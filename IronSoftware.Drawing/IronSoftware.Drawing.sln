@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32519.379
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronSoftware.Drawing.Common", "IronSoftware.Drawing.Common\IronSoftware.Drawing.Common.csproj", "{229F48B8-005F-49C3-B5F2-49A8FC66E5BD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{229F48B8-005F-49C3-B5F2-49A8FC66E5BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{229F48B8-005F-49C3-B5F2-49A8FC66E5BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{229F48B8-005F-49C3-B5F2-49A8FC66E5BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{229F48B8-005F-49C3-B5F2-49A8FC66E5BD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4D16773E-23AA-41B3-BA19-607F88328D7B}
+	EndGlobalSection
+EndGlobal

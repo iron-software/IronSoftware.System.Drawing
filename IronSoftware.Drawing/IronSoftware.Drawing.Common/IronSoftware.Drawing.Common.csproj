@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+	  <LangVersion>8</LangVersion>
+	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Maui.Graphics" Version="6.0.300" PrivateAssets="all" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="2.0.0" PrivateAssets="all" />
+    <PackageReference Include="SkiaSharp" Version="2.80.0" PrivateAssets="all" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.0" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>
