@@ -158,6 +158,7 @@ namespace IronSoftware.Drawing
                 skdata.SaveTo(Stream);
                 return;
             }
+#if NETSTANDARD
             else if (Type.GetType("SixLabors.ImageSharp.Image") != null)
             {
                 using SixLabors.ImageSharp.Image img = this; // magic implicit cast
@@ -174,9 +175,10 @@ namespace IronSoftware.Drawing
                     default: enc = new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder(); break;
                 }
 
-                img.Save(Stream, enc);
+            img.Save(Stream, enc);
                 return;
             }
+#endif
             else if (Type.GetType("System.Drawing.Imaging.ImageFormat") != null)
             {
                 using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
@@ -392,6 +394,7 @@ namespace IronSoftware.Drawing
             Binary = System.IO.File.ReadAllBytes(File);
         }
 
+#if NETSTANDARD
         /// <summary>
         /// Implicitly casts ImageSharp objects to <see cref="Bitmap"/>.  
         /// <para>When your .NET Class methods to use <see cref="Bitmap"/> as parameters and return types, you now automatically support ImageSharp as well.</para>
@@ -406,7 +409,6 @@ namespace IronSoftware.Drawing
             }
         }
 
-
         /// <summary>
         /// Implicitly casts ImageSharp objects from <see cref="Bitmap"/>.  
         /// <para>When your .NET Class methods to use <see cref="Bitmap"/> as parameters and return types, you now automatically support ImageSharp as well.</para>
@@ -416,7 +418,8 @@ namespace IronSoftware.Drawing
         {
             return SixLabors.ImageSharp.Image.Load(bitmap.Binary);
         }
-
+        
+#endif
 
         /// <summary>
         /// Implicitly casts SkiaSharp.SKImage  objects to <see cref="Bitmap"/>.  
@@ -424,8 +427,8 @@ namespace IronSoftware.Drawing
         /// </summary>
         /// <param name="Image">SkiaSharp.SKImage  will automatically be cast to <see cref="Bitmap"/> </param>
         public static implicit operator Bitmap(SkiaSharp.SKImage Image)
-        {
-            return new Bitmap(SkiaSharp.SKBitmap.FromImage(Image).Encode(SkiaSharp.SKEncodedImageFormat.Bmp, 100).ToArray());
+        {            
+            return new Bitmap(SkiaSharp.SKBitmap.FromImage(Image).Bytes);
         }
 
         /// <summary>
@@ -437,7 +440,6 @@ namespace IronSoftware.Drawing
         {
             return SkiaSharp.SKImage.FromBitmap(SkiaSharp.SKBitmap.Decode(bitmap.Binary));
         }
-
         /// <summary>
         /// Implicitly casts SkiaSharp.SKBitmap  objects to <see cref="Bitmap"/>.  
         /// <para>When your .NET Class methods to use <see cref="Bitmap"/> as parameters and return types, you now automatically support SkiaSharp  as well.</para>
@@ -446,7 +448,7 @@ namespace IronSoftware.Drawing
 
         public static implicit operator Bitmap(SkiaSharp.SKBitmap Image)
         {
-            return new Bitmap(Image.Encode(SkiaSharp.SKEncodedImageFormat.Bmp, 100).ToArray());
+            return new Bitmap(Image.Bytes);
         }
 
         /// <summary>
@@ -458,7 +460,7 @@ namespace IronSoftware.Drawing
         {
             return SkiaSharp.SKBitmap.Decode(bitmap.Binary);
         }
-
+#if NETSTANDARD
         /// <summary>
         /// Implicitly casts Microsoft.Maui.Graphics.Platform.PlatformImage  objects to <see cref="Bitmap"/>.  
         /// <para>When your .NET Class methods to use <see cref="Bitmap"/> as parameters and return types, you now automatically support Microsoft.Maui.Graphics  as well.</para>
@@ -483,7 +485,7 @@ namespace IronSoftware.Drawing
         {
             return (Microsoft.Maui.Graphics.Platform.PlatformImage)Microsoft.Maui.Graphics.Platform.PlatformImage.FromStream(bitmap.GetStream());
         }
-
+#endif
 
         /// <summary>
         /// Implicitly casts System.Drawing.Bitmap objects to <see cref="Bitmap"/>.  
@@ -509,10 +511,12 @@ namespace IronSoftware.Drawing
             {
                 if (e is PlatformNotSupportedException || e is TypeInitializationException)
                 {
+#if NETSTANDARD
                     if (!System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
                     {
                         throw SystemDotDrawingPlatformNotSupported(e);
                     }
+#endif
                 }
                 throw e;
             }
@@ -535,10 +539,12 @@ namespace IronSoftware.Drawing
             {
                 if (e is PlatformNotSupportedException || e is TypeInitializationException)
                 {
+#if NETSTANDARD
                     if (!System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
                     {
                         throw SystemDotDrawingPlatformNotSupported(e);
                     }
+#endif
                 }
                 throw e;
             }
@@ -581,12 +587,18 @@ namespace IronSoftware.Drawing
 
             /// <summary> The PNG image format.</summary>
             Png = 4,
-            /// <summary> The WBMP image format.  Will default to BMP if not supported on the runtime platform..</summary>
 
+            /// <summary> The WBMP image format.  Will default to BMP if not supported on the runtime platform..</summary>
             Wbmp = 5,
 
             /// <summary> The new WebP image format.</summary>
             Webp = 6,
+
+            /// <summary> The Icon image format.</summary>
+            Icon = 7,
+
+            /// <summary> The Wmf image format.</summary>
+            Wmf = 8,
 
             /// <summary> The existing raw image format.</summary>
             Default = -1,
