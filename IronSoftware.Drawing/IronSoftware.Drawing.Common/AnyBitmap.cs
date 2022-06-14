@@ -10,7 +10,7 @@ namespace IronSoftware.Drawing
     /// <para>Implicit casting means that using this class to input and output Bitmap and image types from public API's gives full compatibility to all image type fully supported by Microsoft.</para>
     /// <para> Unlike System.Drawing.Bitmap this bitmap object is self memory managing and does not need to be explicitly 'used' or 'disposed'</para>
     /// </summary>
-    public partial class Bitmap
+    public partial class AnyBitmap
     {
         private byte[] Binary { get; set; }
 
@@ -28,14 +28,14 @@ namespace IronSoftware.Drawing
         /// <summary>
         ///  Allows Comparability and equality.
         /// </summary>
-        /// <param name="bitmap">Another <see cref="Bitmap"/></param>
+        /// <param name="bitmap">Another <see cref="AnyBitmap"/></param>
         /// <returns>True if the Bitmaps have exactly the same raw binary data.</returns>
         public override bool Equals(object bitmap)
         {
-            Bitmap comp = bitmap as Bitmap;
+            AnyBitmap comp = bitmap as AnyBitmap;
             if (comp == null) { return false; }
 
-            return Binary == ((Bitmap)bitmap).ExportBytes();
+            return Binary == ((AnyBitmap)bitmap).ExportBytes();
         }
 
         /// <summary>
@@ -76,12 +76,12 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Creates an exact duplicate <see cref="Bitmap"/>
+        /// Creates an exact duplicate <see cref="AnyBitmap"/>
         /// </summary>
         /// <returns></returns>
-        public Bitmap Clone()
+        public AnyBitmap Clone()
         {
-            return new Bitmap(this.Binary);
+            return new AnyBitmap(this.Binary);
         }
 
         /// <summary>
@@ -285,18 +285,18 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Generic method to convert popular image types to <see cref="Bitmap"/>.  
+        /// Generic method to convert popular image types to <see cref="AnyBitmap"/>.  
         /// <para> Support includes SixLabors.ImageSharp.Image,  SkiaSharp.SKImage, SkiaSharp.SKBitmap, System.Drawing.Bitmap, System.Drawing.Image and Microsoft.Maui.Graphics formats. </para>
-        /// <para>Syntax sugar.  Explicit casts already also exist to and from  <see cref="Bitmap"/> and all supported types.</para>
+        /// <para>Syntax sugar.  Explicit casts already also exist to and from  <see cref="AnyBitmap"/> and all supported types.</para>
         /// </summary>
         /// <typeparam name="T">The Type to cast from.  Support includes SixLabors.ImageSharp.Image,  SkiaSharp.SKImage, SkiaSharp.SKBitmap, System.Drawing.Bitmap, System.Drawing.Image and Microsoft.Maui.Graphics formats.</typeparam>
         /// <param name="OtherBitmapFormat">A bitmap or image format from another graphics library.</param>
-        /// <returns>A <see cref="Bitmap"/></returns>
-        public static Bitmap FromBitmap<T>(T OtherBitmapFormat)
+        /// <returns>A <see cref="AnyBitmap"/></returns>
+        public static AnyBitmap FromBitmap<T>(T OtherBitmapFormat)
         {
             try
             {
-                Bitmap result = (Bitmap)Convert.ChangeType(OtherBitmapFormat, typeof(Bitmap));
+                AnyBitmap result = (AnyBitmap)Convert.ChangeType(OtherBitmapFormat, typeof(AnyBitmap));
                 return result;
             }
             catch (Exception e)
@@ -305,13 +305,13 @@ namespace IronSoftware.Drawing
             }
         }
         /// <summary>
-        /// Generic method to convert <see cref="Bitmap"/> to popular image types.
+        /// Generic method to convert <see cref="AnyBitmap"/> to popular image types.
         /// <para> Support includes SixLabors.ImageSharp.Image,  SkiaSharp.SKImage, SkiaSharp.SKBitmap, System.Drawing.Bitmap, System.Drawing.Image and Microsoft.Maui.Graphics formats. </para>
-        /// <para>Syntax sugar.  Explicit casts already also exist to and from  <see cref="Bitmap"/> and all supported types.</para>
+        /// <para>Syntax sugar.  Explicit casts already also exist to and from  <see cref="AnyBitmap"/> and all supported types.</para>
         /// </summary>
         /// <typeparam name="T">The Type to cast to.  Support includes SixLabors.ImageSharp.Image,  SkiaSharp.SKImage, SkiaSharp.SKBitmap, System.Drawing.Bitmap, System.Drawing.Image and Microsoft.Maui.Graphics formats.</typeparam>
 
-        /// <returns>A <see cref="Bitmap"/></returns>
+        /// <returns>A <see cref="AnyBitmap"/></returns>
         public T ToBitmap<T>()
         {
             try
@@ -330,19 +330,19 @@ namespace IronSoftware.Drawing
         /// </summary>
         /// <param name="Bytes">A ByteArray of image data in any common format/</param>
         /// <seealso cref="FromBytes"/>
-        ///  <seealso cref="Bitmap(byte[])"/>
-        public static Bitmap FromBytes(byte[] Bytes)
+        ///  <seealso cref="AnyBitmap(byte[])"/>
+        public static AnyBitmap FromBytes(byte[] Bytes)
         {
-            return new Bitmap(Bytes);
+            return new AnyBitmap(Bytes);
         }
         /// <summary>
         /// Construct a new Bitmap from binary data (bytes)
         /// </summary>
         /// <param name="Bytes">A ByteArray of image data in any common format/</param>
         /// <seealso cref="FromBytes"/>
-        ///  <seealso cref="Bitmap"/>
+        ///  <seealso cref="AnyBitmap"/>
 
-        public Bitmap(byte[] Bytes)
+        public AnyBitmap(byte[] Bytes)
         {
             Binary = Bytes;
         }
@@ -352,10 +352,10 @@ namespace IronSoftware.Drawing
         /// </summary>
         /// <param name="Stream">A <see cref="Stream"/>  of image data in any common format/</param>
         /// <seealso cref="FromStream"/>
-        ///  <seealso cref="Bitmap"/>
-        public static Bitmap FromStream(System.IO.Stream Stream)
+        ///  <seealso cref="AnyBitmap"/>
+        public static AnyBitmap FromStream(System.IO.Stream Stream)
         {
-            return new Bitmap(Stream);
+            return new AnyBitmap(Stream);
         }
 
         /// <summary>
@@ -363,8 +363,8 @@ namespace IronSoftware.Drawing
         /// </summary>
         /// <param name="Stream">A <see cref="Stream"/>  of image data in any common format/</param>
         /// <seealso cref="FromStream"/>
-        ///  <seealso cref="Bitmap"/>
-        public Bitmap(System.IO.Stream Stream)
+        ///  <seealso cref="AnyBitmap"/>
+        public AnyBitmap(System.IO.Stream Stream)
         {
             using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
             {
@@ -377,10 +377,10 @@ namespace IronSoftware.Drawing
         /// </summary>
         /// <param name="File">A fully qualified file path./</param>
         /// <seealso cref="FromFile"/>        
-        /// ///  <seealso cref="Bitmap"/>
-        public static Bitmap FromFile(string File)
+        /// ///  <seealso cref="AnyBitmap"/>
+        public static AnyBitmap FromFile(string File)
         {
-            return new Bitmap(File);
+            return new AnyBitmap(File);
         }
 
         /// <summary>
@@ -388,33 +388,33 @@ namespace IronSoftware.Drawing
         /// </summary>
         /// <param name="File">A fully qualified file path./</param>
         /// <seealso cref="FromFile"/>        
-        /// ///  <seealso cref="Bitmap"/>
-        public Bitmap(string File)
+        /// ///  <seealso cref="AnyBitmap"/>
+        public AnyBitmap(string File)
         {
             Binary = System.IO.File.ReadAllBytes(File);
         }
 
 #if NETSTANDARD
         /// <summary>
-        /// Implicitly casts ImageSharp objects to <see cref="Bitmap"/>.  
-        /// <para>When your .NET Class methods to use <see cref="Bitmap"/> as parameters and return types, you now automatically support ImageSharp as well.</para>
+        /// Implicitly casts ImageSharp objects to <see cref="AnyBitmap"/>.  
+        /// <para>When your .NET Class methods to use <see cref="AnyBitmap"/> as parameters and return types, you now automatically support ImageSharp as well.</para>
         /// </summary>
-        /// <param name="Image">SixLabors.ImageSharp.Image will automatically be cast to <see cref="Bitmap"/> </param>
-        public static implicit operator Bitmap(SixLabors.ImageSharp.Image Image)
+        /// <param name="Image">SixLabors.ImageSharp.Image will automatically be cast to <see cref="AnyBitmap"/> </param>
+        public static implicit operator AnyBitmap(SixLabors.ImageSharp.Image Image)
         {
             using (var memoryStream = new System.IO.MemoryStream())
             {
                 Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder());
-                return new Bitmap(memoryStream.ToArray());
+                return new AnyBitmap(memoryStream.ToArray());
             }
         }
 
         /// <summary>
-        /// Implicitly casts ImageSharp objects from <see cref="Bitmap"/>.  
-        /// <para>When your .NET Class methods to use <see cref="Bitmap"/> as parameters and return types, you now automatically support ImageSharp as well.</para>
+        /// Implicitly casts ImageSharp objects from <see cref="AnyBitmap"/>.  
+        /// <para>When your .NET Class methods to use <see cref="AnyBitmap"/> as parameters and return types, you now automatically support ImageSharp as well.</para>
         /// </summary>
-        /// <param name="bitmap"><see cref="Bitmap"/> is Implicitly cast to an SixLabors.ImageSharp.Image </param>
-        static public implicit operator SixLabors.ImageSharp.Image(Bitmap bitmap)
+        /// <param name="bitmap"><see cref="AnyBitmap"/> is Implicitly cast to an SixLabors.ImageSharp.Image </param>
+        static public implicit operator SixLabors.ImageSharp.Image(AnyBitmap bitmap)
         {
             return SixLabors.ImageSharp.Image.Load(bitmap.Binary);
         }
@@ -422,78 +422,78 @@ namespace IronSoftware.Drawing
 #endif
 
         /// <summary>
-        /// Implicitly casts SkiaSharp.SKImage  objects to <see cref="Bitmap"/>.  
-        /// <para>When your .NET Class methods to use <see cref="Bitmap"/> as parameters and return types, you now automatically support SkiaSharp  as well.</para>
+        /// Implicitly casts SkiaSharp.SKImage  objects to <see cref="AnyBitmap"/>.  
+        /// <para>When your .NET Class methods to use <see cref="AnyBitmap"/> as parameters and return types, you now automatically support SkiaSharp  as well.</para>
         /// </summary>
-        /// <param name="Image">SkiaSharp.SKImage  will automatically be cast to <see cref="Bitmap"/> </param>
-        public static implicit operator Bitmap(SkiaSharp.SKImage Image)
+        /// <param name="Image">SkiaSharp.SKImage  will automatically be cast to <see cref="AnyBitmap"/> </param>
+        public static implicit operator AnyBitmap(SkiaSharp.SKImage Image)
         {            
-            return new Bitmap(SkiaSharp.SKBitmap.FromImage(Image).Bytes);
+            return new AnyBitmap(SkiaSharp.SKBitmap.FromImage(Image).Bytes);
         }
 
         /// <summary>
-        /// Implicitly casts SkiaSharp.SKImage objects from <see cref="Bitmap"/>.  
-        /// <para>When your .NET Class methods to use <see cref="Bitmap"/> as parameters and return types, you now automatically support SkiaSharp.SKImage as well.</para>
+        /// Implicitly casts SkiaSharp.SKImage objects from <see cref="AnyBitmap"/>.  
+        /// <para>When your .NET Class methods to use <see cref="AnyBitmap"/> as parameters and return types, you now automatically support SkiaSharp.SKImage as well.</para>
         /// </summary>
-        /// <param name="bitmap"><see cref="Bitmap"/> is Implicitly cast to an SkiaSharp.SKImage </param>
-        static public implicit operator SkiaSharp.SKImage(Bitmap bitmap)
+        /// <param name="bitmap"><see cref="AnyBitmap"/> is Implicitly cast to an SkiaSharp.SKImage </param>
+        static public implicit operator SkiaSharp.SKImage(AnyBitmap bitmap)
         {
             return SkiaSharp.SKImage.FromBitmap(SkiaSharp.SKBitmap.Decode(bitmap.Binary));
         }
         /// <summary>
-        /// Implicitly casts SkiaSharp.SKBitmap  objects to <see cref="Bitmap"/>.  
-        /// <para>When your .NET Class methods to use <see cref="Bitmap"/> as parameters and return types, you now automatically support SkiaSharp  as well.</para>
+        /// Implicitly casts SkiaSharp.SKBitmap  objects to <see cref="AnyBitmap"/>.  
+        /// <para>When your .NET Class methods to use <see cref="AnyBitmap"/> as parameters and return types, you now automatically support SkiaSharp  as well.</para>
         /// </summary>
-        /// <param name="Image">SkiaSharp.SKBitmap  will automatically be cast to <see cref="Bitmap"/> </param>
+        /// <param name="Image">SkiaSharp.SKBitmap  will automatically be cast to <see cref="AnyBitmap"/> </param>
 
-        public static implicit operator Bitmap(SkiaSharp.SKBitmap Image)
+        public static implicit operator AnyBitmap(SkiaSharp.SKBitmap Image)
         {
-            return new Bitmap(Image.Bytes);
+            return new AnyBitmap(Image.Bytes);
         }
 
         /// <summary>
-        /// Implicitly casts SkiaSharp.SKBitmap objects from <see cref="Bitmap"/>.  
-        /// <para>When your .NET Class methods to use <see cref="Bitmap"/> as parameters and return types, you now automatically support SkiaSharp.SKBitmap as well.</para>
+        /// Implicitly casts SkiaSharp.SKBitmap objects from <see cref="AnyBitmap"/>.  
+        /// <para>When your .NET Class methods to use <see cref="AnyBitmap"/> as parameters and return types, you now automatically support SkiaSharp.SKBitmap as well.</para>
         /// </summary>
-        /// <param name="bitmap"><see cref="Bitmap"/> is explicitly cast to an SkiaSharp.SKBitmap </param>
-        static public implicit operator SkiaSharp.SKBitmap(Bitmap bitmap)
+        /// <param name="bitmap"><see cref="AnyBitmap"/> is explicitly cast to an SkiaSharp.SKBitmap </param>
+        static public implicit operator SkiaSharp.SKBitmap(AnyBitmap bitmap)
         {
             return SkiaSharp.SKBitmap.Decode(bitmap.Binary);
         }
 #if NETSTANDARD
         /// <summary>
-        /// Implicitly casts Microsoft.Maui.Graphics.Platform.PlatformImage  objects to <see cref="Bitmap"/>.  
-        /// <para>When your .NET Class methods to use <see cref="Bitmap"/> as parameters and return types, you now automatically support Microsoft.Maui.Graphics  as well.</para>
+        /// Implicitly casts Microsoft.Maui.Graphics.Platform.PlatformImage  objects to <see cref="AnyBitmap"/>.  
+        /// <para>When your .NET Class methods to use <see cref="AnyBitmap"/> as parameters and return types, you now automatically support Microsoft.Maui.Graphics  as well.</para>
         /// </summary>
-        /// <param name="Image">Microsoft.Maui.Graphics.Platform.PlatformImage  will automatically be cast to <see cref="Bitmap"/> </param>
+        /// <param name="Image">Microsoft.Maui.Graphics.Platform.PlatformImage  will automatically be cast to <see cref="AnyBitmap"/> </param>
 
-        public static implicit operator Bitmap(Microsoft.Maui.Graphics.Platform.PlatformImage Image)
+        public static implicit operator AnyBitmap(Microsoft.Maui.Graphics.Platform.PlatformImage Image)
         {
             using (var memoryStream = new System.IO.MemoryStream())
             {
                 Image.Save(memoryStream);
-                return new Bitmap(memoryStream.ToArray());
+                return new AnyBitmap(memoryStream.ToArray());
             }
         }
         /// <summary>
-        /// Implicitly casts Microsoft.Maui.Graphics.Platform.PlatformImage objects from <see cref="Bitmap"/>.  
-        /// <para>When your .NET Class methods to use <see cref="Bitmap"/> as parameters and return types, you now automatically support Microsoft.Maui.Graphics  as well.</para>
+        /// Implicitly casts Microsoft.Maui.Graphics.Platform.PlatformImage objects from <see cref="AnyBitmap"/>.  
+        /// <para>When your .NET Class methods to use <see cref="AnyBitmap"/> as parameters and return types, you now automatically support Microsoft.Maui.Graphics  as well.</para>
         /// </summary>
-        /// <param name="bitmap"><see cref="Bitmap"/> is Implicitly cast to an Microsoft.Maui.Graphics.Platform.PlatformImage  </param>
+        /// <param name="bitmap"><see cref="AnyBitmap"/> is Implicitly cast to an Microsoft.Maui.Graphics.Platform.PlatformImage  </param>
 
-        static public implicit operator Microsoft.Maui.Graphics.Platform.PlatformImage(Bitmap bitmap)
+        static public implicit operator Microsoft.Maui.Graphics.Platform.PlatformImage(AnyBitmap bitmap)
         {
             return (Microsoft.Maui.Graphics.Platform.PlatformImage)Microsoft.Maui.Graphics.Platform.PlatformImage.FromStream(bitmap.GetStream());
         }
 #endif
 
         /// <summary>
-        /// Implicitly casts System.Drawing.Bitmap objects to <see cref="Bitmap"/>.  
-        /// <para>When your .NET Class methods to use <see cref="Bitmap"/> as parameters and return types, you now automatically support System.Drawing.Common  as well.</para>
+        /// Implicitly casts System.Drawing.Bitmap objects to <see cref="AnyBitmap"/>.  
+        /// <para>When your .NET Class methods to use <see cref="AnyBitmap"/> as parameters and return types, you now automatically support System.Drawing.Common  as well.</para>
         /// </summary>
-        /// <param name="Image">System.Drawing.Bitmap will automatically be cast to <see cref="Bitmap"/> </param>
+        /// <param name="Image">System.Drawing.Bitmap will automatically be cast to <see cref="AnyBitmap"/> </param>
 
-        public static implicit operator Bitmap(System.Drawing.Bitmap Image)
+        public static implicit operator AnyBitmap(System.Drawing.Bitmap Image)
         {
             Byte[] data;
 
@@ -504,7 +504,7 @@ namespace IronSoftware.Drawing
                     Image.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Bmp);
 
                     data = memoryStream.ToArray();
-                    return new Bitmap(data);
+                    return new AnyBitmap(data);
                 }
             }
             catch (Exception e)
@@ -523,13 +523,13 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts System.Drawing.Bitmap objects from <see cref="Bitmap"/>.  
-        /// <para>When your .NET Class methods to use <see cref="Bitmap"/> as parameters and return types, you now automatically support System.Drawing.Common as well.</para>
+        /// Implicitly casts System.Drawing.Bitmap objects from <see cref="AnyBitmap"/>.  
+        /// <para>When your .NET Class methods to use <see cref="AnyBitmap"/> as parameters and return types, you now automatically support System.Drawing.Common as well.</para>
         /// </summary>
-        /// <param name="bitmap"><see cref="Bitmap"/> is implicitly cast to an System.Drawing.Bitmap  </param>
+        /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to an System.Drawing.Bitmap  </param>
 
 
-        static public implicit operator System.Drawing.Bitmap(Bitmap bitmap)
+        static public implicit operator System.Drawing.Bitmap(AnyBitmap bitmap)
         {
             try
             {
@@ -557,16 +557,16 @@ namespace IronSoftware.Drawing
 
         private static InvalidCastException ImageCastException(string fullTypeName, Exception innerException)
         {
-            return new InvalidCastException($"IronSoftware.Drawing does not yet support casting  {fullTypeName} to  {typeof(Bitmap).FullName}.  Try using System.Drawing.Common, SkiaSharp or ImageSharp.", innerException);
+            return new InvalidCastException($"IronSoftware.Drawing does not yet support casting  {fullTypeName} to  {typeof(AnyBitmap).FullName}.  Try using System.Drawing.Common, SkiaSharp or ImageSharp.", innerException);
         }
 
         private static InvalidOperationException NoConverterException(ImageFormat Format, Exception innerException)
         {
-            return new InvalidOperationException($"{typeof(Bitmap)} is unable to convert  your image data to {Format.ToString()} because it requires a suitable encoder to be added to your project via Nuget.\nPlease try SkiaSharp, System.Drawing.Common, SixLabors.ImageSharp, Microsoft.Maui.Graphics; or alternatively save using ImageFormat.Default", innerException);
+            return new InvalidOperationException($"{typeof(AnyBitmap)} is unable to convert  your image data to {Format.ToString()} because it requires a suitable encoder to be added to your project via Nuget.\nPlease try SkiaSharp, System.Drawing.Common, SixLabors.ImageSharp, Microsoft.Maui.Graphics; or alternatively save using ImageFormat.Default", innerException);
         }
 
         /// <summary>
-        /// Popular image formats which <see cref="Bitmap"/> can read and export.
+        /// Popular image formats which <see cref="AnyBitmap"/> can read and export.
         /// </summary>
         /// <seealso cref="ExportFile(string, ImageFormat, int)"/>
         /// <seealso cref="ExportStream(Stream, ImageFormat, int)"/>
