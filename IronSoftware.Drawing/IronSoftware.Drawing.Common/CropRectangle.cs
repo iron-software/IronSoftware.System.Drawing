@@ -2,6 +2,8 @@
 {
     public partial class CropRectangle
     {
+        public CropRectangle() { }
+
         public CropRectangle(int x, int y, int width, int height)
         {
             this.X = x;
