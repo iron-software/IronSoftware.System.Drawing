@@ -4,13 +4,17 @@
 		<TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
 		<LangVersion>8</LangVersion>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<AssemblyVersion>2022.6.2</AssemblyVersion>
+		<FileVersion>2022.6.2</FileVersion>
+		<Version>2022.6.2</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="SkiaSharp" Version="1.68.1" PrivateAssets="all" />
+		<PackageReference Include="SkiaSharp" Version="1.68.1" PrivateAssets="all" Condition="'$(TargetFramework)'=='net45'" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="SkiaSharp" Version="2.88.0" PrivateAssets="all" Condition="'$(TargetFramework)'=='netstandard2.0'" />
 		<PackageReference Include="Microsoft.Maui.Graphics" Version="6.0.300" PrivateAssets="all" Condition="'$(TargetFramework)'=='netstandard2.0'" />
 		<PackageReference Include="SixLabors.ImageSharp" Version="2.0.0" PrivateAssets="all" Condition="'$(TargetFramework)'=='netstandard2.0'" />
 		<PackageReference Include="System.Drawing.Common" Version="5.0.0" PrivateAssets="all" Condition="'$(TargetFramework)'=='netstandard2.0'" />

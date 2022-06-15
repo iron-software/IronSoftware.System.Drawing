@@ -190,7 +190,8 @@ namespace IronSoftware.Drawing
                     case ImageFormat.Gif: exportFormat = System.Drawing.Imaging.ImageFormat.Gif; break;
                     case ImageFormat.Png: exportFormat = System.Drawing.Imaging.ImageFormat.Png; break;
                     case ImageFormat.Tiff: exportFormat = System.Drawing.Imaging.ImageFormat.Tiff; break;
-
+                    case ImageFormat.Wmf: exportFormat = System.Drawing.Imaging.ImageFormat.Wmf; break;
+                    case ImageFormat.Icon: exportFormat = System.Drawing.Imaging.ImageFormat.Icon; break;
                     default: exportFormat = System.Drawing.Imaging.ImageFormat.Bmp; break;
                 }
 
@@ -427,8 +428,12 @@ namespace IronSoftware.Drawing
         /// </summary>
         /// <param name="Image">SkiaSharp.SKImage  will automatically be cast to <see cref="AnyBitmap"/> </param>
         public static implicit operator AnyBitmap(SkiaSharp.SKImage Image)
-        {            
+        {
+#if NETFRAMEWORK
             return new AnyBitmap(SkiaSharp.SKBitmap.FromImage(Image).Bytes);
+#else
+            return new AnyBitmap(SkiaSharp.SKBitmap.FromImage(Image).Encode(SkiaSharp.SKEncodedImageFormat.Bmp, 100).ToArray());
+#endif
         }
 
         /// <summary>
@@ -448,7 +453,11 @@ namespace IronSoftware.Drawing
 
         public static implicit operator AnyBitmap(SkiaSharp.SKBitmap Image)
         {
+#if NETFRAMEWORK
             return new AnyBitmap(Image.Bytes);
+#else
+            return new AnyBitmap(Image.Encode(SkiaSharp.SKEncodedImageFormat.Bmp, 100).ToArray());
+#endif
         }
 
         /// <summary>
