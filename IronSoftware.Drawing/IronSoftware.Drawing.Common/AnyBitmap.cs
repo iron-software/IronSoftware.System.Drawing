@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 
@@ -21,8 +23,7 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                SkiaSharp.SKBitmap sKBitmap = SkiaSharp.SKBitmap.Decode(Binary);
-                return sKBitmap.Width;
+                return SkiaSharp.SKBitmap.Decode(Binary).Width;
             }
         }
 
@@ -33,8 +34,7 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                SkiaSharp.SKBitmap sKBitmap = SkiaSharp.SKBitmap.Decode(Binary);
-                return sKBitmap.Height;
+                return SkiaSharp.SKBitmap.Decode(Binary).Height;
             }
         }
 
@@ -56,10 +56,33 @@ namespace IronSoftware.Drawing
         /// <returns>True if the Bitmaps have exactly the same raw binary data.</returns>
         public override bool Equals(object bitmap)
         {
-            AnyBitmap comp = bitmap as AnyBitmap;
+            AnyBitmap comp = null;
+            if (bitmap is AnyBitmap)
+            {
+                comp = bitmap as AnyBitmap;
+            }
+            else if (bitmap is System.Drawing.Bitmap)
+            {
+                comp = bitmap as System.Drawing.Bitmap;
+            }
+            else if (bitmap is SkiaSharp.SKBitmap)
+            {
+                comp = bitmap as SkiaSharp.SKBitmap;
+            }
+#if NETSTANDARD
+            else if (bitmap is SixLabors.ImageSharp.Image)
+            {
+                comp = bitmap as SixLabors.ImageSharp.Image;
+            }
+            else if (bitmap is Microsoft.Maui.Graphics.Platform.PlatformImage)
+            {
+                comp = bitmap as Microsoft.Maui.Graphics.Platform.PlatformImage;
+            }
+#endif
             if (comp == null) { return false; }
 
-            return Binary == ((AnyBitmap)bitmap).ExportBytes();
+            //return Binary == ((AnyBitmap)comp).ExportBytes();
+            return Binary.SequenceEqual(((AnyBitmap)comp).ExportBytes());
         }
 
         /// <summary>
@@ -85,9 +108,9 @@ namespace IronSoftware.Drawing
         /// The raw image data as byte[] (ByteArray)"/>
         /// </summary>
         /// <returns>A byte[] (ByteArray) </returns>
-        public System.IO.MemoryStream GetBytes()
+        public byte[] GetBytes()
         {
-            return new System.IO.MemoryStream(Binary);
+            return Binary;
         }
 
         /// <summary>
@@ -165,7 +188,8 @@ namespace IronSoftware.Drawing
         {
             if (Format == ImageFormat.Default)
             {
-                Stream.Read(Binary, 0, Binary.Length);
+                var writer = new BinaryWriter(Stream);
+                writer.Write(Binary);
                 return;
             }
 
@@ -378,7 +402,7 @@ namespace IronSoftware.Drawing
         /// <param name="Stream">A <see cref="Stream"/>  of image data in any common format/</param>
         /// <seealso cref="FromStream"/>
         ///  <seealso cref="AnyBitmap"/>
-        public static AnyBitmap FromStream(System.IO.Stream Stream)
+        public static AnyBitmap FromStream(System.IO.MemoryStream Stream)
         {
             return new AnyBitmap(Stream);
         }
@@ -389,12 +413,9 @@ namespace IronSoftware.Drawing
         /// <param name="Stream">A <see cref="Stream"/>  of image data in any common format/</param>
         /// <seealso cref="FromStream"/>
         ///  <seealso cref="AnyBitmap"/>
-        public AnyBitmap(System.IO.Stream Stream)
+        public AnyBitmap(System.IO.MemoryStream Stream)
         {
-            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
-            {
-                Binary = ms.ToArray();
-            }
+            Binary = Stream.ToArray();
         }
 
         /// <summary>
@@ -453,11 +474,7 @@ namespace IronSoftware.Drawing
         /// <param name="Image">SkiaSharp.SKImage  will automatically be cast to <see cref="AnyBitmap"/> </param>
         public static implicit operator AnyBitmap(SkiaSharp.SKImage Image)
         {
-#if NETFRAMEWORK
-            return new AnyBitmap(SkiaSharp.SKBitmap.FromImage(Image).Bytes);
-#else
-            return new AnyBitmap(SkiaSharp.SKBitmap.FromImage(Image).Encode(SkiaSharp.SKEncodedImageFormat.Bmp, 100).ToArray());
-#endif
+            return new AnyBitmap(Image.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray());
         }
 
         /// <summary>
@@ -478,9 +495,9 @@ namespace IronSoftware.Drawing
         public static implicit operator AnyBitmap(SkiaSharp.SKBitmap Image)
         {
 #if NETFRAMEWORK
-            return new AnyBitmap(Image.Bytes);
+            return new AnyBitmap(SkiaSharp.SKImage.FromBitmap(Image).Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray());
 #else
-            return new AnyBitmap(Image.Encode(SkiaSharp.SKEncodedImageFormat.Bmp, 100).ToArray());
+            return new AnyBitmap(Image.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray());
 #endif
         }
 
@@ -534,7 +551,7 @@ namespace IronSoftware.Drawing
             {
                 using (var memoryStream = new System.IO.MemoryStream())
                 {
-                    Image.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Bmp);
+                    Image.Save(memoryStream, Image.RawFormat);
 
                     data = memoryStream.ToArray();
                     return new AnyBitmap(data);

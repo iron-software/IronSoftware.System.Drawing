@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+    <RunConfiguration>
+        <EnvironmentVariables>
+			<IronSoftware.Drawing.Common.LicenseKey>IRONBARCODE.KHUNMEEIRONSOFTWARE.IX1996-D29C67B8A7-ABSIRHRDFIPW-CGEXOEZLDTD3-HF56KVKYI7S5-ZDIB2BCRLRPS-UUJIDPIZVBA5-WSXN3J-LI7CPNZYNTSYUA-1234567.UNLIMITED.10YR-B5AOEI.RENEW.SUPPORT.05.MAY.2032</IronSoftware.Drawing.Common.LicenseKey>
+			<IronSoftware.Drawing.Common.Tests.DataFolder>../../../Data</IronSoftware.Drawing.Common.Tests.DataFolder>	
+		</EnvironmentVariables>
+    </RunConfiguration>
+</RunSettings>
