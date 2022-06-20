@@ -8,10 +8,11 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-- group: IronDrawingVersions
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Debug'
-  AssemblyVersion: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingRevisionVersion).$(Build.BuildID)
+  - group: IronDrawingVersions
+  - name: buildConfiguration
+    value: 'Debug'
+  - name: AssemblyVersion
+    value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingRevisionVersion).$(Build.BuildID)
 
 jobs:
   - job: CheckoutAndRestore
@@ -49,7 +50,7 @@ jobs:
       inputs:
         command: 'build'
         projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
-        arguments: '--configuration $(Configuration) --no-restore --verbosity normal'
+        arguments: '--configuration $(buildConfiguration) --no-restore --verbosity normal'
         versioningScheme: byEnvVar
         versionEnvVar: AssemblyVersion
 
