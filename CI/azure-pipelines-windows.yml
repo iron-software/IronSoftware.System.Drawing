@@ -22,7 +22,7 @@ steps:
   lfs: true
 
 - task: UseDotNet@2
-  displayName: 'Use .NET Core sdk'
+  displayName: 'Use .Net70 Core sdk'
   inputs:
     packageType: 'sdk'
     version: '7.x'
@@ -55,7 +55,7 @@ steps:
     versionEnvVar: AssemblyVersion
 
 - task: DotNetCoreCLI@2
-  displayName: Execute .Net70 Unit Tests
+  displayName: Execute .Net472 Unit Tests
   inputs:
     command: 'test'
     projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
@@ -73,7 +73,7 @@ steps:
   condition: succeededOrFailed()
 
 - task: UseDotNet@2
-  displayName: 'Use .NET Core sdk'
+  displayName: 'Use .Net50 Core sdk'
   inputs:
     packageType: 'sdk'
     version: '5.x'
@@ -89,7 +89,7 @@ steps:
   condition: succeededOrFailed()
 
 - task: UseDotNet@2
-  displayName: 'Use .NET Core sdk'
+  displayName: 'Use .Net60 Core sdk'
   inputs:
     packageType: 'sdk'
     version: '6.x'
@@ -104,13 +104,13 @@ steps:
   condition: succeededOrFailed()
 
 - task: UseDotNet@2
-  displayName: 'Use .NET Core sdk'
+  displayName: 'Use .Netcoreapp2.1 Core sdk'
   inputs:
     packageType: 'sdk'
     version: '2.x'
 
 - task: DotNetCoreCLI@2
-  displayName: Execute .Netcore2.1 Unit Tests
+  displayName: Execute .Netcoreapp2.1 Unit Tests
   inputs:
     command: 'test'
     projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
@@ -119,13 +119,13 @@ steps:
   condition: succeededOrFailed()
 
 - task: UseDotNet@2
-  displayName: 'Use .NET Core sdk'
+  displayName: 'Use .Netcoreapp3.1 Core sdk'
   inputs:
     packageType: 'sdk'
     version: '3.x'
 
 - task: DotNetCoreCLI@2
-  displayName: Execute .Netcore3.1 Unit Tests
+  displayName: Execute .Netcoreapp3.1 Unit Tests
   inputs:
     command: 'test'
     projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
