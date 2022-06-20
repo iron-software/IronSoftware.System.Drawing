@@ -101,15 +101,15 @@ steps:
   condition: succeededOrFailed()
 
 - task: PublishCodeCoverageResults@1
-  dependsOn: [UnitTestsNet50]
   displayName: 'Publish code coverage report'
   inputs:
     codeCoverageTool: 'Cobertura'
     summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+  condition: and (succeededOrFailed(), eq(variables['task.UnitTestsNet50.status'], 'success'))
   
 - task: PublishTestResults@2
-  dependsOn: [UnitTestsNet50]
   displayName: 'Publish test result'
   inputs:
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
+  condition: and (succeededOrFailed(), eq(variables['task.UnitTestsNet50.status'], 'success'))
