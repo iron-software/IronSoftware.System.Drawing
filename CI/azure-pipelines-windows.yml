@@ -37,7 +37,7 @@ steps:
     projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
     verbosityRestore: 'Normal'
     feedsToUse: 'config'
-    nugetConfigPath: 'nuget.config'
+    nugetConfigPath: '$(Build.SourcesDirectory)/IronSoftware.Drawing/nuget.config'
 
 - task: DotNetCoreCLI@2
   displayName: Build IronBarCode Solution
