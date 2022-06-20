@@ -27,6 +27,7 @@ jobs:
       inputs:
         packageType: 'sdk'
         version: '7.x'
+        includePreviewVersions: true
 
     - task: NuGetToolInstaller@1
       displayName: Install NuGet Manager
@@ -64,11 +65,6 @@ jobs:
     displayName: Build & Test .Net50
     dependsOn: [CheckoutAndRestore]
     steps:
-    - task: UseDotNet@2
-      displayName: 'Install .NET Core SDK'
-      inputs:
-        packageType: 'sdk'
-        version: '5.x'
 
     - task: DownloadPipelineArtifact@2
       inputs:
