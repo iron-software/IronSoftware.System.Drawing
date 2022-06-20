@@ -19,7 +19,11 @@ namespace IronSoftware.Drawing
             using (SKCanvas canvas = new SKCanvas(toBitmap))
             {
                 // Draw a bitmap rescaled
+#if NETFRAMEWORK
                 canvas.SetMatrix(SKMatrix.MakeScale(scale, scale));
+#else
+                canvas.SetMatrix(SKMatrix.CreateScale(scale, scale));
+#endif
                 canvas.DrawBitmap(originalBitmap, 0, 0);
                 canvas.ResetMatrix();
                 canvas.Flush();
@@ -60,7 +64,11 @@ namespace IronSoftware.Drawing
             using (SKCanvas canvas = new SKCanvas(toBitmap))
             {
                 // Draw a bitmap rescaled
+#if NETFRAMEWORK
                 canvas.SetMatrix(SKMatrix.MakeScale(ratio, ratio));
+#else
+                canvas.SetMatrix(SKMatrix.CreateScale(ratio, ratio));
+#endif
                 canvas.DrawBitmap(originalBitmap, 0, 0);
                 canvas.ResetMatrix();
                 canvas.Flush();
@@ -251,7 +259,12 @@ namespace IronSoftware.Drawing
 
             using (SKCanvas canvas = new SKCanvas(toBitmap))
             {
+
+#if NETFRAMEWORK
                 canvas.SetMatrix(SKMatrix.MakeScale(ratio, ratio));
+#else
+                canvas.SetMatrix(SKMatrix.CreateScale(ratio, ratio));
+#endif
                 canvas.Clear(color);
                 int x = (toBitmap.Width - originalBitmap.Width) / 2;
                 int y = (toBitmap.Height - originalBitmap.Height) / 2;
@@ -263,7 +276,7 @@ namespace IronSoftware.Drawing
             return toBitmap;
         }
 
-        #region Private Method
+#region Private Method
 
         private static CropRectangle ValidateCropArea(SKBitmap img, CropRectangle CropArea)
         {
@@ -290,6 +303,6 @@ namespace IronSoftware.Drawing
             }
             return new CropRectangle(cropAreaX, cropAreaY, newWidth, newHeight);
         }
-        #endregion
+#endregion
     }
 }
