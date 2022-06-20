@@ -34,7 +34,7 @@ jobs:
         projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
         verbosityRestore: 'Normal'
         feedsToUse: 'config'
-        nugetConfigPath: 'nuget.config'
+        nugetConfigPath: '$(Build.SourcesDirectory)/IronSoftware.Drawing/nuget.config'
 
     - task: PublishPipelineArtifact@1
       inputs:
@@ -56,22 +56,22 @@ jobs:
       inputs:
         buildType: 'current'
         artifactName: 'IronDrawingUnitTests'
-        targetPath: '$(Build.SourcesDirectory)\IronDrawingUnitTests'
+        targetPath: '$(Build.SourcesDirectory)/IronDrawingUnitTests'
 
     - task: DotNetCoreCLI@2
-      displayName: Build IronBarCode Solution
+      displayName: Build Solution
       inputs:
         command: 'build'
-        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
+        projects: '$(Build.SourcesDirectory)/IronDrawingUnitTests/IronSoftware.Drawing.Common.Tests.csproj'
         arguments: '--configuration $(buildConfiguration) -f "net50" --no-restore --verbosity normal'
 
     - task: DotNetCoreCLI@2
-      displayName: (Framework)Execute Unit Tests
+      displayName: Execute Unit Tests
       inputs:
         command: 'test'
-        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
+        projects: '$(Build.SourcesDirectory)/IronDrawingUnitTests/IronSoftware.Drawing.Common.Tests.csproj'
         arguments: '--configuration "$(buildConfiguration)" -f "net50" --verbosity n --no-build --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura'
-        testRunTitle: '(Framework)Execute Unit Tests'
+        testRunTitle: 'Execute Unit Tests'
       condition: succeededOrFailed()
 
     - task: PublishCodeCoverageResults@1
@@ -100,22 +100,22 @@ jobs:
       inputs:
         buildType: 'current'
         artifactName: 'IronDrawingUnitTests'
-        targetPath: '$(Build.SourcesDirectory)\IronDrawingUnitTests'
+        targetPath: '$(Build.SourcesDirectory)/IronDrawingUnitTests'
 
     - task: DotNetCoreCLI@2
-      displayName: Build IronBarCode Solution
+      displayName: Build Solution
       inputs:
         command: 'build'
-        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
+        projects: '$(Build.SourcesDirectory)/IronDrawingUnitTests/IronSoftware.Drawing.Common.Tests.csproj'
         arguments: '--configuration $(buildConfiguration) -f "net60" --no-restore --verbosity normal'
 
     - task: DotNetCoreCLI@2
-      displayName: (Framework)Execute Unit Tests
+      displayName: Execute Unit Tests
       inputs:
         command: 'test'
-        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
+        projects: '$(Build.SourcesDirectory)/IronDrawingUnitTests/IronSoftware.Drawing.Common.Tests.csproj'
         arguments: '--configuration "$(buildConfiguration)" -f "net60" --verbosity n --no-build'
-        testRunTitle: '(Framework)Execute Unit Tests'
+        testRunTitle: 'Execute Unit Tests'
       condition: succeededOrFailed()
 
   - job: BuildAndTestNetCore21
@@ -132,22 +132,22 @@ jobs:
       inputs:
         buildType: 'current'
         artifactName: 'IronDrawingUnitTests'
-        targetPath: '$(Build.SourcesDirectory)\IronDrawingUnitTests'
+        targetPath: '$(Build.SourcesDirectory)/IronDrawingUnitTests'
 
     - task: DotNetCoreCLI@2
-      displayName: Build IronBarCode Solution
+      displayName: Build Solution
       inputs:
         command: 'build'
-        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
+        projects: '$(Build.SourcesDirectory)/IronDrawingUnitTests/IronSoftware.Drawing.Common.Tests.csproj'
         arguments: '--configuration $(buildConfiguration) -f "netcoreapp2.1" --no-restore --verbosity normal'
 
     - task: DotNetCoreCLI@2
-      displayName: (Framework)Execute Unit Tests
+      displayName: Execute Unit Tests
       inputs:
         command: 'test'
-        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
+        projects: '$(Build.SourcesDirectory)/IronDrawingUnitTests/IronSoftware.Drawing.Common.Tests.csproj'
         arguments: '--configuration "$(buildConfiguration)" -f "netcoreapp2.1" --verbosity n --no-build'
-        testRunTitle: '(Framework)Execute Unit Tests'
+        testRunTitle: 'Execute Unit Tests'
       condition: succeededOrFailed()
 
   - job: BuildAndTestNetCore31
@@ -164,22 +164,22 @@ jobs:
       inputs:
         buildType: 'current'
         artifactName: 'IronDrawingUnitTests'
-        targetPath: '$(Build.SourcesDirectory)\IronDrawingUnitTests'
+        targetPath: '$(Build.SourcesDirectory)/IronDrawingUnitTests'
 
     - task: DotNetCoreCLI@2
-      displayName: Build IronBarCode Solution
+      displayName: Build Solution
       inputs:
         command: 'build'
-        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
+        projects: '$(Build.SourcesDirectory)/IronDrawingUnitTests/IronSoftware.Drawing.Common.Tests.csproj'
         arguments: '--configuration $(buildConfiguration) -f "netcoreapp3.1" --no-restore --verbosity normal'
 
     - task: DotNetCoreCLI@2
-      displayName: (Framework)Execute Unit Tests
+      displayName: Execute Unit Tests
       inputs:
         command: 'test'
-        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
+        projects: '$(Build.SourcesDirectory)/IronDrawingUnitTests/IronSoftware.Drawing.Common.Tests.csproj'
         arguments: '--configuration "$(buildConfiguration)" -f "netcoreapp3.1" --verbosity n --no-build'
-        testRunTitle: '(Framework)Execute Unit Tests'
+        testRunTitle: 'Execute Unit Tests'
       condition: succeededOrFailed()
 
   - job: BuildAndTestNet70
@@ -196,20 +196,20 @@ jobs:
       inputs:
         buildType: 'current'
         artifactName: 'IronDrawingUnitTests'
-        targetPath: '$(Build.SourcesDirectory)\IronDrawingUnitTests'
+        targetPath: '$(Build.SourcesDirectory)/IronDrawingUnitTests'
 
     - task: DotNetCoreCLI@2
-      displayName: Build IronBarCode Solution
+      displayName: Build Solution
       inputs:
         command: 'build'
-        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
+        projects: '$(Build.SourcesDirectory)/IronDrawingUnitTests/IronSoftware.Drawing.Common.Tests.csproj'
         arguments: '--configuration $(buildConfiguration) -f "net70" --no-restore --verbosity normal'
 
     - task: DotNetCoreCLI@2
-      displayName: (Framework)Execute Unit Tests
+      displayName: Execute Unit Tests
       inputs:
         command: 'test'
-        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
+        projects: '$(Build.SourcesDirectory)/IronDrawingUnitTests/IronSoftware.Drawing.Common.Tests.csproj'
         arguments: '--configuration "$(buildConfiguration)" -f "net70" --verbosity n --no-build'
-        testRunTitle: '(Framework)Execute Unit Tests'
+        testRunTitle: 'Execute Unit Tests'
       condition: succeededOrFailed()
