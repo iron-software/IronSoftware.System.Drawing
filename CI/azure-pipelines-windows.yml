@@ -1,3 +1,5 @@
+trigger:
+- main
 pr:
   - master
   - main
@@ -47,7 +49,7 @@ jobs:
         nugetConfigPath: '$(Build.SourcesDirectory)/IronSoftware.Drawing/nuget.config'
 
     - task: DotNetCoreCLI@2
-      displayName: Build IronPDF Solution
+      displayName: Build Solution
       inputs:
         command: 'build'
         projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
@@ -55,35 +57,37 @@ jobs:
         versioningScheme: byEnvVar
         versionEnvVar: AssemblyVersion
 
+    - task: DotNetCoreCLI@2
+      displayName: Execute Unit Tests
+      inputs:
+        command: 'test'
+        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
+        arguments: '--configuration "$(buildConfiguration)" -f "net70" --verbosity n --no-build'
+        testRunTitle: 'Execute Unit Tests'
+      condition: succeededOrFailed()
+
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests'
-        artifact: 'IronDrawingUnitTests'
+        targetPath: '$(Build.SourcesDirectory)/IronSoftware.Drawing/'
+        artifact: 'IronDrawing'
         publishLocation: 'pipeline'
 
   - job: BuildAndTestNet50
     displayName: Build & Test .Net50
     dependsOn: [CheckoutAndRestore]
     steps:
-
+    - checkout: none
     - task: DownloadPipelineArtifact@2
       inputs:
         buildType: 'current'
-        artifactName: 'IronDrawingUnitTests'
-        targetPath: '$(Build.SourcesDirectory)/IronDrawingUnitTests'
-
-    - task: DotNetCoreCLI@2
-      displayName: Build Solution
-      inputs:
-        command: 'build'
-        projects: '$(Build.SourcesDirectory)/IronDrawingUnitTests/IronSoftware.Drawing.Common.Tests.csproj'
-        arguments: '--configuration $(buildConfiguration) -f "net50" --no-restore --verbosity normal'
+        artifactName: 'IronDrawing'
+        targetPath: '$(Build.SourcesDirectory)/IronDrawing'
 
     - task: DotNetCoreCLI@2
       displayName: Execute Unit Tests
       inputs:
         command: 'test'
-        projects: '$(Build.SourcesDirectory)/IronDrawingUnitTests/IronSoftware.Drawing.Common.Tests.csproj'
+        projects: '$(Build.SourcesDirectory)/IronDrawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
         arguments: '--configuration "$(buildConfiguration)" -f "net50" --verbosity n --no-build --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura'
         testRunTitle: 'Execute Unit Tests'
       condition: succeededOrFailed()
@@ -104,77 +108,85 @@ jobs:
     displayName: Build & Test .Net60
     dependsOn: [CheckoutAndRestore]
     steps:
+    - checkout: none
     - task: DownloadPipelineArtifact@2
       inputs:
         buildType: 'current'
         artifactName: 'IronDrawingUnitTests'
         targetPath: '$(Build.SourcesDirectory)/IronDrawingUnitTests'
 
-    - task: DotNetCoreCLI@2
-      displayName: Execute Unit Tests
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core sdk'
       inputs:
-        command: 'test'
-        projects: '$(Build.SourcesDirectory)/IronDrawingUnitTests/IronSoftware.Drawing.Common.Tests.csproj'
-        arguments: '--configuration "$(buildConfiguration)" -f "net60" --verbosity n --no-build'
-        testRunTitle: 'Execute Unit Tests'
-      condition: succeededOrFailed()
-
-  - job: BuildAndTestNetCore21
-    displayName: Build & Test .Netcore2.1
-    dependsOn: [CheckoutAndRestore]
-    steps:
-
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: 'current'
-        artifactName: 'IronDrawingUnitTests'
-        targetPath: '$(Build.SourcesDirectory)/IronDrawingUnitTests'
+        packageType: 'sdk'
+        version: '6.x'
+        includePreviewVersions: true
 
     - task: DotNetCoreCLI@2
       displayName: Execute Unit Tests
       inputs:
         command: 'test'
-        projects: '$(Build.SourcesDirectory)/IronDrawingUnitTests/IronSoftware.Drawing.Common.Tests.csproj'
-        arguments: '--configuration "$(buildConfiguration)" -f "netcoreapp2.1" --verbosity n --no-build'
+        projects: '$(Build.SourcesDirectory)/IronDrawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
+        arguments: '--configuration "$(buildConfiguration)" -f "net60" --verbosity n --no-restore'
         testRunTitle: 'Execute Unit Tests'
       condition: succeededOrFailed()
 
-  - job: BuildAndTestNetCore31
-    displayName: Build & Test .Netcore3.1
-    dependsOn: [CheckoutAndRestore]
-    steps:
+  # - job: BuildAndTestNetCore21
+  #   displayName: Build & Test .Netcore2.1
+  #   dependsOn: [CheckoutAndRestore]
+  #   steps:
+  #   - checkout: none
+  #   - task: DownloadPipelineArtifact@2
+  #     inputs:
+  #       buildType: 'current'
+  #       artifactName: 'IronDrawingUnitTests'
+  #       targetPath: '$(Build.SourcesDirectory)/IronDrawingUnitTests'
 
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: 'current'
-        artifactName: 'IronDrawingUnitTests'
-        targetPath: '$(Build.SourcesDirectory)/IronDrawingUnitTests'
+  #   - task: DotNetCoreCLI@2
+  #     displayName: Execute Unit Tests
+  #     inputs:
+  #       command: 'test'
+  #       projects: '$(Build.SourcesDirectory)/IronDrawingUnitTests/IronSoftware.Drawing.Common.Tests.csproj'
+  #       arguments: '--configuration "$(buildConfiguration)" -f "netcoreapp2.1" --verbosity n --no-build'
+  #       testRunTitle: 'Execute Unit Tests'
+  #     condition: succeededOrFailed()
 
-    - task: DotNetCoreCLI@2
-      displayName: Execute Unit Tests
-      inputs:
-        command: 'test'
-        projects: '$(Build.SourcesDirectory)/IronDrawingUnitTests/IronSoftware.Drawing.Common.Tests.csproj'
-        arguments: '--configuration "$(buildConfiguration)" -f "netcoreapp3.1" --verbosity n --no-build'
-        testRunTitle: 'Execute Unit Tests'
-      condition: succeededOrFailed()
+  # - job: BuildAndTestNetCore31
+  #   displayName: Build & Test .Netcore3.1
+  #   dependsOn: [CheckoutAndRestore]
+  #   steps:
+  #   - checkout: none
+  #   - task: DownloadPipelineArtifact@2
+  #     inputs:
+  #       buildType: 'current'
+  #       artifactName: 'IronDrawingUnitTests'
+  #       targetPath: '$(Build.SourcesDirectory)/IronDrawingUnitTests'
 
-  - job: BuildAndTestNet70
-    displayName: Build & Test .Net70
-    dependsOn: [CheckoutAndRestore]
-    steps:
+  #   - task: DotNetCoreCLI@2
+  #     displayName: Execute Unit Tests
+  #     inputs:
+  #       command: 'test'
+  #       projects: '$(Build.SourcesDirectory)/IronDrawingUnitTests/IronSoftware.Drawing.Common.Tests.csproj'
+  #       arguments: '--configuration "$(buildConfiguration)" -f "netcoreapp3.1" --verbosity n --no-build'
+  #       testRunTitle: 'Execute Unit Tests'
+  #     condition: succeededOrFailed()
 
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: 'current'
-        artifactName: 'IronDrawingUnitTests'
-        targetPath: '$(Build.SourcesDirectory)/IronDrawingUnitTests'
+  # - job: BuildAndTestNet70
+  #   displayName: Build & Test .Net70
+  #   dependsOn: [CheckoutAndRestore]
+  #   steps:
+  #   - checkout: none
+  #   - task: DownloadPipelineArtifact@2
+  #     inputs:
+  #       buildType: 'current'
+  #       artifactName: 'IronDrawingUnitTests'
+  #       targetPath: '$(Build.SourcesDirectory)/IronDrawingUnitTests'
 
-    - task: DotNetCoreCLI@2
-      displayName: Execute Unit Tests
-      inputs:
-        command: 'test'
-        projects: '$(Build.SourcesDirectory)/IronDrawingUnitTests/IronSoftware.Drawing.Common.Tests.csproj'
-        arguments: '--configuration "$(buildConfiguration)" -f "net70" --verbosity n --no-build'
-        testRunTitle: 'Execute Unit Tests'
-      condition: succeededOrFailed()
+  #   - task: DotNetCoreCLI@2
+  #     displayName: Execute Unit Tests
+  #     inputs:
+  #       command: 'test'
+  #       projects: '$(Build.SourcesDirectory)/IronDrawingUnitTests/IronSoftware.Drawing.Common.Tests.csproj'
+  #       arguments: '--configuration "$(buildConfiguration)" -f "net70" --verbosity n --no-build'
+  #       testRunTitle: 'Execute Unit Tests'
+  #     condition: succeededOrFailed()
