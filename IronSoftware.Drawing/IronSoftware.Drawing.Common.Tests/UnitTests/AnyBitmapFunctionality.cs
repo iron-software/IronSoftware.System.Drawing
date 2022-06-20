@@ -39,14 +39,6 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
-        public void Bitmap_To_AnyBitmap()
-        {
-            //AnyBitmap anyBitmap = new AnyBitmap(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
-            //System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
-            //AnyBitmap anyBitmap = bitmap.ToBitmap();
-        }
-
-        [FactWithAutomaticDisplayName]
         public void Create_AnyBitmap_by_Byte()
         {            
             string imagePath = GetRelativeFilePath("Mona-Lisa-oil-wood-panel-Leonardo-da.webp");
@@ -96,8 +88,8 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             CleanResultFile("result-try-png.png");
 
             anyBitmap.TrySaveAs("result-try-png-loss.png", AnyBitmap.ImageFormat.Png, 50);
-            Assert.True(File.Exists("result-png-loss.png"));
-            CleanResultFile("result-png-loss.png");
+            Assert.True(File.Exists("result-try-png-loss.png"));
+            CleanResultFile("result-try-png-loss.png");
         }
 
         [FactWithAutomaticDisplayName]
@@ -117,19 +109,6 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             anyBitmap.ExportFile("result-png-loss.png", AnyBitmap.ImageFormat.Png, 50);
             Assert.True(File.Exists("result-png-loss.png"));
             CleanResultFile("result-png-loss.png");
-        }
-
-        [FactWithAutomaticDisplayName]
-        public void Create_AnyBitmap_From_Bitmap()
-        {
-            System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
-            AnyBitmap anyBitmap = AnyBitmap.FromBitmap(bitmap);
-            anyBitmap.SaveAs("result.bmp");
-
-            bitmap.Save("expected.bmp");
-            anyBitmap.SaveAs("result.bmp");
-
-            AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
 
         [FactWithAutomaticDisplayName]
@@ -294,17 +273,6 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
 #if NET5_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER
-        [FactWithAutomaticDisplayName]
-        public void Create_AnyBitmap_From_SixLabors()
-        {
-            SixLabors.ImageSharp.Image imgSharp = SixLabors.ImageSharp.Image.Load(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
-            AnyBitmap anyBitmap = AnyBitmap.FromBitmap(imgSharp);
-
-            imgSharp.Save("expected.bmp");
-            anyBitmap.SaveAs("result.bmp");
-
-            AssertImageAreEqual("expected.bmp", "result.bmp", true);
-        }
 
         [FactWithAutomaticDisplayName]
         public void CastSixLabors_to_AnyBitmap()
@@ -327,20 +295,6 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             anyBitmap.SaveAs("expected.bmp");
             imgSharp.Save("result.bmp");
-
-            AssertImageAreEqual("expected.bmp", "result.bmp", true);
-        }
-
-        [FactWithAutomaticDisplayName]
-        public void Create_AnyBitmap_From_Maui()
-        {
-            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-            byte[] bytes = File.ReadAllBytes(imagePath);
-            Microsoft.Maui.Graphics.IImage image = Microsoft.Maui.Graphics.Platform.PlatformImage.FromStream(new MemoryStream(bytes));
-            AnyBitmap anyBitmap = AnyBitmap.FromBitmap(image);
-
-            SaveMauiImages(image, "expected.bmp");
-            anyBitmap.SaveAs("result.bmp");
 
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }

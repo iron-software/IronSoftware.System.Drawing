@@ -1,8 +1,7 @@
-﻿using SkiaSharp;
-using System;
-using System.Drawing;
+﻿using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace IronSoftware.Drawing
 {
@@ -195,7 +194,7 @@ namespace IronSoftware.Drawing
 
             if (Lossy < 0 || Lossy > 100) { Lossy = 100; }
 
-            if (Type.GetType("SkiaSharp.SKImage") != null)
+            if (IsLoadedType("SkiaSharp.SKImage"))
             {
                 using SkiaSharp.SKImage img = this; // magic implicit cast
 
@@ -207,7 +206,7 @@ namespace IronSoftware.Drawing
                 return;
             }
 #if NETSTANDARD
-            else if (Type.GetType("SixLabors.ImageSharp.Image") != null)
+            else if (IsLoadedType("SixLabors.ImageSharp.Image"))
             {
                 using SixLabors.ImageSharp.Image img = this; // magic implicit cast
 
@@ -227,7 +226,7 @@ namespace IronSoftware.Drawing
                 return;
             }
 #endif
-            else if (Type.GetType("System.Drawing.Imaging.ImageFormat") != null)
+            else if (IsLoadedType("System.Drawing.Imaging.ImageFormat"))
             {
                 using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
 
@@ -330,47 +329,6 @@ namespace IronSoftware.Drawing
             catch
             {
                 return false;
-            }
-        }
-
-        /// <summary>
-        /// Generic method to convert popular image types to <see cref="AnyBitmap"/>.  
-        /// <para> Support includes SixLabors.ImageSharp.Image,  SkiaSharp.SKImage, SkiaSharp.SKBitmap, System.Drawing.Bitmap, System.Drawing.Image and Microsoft.Maui.Graphics formats. </para>
-        /// <para>Syntax sugar.  Explicit casts already also exist to and from  <see cref="AnyBitmap"/> and all supported types.</para>
-        /// </summary>
-        /// <typeparam name="T">The Type to cast from.  Support includes SixLabors.ImageSharp.Image,  SkiaSharp.SKImage, SkiaSharp.SKBitmap, System.Drawing.Bitmap, System.Drawing.Image and Microsoft.Maui.Graphics formats.</typeparam>
-        /// <param name="OtherBitmapFormat">A bitmap or image format from another graphics library.</param>
-        /// <returns>A <see cref="AnyBitmap"/></returns>
-        public static AnyBitmap FromBitmap<T>(T OtherBitmapFormat)
-        {
-            try
-            {
-                AnyBitmap result = (AnyBitmap)Convert.ChangeType(OtherBitmapFormat, typeof(AnyBitmap));
-                return result;
-            }
-            catch (Exception e)
-            {
-                throw new InvalidCastException(typeof(T).FullName, e);
-            }
-        }
-        /// <summary>
-        /// Generic method to convert <see cref="AnyBitmap"/> to popular image types.
-        /// <para> Support includes SixLabors.ImageSharp.Image,  SkiaSharp.SKImage, SkiaSharp.SKBitmap, System.Drawing.Bitmap, System.Drawing.Image and Microsoft.Maui.Graphics formats. </para>
-        /// <para>Syntax sugar.  Explicit casts already also exist to and from  <see cref="AnyBitmap"/> and all supported types.</para>
-        /// </summary>
-        /// <typeparam name="T">The Type to cast to.  Support includes SixLabors.ImageSharp.Image,  SkiaSharp.SKImage, SkiaSharp.SKBitmap, System.Drawing.Bitmap, System.Drawing.Image and Microsoft.Maui.Graphics formats.</typeparam>
-
-        /// <returns>A <see cref="AnyBitmap"/></returns>
-        public T ToBitmap<T>()
-        {
-            try
-            {
-                T result = (T)Convert.ChangeType(this, typeof(T));
-                return result;
-            }
-            catch (Exception e)
-            {
-                throw new InvalidCastException(typeof(T).FullName, e);
             }
         }
 
@@ -491,7 +449,6 @@ namespace IronSoftware.Drawing
         /// <para>When your .NET Class methods to use <see cref="AnyBitmap"/> as parameters and return types, you now automatically support SkiaSharp  as well.</para>
         /// </summary>
         /// <param name="Image">SkiaSharp.SKBitmap  will automatically be cast to <see cref="AnyBitmap"/> </param>
-
         public static implicit operator AnyBitmap(SkiaSharp.SKBitmap Image)
         {
 #if NETFRAMEWORK
@@ -549,9 +506,10 @@ namespace IronSoftware.Drawing
 
             try
             {
+                System.Drawing.Imaging.ImageFormat imageFormat = GetMimeType(Image) != "image/unknown" ? Image.RawFormat : System.Drawing.Imaging.ImageFormat.Bmp;
                 using (var memoryStream = new System.IO.MemoryStream())
                 {
-                    Image.Save(memoryStream, Image.RawFormat);
+                    Image.Save(memoryStream, imageFormat);
 
                     data = memoryStream.ToArray();
                     return new AnyBitmap(data);
@@ -600,21 +558,6 @@ namespace IronSoftware.Drawing
             }
         }
 
-        private static PlatformNotSupportedException SystemDotDrawingPlatformNotSupported(Exception innerException)
-        {
-            return new PlatformNotSupportedException("Microsoft has chosen to no longer support System.Drawing.Common on Linux or MacOS.  To solve this please use another Bitmap type such as {typeof(Bitmap).ToString()}, SkiaSharp or ImageSharp.\n\nhttps://docs.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/system-drawing-common-windows-only", innerException);
-        }
-
-        private static InvalidCastException ImageCastException(string fullTypeName, Exception innerException)
-        {
-            return new InvalidCastException($"IronSoftware.Drawing does not yet support casting  {fullTypeName} to  {typeof(AnyBitmap).FullName}.  Try using System.Drawing.Common, SkiaSharp or ImageSharp.", innerException);
-        }
-
-        private static InvalidOperationException NoConverterException(ImageFormat Format, Exception innerException)
-        {
-            return new InvalidOperationException($"{typeof(AnyBitmap)} is unable to convert  your image data to {Format.ToString()} because it requires a suitable encoder to be added to your project via Nuget.\nPlease try SkiaSharp, System.Drawing.Common, SixLabors.ImageSharp, Microsoft.Maui.Graphics; or alternatively save using ImageFormat.Default", innerException);
-        }
-
         /// <summary>
         /// Popular image formats which <see cref="AnyBitmap"/> can read and export.
         /// </summary>
@@ -653,6 +596,52 @@ namespace IronSoftware.Drawing
             /// <summary> The existing raw image format.</summary>
             Default = -1,
         }
+
+        #region Private Method
+
+        private static PlatformNotSupportedException SystemDotDrawingPlatformNotSupported(Exception innerException)
+        {
+            return new PlatformNotSupportedException("Microsoft has chosen to no longer support System.Drawing.Common on Linux or MacOS.  To solve this please use another Bitmap type such as {typeof(Bitmap).ToString()}, SkiaSharp or ImageSharp.\n\nhttps://docs.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/system-drawing-common-windows-only", innerException);
+        }
+
+        private static InvalidCastException ImageCastException(string fullTypeName, Exception innerException)
+        {
+            return new InvalidCastException($"IronSoftware.Drawing does not yet support casting  {fullTypeName} to  {typeof(AnyBitmap).FullName}.  Try using System.Drawing.Common, SkiaSharp or ImageSharp.", innerException);
+        }
+
+        private static InvalidOperationException NoConverterException(ImageFormat Format, Exception innerException)
+        {
+            return new InvalidOperationException($"{typeof(AnyBitmap)} is unable to convert  your image data to {Format.ToString()} because it requires a suitable encoder to be added to your project via Nuget.\nPlease try SkiaSharp, System.Drawing.Common, SixLabors.ImageSharp, Microsoft.Maui.Graphics; or alternatively save using ImageFormat.Default", innerException);
+        }
+
+        private bool IsLoadedType(string typeName)
+        {
+            foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                try
+                {
+                    if (a.GetTypes().Any(t => t.FullName == typeName)) return true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Could not load {a.FullName} : {ex.Message}");
+                }
+            }
+            return false;
+        }
+
+        private static string GetMimeType(System.Drawing.Bitmap Image)
+        {
+            var imgguid = Image.RawFormat.Guid;
+            foreach (System.Drawing.Imaging.ImageCodecInfo codec in System.Drawing.Imaging.ImageCodecInfo.GetImageDecoders())
+            {
+                if (codec.FormatID == imgguid)
+                    return codec.MimeType;
+            }
+            return "image/unknown";
+        }
+
+        #endregion
     }
 }
 
