@@ -142,8 +142,12 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
             AnyBitmap anyBitmap = AnyBitmap.FromFile(imagePath);
             System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(imagePath);
+            AnyBitmap compareAnyBitmap = bitmap;
 
-            Assert.True(anyBitmap.Equals(bitmap));
+            if (!IsUnix())
+            { 
+                Assert.True(anyBitmap.Equals(compareAnyBitmap));
+            }
 
             anyBitmap.SaveAs("expected.bmp");
             bitmap.Save("result.bmp");

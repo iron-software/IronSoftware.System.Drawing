@@ -22,7 +22,24 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                return SkiaSharp.SKBitmap.Decode(Binary).Width;
+                if (IsLoadedType("SkiaSharp.SKImage"))
+                {
+                    using SkiaSharp.SKImage img = this; // magic implicit cast
+                    return img.Width;
+                }
+#if NETSTANDARD
+                else if (IsLoadedType("SixLabors.ImageSharp.Image"))
+                {
+                    using SixLabors.ImageSharp.Image img = this; // magic implicit cast
+                    return img.Width;
+                }
+#endif
+                else if (IsLoadedType("System.Drawing.Imaging.ImageFormat"))
+                {
+                    using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
+                    return img.Width;
+                }
+                return -1;
             }
         }
 
@@ -33,7 +50,24 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                return SkiaSharp.SKBitmap.Decode(Binary).Height;
+                if (IsLoadedType("SkiaSharp.SKImage"))
+                {
+                    using SkiaSharp.SKImage img = this; // magic implicit cast
+                    return img.Height;
+                }
+#if NETSTANDARD
+                else if (IsLoadedType("SixLabors.ImageSharp.Image"))
+                {
+                    using SixLabors.ImageSharp.Image img = this; // magic implicit cast
+                    return img.Height;
+                }
+#endif
+                else if (IsLoadedType("System.Drawing.Imaging.ImageFormat"))
+                {
+                    using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
+                    return img.Height;
+                }
+                return -1;
             }
         }
 
@@ -80,7 +114,6 @@ namespace IronSoftware.Drawing
 #endif
             if (comp == null) { return false; }
 
-            //return Binary == ((AnyBitmap)comp).ExportBytes();
             return Binary.SequenceEqual(((AnyBitmap)comp).ExportBytes());
         }
 
