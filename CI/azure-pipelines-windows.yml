@@ -182,7 +182,7 @@ jobs:
         testRunTitle: '(Framework)Execute Unit Tests'
       condition: succeededOrFailed()
 
-  - job: BuildAndTestNet60
+  - job: BuildAndTestNet70
     displayName: Build & Test .Net70
     dependsOn: [CheckoutAndRestore]
     steps:
