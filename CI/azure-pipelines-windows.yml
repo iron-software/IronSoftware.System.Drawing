@@ -1,5 +1,7 @@
 pr:
   - master
+  - main
+  - multiple-framework-croprectangle
 
 
 pool:
