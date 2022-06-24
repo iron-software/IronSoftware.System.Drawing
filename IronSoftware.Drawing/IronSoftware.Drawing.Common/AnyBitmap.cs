@@ -34,7 +34,7 @@ namespace IronSoftware.Drawing
                     return img.Width;
                 }
 #endif
-                else if (IsLoadedType("System.Drawing.Imaging.ImageFormat"))
+                else if (IsLoadedType("System.Drawing.Imaging"))
                 {
                     using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
                     return img.Width;
@@ -62,7 +62,7 @@ namespace IronSoftware.Drawing
                     return img.Height;
                 }
 #endif
-                else if (IsLoadedType("System.Drawing.Imaging.ImageFormat"))
+                else if (IsLoadedType("System.Drawing.Imaging"))
                 {
                     using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
                     return img.Height;
@@ -259,7 +259,7 @@ namespace IronSoftware.Drawing
                 return;
             }
 #endif
-            else if (IsLoadedType("System.Drawing.Imaging.ImageFormat"))
+            else if (IsLoadedType("System.Drawing.Imaging"))
             {
                 using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
 

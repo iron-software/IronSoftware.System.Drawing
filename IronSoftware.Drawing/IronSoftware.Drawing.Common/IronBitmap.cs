@@ -81,20 +81,22 @@ namespace IronSoftware.Drawing
         /// Resize an image with width and height.
         /// </summary>
         /// <param name="bitmap">Original bitmap to resize.</param>
-        /// <param name="cropRect">CropArea to crop an image.</param>
+        /// <param name="cropArea">CropArea to crop an image.</param>
         /// <return>IronSoftware.Drawing.AnyBitmap.</return>
-        public static AnyBitmap CropImage(this AnyBitmap bitmap, CropRectangle cropRect)
+        public static AnyBitmap CropImage(this AnyBitmap bitmap, CropRectangle cropArea)
         {
-            if (cropRect != null)
+            if (cropArea != null)
             {
-                CropRectangle dest = ValidateCropArea(bitmap, cropRect);
-                SKBitmap croppedBitmap = new SKBitmap((int)dest.Width, (int)dest.Height);
+                SKRect cropRect = ValidateCropArea(bitmap, cropArea);
+                SKBitmap croppedBitmap = new SKBitmap((int)cropRect.Width, (int)cropRect.Height);
+
+                SKRect dest = new SKRect(0, 0, cropRect.Width, cropRect.Height);
+                SKRect source = new SKRect(cropRect.Left, cropRect.Top, cropRect.Right, cropRect.Bottom);
                 try
                 {
                     using (SKCanvas canvas = new SKCanvas(croppedBitmap))
                     {
-                        canvas.DrawBitmap(bitmap, cropRect, dest);
-                        canvas.Flush();
+                        canvas.DrawBitmap(bitmap, source, dest);
                     }
 
                     return croppedBitmap;
