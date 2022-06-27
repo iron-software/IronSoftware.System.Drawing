@@ -15,6 +15,30 @@ namespace IronSoftware.Drawing
         private byte[] Binary { get; set; }
 
         /// <summary>
+        /// Width of the image.
+        /// </summary>
+        public int Width
+        {
+            get
+            {
+                SkiaSharp.SKBitmap sKBitmap = SkiaSharp.SKBitmap.Decode(Binary);
+                return sKBitmap.Width;
+            }
+        }
+
+        /// <summary>
+        /// Height of the image.
+        /// </summary>
+        public int Height
+        {
+            get
+            {
+                SkiaSharp.SKBitmap sKBitmap = SkiaSharp.SKBitmap.Decode(Binary);
+                return sKBitmap.Height;
+            }
+        }
+
+        /// <summary>
         /// Number of raw image bytes stored
         /// </summary>
         public int Length
