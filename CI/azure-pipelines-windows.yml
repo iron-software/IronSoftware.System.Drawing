@@ -137,11 +137,9 @@ steps:
   inputs:
     codeCoverageTool: 'Cobertura'
     summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
-  condition: and (succeededOrFailed(), eq(variables['task.UnitTestsNet50.status'], 'success'))
   
 - task: PublishTestResults@2
   displayName: 'Publish test result'
   inputs:
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
-  condition: and (succeededOrFailed(), eq(variables['task.UnitTestsNet50.status'], 'success'))
