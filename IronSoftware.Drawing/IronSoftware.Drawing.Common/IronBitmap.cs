@@ -166,74 +166,13 @@ namespace IronSoftware.Drawing
             try
             {
                 SKBitmap originalBitmap = bitmap;
-                int[] rgbValues = new int[originalBitmap.Height * originalBitmap.Width];
 
-                // Determine Left
-                int newLeft = -1;
-                for (int x = 0; x < originalBitmap.Width; x++)
-                {
-                    for (int y = 0; y < originalBitmap.Height; y++)
-                    {
-                        SKColor color = originalBitmap.GetPixel(x, y);
-                        if (color != SKColors.White)
-                        {
-                            newLeft = x;
-                            break;
-                        }
-                    }
-                    if (newLeft != -1)
-                        break;
-                }
-                // Determine Right
-                int newRight = -1;
-                for (int x = originalBitmap.Width - 1; x >= 0; x--)
-                {
-                    for (int y = 0; y < originalBitmap.Height; y++)
-                    {
-                        SKColor color = originalBitmap.GetPixel(x, y);
-                        if (color != SKColors.White)
-                        {
-                            newRight = x;
-                            break;
-                        }
-                    }
-                    if (newRight != -1)
-                        break;
-                }
-                // Determine Bottom
-                int newBottom = -1;
-                for (int y = 0; y < originalBitmap.Height; y++)
-                {
-                    for (int x = 0; x < originalBitmap.Width; x++)
-                    {
-                        SKColor color = originalBitmap.GetPixel(x, y);
-                        if (color != SKColors.White)
-                        {
-                            newBottom = x;
-                            break;
-                        }
-                    }
-                    if (newBottom != -1)
-                        break;
-                }
-                // Determine Top
-                int newTop = -1;
-                for (int y = originalBitmap.Height - 1; y >= 0; y--)
-                {
-                    for (int x = 0; x < originalBitmap.Width; x++)
-                    {
-                        SKColor color = originalBitmap.GetPixel(x, y);
-                        if (color != SKColors.White)
-                        {
-                            newTop = x;
-                            break;
-                        }
-                    }
-                    if (newTop != -1)
-                        break;
-                }
+                int newLeft = DetermineLeft(originalBitmap);
+                int newRight = DetermineRight(originalBitmap);
+                int newBottom = DetermineBottom(originalBitmap);
+                int newTop = DetermineTop(originalBitmap);
 
-                return CropImage(bitmap, new SKRect(newLeft, newTop, newRight, newBottom));
+                return CropImage(bitmap, CreateCropRectangle(newLeft, newRight, newBottom, newTop));
             }
             catch
             {
@@ -305,6 +244,106 @@ namespace IronSoftware.Drawing
             }
             return new CropRectangle(cropAreaX, cropAreaY, newWidth, newHeight);
         }
-#endregion
+
+        private static bool DifferentColor(Color source, Color target)
+        {
+            return !IsTransparent(source) && (source.R != target.R || source.G != target.G || source.B != target.B || source.A != target.A);
+        }
+
+        private static bool IsTransparent(Color source)
+        {
+            return (SKColor)source == SKColors.Transparent;
+        }
+
+        private static int DetermineRight(SKBitmap originalBitmap)
+        {
+            int result = -1;
+            for (int x = originalBitmap.Width - 1; x >= 0; x--)
+            {
+                for (int y = 0; y < originalBitmap.Height; y++)
+                {
+                    SKColor color = originalBitmap.GetPixel(x, y);
+                    if (color != SKColors.White)
+                    {
+                        result = x;
+                        break;
+                    }
+                }
+                if (result != -1)
+                    break;
+            }
+
+            return result;
+        }
+
+        private static int DetermineLeft(SKBitmap originalBitmap)
+        {
+            int result = -1;
+            for (int x = 0; x < originalBitmap.Width; x++)
+            {
+                for (int y = 0; y < originalBitmap.Height; y++)
+                {
+                    SKColor color = originalBitmap.GetPixel(x, y);
+                    if (DifferentColor(color, Color.White))
+                    {
+                        result = x;
+                        break;
+                    }
+                }
+                if (result != -1)
+                    break;
+            }
+
+            return result;
+        }
+
+        private static int DetermineTop(SKBitmap originalBitmap)
+        {
+            int newTop = -1;
+            for (int y = originalBitmap.Height - 1; y >= 0; y--)
+            {
+                for (int x = 0; x < originalBitmap.Width; x++)
+                {
+                    SKColor color = originalBitmap.GetPixel(x, y);
+                    if (DifferentColor(color, Color.White))
+                    {
+                        newTop = y;
+                        break;
+                    }
+                }
+                if (newTop != -1)
+                    break;
+            }
+
+            return newTop;
+        }
+
+        private static int DetermineBottom(SKBitmap originalBitmap)
+        {
+            int newBottom = -1;
+            for (int y = 0; y < originalBitmap.Height; y++)
+            {
+                for (int x = 0; x < originalBitmap.Width; x++)
+                {
+                    SKColor color = originalBitmap.GetPixel(x, y);
+                    if (DifferentColor(color, Color.White))
+                    {
+                        newBottom = y;
+                        break;
+                    }
+                }
+                if (newBottom != -1)
+                    break;
+            }
+
+            return newBottom;
+        }
+
+        private static CropRectangle CreateCropRectangle(int left, int right, int bottom, int top)
+        {
+            return new CropRectangle(left, bottom, right - left, top - bottom);
+        }
+
+        #endregion
     }
 }
