@@ -135,7 +135,7 @@ namespace IronSoftware.Drawing
 
             using (SKCanvas canvas = new SKCanvas(rotatedBitmap))
             {
-                canvas.Clear(SKColors.LightPink);
+                canvas.Clear();
                 canvas.Translate(rotatedWidth / 2, rotatedHeight / 2);
                 canvas.RotateDegrees((float)angle);
                 canvas.Translate(-originalWidth / 2, -originalHeight / 2);
