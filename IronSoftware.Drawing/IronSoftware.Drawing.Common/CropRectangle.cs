@@ -13,27 +13,27 @@
         }
 
         /// <summary>
-        /// The x-coordinate of the upper-left corner of this Rectangle structure. The default is 0.
+        /// The x-coordinate of the upper-left corner of this Rectangle. The default is 0.
         /// </summary>
         public int X { get; set; }
         /// <summary>
-        /// The y-coordinate of the upper-left corner of this Rectangle structure. The default is 0.
+        /// The y-coordinate of the upper-left corner of this Rectangle. The default is 0.
         /// </summary>
         public int Y { get; set; }
         /// <summary>
-        /// The width of this Rectangle structure. The default is 0.
+        /// The width of this Rectangle. The default is 0.
         /// </summary>
         public int Width { get; set; }
         /// <summary>
-        /// The height of this Rectangle structure. The default is 0.
+        /// The height of this Rectangle. The default is 0.
         /// </summary>
         public int Height { get; set; }
 
         /// <summary>
-        /// Implicitly casts System.Drawing.Rectangle objects to <see cref="CropRectangle"/>.  
-        /// <para>When your .NET Class methods to use <see cref="CropRectangle"/> as parameters and return types, you now automatically support Rectangle as well.</para>
+        /// Implicitly casts System.Drawing.Rectangle objects to <see cref="CropRectangle"/>.
+        /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support Rectangle as well.</para>
         /// </summary>
-        /// <param name="Rectangle">System.Drawing.Rectangle will automatically be cast to <see cref="CropRectangle"/> </param>
+        /// <param name="Rectangle">System.Drawing.Rectangle will automatically be cast to <see cref="CropRectangle"/>.</param>
 
         public static implicit operator CropRectangle(System.Drawing.Rectangle Rectangle)
         {
@@ -41,20 +41,20 @@
         }
 
         /// <summary>
-        /// Implicitly casts System.Drawing.Rectangle objects from <see cref="CropRectangle"/>.  
-        /// <para>When your .NET Class methods to use <see cref="CropRectangle"/> as parameters and return types, you now automatically support Rectangle as well.</para>
+        /// Implicitly casts System.Drawing.Rectangle objects from <see cref="CropRectangle"/>.
+        /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support Rectangle as well.</para>
         /// </summary>
-        /// <param name="CropRectangle"><see cref="CropRectangle"/> is explicitly cast to an System.Drawing.Rectangle </param>
+        /// <param name="CropRectangle"><see cref="CropRectangle"/> is explicitly cast to an System.Drawing.Rectangle.</param>
         static public implicit operator System.Drawing.Rectangle(CropRectangle CropRectangle)
         {
             return new System.Drawing.Rectangle(CropRectangle.X, CropRectangle.Y, CropRectangle.Width, CropRectangle.Height);
         }
 
         /// <summary>
-        /// Implicitly casts SkiaSharp.SKRect objects to <see cref="CropRectangle"/>.  
-        /// <para>When your .NET Class methods to use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SkiaSharp.SKRect as well.</para>
+        /// Implicitly casts SkiaSharp.SKRect objects to <see cref="CropRectangle"/>.
+        /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SkiaSharp.SKRect as well.</para>
         /// </summary>
-        /// <param name="SKRect">SkiaSharp.SKRect will automatically be cast to <see cref="CropRectangle"/> </param>
+        /// <param name="SKRect">SkiaSharp.SKRect will automatically be cast to <see cref="CropRectangle"/>.</param>
 
         public static implicit operator CropRectangle(SkiaSharp.SKRect SKRect)
         {
@@ -62,20 +62,20 @@
         }
 
         /// <summary>
-        /// Implicitly casts SkiaSharp.SKRect objects from <see cref="CropRectangle"/>.  
-        /// <para>When your .NET Class methods to use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SkiaSharp.SKRect as well.</para>
+        /// Implicitly casts SkiaSharp.SKRect objects from <see cref="CropRectangle"/>.
+        /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SkiaSharp.SKRect as well.</para>
         /// </summary>
-        /// <param name="CropRectangle"><see cref="CropRectangle"/> is explicitly cast to an SkiaSharp.SKRect </param>
+        /// <param name="CropRectangle"><see cref="CropRectangle"/> is explicitly cast to an SkiaSharp.SKRect.</param>
         static public implicit operator SkiaSharp.SKRect(CropRectangle CropRectangle)
         {
             return SkiaSharp.SKRect.Create(CropRectangle.X, CropRectangle.Y, CropRectangle.Width, CropRectangle.Height);
         }
 
         /// <summary>
-        /// Implicitly casts SkiaSharp.SKRectI objects to <see cref="CropRectangle"/>.  
-        /// <para>When your .NET Class methods to use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SkiaSharp.SKRectI as well.</para>
+        /// Implicitly casts SkiaSharp.SKRectI objects to <see cref="CropRectangle"/>.
+        /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SkiaSharp.SKRectI as well.</para>
         /// </summary>
-        /// <param name="SKRectI">SkiaSharp.SKRectI will automatically be cast to <see cref="CropRectangle"/> </param>
+        /// <param name="SKRectI">SkiaSharp.SKRectI will automatically be cast to <see cref="CropRectangle"/>.</param>
 
         public static implicit operator CropRectangle(SkiaSharp.SKRectI SKRectI)
         {
@@ -83,10 +83,10 @@
         }
 
         /// <summary>
-        /// Implicitly casts SkiaSharp.SKRectI objects from <see cref="CropRectangle"/>.  
-        /// <para>When your .NET Class methods to use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SkiaSharp.SKRectI as well.</para>
+        /// Implicitly casts SkiaSharp.SKRectI objects from <see cref="CropRectangle"/>.
+        /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SkiaSharp.SKRectI as well.</para>
         /// </summary>
-        /// <param name="CropRectangle"><see cref="CropRectangle"/> is explicitly cast to an SkiaSharp.SKRectI </param>
+        /// <param name="CropRectangle"><see cref="CropRectangle"/> is explicitly cast to a SkiaSharp.SKRectI.</param>
         static public implicit operator SkiaSharp.SKRectI(CropRectangle CropRectangle)
         {
             return SkiaSharp.SKRectI.Create(CropRectangle.X, CropRectangle.Y, CropRectangle.Width, CropRectangle.Height);
