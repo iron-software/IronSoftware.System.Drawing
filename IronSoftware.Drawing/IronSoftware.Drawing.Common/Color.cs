@@ -31,30 +31,30 @@ namespace IronSoftware.Drawing
         /// <return>The red component value of this IronSoftware.Drawing.Color.</return>
         public byte R { get; internal set; }
 
-        internal Color(string colorcode)
+        public Color(string colorcode)
         {
-            colorcode = colorcode.TrimStart('#');
+            string trimmedColorcode = colorcode.TrimStart('#');
 
-            if (colorcode.Length == 8)
+            if (trimmedColorcode.Length == 8)
             {
-                this.A = (byte)int.Parse(colorcode.Substring(0, 2), NumberStyles.HexNumber);
-                this.R = (byte)int.Parse(colorcode.Substring(2, 2), NumberStyles.HexNumber);
-                this.G = (byte)int.Parse(colorcode.Substring(4, 2), NumberStyles.HexNumber);
-                this.B = (byte)int.Parse(colorcode.Substring(6, 2), NumberStyles.HexNumber);
+                this.A = ConvertToHexNumberByte(trimmedColorcode, 0, 2);
+                this.R = ConvertToHexNumberByte(trimmedColorcode, 2, 2);
+                this.G = ConvertToHexNumberByte(trimmedColorcode, 4, 2);
+                this.B = ConvertToHexNumberByte(trimmedColorcode, 6, 2);
             }
-            else if (colorcode.Length == 6)
+            else if (trimmedColorcode.Length == 6)
             {
                 this.A = 255;
-                this.R = (byte)int.Parse(colorcode.Substring(0, 2), NumberStyles.HexNumber);
-                this.G = (byte)int.Parse(colorcode.Substring(2, 2), NumberStyles.HexNumber);
-                this.B = (byte)int.Parse(colorcode.Substring(4, 2), NumberStyles.HexNumber);
+                this.R = ConvertToHexNumberByte(trimmedColorcode, 0, 2);
+                this.G = ConvertToHexNumberByte(trimmedColorcode, 2, 2);
+                this.B = ConvertToHexNumberByte(trimmedColorcode, 4, 2);
             }
-            else if (colorcode.Length == 3)
+            else if (trimmedColorcode.Length == 3)
             {
                 this.A = 255;
-                this.R = (byte)int.Parse(string.Join("", Enumerable.Repeat(colorcode.Substring(0, 1), 2)), NumberStyles.HexNumber);
-                this.G = (byte)int.Parse(string.Join("", Enumerable.Repeat(colorcode.Substring(1, 1), 2)), NumberStyles.HexNumber);
-                this.B = (byte)int.Parse(string.Join("", Enumerable.Repeat(colorcode.Substring(2, 1), 2)), NumberStyles.HexNumber);
+                this.R = ConvertToHexNumberByte(trimmedColorcode, 0, 1);
+                this.G = ConvertToHexNumberByte(trimmedColorcode, 1, 1);
+                this.B = ConvertToHexNumberByte(trimmedColorcode, 2, 1);
             }
             else
             {
@@ -62,7 +62,7 @@ namespace IronSoftware.Drawing
             }
         }
 
-        internal Color(int alpha, int red, int green, int blue)
+        public Color(int alpha, int red, int green, int blue)
         {
             this.A = (byte)alpha;
             this.R = (byte)red;
@@ -70,7 +70,7 @@ namespace IronSoftware.Drawing
             this.B = (byte)blue;
         }
 
-        internal Color(int red, int green, int blue)
+        public Color(int red, int green, int blue)
         {
             this.A = 255;
             this.R = (byte)red;
@@ -830,26 +830,22 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
+        /// Returns the color as a string in the format: #AARRGGBB.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"#{this.A:X}{this.R:X}{this.G:X}{this.B:X}";
+        }
+
+        /// <summary>
         /// Luminance is a value from 0 (black) to 100 (white) where 50 is the perceptual "middle grey". 
         /// Luminance = 50 is the equivalent of Y = 18.4, or in other words an 18% grey card, representing the middle of a photographic exposure(Ansel Adams zone V).
         /// </summary>
         /// <returns>Preceived Lightness</returns>
         public double GetLuminance()
         {
-            int vR = R / 255;
-            int vG = G / 255;
-            int vB = B / 255;
-
-            double Y = (0.2126 * SRGBtoLin(vR) + 0.7152 * SRGBtoLin(vG) + 0.0722 * SRGBtoLin(vB));
-
-            if (Y <= (216 / 24389))
-            {                               // The CIE standard states 0.008856 but 216/24389 is the intent for 0.008856451679036
-                return Y * (24389 / 27);    // The CIE standard states 903.3, but 24389/27 is the intent, making 903.296296296296296
-            }
-            else
-            {
-                return Math.Pow(Y, (1 / 3)) * 116 - 16;
-            }
+            return Math.Round(Percentage(255, CalculateLuminance()), MidpointRounding.AwayFromZero);
         }
 
         /// <summary>
@@ -889,7 +885,7 @@ namespace IronSoftware.Drawing
         /// <param name="Color"><see cref="Color"/> is explicitly cast to an SkiaSharp.SKColor </param>
         static public implicit operator SkiaSharp.SKColor(Color Color)
         {
-            return new SkiaSharp.SKColor(Color.A, Color.R, Color.G, Color.B);
+            return new SkiaSharp.SKColor(Color.R, Color.G, Color.B, Color.A);
         }
 
         #region Private Method
@@ -899,19 +895,30 @@ namespace IronSoftware.Drawing
             return new InvalidOperationException($"{color} is unable to convert to {typeof(Color)} because it requires a suitable length of string.", innerException);
         }
 
-        private static double SRGBtoLin(int colorChannel)
+        private double Percentage(int total, double value)
         {
-            // Send this function a decimal sRGB gamma encoded color value
-            // between 0.0 and 1.0, and it returns a linearized value.
+            return (value * 100) / (double)total;
+        }
 
-            if (colorChannel <= 0.04045)
+        private byte ConvertToHexNumberByte(string colorcode, int start, int length)
+        {
+            if (length == 2)
             {
-                return colorChannel / 12.92;
+                return (byte)int.Parse(colorcode.Substring(start, length), NumberStyles.HexNumber);
+            }
+            else if (length == 1)
+            {
+                return (byte)int.Parse(string.Join("", Enumerable.Repeat(colorcode.Substring(start, length), 2)), NumberStyles.HexNumber);
             }
             else
             {
-                return Math.Pow(((colorChannel + 0.055) / 1.055), 2.4);
+                throw new InvalidOperationException($"{colorcode} is unable to convert to {typeof(byte)} because it requires a suitable length of string.");
             }
+        }
+
+        private double CalculateLuminance()
+        {
+            return 0.299 * R + 0.587 * G + 0.114 * B;
         }
 
         #endregion
