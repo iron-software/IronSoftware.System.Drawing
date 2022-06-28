@@ -159,14 +159,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 #if NETCOREAPP2_1
             System.Drawing.Bitmap bitmap;
             var ex = Assert.Throws<PlatformNotSupportedException>(() => bitmap = new System.Drawing.Bitmap(imagePath));
-            if (IsUnix())
-            {
-                Assert.Equal($"Microsoft has chosen to no longer support System.Drawing.Common on Linux or MacOS. To solve this please use another Bitmap type such as {typeof(System.Drawing.Bitmap).ToString()}, SkiaSharp or ImageSharp.\n\nhttps://docs.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/system-drawing-common-windows-only", ex.Message);
-            }
-            else
-            {
-                Assert.Equal("System.Drawing is not supported on this platform.", ex.Message);
-            }
+            Assert.Equal("System.Drawing is not supported on this platform.", ex.Message);
 #else
             System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(imagePath);
             AnyBitmap compareAnyBitmap = bitmap;
