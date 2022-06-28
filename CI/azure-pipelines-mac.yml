@@ -19,6 +19,9 @@ jobs:
   - job: CheckoutAndRestore
     displayName: Checkout & Restore IronSoftware.Drawing
     steps:
+    - bash: 'brew update && brew install mono-libgdiplus'
+      displayName: Install GdiPlus
+
     - checkout: self
       displayName: Checkout IronSoftware.Drawing git repository
       lfs: true
