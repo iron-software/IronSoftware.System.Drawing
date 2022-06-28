@@ -2,10 +2,6 @@ using System;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
-using System.Reflection;
-using Xunit.Sdk;
-using System.Security.Cryptography;
-using System.Drawing;
 #if NET5_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER
 using SixLabors.ImageSharp;
 #endif
@@ -115,6 +111,11 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void CastBitmap_to_AnyBitmap()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
+#if NETCOREAPP2_1
+            System.Drawing.Bitmap bitmap;
+            var ex = Assert.Throws<PlatformNotSupportedException>(() => bitmap = new System.Drawing.Bitmap(imagePath));
+            Assert.Equal("System.Drawing is not supported on this platform.", ex.Message);
+#else
             System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(imagePath);
             AnyBitmap anyBitmap = bitmap;
 
@@ -122,18 +123,25 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             anyBitmap.SaveAs("result.bmp");
 
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
+#endif
         }
 
         [FactWithAutomaticDisplayName]
         public void CastBitmap_from_AnyBitmap()
         {
             AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
+#if NETCOREAPP2_1
+            System.Drawing.Bitmap bitmap;
+            var ex = Assert.Throws<PlatformNotSupportedException>(() => bitmap = anyBitmap);
+            Assert.Equal("System.Drawing is not supported on this platform.", ex.Message);
+#else
             System.Drawing.Bitmap bitmap = anyBitmap;
 
             anyBitmap.SaveAs("expected.bmp");
             bitmap.Save("result.bmp");
 
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
+#endif
         }
 
         [FactWithAutomaticDisplayName]
@@ -141,6 +149,11 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
             AnyBitmap anyBitmap = AnyBitmap.FromFile(imagePath);
+#if NETCOREAPP2_1
+            System.Drawing.Bitmap bitmap;
+            var ex = Assert.Throws<PlatformNotSupportedException>(() => bitmap = new System.Drawing.Bitmap(imagePath));
+            Assert.Equal("System.Drawing is not supported on this platform.", ex.Message);
+#else
             System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(imagePath);
             AnyBitmap compareAnyBitmap = bitmap;
 
@@ -152,6 +165,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             anyBitmap.SaveAs("expected.bmp");
             bitmap.Save("result.bmp");
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
+#endif
         }
 
         [FactWithAutomaticDisplayName]

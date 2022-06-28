@@ -24,6 +24,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="IronSoftware.CommonLibraries" Version="1.0.6037" />
 		<PackageReference Include="Microsoft.Maui.Graphics" Version="6.0.403" PrivateAssets="all" Condition="'$(TargetFramework)'=='netstandard2.0'" />
 		<PackageReference Include="SixLabors.ImageSharp" Version="2.1.3" PrivateAssets="all" Condition="'$(TargetFramework)'=='netstandard2.0'" />
 		<PackageReference Include="SkiaSharp" Version="2.88.0" Condition="'$(TargetFramework)'=='netstandard2.0'" />
