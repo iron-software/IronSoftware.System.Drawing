@@ -172,7 +172,7 @@ namespace IronSoftware.Drawing
                 int newBottom = DetermineBottom(originalBitmap);
                 int newTop = DetermineTop(originalBitmap);
 
-                return CropImage(bitmap, CreateCropRectangle(newLeft, newRight, newBottom, newTop));
+                return CropImage(bitmap, new SKRect(newLeft, newTop, newRight, newBottom));
             }
             catch
             {
@@ -336,11 +336,6 @@ namespace IronSoftware.Drawing
             }
 
             return newBottom;
-        }
-
-        private static CropRectangle CreateCropRectangle(int left, int right, int bottom, int top)
-        {
-            return new CropRectangle(left, bottom, right - left, top - bottom);
         }
 
         #endregion

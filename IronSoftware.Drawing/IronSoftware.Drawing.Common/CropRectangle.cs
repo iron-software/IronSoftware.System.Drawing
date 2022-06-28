@@ -1,4 +1,6 @@
-﻿namespace IronSoftware.Drawing
+﻿using SkiaSharp;
+
+namespace IronSoftware.Drawing
 {
     public partial class CropRectangle
     {
@@ -34,7 +36,6 @@
         /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support Rectangle as well.</para>
         /// </summary>
         /// <param name="Rectangle">System.Drawing.Rectangle will automatically be cast to <see cref="CropRectangle"/>.</param>
-
         public static implicit operator CropRectangle(System.Drawing.Rectangle Rectangle)
         {
             return new CropRectangle(Rectangle.X, Rectangle.Y, Rectangle.Width, Rectangle.Height);
@@ -55,10 +56,10 @@
         /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SkiaSharp.SKRect as well.</para>
         /// </summary>
         /// <param name="SKRect">SkiaSharp.SKRect will automatically be cast to <see cref="CropRectangle"/>.</param>
-
         public static implicit operator CropRectangle(SkiaSharp.SKRect SKRect)
         {
-            return new CropRectangle((int)SKRect.Left, (int)SKRect.Bottom, (int)SKRect.Width, (int)SKRect.Height);
+            SkiaSharp.SKRect standardizedSKRect = SKRect.Standardized;
+            return CreateCropRectangle((int)standardizedSKRect.Left, (int)standardizedSKRect.Top, (int)standardizedSKRect.Right, (int)standardizedSKRect.Bottom);
         }
 
         /// <summary>
@@ -76,10 +77,10 @@
         /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SkiaSharp.SKRectI as well.</para>
         /// </summary>
         /// <param name="SKRectI">SkiaSharp.SKRectI will automatically be cast to <see cref="CropRectangle"/>.</param>
-
         public static implicit operator CropRectangle(SkiaSharp.SKRectI SKRectI)
         {
-            return new CropRectangle((int)SKRectI.Left, (int)SKRectI.Bottom, (int)SKRectI.Width, (int)SKRectI.Height);
+            SkiaSharp.SKRectI standardizedSKRectI = SKRectI.Standardized;
+            return CreateCropRectangle((int)standardizedSKRectI.Left, (int)standardizedSKRectI.Top, (int)standardizedSKRectI.Right, (int)standardizedSKRectI.Bottom);
         }
 
         /// <summary>
@@ -91,5 +92,14 @@
         {
             return SkiaSharp.SKRectI.Create(CropRectangle.X, CropRectangle.Y, CropRectangle.Width, CropRectangle.Height);
         }
+
+        #region Private Method
+
+        private static CropRectangle CreateCropRectangle(int left, int top, int right, int bottom)
+        {
+            return new CropRectangle(left, top, right - left, bottom - top);
+        }
+
+        #endregion
     }
 }
