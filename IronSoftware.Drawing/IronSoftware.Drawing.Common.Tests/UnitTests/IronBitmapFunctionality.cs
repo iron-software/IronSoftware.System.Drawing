@@ -97,10 +97,24 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 #if NETCOREAPP2_1
             System.Drawing.Bitmap bitmap;
             var ex = Assert.Throws<PlatformNotSupportedException>(() => System.Math.Ceiling(IronBitmap.DetermineSkewAngle(anyBitmap)));
-            Assert.Equal("System.Drawing is not supported on this platform.", ex.Message);
+            if (IsUnix())
+            {
+                Assert.Equal($"Microsoft has chosen to no longer support System.Drawing.Common on Linux or MacOS. To solve this please use another Bitmap type such as {typeof(System.Drawing.Bitmap).ToString()}, SkiaSharp or ImageSharp.\n\nhttps://docs.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/system-drawing-common-windows-only", ex.Message);
+            }
+            else
+            {
+                Assert.Equal("System.Drawing is not supported on this platform.", ex.Message);
+            }
 
             ex = Assert.Throws<PlatformNotSupportedException>(() => rotatedBitmap = anyBitmap.RotateImage());
-            Assert.Equal("System.Drawing is not supported on this platform.", ex.Message);
+            if (IsUnix())
+            {
+                Assert.Equal($"Microsoft has chosen to no longer support System.Drawing.Common on Linux or MacOS. To solve this please use another Bitmap type such as {typeof(System.Drawing.Bitmap).ToString()}, SkiaSharp or ImageSharp.\n\nhttps://docs.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/system-drawing-common-windows-only", ex.Message);
+            }
+            else
+            {
+                Assert.Equal("System.Drawing is not supported on this platform.", ex.Message);
+            }
 #else
             Assert.Equal(45, System.Math.Ceiling(IronBitmap.DetermineSkewAngle(anyBitmap)));
             rotatedBitmap = anyBitmap.RotateImage();
