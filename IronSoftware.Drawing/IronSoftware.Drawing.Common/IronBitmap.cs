@@ -6,7 +6,7 @@ namespace IronSoftware.Drawing
     public static class IronBitmap
     {
         /// <summary>
-        /// Resize an image with scale.
+        /// Resize an image with scaling.
         /// </summary>
         /// <param name="bitmap">Original bitmap to resize.</param>
         /// <param name="scale">Scale of new image 0 - 1.</param>
@@ -36,8 +36,8 @@ namespace IronSoftware.Drawing
         /// Resize an image with width and height.
         /// </summary>
         /// <param name="bitmap">Original bitmap to resize.</param>
-        /// <param name="width">Width ot the new resized image.</param>
-        /// <param name="height">Height ot the new resized image.</param>
+        /// <param name="width">Width of the new resized image.</param>
+        /// <param name="height">Height of the new resized image.</param>
         /// <return>IronSoftware.Drawing.AnyBitmap.</return>
         public static AnyBitmap Resize(this AnyBitmap bitmap, int width, int height)
         {
@@ -52,11 +52,11 @@ namespace IronSoftware.Drawing
         /// Resize an image with width and height.
         /// </summary>
         /// <param name="bitmap">Original bitmap to resize.</param>
-        /// <param name="width">Width ot the new resized image.</param>
-        /// <param name="height">Height ot the new resized image.</param>
-        /// <param name="ratio">Ratio of new image 0 - 1.</param>
+        /// <param name="width">Width of the new resized image.</param>
+        /// <param name="height">Height of the new resized image.</param>
+        /// <param name="scale">Scale of new image 0 - 1.</param>
         /// <return>IronSoftware.Drawing.AnyBitmap.</return>
-        public static AnyBitmap Resize(this AnyBitmap bitmap, int width, int height, float ratio)
+        public static AnyBitmap Resize(this AnyBitmap bitmap, int width, int height, float scale)
         {
             SKBitmap originalBitmap = bitmap;
             SKBitmap toBitmap = new SKBitmap(width, height, originalBitmap.ColorType, originalBitmap.AlphaType);
@@ -65,9 +65,9 @@ namespace IronSoftware.Drawing
             {
                 // Draw a bitmap rescaled
 #if NETFRAMEWORK
-                canvas.SetMatrix(SKMatrix.MakeScale(ratio, ratio));
+                canvas.SetMatrix(SKMatrix.MakeScale(scale, scale));
 #else
-                canvas.SetMatrix(SKMatrix.CreateScale(ratio, ratio));
+                canvas.SetMatrix(SKMatrix.CreateScale(scale, scale));
 #endif
                 canvas.DrawBitmap(originalBitmap, 0, 0);
                 canvas.ResetMatrix();
@@ -117,7 +117,7 @@ namespace IronSoftware.Drawing
         /// Rotate an image.
         /// </summary>
         /// <param name="bitmap">Original bitmap to resize.</param>
-        /// <param name="angle">Angle for rotate image. Default (null): Try to find the image angle.</param>
+        /// <param name="angle">Angle for rotate image. Default (null): Will try to determine the image's rotation angle.</param>
         /// <return>IronSoftware.Drawing.AnyBitmap.</return>
         public static AnyBitmap RotateImage(this AnyBitmap bitmap, double? angle = null)
         {
@@ -146,10 +146,10 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Find angle of the image.
+        /// Determine the image's skew angle.
         /// </summary>
-        /// <param name="bitmap">Original bitmap to resize.</param>
-        /// <return>Angle of the image in double.</return>
+        /// <param name="bitmap">Original bitmap to get skew angle from.</param>
+        /// <return>Image's angle of skew.</return>
         public static double GetSkewAngle(this AnyBitmap bitmap)
         {
             return SkewImageLib.GetSkewAngle(bitmap);
@@ -181,30 +181,29 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Add border to the image.
+        /// Add a colored border around the image.
         /// </summary>
-        /// <param name="bitmap">Original bitmap to trim.</param>
-        /// <param name="color">Background color of the border.</param>
-        /// <param name="size">Size of the border in pixel.</param>
+        /// <param name="bitmap">Original bitmap to add a border to.</param>
+        /// <param name="color">Color of the border.</param>
+        /// <param name="width">Width of the border in pixel.</param>
         /// <return>IronSoftware.Drawing.AnyBitmap.</return>
-        public static AnyBitmap AddBorder(this AnyBitmap bitmap, IronSoftware.Drawing.Color color, int size)
+        public static AnyBitmap AddBorder(this AnyBitmap bitmap, IronSoftware.Drawing.Color color, int width)
         {
             SKBitmap originalBitmap = bitmap;
-            int maxWidth = originalBitmap.Width + size * 2;
-            int maxHeight = originalBitmap.Height + size * 2;
+            int maxWidth = originalBitmap.Width + width * 2;
+            int maxHeight = originalBitmap.Height + width * 2;
             SKBitmap toBitmap = new SKBitmap(maxWidth, maxHeight);
 
             var ratioX = (double)maxWidth / originalBitmap.Width;
             var ratioY = (double)maxHeight / originalBitmap.Height;
-            var ratio = (float)Math.Min(ratioX, ratioY);
+            var scale = (float)Math.Min(ratioX, ratioY);
 
             using (SKCanvas canvas = new SKCanvas(toBitmap))
             {
-
 #if NETFRAMEWORK
-                canvas.SetMatrix(SKMatrix.MakeScale(ratio, ratio));
+                canvas.SetMatrix(SKMatrix.MakeScale(scale, scale));
 #else
-                canvas.SetMatrix(SKMatrix.CreateScale(ratio, ratio));
+                canvas.SetMatrix(SKMatrix.CreateScale(scale, scale));
 #endif
                 canvas.Clear(color);
                 int x = (toBitmap.Width - originalBitmap.Width) / 2;
