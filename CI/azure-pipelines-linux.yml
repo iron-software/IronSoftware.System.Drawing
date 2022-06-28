@@ -63,7 +63,6 @@ jobs:
         projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
         arguments: '--configuration "$(buildConfiguration)" -f "net70" --verbosity n --no-build'
         testRunTitle: 'Execute Unit Tests'
-      condition: succeededOrFailed()
 
     - task: UseDotNet@2
       displayName: 'Use .Net50 Core sdk'
@@ -79,7 +78,6 @@ jobs:
         projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
         arguments: '--configuration "$(buildConfiguration)" -f "net50" --verbosity n --no-build --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura'
         testRunTitle: 'Execute Unit Tests'
-      condition: succeededOrFailed()
 
     - task: UseDotNet@2
       displayName: 'Use .Net60 Core sdk'
@@ -94,7 +92,6 @@ jobs:
         projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
         arguments: '--configuration "$(buildConfiguration)" -f "net60" --verbosity n --no-build'
         testRunTitle: 'Execute Unit Tests'
-      condition: succeededOrFailed()
 
     - task: UseDotNet@2
       displayName: 'Use .Netcoreapp2.1 Core sdk'
@@ -109,7 +106,6 @@ jobs:
         projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
         arguments: '--configuration "$(buildConfiguration)" -f "netcoreapp2.1" --verbosity n --no-build'
         testRunTitle: 'Execute Unit Tests'
-      condition: succeededOrFailed()
 
     - task: UseDotNet@2
       displayName: 'Use .Netcoreapp3.1 Core sdk'
@@ -124,7 +120,6 @@ jobs:
         projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
         arguments: '--configuration "$(buildConfiguration)" -f "netcoreapp3.1" --verbosity n --no-build'
         testRunTitle: 'Execute Unit Tests'
-      condition: succeededOrFailed()
 
     - task: PublishCodeCoverageResults@1
       displayName: 'Publish code coverage report'
