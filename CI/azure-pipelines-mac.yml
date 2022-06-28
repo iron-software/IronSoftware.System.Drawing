@@ -1,13 +1,19 @@
+trigger:
+- main
 pr:
   - master
+  - main
 
 
 pool:
   vmImage: 'macOS-latest'
 
 variables:
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+  - group: IronDrawingVersions
+  - name: buildConfiguration
+    value: 'Debug'
+  - name: AssemblyVersion
+    value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingRevisionVersion).$(Build.BuildID)
 
 jobs:
   - job: CheckoutAndRestore
@@ -17,17 +23,18 @@ jobs:
       displayName: Checkout IronSoftware.Drawing git repository
       lfs: true
 
+    - task: UseDotNet@2
+      displayName: 'Use .Net70 Core sdk'
+      inputs:
+        packageType: 'sdk'
+        version: '7.x'
+        includePreviewVersions: true
+
     - task: NuGetToolInstaller@1
       displayName: Install NuGet Manager
       inputs:
         versionSpec:
         checkLatest: true
-
-    - task: UseDotNet@2
-      displayName: 'Install .NET Core SDK'
-      inputs:
-        packageType: 'sdk'
-        version: '5.0.x'
 
     - task: DotNetCoreCLI@2
       displayName: 'Restore Solution NuGet Packages'
@@ -38,44 +45,85 @@ jobs:
         projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
         verbosityRestore: 'Normal'
         feedsToUse: 'config'
-        nugetConfigPath: 'nuget.config'
-
-    - task: PublishPipelineArtifact@1
-      inputs:
-        targetPath: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests'
-        artifact: 'IronDrawingUnitTests'
-        publishLocation: 'pipeline'
-
-  - job: BuildAndTestNet50
-    displayName: Build & Test .Net50
-    dependsOn: [CheckoutAndRestore]
-    steps:
-    - task: UseDotNet@2
-      displayName: 'Install .NET Core SDK'
-      inputs:
-        packageType: 'sdk'
-        version: '5.0.x'
-
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: 'current'
-        artifactName: 'IronDrawingUnitTests'
-        targetPath: '$(Build.SourcesDirectory)\IronDrawingUnitTests'
+        nugetConfigPath: '$(Build.SourcesDirectory)/IronSoftware.Drawing/nuget.config'
 
     - task: DotNetCoreCLI@2
-      displayName: Build IronBarCode Solution
+      displayName: Build Solution
       inputs:
         command: 'build'
         projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
-        arguments: '--configuration $(buildConfiguration) -f "net50" --no-restore --verbosity normal'
+        arguments: '--configuration $(buildConfiguration) --no-restore --verbosity normal'
+        versioningScheme: byEnvVar
+        versionEnvVar: AssemblyVersion
 
     - task: DotNetCoreCLI@2
-      displayName: (Framework)Execute Unit Tests
+      displayName: Execute .Net70 Unit Tests
       inputs:
         command: 'test'
-        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
+        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
+        arguments: '--configuration "$(buildConfiguration)" -f "net70" --verbosity n --no-build'
+        testRunTitle: 'Execute Unit Tests'
+      condition: succeededOrFailed()
+
+    - task: UseDotNet@2
+      displayName: 'Use .Net50 Core sdk'
+      inputs:
+        packageType: 'sdk'
+        version: '5.x'
+
+    - task: DotNetCoreCLI@2
+      name: UnitTestsNet50
+      displayName: Execute .Net50 Unit Tests
+      inputs:
+        command: 'test'
+        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
         arguments: '--configuration "$(buildConfiguration)" -f "net50" --verbosity n --no-build --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura'
-        testRunTitle: '(Framework)Execute Unit Tests'
+        testRunTitle: 'Execute Unit Tests'
+      condition: succeededOrFailed()
+
+    - task: UseDotNet@2
+      displayName: 'Use .Net60 Core sdk'
+      inputs:
+        packageType: 'sdk'
+        version: '6.x'
+
+    - task: DotNetCoreCLI@2
+      displayName: Execute .Net60 Unit Tests
+      inputs:
+        command: 'test'
+        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
+        arguments: '--configuration "$(buildConfiguration)" -f "net60" --verbosity n --no-build'
+        testRunTitle: 'Execute Unit Tests'
+      condition: succeededOrFailed()
+
+    - task: UseDotNet@2
+      displayName: 'Use .Netcoreapp2.1 Core sdk'
+      inputs:
+        packageType: 'sdk'
+        version: '2.x'
+
+    - task: DotNetCoreCLI@2
+      displayName: Execute .Netcoreapp2.1 Unit Tests
+      inputs:
+        command: 'test'
+        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
+        arguments: '--configuration "$(buildConfiguration)" -f "netcoreapp2.1" --verbosity n --no-build'
+        testRunTitle: 'Execute Unit Tests'
+      condition: succeededOrFailed()
+
+    - task: UseDotNet@2
+      displayName: 'Use .Netcoreapp3.1 Core sdk'
+      inputs:
+        packageType: 'sdk'
+        version: '3.x'
+
+    - task: DotNetCoreCLI@2
+      displayName: Execute .Netcoreapp3.1 Unit Tests
+      inputs:
+        command: 'test'
+        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
+        arguments: '--configuration "$(buildConfiguration)" -f "netcoreapp3.1" --verbosity n --no-build'
+        testRunTitle: 'Execute Unit Tests'
       condition: succeededOrFailed()
 
     - task: PublishCodeCoverageResults@1
@@ -83,105 +131,9 @@ jobs:
       inputs:
         codeCoverageTool: 'Cobertura'
         summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
-      
+  
     - task: PublishTestResults@2
       displayName: 'Publish test result'
       inputs:
         testRunner: VSTest
         testResultsFiles: '**/*.trx'
-
-  - job: BuildAndTestNet60
-    displayName: Build & Test .Net60
-    dependsOn: [CheckoutAndRestore]
-    steps:
-    - task: UseDotNet@2
-      displayName: 'Install .NET Core SDK'
-      inputs:
-        packageType: 'sdk'
-        version: '6.0.x'
-
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: 'current'
-        artifactName: 'IronDrawingUnitTests'
-        targetPath: '$(Build.SourcesDirectory)\IronDrawingUnitTests'
-
-    - task: DotNetCoreCLI@2
-      displayName: Build IronBarCode Solution
-      inputs:
-        command: 'build'
-        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
-        arguments: '--configuration $(buildConfiguration) -f "net60" --no-restore --verbosity normal'
-
-    - task: DotNetCoreCLI@2
-      displayName: (Framework)Execute Unit Tests
-      inputs:
-        command: 'test'
-        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
-        arguments: '--configuration "$(buildConfiguration)" -f "net60" --verbosity n --no-build'
-        testRunTitle: '(Framework)Execute Unit Tests'
-      condition: succeededOrFailed()
-
-  - job: BuildAndTestNetCore21
-    displayName: Build & Test .Netcore2.1
-    dependsOn: [CheckoutAndRestore]
-    steps:
-    - task: UseDotNet@2
-      displayName: 'Install .NET Core SDK'
-      inputs:
-        packageType: 'sdk'
-        version: '2.1.x'
-
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: 'current'
-        artifactName: 'IronDrawingUnitTests'
-        targetPath: '$(Build.SourcesDirectory)\IronDrawingUnitTests'
-
-    - task: DotNetCoreCLI@2
-      displayName: Build IronBarCode Solution
-      inputs:
-        command: 'build'
-        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
-        arguments: '--configuration $(buildConfiguration) -f "netcoreapp2.1" --no-restore --verbosity normal'
-
-    - task: DotNetCoreCLI@2
-      displayName: (Framework)Execute Unit Tests
-      inputs:
-        command: 'test'
-        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
-        arguments: '--configuration "$(buildConfiguration)" -f "netcoreapp2.1" --verbosity n --no-build'
-        testRunTitle: '(Framework)Execute Unit Tests'
-      condition: succeededOrFailed()
-
-  - job: BuildAndTestNetCore31
-    displayName: Build & Test .Netcore3.1
-    dependsOn: [CheckoutAndRestore]
-    steps:
-    - task: UseDotNet@2
-      displayName: 'Install .NET Core SDK'
-      inputs:
-        packageType: 'sdk'
-        version: '3.1.x'
-
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: 'current'
-        artifactName: 'IronDrawingUnitTests'
-        targetPath: '$(Build.SourcesDirectory)\IronDrawingUnitTests'
-
-    - task: DotNetCoreCLI@2
-      displayName: Build IronBarCode Solution
-      inputs:
-        command: 'build'
-        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
-        arguments: '--configuration $(buildConfiguration) -f "netcoreapp3.1" --no-restore --verbosity normal'
-
-    - task: DotNetCoreCLI@2
-      displayName: (Framework)Execute Unit Tests
-      inputs:
-        command: 'test'
-        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
-        arguments: '--configuration "$(buildConfiguration)" -f "netcoreapp3.1" --verbosity n --no-build'
-        testRunTitle: '(Framework)Execute Unit Tests'
-      condition: succeededOrFailed()
