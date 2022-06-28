@@ -631,21 +631,6 @@ namespace IronSoftware.Drawing
             }
         }
 
-        private static PlatformNotSupportedException SystemDotDrawingPlatformNotSupported(Exception innerException)
-        {
-            return new PlatformNotSupportedException("Microsoft has chosen to no longer support System.Drawing.Common on Linux or MacOS. To solve this please use another Bitmap type such as {typeof(Bitmap).ToString()}, SkiaSharp or ImageSharp.\n\nhttps://docs.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/system-drawing-common-windows-only", innerException);
-        }
-
-        private static InvalidCastException ImageCastException(string fullTypeName, Exception innerException)
-        {
-            return new InvalidCastException($"IronSoftware.Drawing does not yet support casting {fullTypeName} to {typeof(AnyBitmap).FullName}. Try using System.Drawing.Common, SkiaSharp or ImageSharp.", innerException);
-        }
-
-        private static InvalidOperationException NoConverterException(ImageFormat Format, Exception innerException)
-        {
-            return new InvalidOperationException($"{typeof(AnyBitmap)} is unable to convert your image data to {Format.ToString()} because it requires a suitable encoder to be added to your project via Nuget.\nPlease try SkiaSharp, System.Drawing.Common, SixLabors.ImageSharp, Microsoft.Maui.Graphics; or alternatively save using ImageFormat.Default", innerException);
-        }
-
         /// <summary>
         /// Popular image formats which <see cref="AnyBitmap"/> can read and export.
         /// </summary>
@@ -689,17 +674,17 @@ namespace IronSoftware.Drawing
 
         private static PlatformNotSupportedException SystemDotDrawingPlatformNotSupported(Exception innerException)
         {
-            return new PlatformNotSupportedException("Microsoft has chosen to no longer support System.Drawing.Common on Linux or MacOS.  To solve this please use another Bitmap type such as {typeof(Bitmap).ToString()}, SkiaSharp or ImageSharp.\n\nhttps://docs.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/system-drawing-common-windows-only", innerException);
+            return new PlatformNotSupportedException("Microsoft has chosen to no longer support System.Drawing.Common on Linux or MacOS. To solve this please use another Bitmap type such as {typeof(Bitmap).ToString()}, SkiaSharp or ImageSharp.\n\nhttps://docs.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/system-drawing-common-windows-only", innerException);
         }
 
         private static InvalidCastException ImageCastException(string fullTypeName, Exception innerException)
         {
-            return new InvalidCastException($"IronSoftware.Drawing does not yet support casting  {fullTypeName} to  {typeof(AnyBitmap).FullName}.  Try using System.Drawing.Common, SkiaSharp or ImageSharp.", innerException);
+            return new InvalidCastException($"IronSoftware.Drawing does not yet support casting {fullTypeName} to {typeof(AnyBitmap).FullName}. Try using System.Drawing.Common, SkiaSharp or ImageSharp.", innerException);
         }
 
         private static InvalidOperationException NoConverterException(ImageFormat Format, Exception innerException)
         {
-            return new InvalidOperationException($"{typeof(AnyBitmap)} is unable to convert  your image data to {Format.ToString()} because it requires a suitable encoder to be added to your project via Nuget.\nPlease try SkiaSharp, System.Drawing.Common, SixLabors.ImageSharp, Microsoft.Maui.Graphics; or alternatively save using ImageFormat.Default", innerException);
+            return new InvalidOperationException($"{typeof(AnyBitmap)} is unable to convert your image data to {Format.ToString()} because it requires a suitable encoder to be added to your project via Nuget.\nPlease try SkiaSharp, System.Drawing.Common, SixLabors.ImageSharp, Microsoft.Maui.Graphics; or alternatively save using ImageFormat.Default", innerException);
         }
 
         private bool IsLoadedType(string typeName)
