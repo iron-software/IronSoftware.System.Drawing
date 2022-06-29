@@ -840,7 +840,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Luminance is a value from 0 (black) to 100 (white) where 50 is the perceptual "middle grey". 
-        /// Luminance = 50 is the equivalent of Y = 18.4, or in other words an 18% grey card, representing the middle of a photographic exposure(Ansel Adams zone V).
+        /// Luminance = 50 is the equivalent of Y = 18.4, or in other words a 18% grey card, representing the middle of a photographic exposure.
         /// </summary>
         /// <returns>Preceived Lightness</returns>
         public double GetLuminance()
@@ -912,7 +912,7 @@ namespace IronSoftware.Drawing
             }
             else
             {
-                throw new InvalidOperationException($"{colorcode} is unable to convert to {typeof(byte)} because it requires a suitable length of string.");
+                throw new InvalidOperationException($"{colorcode} is unable to convert to {typeof(byte)} because it requires 1 or 2 for length.");
             }
         }
 

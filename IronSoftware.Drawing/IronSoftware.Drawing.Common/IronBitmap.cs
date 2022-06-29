@@ -35,7 +35,7 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Resize an image with width and height.
         /// </summary>
-        /// <param name="bitmap">Original bitmap to resize.</param>
+        /// <param name="bitmap">Original bitmap to rotate.</param>
         /// <param name="width">Width of the new resized image.</param>
         /// <param name="height">Height of the new resized image.</param>
         /// <return>IronSoftware.Drawing.AnyBitmap.</return>
@@ -66,7 +66,7 @@ namespace IronSoftware.Drawing
         /// Resize an image with width and height.
         /// </summary>
         /// <param name="bitmap">Original bitmap to resize.</param>
-        /// <param name="cropArea">CropArea to crop an image.</param>
+        /// <param name="cropArea">Crop area for the image.</param>
         /// <return>IronSoftware.Drawing.AnyBitmap.</return>
         public static AnyBitmap CropImage(this AnyBitmap bitmap, CropRectangle cropArea)
         {
@@ -115,10 +115,10 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Rotate an image.
+        /// Rotate an image. 
         /// </summary>
         /// <param name="bitmap">Original bitmap to resize.</param>
-        /// <param name="angle">Angle for rotate image. Default (null): Will try to determine the image's rotation angle (Required: System.Drawing.Bitmap).</param>
+        /// <param name="angle">Angle to rotate the image. Default (null): Will attempt to deskew image if it is not aligned (Required: System.Drawing.Bitmap).</param>
         /// <return>IronSoftware.Drawing.AnyBitmap.</return>
         public static AnyBitmap RotateImage(this AnyBitmap bitmap, double? angle = null)
         {
