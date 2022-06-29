@@ -152,30 +152,6 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
-        public void AnyBitmap_should_equal_Bitmap()
-        {
-            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(imagePath);
-#if NETCOREAPP2_1
-            System.Drawing.Bitmap bitmap;
-            var ex = Assert.Throws<PlatformNotSupportedException>(() => bitmap = new System.Drawing.Bitmap(imagePath));
-            Assert.Equal("System.Drawing is not supported on this platform.", ex.Message);
-#else
-            System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(imagePath);
-            AnyBitmap compareAnyBitmap = bitmap;
-
-            if (!IsUnix())
-            { 
-                Assert.True(anyBitmap.Equals(compareAnyBitmap));
-            }
-
-            anyBitmap.SaveAs("expected.bmp");
-            bitmap.Save("result.bmp");
-            AssertImageAreEqual("expected.bmp", "result.bmp", true);
-#endif
-        }
-
-        [FactWithAutomaticDisplayName]
         public void AnyBitmap_should_get_Bytes()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");

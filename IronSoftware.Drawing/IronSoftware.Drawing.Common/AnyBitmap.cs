@@ -83,41 +83,6 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Allows Comparability and equality.
-        /// </summary>
-        /// <param name="bitmap">Another <see cref="AnyBitmap"/></param>
-        /// <returns>True if the Bitmaps have exactly the same raw binary data.</returns>
-        public override bool Equals(object bitmap)
-        {
-            AnyBitmap comp = null;
-            if (bitmap is AnyBitmap)
-            {
-                comp = bitmap as AnyBitmap;
-            }
-            else if (bitmap is System.Drawing.Bitmap)
-            {
-                comp = bitmap as System.Drawing.Bitmap;
-            }
-            else if (bitmap is SkiaSharp.SKBitmap)
-            {
-                comp = bitmap as SkiaSharp.SKBitmap;
-            }
-#if NETSTANDARD
-            else if (bitmap is SixLabors.ImageSharp.Image)
-            {
-                comp = bitmap as SixLabors.ImageSharp.Image;
-            }
-            else if (bitmap is Microsoft.Maui.Graphics.Platform.PlatformImage)
-            {
-                comp = bitmap as Microsoft.Maui.Graphics.Platform.PlatformImage;
-            }
-#endif
-            if (comp == null) { return false; }
-
-            return Binary.SequenceEqual(((AnyBitmap)comp).ExportBytes());
-        }
-
-        /// <summary>
         /// Hashing integer based on image raw binary data.
         /// </summary>
         /// <returns>Int</returns>
@@ -576,13 +541,21 @@ namespace IronSoftware.Drawing
         public static implicit operator AnyBitmap(System.Drawing.Bitmap Image)
         {
             Byte[] data;
-
             try
             {
+                System.Drawing.Bitmap blank = new System.Drawing.Bitmap(Image.Width, Image.Height);
+                System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(blank);
+                g.Clear(Color.White);
+                g.DrawImage(Image, 0, 0, Image.Width, Image.Height);
+
+                System.Drawing.Bitmap tempImage = new System.Drawing.Bitmap(blank);
+                blank.Dispose();
+
                 System.Drawing.Imaging.ImageFormat imageFormat = GetMimeType(Image) != "image/unknown" ? Image.RawFormat : System.Drawing.Imaging.ImageFormat.Bmp;
                 using (var memoryStream = new System.IO.MemoryStream())
                 {
-                    Image.Save(memoryStream, imageFormat);
+                    tempImage.Save(memoryStream, imageFormat);
+                    tempImage.Dispose();
 
                     data = memoryStream.ToArray();
                     return new AnyBitmap(data);
