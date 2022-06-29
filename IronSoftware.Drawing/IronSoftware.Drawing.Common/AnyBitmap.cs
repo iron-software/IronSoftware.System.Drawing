@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace IronSoftware.Drawing
 {
@@ -21,8 +22,24 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                SkiaSharp.SKBitmap sKBitmap = SkiaSharp.SKBitmap.Decode(Binary);
-                return sKBitmap.Width;
+                if (IsLoadedType("SkiaSharp.SKImage"))
+                {
+                    using SkiaSharp.SKImage img = this; // magic implicit cast
+                    return img.Width;
+                }
+#if NETSTANDARD
+                else if (IsLoadedType("SixLabors.ImageSharp.Image"))
+                {
+                    using SixLabors.ImageSharp.Image img = this; // magic implicit cast
+                    return img.Width;
+                }
+#endif
+                else if (IsLoadedType("System.Drawing.Imaging"))
+                {
+                    using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
+                    return img.Width;
+                }
+                return -1;
             }
         }
 
@@ -33,8 +50,24 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                SkiaSharp.SKBitmap sKBitmap = SkiaSharp.SKBitmap.Decode(Binary);
-                return sKBitmap.Height;
+                if (IsLoadedType("SkiaSharp.SKImage"))
+                {
+                    using SkiaSharp.SKImage img = this; // magic implicit cast
+                    return img.Height;
+                }
+#if NETSTANDARD
+                else if (IsLoadedType("SixLabors.ImageSharp.Image"))
+                {
+                    using SixLabors.ImageSharp.Image img = this; // magic implicit cast
+                    return img.Height;
+                }
+#endif
+                else if (IsLoadedType("System.Drawing.Imaging"))
+                {
+                    using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
+                    return img.Height;
+                }
+                return -1;
             }
         }
 
@@ -56,10 +89,32 @@ namespace IronSoftware.Drawing
         /// <returns>True if the Bitmaps have exactly the same raw binary data.</returns>
         public override bool Equals(object bitmap)
         {
-            AnyBitmap comp = bitmap as AnyBitmap;
+            AnyBitmap comp = null;
+            if (bitmap is AnyBitmap)
+            {
+                comp = bitmap as AnyBitmap;
+            }
+            else if (bitmap is System.Drawing.Bitmap)
+            {
+                comp = bitmap as System.Drawing.Bitmap;
+            }
+            else if (bitmap is SkiaSharp.SKBitmap)
+            {
+                comp = bitmap as SkiaSharp.SKBitmap;
+            }
+#if NETSTANDARD
+            else if (bitmap is SixLabors.ImageSharp.Image)
+            {
+                comp = bitmap as SixLabors.ImageSharp.Image;
+            }
+            else if (bitmap is Microsoft.Maui.Graphics.Platform.PlatformImage)
+            {
+                comp = bitmap as Microsoft.Maui.Graphics.Platform.PlatformImage;
+            }
+#endif
             if (comp == null) { return false; }
 
-            return Binary == ((AnyBitmap)bitmap).ExportBytes();
+            return Binary.SequenceEqual(((AnyBitmap)comp).ExportBytes());
         }
 
         /// <summary>
@@ -85,9 +140,9 @@ namespace IronSoftware.Drawing
         /// The raw image data as byte[] (ByteArray)"/>
         /// </summary>
         /// <returns>A byte[] (ByteArray) </returns>
-        public System.IO.MemoryStream GetBytes()
+        public byte[] GetBytes()
         {
-            return new System.IO.MemoryStream(Binary);
+            return Binary;
         }
 
         /// <summary>
@@ -165,13 +220,14 @@ namespace IronSoftware.Drawing
         {
             if (Format == ImageFormat.Default)
             {
-                Stream.Read(Binary, 0, Binary.Length);
+                var writer = new BinaryWriter(Stream);
+                writer.Write(Binary);
                 return;
             }
 
             if (Lossy < 0 || Lossy > 100) { Lossy = 100; }
 
-            if (Type.GetType("SkiaSharp.SKImage") != null)
+            if (IsLoadedType("SkiaSharp.SKImage"))
             {
                 using SkiaSharp.SKImage img = this; // magic implicit cast
 
@@ -183,7 +239,7 @@ namespace IronSoftware.Drawing
                 return;
             }
 #if NETSTANDARD
-            else if (Type.GetType("SixLabors.ImageSharp.Image") != null)
+            else if (IsLoadedType("SixLabors.ImageSharp.Image"))
             {
                 using SixLabors.ImageSharp.Image img = this; // magic implicit cast
 
@@ -203,7 +259,7 @@ namespace IronSoftware.Drawing
                 return;
             }
 #endif
-            else if (Type.GetType("System.Drawing.Imaging.ImageFormat") != null)
+            else if (IsLoadedType("System.Drawing.Imaging"))
             {
                 using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
 
@@ -377,7 +433,7 @@ namespace IronSoftware.Drawing
         /// <param name="Stream">A <see cref="Stream"/> of image data in any common format.</param>
         /// <seealso cref="FromStream"/>
         /// <seealso cref="AnyBitmap"/>
-        public static AnyBitmap FromStream(System.IO.Stream Stream)
+        public static AnyBitmap FromStream(System.IO.MemoryStream Stream)
         {
             return new AnyBitmap(Stream);
         }
@@ -388,12 +444,9 @@ namespace IronSoftware.Drawing
         /// <param name="Stream">A <see cref="Stream"/> of image data in any common format.</param>
         /// <seealso cref="FromStream"/>
         /// <seealso cref="AnyBitmap"/>
-        public AnyBitmap(System.IO.Stream Stream)
+        public AnyBitmap(System.IO.MemoryStream Stream)
         {
-            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
-            {
-                Binary = ms.ToArray();
-            }
+            Binary = Stream.ToArray();
         }
 
         /// <summary>
@@ -452,11 +505,7 @@ namespace IronSoftware.Drawing
         /// <param name="Image">SkiaSharp.SKImage will automatically be cast to <see cref="AnyBitmap"/>.</param>
         public static implicit operator AnyBitmap(SkiaSharp.SKImage Image)
         {
-#if NETFRAMEWORK
-            return new AnyBitmap(SkiaSharp.SKBitmap.FromImage(Image).Bytes);
-#else
-            return new AnyBitmap(SkiaSharp.SKBitmap.FromImage(Image).Encode(SkiaSharp.SKEncodedImageFormat.Bmp, 100).ToArray());
-#endif
+            return new AnyBitmap(Image.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray());
         }
 
         /// <summary>
@@ -473,13 +522,12 @@ namespace IronSoftware.Drawing
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters and return types, you now automatically support SkiaSharp as well.</para>
         /// </summary>
         /// <param name="Image">SkiaSharp.SKBitmap will automatically be cast to <see cref="AnyBitmap"/>.</param>
-
         public static implicit operator AnyBitmap(SkiaSharp.SKBitmap Image)
         {
 #if NETFRAMEWORK
-            return new AnyBitmap(Image.Bytes);
+            return new AnyBitmap(SkiaSharp.SKImage.FromBitmap(Image).Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray());
 #else
-            return new AnyBitmap(Image.Encode(SkiaSharp.SKEncodedImageFormat.Bmp, 100).ToArray());
+            return new AnyBitmap(Image.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray());
 #endif
         }
 
@@ -531,9 +579,10 @@ namespace IronSoftware.Drawing
 
             try
             {
+                System.Drawing.Imaging.ImageFormat imageFormat = GetMimeType(Image) != "image/unknown" ? Image.RawFormat : System.Drawing.Imaging.ImageFormat.Bmp;
                 using (var memoryStream = new System.IO.MemoryStream())
                 {
-                    Image.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Bmp);
+                    Image.Save(memoryStream, imageFormat);
 
                     data = memoryStream.ToArray();
                     return new AnyBitmap(data);
@@ -582,21 +631,6 @@ namespace IronSoftware.Drawing
             }
         }
 
-        private static PlatformNotSupportedException SystemDotDrawingPlatformNotSupported(Exception innerException)
-        {
-            return new PlatformNotSupportedException("Microsoft has chosen to no longer support System.Drawing.Common on Linux or MacOS. To solve this please use another Bitmap type such as {typeof(Bitmap).ToString()}, SkiaSharp or ImageSharp.\n\nhttps://docs.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/system-drawing-common-windows-only", innerException);
-        }
-
-        private static InvalidCastException ImageCastException(string fullTypeName, Exception innerException)
-        {
-            return new InvalidCastException($"IronSoftware.Drawing does not yet support casting {fullTypeName} to {typeof(AnyBitmap).FullName}. Try using System.Drawing.Common, SkiaSharp or ImageSharp.", innerException);
-        }
-
-        private static InvalidOperationException NoConverterException(ImageFormat Format, Exception innerException)
-        {
-            return new InvalidOperationException($"{typeof(AnyBitmap)} is unable to convert your image data to {Format.ToString()} because it requires a suitable encoder to be added to your project via Nuget.\nPlease try SkiaSharp, System.Drawing.Common, SixLabors.ImageSharp, Microsoft.Maui.Graphics; or alternatively save using ImageFormat.Default", innerException);
-        }
-
         /// <summary>
         /// Popular image formats which <see cref="AnyBitmap"/> can read and export.
         /// </summary>
@@ -635,6 +669,52 @@ namespace IronSoftware.Drawing
             /// <summary> The existing raw image format.</summary>
             Default = -1,
         }
+
+        #region Private Method
+
+        private static PlatformNotSupportedException SystemDotDrawingPlatformNotSupported(Exception innerException)
+        {
+            return new PlatformNotSupportedException($"Microsoft has chosen to no longer support System.Drawing.Common on Linux or MacOS. To solve this please use another Bitmap type such as {typeof(System.Drawing.Bitmap).ToString()}, SkiaSharp or ImageSharp.\n\nhttps://docs.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/system-drawing-common-windows-only", innerException);
+        }
+
+        private static InvalidCastException ImageCastException(string fullTypeName, Exception innerException)
+        {
+            return new InvalidCastException($"IronSoftware.Drawing does not yet support casting {fullTypeName} to {typeof(AnyBitmap).FullName}. Try using System.Drawing.Common, SkiaSharp or ImageSharp.", innerException);
+        }
+
+        private static InvalidOperationException NoConverterException(ImageFormat Format, Exception innerException)
+        {
+            return new InvalidOperationException($"{typeof(AnyBitmap)} is unable to convert your image data to {Format.ToString()} because it requires a suitable encoder to be added to your project via Nuget.\nPlease try SkiaSharp, System.Drawing.Common, SixLabors.ImageSharp, Microsoft.Maui.Graphics; or alternatively save using ImageFormat.Default", innerException);
+        }
+
+        private bool IsLoadedType(string typeName)
+        {
+            foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                try
+                {
+                    if (a.GetTypes().Any(t => t.FullName == typeName)) return true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Could not load {a.FullName} : {ex.Message}");
+                }
+            }
+            return false;
+        }
+
+        private static string GetMimeType(System.Drawing.Bitmap Image)
+        {
+            var imgguid = Image.RawFormat.Guid;
+            foreach (System.Drawing.Imaging.ImageCodecInfo codec in System.Drawing.Imaging.ImageCodecInfo.GetImageDecoders())
+            {
+                if (codec.FormatID == imgguid)
+                    return codec.MimeType;
+            }
+            return "image/unknown";
+        }
+
+        #endregion
     }
 }
 

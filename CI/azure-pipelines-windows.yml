@@ -1,0 +1,139 @@
+trigger:
+- main
+pr:
+  - master
+  - main
+
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  - group: IronDrawingVersions
+  - name: buildConfiguration
+    value: 'Debug'
+  - name: AssemblyVersion
+    value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingRevisionVersion).$(Build.BuildID)
+
+steps:
+- checkout: self
+  displayName: Checkout IronSoftware.Drawing git repository
+  lfs: true
+
+- task: UseDotNet@2
+  displayName: 'Use .Net70 Core sdk'
+  inputs:
+    packageType: 'sdk'
+    version: '7.x'
+    includePreviewVersions: true
+
+- task: NuGetToolInstaller@1
+  displayName: Install NuGet Manager
+  inputs:
+    versionSpec:
+    checkLatest: true
+
+- task: DotNetCoreCLI@2
+  displayName: 'Restore Solution NuGet Packages'
+  enabled: true
+  continueOnError: true
+  inputs:
+    command: 'restore'
+    projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
+    verbosityRestore: 'Normal'
+    feedsToUse: 'config'
+    nugetConfigPath: '$(Build.SourcesDirectory)/IronSoftware.Drawing/nuget.config'
+
+- task: DotNetCoreCLI@2
+  displayName: Build Solution
+  inputs:
+    command: 'build'
+    projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
+    arguments: '--configuration $(buildConfiguration) --no-restore --verbosity normal'
+    versioningScheme: byEnvVar
+    versionEnvVar: AssemblyVersion
+
+- task: DotNetCoreCLI@2
+  displayName: Execute .Net472 Unit Tests
+  inputs:
+    command: 'test'
+    projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
+    arguments: '--configuration "$(buildConfiguration)" -f "net472" --verbosity n --no-build'
+    testRunTitle: 'Execute Unit Tests'
+
+- task: DotNetCoreCLI@2
+  displayName: Execute .Net70 Unit Tests
+  inputs:
+    command: 'test'
+    projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
+    arguments: '--configuration "$(buildConfiguration)" -f "net70" --verbosity n --no-build'
+    testRunTitle: 'Execute Unit Tests'
+
+- task: UseDotNet@2
+  displayName: 'Use .Net50 Core sdk'
+  inputs:
+    packageType: 'sdk'
+    version: '5.x'
+
+- task: DotNetCoreCLI@2
+  name: UnitTestsNet50
+  displayName: Execute .Net50 Unit Tests
+  inputs:
+    command: 'test'
+    projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
+    arguments: '--configuration "$(buildConfiguration)" -f "net50" --verbosity n --no-build --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura'
+    testRunTitle: 'Execute Unit Tests'
+
+- task: UseDotNet@2
+  displayName: 'Use .Net60 Core sdk'
+  inputs:
+    packageType: 'sdk'
+    version: '6.x'
+
+- task: DotNetCoreCLI@2
+  displayName: Execute .Net60 Unit Tests
+  inputs:
+    command: 'test'
+    projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
+    arguments: '--configuration "$(buildConfiguration)" -f "net60" --verbosity n --no-build'
+    testRunTitle: 'Execute Unit Tests'
+
+- task: UseDotNet@2
+  displayName: 'Use .Netcoreapp2.1 Core sdk'
+  inputs:
+    packageType: 'sdk'
+    version: '2.x'
+
+- task: DotNetCoreCLI@2
+  displayName: Execute .Netcoreapp2.1 Unit Tests
+  inputs:
+    command: 'test'
+    projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
+    arguments: '--configuration "$(buildConfiguration)" -f "netcoreapp2.1" --verbosity n --no-build'
+    testRunTitle: 'Execute Unit Tests'
+
+- task: UseDotNet@2
+  displayName: 'Use .Netcoreapp3.1 Core sdk'
+  inputs:
+    packageType: 'sdk'
+    version: '3.x'
+
+- task: DotNetCoreCLI@2
+  displayName: Execute .Netcoreapp3.1 Unit Tests
+  inputs:
+    command: 'test'
+    projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
+    arguments: '--configuration "$(buildConfiguration)" -f "netcoreapp3.1" --verbosity n --no-build'
+    testRunTitle: 'Execute Unit Tests'
+
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish code coverage report'
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+  
+- task: PublishTestResults@2
+  displayName: 'Publish test result'
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'

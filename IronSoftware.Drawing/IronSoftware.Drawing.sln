@@ -1,9 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.2.32519.379
+VisualStudioVersion = 17.3.32611.2
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronSoftware.Drawing.Common", "IronSoftware.Drawing.Common\IronSoftware.Drawing.Common.csproj", "{229F48B8-005F-49C3-B5F2-49A8FC66E5BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronSoftware.Drawing.Common", "IronSoftware.Drawing.Common\IronSoftware.Drawing.Common.csproj", "{229F48B8-005F-49C3-B5F2-49A8FC66E5BD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronSoftware.Drawing.Common.Tests", "IronSoftware.Drawing.Common.Tests\IronSoftware.Drawing.Common.Tests.csproj", "{B9418412-12AE-48D8-8B73-14DEB4FF47AD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{87EDECFE-F93E-4E05-A735-D4E0C3B39967}"
+	ProjectSection(SolutionItems) = preProject
+		..\CI\azure-pipelines-linux.yml = ..\CI\azure-pipelines-linux.yml
+		..\CI\azure-pipelines-mac.yml = ..\CI\azure-pipelines-mac.yml
+		..\CI\azure-pipelines-windows.yml = ..\CI\azure-pipelines-windows.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +24,10 @@ Global
 		{229F48B8-005F-49C3-B5F2-49A8FC66E5BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{229F48B8-005F-49C3-B5F2-49A8FC66E5BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{229F48B8-005F-49C3-B5F2-49A8FC66E5BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9418412-12AE-48D8-8B73-14DEB4FF47AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9418412-12AE-48D8-8B73-14DEB4FF47AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9418412-12AE-48D8-8B73-14DEB4FF47AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9418412-12AE-48D8-8B73-14DEB4FF47AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

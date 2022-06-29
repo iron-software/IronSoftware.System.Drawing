@@ -1,24 +1,40 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
 		<LangVersion>8</LangVersion>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<AssemblyVersion>2022.6.2</AssemblyVersion>
-		<FileVersion>2022.6.2</FileVersion>
-		<Version>2022.6.2</Version>
+		<AssemblyVersion>2022.6.9</AssemblyVersion>
+		<FileVersion>2022.6.9</FileVersion>
+		<Version>2022.6.9</Version>
+		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>IronSoftware.Drawing.Common.snk</AssemblyOriginatorKeyFile>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net45|AnyCPU'">
+	  <DefineConstants>DEBUG;TRACE</DefineConstants>
+	  <DebugType>full</DebugType>
+	  <DebugSymbols>true</DebugSymbols>
+	  <PlatformTarget>AnyCPU</PlatformTarget>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+	  <PlatformTarget>AnyCPU</PlatformTarget>
+	  <DefineConstants>DEBUG;TRACE</DefineConstants>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="SkiaSharp" Version="1.68.1" PrivateAssets="all" Condition="'$(TargetFramework)'=='net45'" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="SkiaSharp" Version="2.88.0" PrivateAssets="all" Condition="'$(TargetFramework)'=='netstandard2.0'" />
-		<PackageReference Include="Microsoft.Maui.Graphics" Version="6.0.300" PrivateAssets="all" Condition="'$(TargetFramework)'=='netstandard2.0'" />
-		<PackageReference Include="SixLabors.ImageSharp" Version="2.0.0" PrivateAssets="all" Condition="'$(TargetFramework)'=='netstandard2.0'" />
+		<PackageReference Include="IronSoftware.CommonLibraries" Version="1.0.6037" />
+		<PackageReference Include="Microsoft.Maui.Graphics" Version="6.0.403" PrivateAssets="all" Condition="'$(TargetFramework)'=='netstandard2.0'" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="2.1.3" PrivateAssets="all" Condition="'$(TargetFramework)'=='netstandard2.0'" />
+		<PackageReference Include="SkiaSharp" Version="2.88.0" Condition="'$(TargetFramework)'=='netstandard2.0'" />
+		<PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.88.0" Condition="'$(TargetFramework)'=='netstandard2.0'" />
 		<PackageReference Include="System.Drawing.Common" Version="5.0.0" PrivateAssets="all" Condition="'$(TargetFramework)'=='netstandard2.0'" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<PackageReference Include="SkiaSharp" Version="1.68.1" PrivateAssets="all" Condition="'$(TargetFramework)'=='net45'" />
+		<PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="1.68.1" PrivateAssets="all" Condition="'$(TargetFramework)'=='net45'" />
+	</ItemGroup>
 
 </Project>
