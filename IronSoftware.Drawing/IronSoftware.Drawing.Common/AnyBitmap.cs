@@ -489,11 +489,7 @@ namespace IronSoftware.Drawing
         /// <param name="Image">SkiaSharp.SKBitmap will automatically be cast to <see cref="AnyBitmap"/>.</param>
         public static implicit operator AnyBitmap(SkiaSharp.SKBitmap Image)
         {
-#if NETFRAMEWORK
-            return new AnyBitmap(SkiaSharp.SKImage.FromBitmap(Image).Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray());
-#else
             return new AnyBitmap(Image.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray());
-#endif
         }
 
         /// <summary>
