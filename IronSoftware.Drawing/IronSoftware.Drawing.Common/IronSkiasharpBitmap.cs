@@ -1,4 +1,5 @@
-﻿using BitMiracle.LibTiff.Classic;
+﻿using AForge.Imaging.Filters;
+using BitMiracle.LibTiff.Classic;
 using SkiaSharp;
 using System;
 using System.IO;
@@ -277,6 +278,30 @@ namespace IronSoftware.Drawing
             {
                 throw e;
             }
+        }
+
+        public static SkiaSharp.SKBitmap Sharpen(this SkiaSharp.SKBitmap bitmap, int grayScale = 50)
+        {
+            SkiaSharp.SKBitmap result = new SkiaSharp.SKBitmap(bitmap.Width, bitmap.Height);
+            bitmap.CopyTo(result);
+            for (int i = 0; i < bitmap.Width; i++)
+            {
+                for (int j = 0; j < bitmap.Height; j++)
+                {
+                    Color color = bitmap.GetPixel(i, j);
+                    if (color.GetLuminance() > grayScale)
+                    {
+                        result.SetPixel(i, j, Color.White);
+                    }
+                    else
+                    {
+                        result.SetPixel(i, j, Color.Black);
+                    }
+                }
+            }
+            bitmap.Dispose();
+
+            return result;
         }
 
         #region Private Method

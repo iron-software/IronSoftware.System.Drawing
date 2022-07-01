@@ -1,3 +1,4 @@
+using FluentAssertions;
 using System;
 using Xunit;
 using Xunit.Abstractions;
@@ -107,6 +108,32 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(borderWidth * 2 + bitmap.Width, borderedBitmap.Width);
             Assert.Equal(borderWidth * 2 + bitmap.Height, borderedBitmap.Height);
             AssertImageAreEqual(GetRelativeFilePath("IronBitmap", "expected-bordered.jpg"), "result-skiasharp-bordered.jpg");
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Sharpen_SKBitmap()
+        {
+            string imagePath = GetRelativeFilePath("IRON-332 Input.png");
+            SkiaSharp.SKBitmap bitmap = SkiaSharp.SKBitmap.Decode(imagePath);
+
+            SkiaSharp.SKBitmap trimmed = bitmap.Trim();
+
+            SkiaSharp.SKBitmap sharpped = trimmed.Sharpen();
+
+            for (int i = 0; i < sharpped.Width; i++)
+            {
+                for (int j = 0; j < sharpped.Height; j++)
+                {
+                    Color color = sharpped.GetPixel(i, j);
+                    color.GetLuminance().Should().BeOneOf(0, 100);
+                }
+            }
+
+            SaveSkiaBitmap(sharpped, "sharppen-image.png");
+
+            bitmap.Dispose();
+            trimmed.Dispose();
+            sharpped.Dispose();
         }
     }
 }
