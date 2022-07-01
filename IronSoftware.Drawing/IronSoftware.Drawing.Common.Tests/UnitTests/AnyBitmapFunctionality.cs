@@ -230,7 +230,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             SkiaSharp.SKBitmap skBitmap = SkiaSharp.SKBitmap.Decode(imagePath);
             AnyBitmap anyBitmap = skBitmap;
 
-            SaveSkiaImage(skBitmap, "expected.png");
+            SaveSkiaBitmap(skBitmap, "expected.png");
             anyBitmap.SaveAs("result.png");
 
             AssertImageAreEqual("expected.png", "result.png", true);
@@ -243,7 +243,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             SkiaSharp.SKBitmap skBitmap = anyBitmap;
 
             anyBitmap.SaveAs("expected.png");
-            SaveSkiaImage(skBitmap, "result.png");
+            SaveSkiaBitmap(skBitmap, "result.png");
 
             AssertImageAreEqual("expected.png", "result.png", true);
         }

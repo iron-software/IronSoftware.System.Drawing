@@ -78,7 +78,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
                 throw new AssertActualExpectedException($"Expected: {expected}", $"Actual: {actual}", $"{assertName} failed.");
         }
 
-        protected void SaveSkiaImage(SkiaSharp.SKBitmap bitmap, string filename, AnyBitmap.ImageFormat imageFormat = AnyBitmap.ImageFormat.Png)
+        protected void SaveSkiaBitmap(SkiaSharp.SKBitmap bitmap, string filename, AnyBitmap.ImageFormat imageFormat = AnyBitmap.ImageFormat.Png)
         {
             SkiaSharp.SKImage image = SkiaSharp.SKImage.FromBitmap(bitmap);
             SaveSkiaImage(image, filename, imageFormat);
