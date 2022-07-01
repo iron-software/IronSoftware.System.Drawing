@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -22,23 +23,45 @@ namespace IronSoftware.Drawing
         {
             get
             {
+#if NETSTANDARD
+                if (IsLoadedType("SixLabors.ImageSharp.Image"))
+                {
+                    try
+                    {
+                        using SixLabors.ImageSharp.Image img = this; // magic implicit cast
+                        return img.Width;
+                    }
+                    catch { }
+                }
+                if (IsLoadedType("System.Drawing.Imaging"))
+                {
+                    try
+                    {
+                        using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
+                        return img.Width;
+                    }
+                    catch { }
+                }
+#else
                 if (IsLoadedType("SkiaSharp.SKImage"))
                 {
-                    using SkiaSharp.SKImage img = this; // magic implicit cast
-                    return img.Width;
+                    try
+                    {
+                        using SkiaSharp.SKImage img = this; // magic implicit cast
+                        return img.Width;
+                    }
+                    catch { }
                 }
-#if NETSTANDARD
-                else if (IsLoadedType("SixLabors.ImageSharp.Image"))
+                if (IsLoadedType("System.Drawing.Imaging"))
                 {
-                    using SixLabors.ImageSharp.Image img = this; // magic implicit cast
-                    return img.Width;
+                    try
+                    {
+                        using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
+                        return img.Width;
+                    }
+                    catch { }
                 }
 #endif
-                else if (IsLoadedType("System.Drawing.Imaging"))
-                {
-                    using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
-                    return img.Width;
-                }
                 return -1;
             }
         }
@@ -50,23 +73,45 @@ namespace IronSoftware.Drawing
         {
             get
             {
+#if NETSTANDARD
+                if (IsLoadedType("SixLabors.ImageSharp.Image"))
+                {
+                    try
+                    {
+                        using SixLabors.ImageSharp.Image img = this; // magic implicit cast
+                        return img.Height;
+                    }
+                    catch { }
+                }
+                if (IsLoadedType("System.Drawing.Imaging"))
+                {
+                    try
+                    {
+                        using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
+                        return img.Height;
+                    }
+                    catch { }
+                }
+#else
                 if (IsLoadedType("SkiaSharp.SKImage"))
                 {
-                    using SkiaSharp.SKImage img = this; // magic implicit cast
-                    return img.Height;
+                    try
+                    {
+                        using SkiaSharp.SKImage img = this; // magic implicit cast
+                        return img.Height;
+                    }
+                    catch { }
                 }
-#if NETSTANDARD
-                else if (IsLoadedType("SixLabors.ImageSharp.Image"))
+                if (IsLoadedType("System.Drawing.Imaging"))
                 {
-                    using SixLabors.ImageSharp.Image img = this; // magic implicit cast
-                    return img.Height;
+                    try
+                    {
+                        using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
+                        return img.Height;
+                    }
+                    catch { }
                 }
 #endif
-                else if (IsLoadedType("System.Drawing.Imaging"))
-                {
-                    using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
-                    return img.Height;
-                }
                 return -1;
             }
         }
@@ -480,7 +525,19 @@ namespace IronSoftware.Drawing
         /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to an SkiaSharp.SKImage.</param>
         static public implicit operator SkiaSharp.SKImage(AnyBitmap bitmap)
         {
-            return SkiaSharp.SKImage.FromBitmap(SkiaSharp.SKBitmap.Decode(bitmap.Binary));
+            SkiaSharp.SKImage result = null;
+            try
+            {
+                result = SkiaSharp.SKImage.FromBitmap(SkiaSharp.SKBitmap.Decode(bitmap.Binary));
+            }
+            catch { }
+
+            if (result != null)
+            {
+                return result;
+            }
+
+            return OpenTiffToSKImage(bitmap);
         }
         /// <summary>
         /// Implicitly casts SkiaSharp.SKBitmap objects to <see cref="AnyBitmap"/>.
@@ -499,8 +556,21 @@ namespace IronSoftware.Drawing
         /// <param name="bitmap"><see cref="AnyBitmap"/> is explicitly cast to an SkiaSharp.SKBitmap.</param>
         static public implicit operator SkiaSharp.SKBitmap(AnyBitmap bitmap)
         {
-            return SkiaSharp.SKBitmap.Decode(bitmap.Binary);
+            SkiaSharp.SKBitmap result = null;
+            try
+            {
+                result = SkiaSharp.SKBitmap.Decode(bitmap.Binary);
+            }
+            catch { }
+
+            if (result != null)
+            {
+                return result;
+            }
+
+            return OpenTiffToSKBitmap(bitmap);
         }
+
 #if NETSTANDARD
         /// <summary>
         /// Implicitly casts Microsoft.Maui.Graphics.Platform.PlatformImage objects to <see cref="AnyBitmap"/>.
@@ -639,7 +709,7 @@ namespace IronSoftware.Drawing
             Default = -1,
         }
 
-        #region Private Method
+#region Private Method
 
         private static PlatformNotSupportedException SystemDotDrawingPlatformNotSupported(Exception innerException)
         {
@@ -683,7 +753,65 @@ namespace IronSoftware.Drawing
             return "image/unknown";
         }
 
-        #endregion
+        private static SkiaSharp.SKImage OpenTiffToSKImage(AnyBitmap anyBitmap)
+        {
+            SkiaSharp.SKBitmap skBitmap = OpenTiffToSKBitmap(anyBitmap);
+            if (skBitmap != null)
+            {
+                return SkiaSharp.SKImage.FromBitmap(skBitmap);
+            }
+
+            return null;
+        }
+
+        private static SkiaSharp.SKBitmap OpenTiffToSKBitmap(AnyBitmap anyBitmap)
+        {
+            try
+            {
+                // create a memory stream out of them
+                MemoryStream tiffStream = new MemoryStream(anyBitmap.Binary);
+
+                // open a TIFF stored in the stream
+                using (var tifImg = BitMiracle.LibTiff.Classic.Tiff.ClientOpen("in-memory", "r", tiffStream, new BitMiracle.LibTiff.Classic.TiffStream()))
+                {
+                    // read the dimensions
+                    var width = tifImg.GetField(BitMiracle.LibTiff.Classic.TiffTag.IMAGEWIDTH)[0].ToInt();
+                    var height = tifImg.GetField(BitMiracle.LibTiff.Classic.TiffTag.IMAGELENGTH)[0].ToInt();
+
+                    // create the bitmap
+                    var bitmap = new SkiaSharp.SKBitmap();
+                    var info = new SkiaSharp.SKImageInfo(width, height);
+
+                    // create the buffer that will hold the pixels
+                    var raster = new int[width * height];
+
+                    // get a pointer to the buffer, and give it to the bitmap
+                    var ptr = System.Runtime.InteropServices.GCHandle.Alloc(raster, System.Runtime.InteropServices.GCHandleType.Pinned);
+                    bitmap.InstallPixels(info, ptr.AddrOfPinnedObject(), info.RowBytes, (addr, ctx) => ptr.Free(), null);
+
+                    // read the image into the memory buffer
+                    if (!tifImg.ReadRGBAImageOriented(width, height, raster, BitMiracle.LibTiff.Classic.Orientation.TOPLEFT))
+                    {
+                        // not a valid TIF image.
+                        return null;
+                    }
+
+                    // swap the red and blue because SkiaSharp may differ from the tiff
+                    if (SkiaSharp.SKImageInfo.PlatformColorType == SkiaSharp.SKColorType.Bgra8888)
+                    {
+                        SkiaSharp.SKSwizzle.SwapRedBlue(ptr.AddrOfPinnedObject(), raster.Length);
+                    }
+
+                    return bitmap;
+                }
+
+            }
+            catch { }
+
+            return anyBitmap;
+        }
+
+#endregion
     }
 }
 

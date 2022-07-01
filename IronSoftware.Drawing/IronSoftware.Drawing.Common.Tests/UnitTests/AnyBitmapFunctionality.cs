@@ -234,6 +234,15 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             anyBitmap.SaveAs("result.png");
 
             AssertImageAreEqual("expected.png", "result.png", true);
+
+            imagePath = GetRelativeFilePath("Sample-Tiff-File-download-for-Testing.tiff");
+            skBitmap = IronSkiasharpBitmap.OpenTiffToSKBitmap(imagePath);
+            anyBitmap = skBitmap;
+
+            SaveSkiaBitmap(skBitmap, "expected.png");
+            anyBitmap.SaveAs("result.png");
+
+            AssertImageAreEqual("expected.png", "result.png", true);
         }
 
         [FactWithAutomaticDisplayName]
@@ -241,6 +250,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
             AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
             SkiaSharp.SKBitmap skBitmap = anyBitmap;
+
+            anyBitmap.SaveAs("expected.png");
+            SaveSkiaBitmap(skBitmap, "result.png");
+
+            AssertImageAreEqual("expected.png", "result.png", true);
+
+            anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("Sample-Tiff-File-download-for-Testing.tiff"));
+            skBitmap = anyBitmap;
 
             anyBitmap.SaveAs("expected.png");
             SaveSkiaBitmap(skBitmap, "result.png");
@@ -259,6 +276,15 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             anyBitmap.SaveAs("result.png");
 
             AssertImageAreEqual("expected.png", "result.png", true);
+
+            imagePath = GetRelativeFilePath("Sample-Tiff-File-download-for-Testing.tiff");
+            skImage = SkiaSharp.SKImage.FromBitmap(IronSkiasharpBitmap.OpenTiffToSKBitmap(imagePath));
+            anyBitmap = skImage;
+
+            SaveSkiaImage(skImage, "expected.png");
+            anyBitmap.SaveAs("result.png");
+
+            AssertImageAreEqual("expected.png", "result.png", true);
         }
 
         [FactWithAutomaticDisplayName]
@@ -266,6 +292,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
             AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
             SkiaSharp.SKImage skImage = anyBitmap;
+
+            anyBitmap.SaveAs("expected.png");
+            SaveSkiaImage(skImage, "result.png");
+
+            AssertImageAreEqual("expected.png", "result.png", true);
+
+            anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("Sample-Tiff-File-download-for-Testing.tiff"));
+            skImage = anyBitmap;
 
             anyBitmap.SaveAs("expected.png");
             SaveSkiaImage(skImage, "result.png");

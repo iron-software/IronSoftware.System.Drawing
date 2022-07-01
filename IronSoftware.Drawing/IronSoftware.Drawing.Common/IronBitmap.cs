@@ -1,5 +1,6 @@
 ﻿using SkiaSharp;
 using System;
+using System.Runtime.InteropServices;
 
 namespace IronSoftware.Drawing
 {
@@ -13,23 +14,28 @@ namespace IronSoftware.Drawing
         /// <return>IronSoftware.Drawing.AnyBitmap.</return>
         public static AnyBitmap Resize(this AnyBitmap bitmap, float scale)
         {
-            SKBitmap originalBitmap = bitmap;
-            SKBitmap toBitmap = new SKBitmap((int)(originalBitmap.Width * scale), (int)(originalBitmap.Height * scale), originalBitmap.ColorType, originalBitmap.AlphaType);
-
-            using (SKCanvas canvas = new SKCanvas(toBitmap))
+            try
             {
-                // Draw a bitmap rescaled
-#if NETFRAMEWORK
-                canvas.SetMatrix(SKMatrix.MakeScale(scale, scale));
-#else
-                canvas.SetMatrix(SKMatrix.CreateScale(scale, scale));
-#endif
-                canvas.DrawBitmap(originalBitmap, 0, 0);
-                canvas.ResetMatrix();
-                canvas.Flush();
-            }
+                SKBitmap originalBitmap = bitmap;
 
-            return toBitmap;
+                if (originalBitmap != null)
+                {
+                    SKBitmap toBitmap = new SKBitmap((int)(originalBitmap.Width * scale), (int)(originalBitmap.Height * scale), originalBitmap.ColorType, originalBitmap.AlphaType);
+
+                    using (SKCanvas canvas = new SKCanvas(toBitmap))
+                    {
+                        canvas.SetMatrix(SKMatrix.CreateScale(scale, scale));
+                        canvas.DrawBitmap(originalBitmap, 0, 0, CreateHighQualityPaint());
+                        canvas.ResetMatrix();
+                        canvas.Flush();
+                    }
+
+                    return toBitmap;
+                }
+            }
+            catch { }
+
+            return bitmap.Clone();
         }
 
         /// <summary>
@@ -41,25 +47,27 @@ namespace IronSoftware.Drawing
         /// <return>IronSoftware.Drawing.AnyBitmap.</return>
         public static AnyBitmap Resize(this AnyBitmap bitmap, int width, int height)
         {
-            SKBitmap originalBitmap = bitmap;
-            SKBitmap toBitmap = new SKBitmap(width, height, originalBitmap.ColorType, originalBitmap.AlphaType);
-
-            float scale = CalculateImageScale(originalBitmap, width, height);
-
-            using (SKCanvas canvas = new SKCanvas(toBitmap))
+            try
             {
-                // Draw a bitmap rescaled
-#if NETFRAMEWORK
-                canvas.SetMatrix(SKMatrix.MakeScale(CalculateScaleOfWidth(originalBitmap, width), CalculateScaleOfHeight(originalBitmap, height)));
-#else
-                canvas.SetMatrix(SKMatrix.CreateScale(CalculateScaleOfWidth(originalBitmap, width), CalculateScaleOfHeight(originalBitmap, height)));
-#endif
-                canvas.DrawBitmap(originalBitmap, 0, 0);
-                canvas.ResetMatrix();
-                canvas.Flush();
-            }
+                SKBitmap originalBitmap = bitmap;
 
-            return toBitmap;
+                if (originalBitmap != null)
+                {
+                    SKBitmap toBitmap = new SKBitmap(width, height, originalBitmap.ColorType, originalBitmap.AlphaType);
+
+                    using (SKCanvas canvas = new SKCanvas(toBitmap))
+                    {
+                        canvas.SetMatrix(SKMatrix.CreateScale(CalculateScaleOfWidth(originalBitmap, width), CalculateScaleOfHeight(originalBitmap, height)));
+                        canvas.DrawBitmap(originalBitmap, 0, 0, CreateHighQualityPaint());
+                        canvas.ResetMatrix();
+                        canvas.Flush();
+                    }
+                    return toBitmap;
+                }
+            }
+            catch { }
+
+            return bitmap.Clone();
         }
 
         /// <summary>
@@ -70,32 +78,37 @@ namespace IronSoftware.Drawing
         /// <return>IronSoftware.Drawing.AnyBitmap.</return>
         public static AnyBitmap CropImage(this AnyBitmap bitmap, CropRectangle cropArea)
         {
-            if (cropArea != null)
+            try
             {
-                SKRect cropRect = ValidateCropArea(bitmap, cropArea);
-                SKBitmap croppedBitmap = new SKBitmap((int)cropRect.Width, (int)cropRect.Height);
+                SKBitmap originalBitmap = bitmap;
 
-                SKRect dest = new SKRect(0, 0, cropRect.Width, cropRect.Height);
-                SKRect source = new SKRect(cropRect.Left, cropRect.Top, cropRect.Right, cropRect.Bottom);
-                try
+                if (cropArea != null && originalBitmap != null)
                 {
-                    using (SKCanvas canvas = new SKCanvas(croppedBitmap))
+                    SKRect cropRect = ValidateCropArea(originalBitmap, cropArea);
+                    SKBitmap croppedBitmap = new SKBitmap((int)cropRect.Width, (int)cropRect.Height);
+
+                    SKRect dest = new SKRect(0, 0, cropRect.Width, cropRect.Height);
+                    SKRect source = new SKRect(cropRect.Left, cropRect.Top, cropRect.Right, cropRect.Bottom);
+
+                    try
                     {
-                        canvas.DrawBitmap(bitmap, source, dest);
-                    }
+                        using (SKCanvas canvas = new SKCanvas(croppedBitmap))
+                        {
+                            canvas.DrawBitmap(originalBitmap, source, dest, CreateHighQualityPaint());
+                        }
 
-                    return croppedBitmap;
-                }
-                catch (OutOfMemoryException)
-                {
-                    try { croppedBitmap.Dispose(); } catch { }
-                    throw new Exception("Crop Rectangle is larger than the input image.");
+                        return croppedBitmap;
+                    }
+                    catch (OutOfMemoryException ex)
+                    {
+                        try { croppedBitmap.Dispose(); } catch { }
+                        throw new Exception("Crop Rectangle is larger than the input image.", ex);
+                    }
                 }
             }
-            else
-            {
-                return bitmap;
-            }
+            catch { }
+
+            return bitmap.Clone();
         }
 
         /// <summary>
@@ -107,11 +120,22 @@ namespace IronSoftware.Drawing
         /// <return>IronSoftware.Drawing.AnyBitmap.</return>
         public static AnyBitmap CropImage(this AnyBitmap bitmap, int width, int height)
         {
-            SKBitmap originalBitmap = bitmap;
-            SKBitmap toBitmap = new SKBitmap(width, height, originalBitmap.ColorType, originalBitmap.AlphaType);
-            originalBitmap.ExtractSubset(toBitmap, new CropRectangle(0, 0, width, height));
+            try
+            {
+                SKBitmap originalBitmap = bitmap;
 
-            return toBitmap;
+                if (originalBitmap != null)
+                {
+                    SKBitmap toBitmap = new SKBitmap(width, height, originalBitmap.ColorType, originalBitmap.AlphaType);
+                    originalBitmap.ExtractSubset(toBitmap, new CropRectangle(0, 0, width, height));
+
+                    return toBitmap;
+                }
+
+            }
+            catch { }
+
+            return bitmap.Clone();
         }
 
         /// <summary>
@@ -122,28 +146,40 @@ namespace IronSoftware.Drawing
         /// <return>IronSoftware.Drawing.AnyBitmap.</return>
         public static AnyBitmap RotateImage(this AnyBitmap bitmap, double? angle = null)
         {
-            double skewAngle = angle ?? (-1 * GetSkewAngle(bitmap));
-            double radians = Math.PI * skewAngle / 180;
-            float sine = (float)Math.Abs(Math.Sin(radians));
-            float cosine = (float)Math.Abs(Math.Cos(radians));
-
-            int originalWidth = ((SKBitmap)bitmap).Width;
-            int originalHeight = ((SKBitmap)bitmap).Height;
-            int rotatedWidth = (int)(cosine * originalWidth + sine * originalHeight);
-            int rotatedHeight = (int)(cosine * originalHeight + sine * originalWidth);
-
-            SKBitmap rotatedBitmap = new SKBitmap(rotatedWidth, rotatedHeight);
-
-            using (SKCanvas canvas = new SKCanvas(rotatedBitmap))
+            try
             {
-                canvas.Clear();
-                canvas.Translate(rotatedWidth / 2, rotatedHeight / 2);
-                canvas.RotateDegrees((float)skewAngle);
-                canvas.Translate(-originalWidth / 2, -originalHeight / 2);
-                canvas.DrawBitmap(bitmap, new SKPoint());
-            }
+                SKBitmap originalBitmap = bitmap;
 
-            return rotatedBitmap;
+                if (originalBitmap != null)
+                {
+                    double skewAngle = angle ?? (-1 * GetSkewAngle(bitmap));
+                    double radians = Math.PI * skewAngle / 180;
+                    float sine = (float)Math.Abs(Math.Sin(radians));
+                    float cosine = (float)Math.Abs(Math.Cos(radians));
+
+                    int originalWidth = (originalBitmap).Width;
+                    int originalHeight = (originalBitmap).Height;
+                    int rotatedWidth = (int)(cosine * originalWidth + sine * originalHeight);
+                    int rotatedHeight = (int)(cosine * originalHeight + sine * originalWidth);
+
+                    SKBitmap rotatedBitmap = new SKBitmap(rotatedWidth, rotatedHeight);
+
+                    using (SKCanvas canvas = new SKCanvas(rotatedBitmap))
+                    {
+                        canvas.Clear();
+                        canvas.Translate(rotatedWidth / 2, rotatedHeight / 2);
+                        canvas.RotateDegrees((float)skewAngle);
+                        canvas.Translate(-originalWidth / 2, -originalHeight / 2);
+                        canvas.DrawBitmap(originalBitmap, new SKPoint(), CreateHighQualityPaint());
+                    }
+
+                    return rotatedBitmap;
+                }
+            }
+            catch (PlatformNotSupportedException e) { throw e; }
+            catch { }
+
+            return bitmap.Clone();
         }
 
         /// <summary>
@@ -163,24 +199,36 @@ namespace IronSoftware.Drawing
         /// </summary>
         /// <param name="bitmap">Original bitmap to trim.</param>
         /// <return>IronSoftware.Drawing.AnyBitmap.</return>
-        public static SKBitmap Trim(this AnyBitmap bitmap)
+        public static AnyBitmap Trim(this AnyBitmap bitmap)
         {
-
             try
             {
                 SKBitmap originalBitmap = bitmap;
 
-                int newLeft = DetermineLeft(originalBitmap);
-                int newRight = DetermineRight(originalBitmap);
-                int newBottom = DetermineBottom(originalBitmap);
-                int newTop = DetermineTop(originalBitmap);
+                if (originalBitmap != null)
+                {
+                    int[] rgbValues = new int[originalBitmap.Height * originalBitmap.Width];
+                    Marshal.Copy(originalBitmap.GetPixels(), rgbValues, 0, rgbValues.Length);
 
-                return CropImage(bitmap, new SKRect(newLeft, newTop, newRight, newBottom));
+                    int left = originalBitmap.Width;
+                    int top = originalBitmap.Height;
+                    int right = 0;
+                    int bottom = 0;
+
+                    DetermineTop(originalBitmap, rgbValues, ref left, ref top, ref right, ref bottom);
+                    DetermineBottom(originalBitmap, rgbValues, ref left, ref right, ref bottom);
+
+                    if (bottom > top)
+                    {
+                        DetermineLeftAndRight(originalBitmap, rgbValues, ref left, top, ref right, bottom);
+                    }
+
+                    return CropImage(originalBitmap, new SKRect(left, top, right, bottom));
+                }
             }
-            catch
-            {
-                return bitmap.Clone();
-            }
+            catch { }
+
+            return bitmap.Clone();
         }
 
         /// <summary>
@@ -192,22 +240,30 @@ namespace IronSoftware.Drawing
         /// <return>IronSoftware.Drawing.AnyBitmap.</return>
         public static AnyBitmap AddBorder(this AnyBitmap bitmap, IronSoftware.Drawing.Color color, int width)
         {
-            SKBitmap originalBitmap = bitmap;
-            int maxWidth = originalBitmap.Width + width * 2;
-            int maxHeight = originalBitmap.Height + width * 2;
-            SKBitmap toBitmap = new SKBitmap(maxWidth, maxHeight);
-
-            float scale = CalculateImageScale(originalBitmap, maxWidth, maxHeight);
-
-            using (SKCanvas canvas = new SKCanvas(toBitmap))
+            try
             {
-                canvas.Clear(color);
-                SKRect dest = new SKRect(width, width, width + originalBitmap.Width, width + originalBitmap.Height);
-                canvas.DrawBitmap(originalBitmap, dest);
-                canvas.Flush();
-            }
+                SKBitmap originalBitmap = bitmap;
 
-            return toBitmap;
+                if (originalBitmap != null)
+                {
+                    int maxWidth = originalBitmap.Width + width * 2;
+                    int maxHeight = originalBitmap.Height + width * 2;
+                    SKBitmap toBitmap = new SKBitmap(maxWidth, maxHeight);
+
+                    using (SKCanvas canvas = new SKCanvas(toBitmap))
+                    {
+                        canvas.Clear(color);
+                        SKRect dest = new SKRect(width, width, width + originalBitmap.Width, width + originalBitmap.Height);
+                        canvas.DrawBitmap(originalBitmap, dest, CreateHighQualityPaint());
+                        canvas.Flush();
+                    }
+
+                    return toBitmap;
+                }
+            }
+            catch { }
+
+            return bitmap.Clone();
         }
 
         #region Private Method
@@ -238,105 +294,94 @@ namespace IronSoftware.Drawing
             return new CropRectangle(cropAreaX, cropAreaY, newWidth, newHeight);
         }
 
-        private static bool DifferentColor(Color source, Color target)
+        private static void DetermineLeftAndRight(SKBitmap originalBitmap, int[] rgbValues, ref int left, int top, ref int right, int bottom)
         {
-            return !IsTransparent(source) && (source.R != target.R || source.G != target.G || source.B != target.B || source.A != target.A);
-        }
-
-        private static bool IsTransparent(Color source)
-        {
-            return (SKColor)source == SKColors.Transparent;
-        }
-
-        private static int DetermineRight(SKBitmap originalBitmap)
-        {
-            int result = -1;
-            for (int x = originalBitmap.Width - 1; x >= 0; x--)
+            for (int r = top + 1; r < bottom; r++)
             {
-                for (int y = 0; y < originalBitmap.Height; y++)
+                DetermineLeft(originalBitmap, rgbValues, ref left, r);
+                DetermineRight(originalBitmap, rgbValues, ref right, r);
+            }
+        }
+
+        private static void DetermineRight(SKBitmap originalBitmap, int[] rgbValues, ref int right, int r)
+        {
+            for (int c = originalBitmap.Width - 1; c > right; c--)
+            {
+                int color = rgbValues[r * originalBitmap.Width + c] & 0xffffff;
+                if (color != 0xffffff)
                 {
-                    SKColor color = originalBitmap.GetPixel(x, y);
-                    if (color != SKColors.White)
+                    if (right < c)
                     {
-                        result = x;
+                        right = c;
                         break;
                     }
                 }
-                if (result != -1)
-                    break;
             }
-
-            return result;
         }
 
-        private static int DetermineLeft(SKBitmap originalBitmap)
+        private static void DetermineLeft(SKBitmap originalBitmap, int[] rgbValues, ref int left, int r)
         {
-            int result = -1;
-            for (int x = 0; x < originalBitmap.Width; x++)
+            for (int c = 0; c < left; c++)
             {
-                for (int y = 0; y < originalBitmap.Height; y++)
+                int color = rgbValues[r * originalBitmap.Width + c] & 0xffffff;
+                if (color != 0xffffff)
                 {
-                    SKColor color = originalBitmap.GetPixel(x, y);
-                    if (DifferentColor(color, Color.White))
+                    if (left > c)
                     {
-                        result = x;
+                        left = c;
                         break;
                     }
                 }
-                if (result != -1)
-                    break;
             }
-
-            return result;
         }
 
-        private static int DetermineTop(SKBitmap originalBitmap)
+        private static void DetermineBottom(SKBitmap originalBitmap, int[] rgbValues, ref int left, ref int right, ref int bottom)
         {
-            int newTop = -1;
-            for (int y = originalBitmap.Height - 1; y >= 0; y--)
+            for (int i = rgbValues.Length - 1; i >= 0; i--)
             {
-                for (int x = 0; x < originalBitmap.Width; x++)
+                int color = rgbValues[i] & 0xffffff;
+                if (color != 0xffffff)
                 {
-                    SKColor color = originalBitmap.GetPixel(x, y);
-                    if (DifferentColor(color, Color.White))
-                    {
-                        newTop = y;
-                        break;
-                    }
-                }
-                if (newTop != -1)
-                    break;
-            }
+                    int r = i / originalBitmap.Width;
+                    int c = i % originalBitmap.Width;
 
-            return newTop;
+                    if (left > c)
+                    {
+                        left = c;
+                    }
+                    if (right < c)
+                    {
+                        right = c;
+                    }
+                    bottom = r;
+                    break;
+                }
+            }
         }
 
-        private static int DetermineBottom(SKBitmap originalBitmap)
+        private static void DetermineTop(SKBitmap originalBitmap, int[] rgbValues, ref int left, ref int top, ref int right, ref int bottom)
         {
-            int newBottom = -1;
-            for (int y = 0; y < originalBitmap.Height; y++)
+            for (int i = 0; i < rgbValues.Length; i++)
             {
-                for (int x = 0; x < originalBitmap.Width; x++)
+                int color = rgbValues[i] & 0xffffff;
+                if (color != 0xffffff)
                 {
-                    SKColor color = originalBitmap.GetPixel(x, y);
-                    if (DifferentColor(color, Color.White))
+                    int r = i / originalBitmap.Width;
+                    int c = i % originalBitmap.Width;
+
+                    if (left > c)
                     {
-                        newBottom = y;
-                        break;
+                        left = c;
                     }
-                }
-                if (newBottom != -1)
+                    if (right < c)
+                    {
+                        right = c;
+                    }
+                    bottom = r;
+                    top = r;
                     break;
+                }
             }
-
-            return newBottom;
-        }
-
-        private static float CalculateImageScale(SKBitmap originalBitmap, int width, int height)
-        {
-            float ratioX = CalculateScaleOfWidth(originalBitmap, width);
-            float ratioY = CalculateScaleOfHeight(originalBitmap, height);
-            return Math.Min(ratioX, ratioY);
         }
 
         private static float CalculateScaleOfWidth(SKBitmap originalBitmap, int width)
@@ -369,6 +414,45 @@ namespace IronSoftware.Drawing
             image.Dispose();
 
             return angle;
+        }
+
+        private static SKPaint CreateHighQualityPaint()
+        {
+            return new SKPaint()
+            {
+                FilterQuality = SKFilterQuality.High
+            };
+        }
+
+        private static SKBitmap CropImage(SKBitmap skBitmap, CropRectangle cropArea)
+        {
+            if (cropArea != null)
+            {
+                SKRect cropRect = ValidateCropArea(skBitmap, cropArea);
+                SKBitmap croppedBitmap = new SKBitmap((int)cropRect.Width, (int)cropRect.Height);
+
+                SKRect dest = new SKRect(0, 0, cropRect.Width, cropRect.Height);
+                SKRect source = new SKRect(cropRect.Left, cropRect.Top, cropRect.Right, cropRect.Bottom);
+
+                try
+                {
+                    using (SKCanvas canvas = new SKCanvas(croppedBitmap))
+                    {
+                        canvas.DrawBitmap(skBitmap, source, dest, CreateHighQualityPaint());
+                    }
+
+                    return croppedBitmap;
+                }
+                catch (OutOfMemoryException)
+                {
+                    try { croppedBitmap.Dispose(); } catch { }
+                    throw new Exception("Crop Rectangle is larger than the input image.");
+                }
+            }
+            else
+            {
+                return skBitmap;
+            }
         }
 
         #endregion

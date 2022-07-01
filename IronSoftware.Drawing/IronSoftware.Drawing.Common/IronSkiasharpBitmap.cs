@@ -1,5 +1,7 @@
-﻿using SkiaSharp;
+﻿using BitMiracle.LibTiff.Classic;
+using SkiaSharp;
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace IronSoftware.Drawing
@@ -224,6 +226,56 @@ namespace IronSoftware.Drawing
             else
             {
                 throw new Exception("Please provide a bitmap to process.");
+            }
+        }
+
+        public static SkiaSharp.SKBitmap OpenTiffToSKBitmap(string imagePath)
+{
+            return OpenTiffToSKBitmap(new MemoryStream(File.ReadAllBytes(imagePath)));
+        }
+
+        public static SkiaSharp.SKBitmap OpenTiffToSKBitmap(MemoryStream tiffStream)
+        {
+            try
+            {
+                // open a TIFF stored in the stream
+                using (var tifImg = BitMiracle.LibTiff.Classic.Tiff.ClientOpen("in-memory", "r", tiffStream, new BitMiracle.LibTiff.Classic.TiffStream()))
+                {
+                    // read the dimensions
+                    var width = tifImg.GetField(BitMiracle.LibTiff.Classic.TiffTag.IMAGEWIDTH)[0].ToInt();
+                    var height = tifImg.GetField(BitMiracle.LibTiff.Classic.TiffTag.IMAGELENGTH)[0].ToInt();
+
+                    // create the bitmap
+                    var bitmap = new SkiaSharp.SKBitmap();
+                    var info = new SkiaSharp.SKImageInfo(width, height);
+
+                    // create the buffer that will hold the pixels
+                    var raster = new int[width * height];
+
+                    // get a pointer to the buffer, and give it to the bitmap
+                    var ptr = System.Runtime.InteropServices.GCHandle.Alloc(raster, System.Runtime.InteropServices.GCHandleType.Pinned);
+                    bitmap.InstallPixels(info, ptr.AddrOfPinnedObject(), info.RowBytes, (addr, ctx) => ptr.Free(), null);
+
+                    // read the image into the memory buffer
+                    if (!tifImg.ReadRGBAImageOriented(width, height, raster, BitMiracle.LibTiff.Classic.Orientation.TOPLEFT))
+                    {
+                        // not a valid TIF image.
+                        return null;
+                    }
+
+                    // swap the red and blue because SkiaSharp may differ from the tiff
+                    if (SkiaSharp.SKImageInfo.PlatformColorType == SkiaSharp.SKColorType.Bgra8888)
+                    {
+                        SkiaSharp.SKSwizzle.SwapRedBlue(ptr.AddrOfPinnedObject(), raster.Length);
+                    }
+
+                    return bitmap;
+                }
+
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
         }
 
