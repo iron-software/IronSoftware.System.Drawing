@@ -231,7 +231,7 @@ namespace IronSoftware.Drawing
         }
 
         public static SkiaSharp.SKBitmap OpenTiffToSKBitmap(string imagePath)
-{
+        {
             return OpenTiffToSKBitmap(new MemoryStream(File.ReadAllBytes(imagePath)));
         }
 
