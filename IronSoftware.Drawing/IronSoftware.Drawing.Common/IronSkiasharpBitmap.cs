@@ -232,7 +232,12 @@ namespace IronSoftware.Drawing
 
         public static SkiaSharp.SKBitmap OpenTiffToSKBitmap(string imagePath)
         {
-            return OpenTiffToSKBitmap(new MemoryStream(File.ReadAllBytes(imagePath)));
+            return OpenTiffToSKBitmap(File.ReadAllBytes(imagePath));
+        }
+
+        public static SkiaSharp.SKBitmap OpenTiffToSKBitmap(byte[] bytes)
+        {
+            return OpenTiffToSKBitmap(new MemoryStream(bytes));
         }
 
         public static SkiaSharp.SKBitmap OpenTiffToSKBitmap(MemoryStream tiffStream)

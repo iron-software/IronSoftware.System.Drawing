@@ -243,6 +243,29 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             anyBitmap.SaveAs("result.png");
 
             AssertImageAreEqual("expected.png", "result.png", true);
+
+            byte[] bytes = File.ReadAllBytes(imagePath);
+            skBitmap = IronSkiasharpBitmap.OpenTiffToSKBitmap(bytes);
+            anyBitmap = skBitmap;
+
+            SaveSkiaBitmap(skBitmap, "expected.png");
+            anyBitmap.SaveAs("result.png");
+
+            AssertImageAreEqual("expected.png", "result.png", true);
+
+            MemoryStream memStream = new MemoryStream();
+            using (FileStream fs = File.OpenRead(imagePath))
+            {
+                fs.CopyTo(memStream);
+                memStream.Position = 0;
+            }
+            skBitmap = IronSkiasharpBitmap.OpenTiffToSKBitmap(memStream);
+            anyBitmap = skBitmap;
+
+            SaveSkiaBitmap(skBitmap, "expected.png");
+            anyBitmap.SaveAs("result.png");
+
+            AssertImageAreEqual("expected.png", "result.png", true);
         }
 
         [FactWithAutomaticDisplayName]
