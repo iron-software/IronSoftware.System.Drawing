@@ -241,35 +241,44 @@ namespace IronSoftware.Drawing
             {
                 using SkiaSharp.SKImage img = this; // magic implicit cast
 
-                var encoding = (SkiaSharp.SKEncodedImageFormat)((int)Format);
-
-                var skdata = img.Encode(encoding, Lossy);
-
-                skdata.SaveTo(Stream);
-                return;
+                if (Format == ImageFormat.Gif || Format == ImageFormat.Tiff || Format == ImageFormat.Bmp)
+                {
+                    var writer = new BinaryWriter(Stream);
+                    writer.Write(Binary);
+                    return;
+                }
+                else
+                {
+                    var skdata = img.Encode((SkiaSharp.SKEncodedImageFormat)((int)Format), Lossy);
+                    skdata.SaveTo(Stream);
+                    return;
+                }
             }
 #if NETSTANDARD
-            else if (IsLoadedType("SixLabors.ImageSharp.Image"))
+            if (IsLoadedType("SixLabors.ImageSharp.Image"))
             {
                 using SixLabors.ImageSharp.Image img = this; // magic implicit cast
 
-                SixLabors.ImageSharp.Formats.IImageEncoder enc;
-                switch (Format)
+                if (img != null)
                 {
-                    case ImageFormat.Jpeg: enc = new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder() { Quality = Lossy }; break;
-                    case ImageFormat.Gif: enc = new SixLabors.ImageSharp.Formats.Gif.GifEncoder(); break;
-                    case ImageFormat.Png: enc = new SixLabors.ImageSharp.Formats.Png.PngEncoder(); break;
-                    case ImageFormat.Webp: enc = new SixLabors.ImageSharp.Formats.Webp.WebpEncoder() { Quality = Lossy }; break;
-                    case ImageFormat.Tiff: enc = new SixLabors.ImageSharp.Formats.Tiff.TiffEncoder(); break;
+                    SixLabors.ImageSharp.Formats.IImageEncoder enc;
+                    switch (Format)
+                    {
+                        case ImageFormat.Jpeg: enc = new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder() { Quality = Lossy }; break;
+                        case ImageFormat.Gif: enc = new SixLabors.ImageSharp.Formats.Gif.GifEncoder(); break;
+                        case ImageFormat.Png: enc = new SixLabors.ImageSharp.Formats.Png.PngEncoder(); break;
+                        case ImageFormat.Webp: enc = new SixLabors.ImageSharp.Formats.Webp.WebpEncoder() { Quality = Lossy }; break;
+                        case ImageFormat.Tiff: enc = new SixLabors.ImageSharp.Formats.Tiff.TiffEncoder(); break;
 
-                    default: enc = new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder(); break;
+                        default: enc = new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder(); break;
+                    }
+
+                    img.Save(Stream, enc);
+                    return;
                 }
-
-            img.Save(Stream, enc);
-                return;
             }
 #endif
-            else if (IsLoadedType("System.Drawing.Imaging"))
+            if (IsLoadedType("System.Drawing.Bitmap"))
             {
                 using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
 
@@ -329,7 +338,7 @@ namespace IronSoftware.Drawing
         /// <seealso cref="TrySaveAs(string)"/>
         public void SaveAs(string File, ImageFormat Format, int Lossy = 100)
         {
-            System.IO.File.WriteAllBytes(File, Binary);
+            System.IO.File.WriteAllBytes(File, ExportBytes(Format, Lossy));
         }
 
         /// <summary>
