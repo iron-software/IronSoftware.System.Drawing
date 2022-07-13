@@ -34,7 +34,7 @@ stages:
         continueOnError: true
         inputs:
           command: 'restore'
-          projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.CommonLibraries.sln'
+          projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
           verbosityRestore: Minimal
           feedsToUse: 'config'
           nugetConfigPath: '$(Build.SourcesDirectory)/IronSoftware.Drawing/nuget.config'
@@ -42,7 +42,7 @@ stages:
         displayName: Build Drawing Libraries Solution
         inputs:
           command: 'build'
-          projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.CommonLibraries.sln'
+          projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
           arguments: '--configuration $(Configuration) --no-restore --verbosity normal'
           versioningScheme: byEnvVar
           versionEnvVar: AssemblyVersion
