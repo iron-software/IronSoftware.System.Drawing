@@ -70,7 +70,7 @@ stages:
   pool:
     vmImage: 'windows-latest'
   displayName: Execute Windows Tests
-  dependsOn: BuildCommonLibraries
+  dependsOn: BuildDrawingLibraries
   jobs:
   # Windows x64 Tests
   - job: Windowsx64Tests
@@ -150,7 +150,7 @@ stages:
   pool:
     vmImage: 'ubuntu-18.04'
   displayName: Execute Linux Tests
-  dependsOn: BuildCommonLibraries
+  dependsOn: BuildDrawingLibraries
   jobs:
   - job: LinuxNetCoreTests
     steps:
@@ -193,7 +193,7 @@ stages:
   pool:
     vmImage: 'macOS-10.15'
   displayName: Execute MacOs Tests
-  dependsOn: BuildCommonLibraries
+  dependsOn: BuildDrawingLibraries
   jobs:
   - job: MacOsNetCoreTests
     steps:
