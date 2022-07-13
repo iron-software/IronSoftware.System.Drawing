@@ -58,7 +58,7 @@ steps:
   inputs:
     command: 'test'
     projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
-    arguments: '-s IronDrawingTests/tests.runsettings --configuration "$(buildConfiguration)" -f "net472" --verbosity n --no-build'
+    arguments: '-s $(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/tests.runsettings --configuration "$(buildConfiguration)" -f "net472" --verbosity n --no-build'
     testRunTitle: 'Execute Unit Tests'
 
 - task: DotNetCoreCLI@2
@@ -66,7 +66,7 @@ steps:
   inputs:
     command: 'test'
     projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
-    arguments: '-s IronDrawingTests/tests.x86.runsettings --configuration "$(buildConfiguration)" -f "net472" --verbosity n --no-build'
+    arguments: '-s $(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/tests.x86.runsettings --configuration "$(buildConfiguration)" -f "net472" --verbosity n --no-build'
     testRunTitle: 'Execute Unit Tests'
 
 - task: DotNetCoreCLI@2
