@@ -211,7 +211,7 @@ stages:
         arguments: '-s IronDrawingTests/tests.runsettings --framework "net60" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net60\testhost.log"'
         testRunTitle: 'Linux (.NET 6.0) Tests'
         publishTestResults: true
-  - job: LinuxNet60Tests
+  - job: LinuxNet70Tests
     steps:
     - checkout: none
     - task: DownloadPipelineArtifact@2
