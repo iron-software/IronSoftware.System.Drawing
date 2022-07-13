@@ -62,7 +62,7 @@ stages:
       - task: PublishPipelineArtifact@1
         displayName: Publish IronDrawing Assemblies
         inputs:
-          targetPath: '$(Build.SourcesDirectory)/IronSoftware.Drawing/bin/$(Configuration)'
+          targetPath: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common/bin/$(Configuration)'
           artifact: 'IronDrawingAssemblies'
           publishLocation: 'pipeline'
       - task: PublishPipelineArtifact@1
