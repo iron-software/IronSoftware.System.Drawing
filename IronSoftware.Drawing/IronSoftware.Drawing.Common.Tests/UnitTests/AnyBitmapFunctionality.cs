@@ -66,6 +66,15 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void Create_SVG_AnyBitmap()
+        {
+            string imagePath = GetRelativeFilePath("Example_barcode.svg");
+            AnyBitmap bitmap = AnyBitmap.FromFile(imagePath);
+            bitmap.SaveAs("result.bmp");
+            AssertImageAreEqual(imagePath, "result.bmp");
+        }
+
+        [FactWithAutomaticDisplayName]
         public void Try_Save_Bitmap_with_Format()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");

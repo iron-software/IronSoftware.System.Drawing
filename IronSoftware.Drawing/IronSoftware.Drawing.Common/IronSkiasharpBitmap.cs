@@ -309,6 +309,22 @@ namespace IronSoftware.Drawing
             return result;
         }
 
+        internal static SkiaSharp.SKBitmap DecodeSVG(string strInput)
+        {
+            SkiaSharp.Extended.Svg.SKSvg svg = new SkiaSharp.Extended.Svg.SKSvg();
+            svg.Load(strInput);
+
+            SkiaSharp.SKBitmap toBitmap = new SkiaSharp.SKBitmap((int)svg.Picture.CullRect.Width, (int)svg.Picture.CullRect.Height);
+            using (SkiaSharp.SKCanvas canvas = new SkiaSharp.SKCanvas(toBitmap))
+            {
+                canvas.Clear(SKColors.White);
+                canvas.DrawPicture(svg.Picture);
+                canvas.Flush();
+            }
+
+            return toBitmap;
+        }
+
         #region Private Method
 
         private static CropRectangle ValidateCropArea(SKBitmap img, CropRectangle CropArea)

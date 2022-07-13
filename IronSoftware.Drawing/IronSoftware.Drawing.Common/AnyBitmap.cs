@@ -23,6 +23,15 @@ namespace IronSoftware.Drawing
         {
             get
             {
+                if (IsLoadedType("SkiaSharp.SKImage"))
+                {
+                    try
+                    {
+                        using SkiaSharp.SKImage img = this; // magic implicit cast
+                        return img.Width;
+                    }
+                    catch { }
+                }
 #if NETSTANDARD
                 if (IsLoadedType("SixLabors.ImageSharp.Image"))
                 {
@@ -42,16 +51,7 @@ namespace IronSoftware.Drawing
                     }
                     catch { }
                 }
-#else
-                if (IsLoadedType("SkiaSharp.SKImage"))
-                {
-                    try
-                    {
-                        using SkiaSharp.SKImage img = this; // magic implicit cast
-                        return img.Width;
-                    }
-                    catch { }
-                }
+#else                
                 if (IsLoadedType("System.Drawing.Imaging"))
                 {
                     try
@@ -73,6 +73,15 @@ namespace IronSoftware.Drawing
         {
             get
             {
+                if (IsLoadedType("SkiaSharp.SKImage"))
+                {
+                    try
+                    {
+                        using SkiaSharp.SKImage img = this; // magic implicit cast
+                        return img.Height;
+                    }
+                    catch { }
+                }
 #if NETSTANDARD
                 if (IsLoadedType("SixLabors.ImageSharp.Image"))
                 {
@@ -93,15 +102,6 @@ namespace IronSoftware.Drawing
                     catch { }
                 }
 #else
-                if (IsLoadedType("SkiaSharp.SKImage"))
-                {
-                    try
-                    {
-                        using SkiaSharp.SKImage img = this; // magic implicit cast
-                        return img.Height;
-                    }
-                    catch { }
-                }
                 if (IsLoadedType("System.Drawing.Imaging"))
                 {
                     try
@@ -277,7 +277,7 @@ namespace IronSoftware.Drawing
                     return;
                 }
             }
-#endif
+#else
             if (IsLoadedType("System.Drawing.Bitmap"))
             {
                 using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
@@ -312,7 +312,7 @@ namespace IronSoftware.Drawing
 
                 return;
             }
-
+#endif
             throw NoConverterException(Format, null);
         }
 
@@ -476,7 +476,14 @@ namespace IronSoftware.Drawing
         /// <seealso cref="AnyBitmap"/>
         public static AnyBitmap FromFile(string File)
         {
-            return new AnyBitmap(File);
+            if (File.ToLower().EndsWith(".svg"))
+            {
+                return new AnyBitmap(IronSkiasharpBitmap.DecodeSVG(File).Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray());
+            }
+            else
+            {
+                return new AnyBitmap(File);
+            }
         }
 
         /// <summary>

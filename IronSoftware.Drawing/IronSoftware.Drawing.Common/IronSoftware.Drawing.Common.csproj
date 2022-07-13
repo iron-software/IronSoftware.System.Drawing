@@ -3,10 +3,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;net462</TargetFrameworks>
 		<LangVersion>8</LangVersion>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<AssemblyVersion>2022.6.9</AssemblyVersion>
-		<FileVersion>2022.6.9</FileVersion>
-		<Version>2022.6.9</Version>
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>IronSoftware.Drawing.Common.snk</AssemblyOriginatorKeyFile>
 	</PropertyGroup>
@@ -30,6 +27,7 @@
 		<PackageReference Include="SixLabors.ImageSharp" Version="2.1.3" PrivateAssets="all" Condition="'$(TargetFramework)'=='netstandard2.0'" />
 		<PackageReference Include="SkiaSharp" Version="2.88.0" Condition="'$(TargetFramework)'=='netstandard2.0'" />
 		<PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.88.0" />
+		<PackageReference Include="SkiaSharp.Svg" Version="1.60.0" />
 		<PackageReference Include="System.Drawing.Common" Version="5.0.0" PrivateAssets="all" />
 	</ItemGroup>
 
