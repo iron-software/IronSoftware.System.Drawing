@@ -21,7 +21,7 @@ steps:
   lfs: true
 
 - task: UseDotNet@2
-  displayName: 'Use .Net70 Core sdk'
+  displayName: 'Use .NET70 Core sdk'
   inputs:
     packageType: 'sdk'
     version: '7.x'
@@ -54,15 +54,23 @@ steps:
     versionEnvVar: AssemblyVersion
 
 - task: DotNetCoreCLI@2
-  displayName: Execute .Net472 Unit Tests
+  displayName: Execute .NET472 (x64) Unit Tests
   inputs:
     command: 'test'
     projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
-    arguments: '--configuration "$(buildConfiguration)" -f "net472" --verbosity n --no-build'
+    arguments: '-s IronDrawingTests/tests.runsettings --configuration "$(buildConfiguration)" -f "net472" --verbosity n --no-build'
     testRunTitle: 'Execute Unit Tests'
 
 - task: DotNetCoreCLI@2
-  displayName: Execute .Net70 Unit Tests
+  displayName: Execute .NET472 (x86) Unit Tests
+  inputs:
+    command: 'test'
+    projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
+    arguments: '-s IronDrawingTests/tests.x86.runsettings --configuration "$(buildConfiguration)" -f "net472" --verbosity n --no-build'
+    testRunTitle: 'Execute Unit Tests'
+
+- task: DotNetCoreCLI@2
+  displayName: Execute .NET70 Unit Tests
   inputs:
     command: 'test'
     projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
@@ -70,14 +78,14 @@ steps:
     testRunTitle: 'Execute Unit Tests'
 
 - task: UseDotNet@2
-  displayName: 'Use .Net50 Core sdk'
+  displayName: 'Use .NET50 Core sdk'
   inputs:
     packageType: 'sdk'
     version: '5.x'
 
 - task: DotNetCoreCLI@2
   name: UnitTestsNet50
-  displayName: Execute .Net50 Unit Tests
+  displayName: Execute .NET50 Unit Tests
   inputs:
     command: 'test'
     projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
@@ -85,13 +93,13 @@ steps:
     testRunTitle: 'Execute Unit Tests'
 
 - task: UseDotNet@2
-  displayName: 'Use .Net60 Core sdk'
+  displayName: 'Use .NET60 Core sdk'
   inputs:
     packageType: 'sdk'
     version: '6.x'
 
 - task: DotNetCoreCLI@2
-  displayName: Execute .Net60 Unit Tests
+  displayName: Execute .NET60 Unit Tests
   inputs:
     command: 'test'
     projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'

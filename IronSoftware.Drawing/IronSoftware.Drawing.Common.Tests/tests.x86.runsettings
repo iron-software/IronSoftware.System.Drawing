@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RunSettings>
     <RunConfiguration>
+	    <EnvironmentVariables>
+		    <IronSoftware.Drawing.Common.Tests.DataFolder>../../../Data</IronSoftware.Drawing.Common.Tests.DataFolder>
+	    </EnvironmentVariables>
         <MaxCpuCount>1</MaxCpuCount>
         <TargetPlatform>x86</TargetPlatform>
         <TreatNoTestsAsError>true</TreatNoTestsAsError>
