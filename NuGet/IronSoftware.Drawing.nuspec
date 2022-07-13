@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>IronSoftware.Drawing</id>
+    <version>$version$</version>
+    <title>IronSoftware.Drawing</title>
+    <authors>https://ironsoftware.com/</authors>
+    <owners></owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>IronSoftware.Drawing</description>
+    <summary>IronSoftware.Drawing</summary>
+    <releaseNotes>IronSoftware.Drawing</releaseNotes>
+    <copyright>Copyright https://ironpdf.com 2017-2021</copyright>
+    <tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, Tiff, Gif, Jpeg, Png, Color, Rectangle, Drawing, C#, VB.NET, aspx, create, render, generate, standard, netstandard2.0, core, netcore</tags>
+  </metadata>
+  <files>
+    <!-- Deployment -->
+    <file src=".\IronSoftware.Drawing.targets" target="build\netstandard" />
+    <file src=".\IronSoftware.Drawing.targets" target="build\net" />
+    <!-- Assemblies -->
+    <file src="..\bin\$configuration$\net462\**" target="lib\net462\" />
+    <file src="..\bin\$configuration$\netstandard2.0\**" target="lib\netstandard2.0\" />
+  </files>
+</package>
