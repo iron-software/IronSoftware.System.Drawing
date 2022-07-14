@@ -28,7 +28,7 @@ stages:
         displayName: Checkout IronSoftware.Drawing repository
         lfs: true
       - task: UseDotNet@2
-        displayName: 'Use .NET Core sdk'
+        displayName: 'Install .NET7.0 sdk'
         inputs:
           packageType: 'sdk'
           version: '7.0.x'
