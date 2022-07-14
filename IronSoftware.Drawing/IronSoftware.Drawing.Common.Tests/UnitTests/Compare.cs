@@ -103,5 +103,24 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             memStream.CopyTo(fileStream);
         }
 #endif
+
+        protected bool IsGrayScale(SkiaSharp.SKBitmap image)
+        {
+            bool res = true;
+            for (int i = 0; i < image.Width; i++)
+            {
+                for (int j = 0; j < image.Height; j++)
+                {
+                    SkiaSharp.SKColor color = image.GetPixel(i, j);
+
+                    if (color.Alpha != 0 && (color.Red != color.Green || color.Green != color.Blue))
+                    {
+                        res = false;
+                        break;
+                    }
+                }
+            }
+            return res;
+        }
     }
 }

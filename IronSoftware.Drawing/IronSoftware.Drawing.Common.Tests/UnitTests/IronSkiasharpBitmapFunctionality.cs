@@ -154,5 +154,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             bitmap.Dispose();
 
         }
+
+        [FactWithAutomaticDisplayName]
+        public void GrayScale_SKBitmap()
+        {
+            string imagePath = GetRelativeFilePath(@"mountainclimbers.jpg");
+            SkiaSharp.SKBitmap bitmap = SkiaSharp.SKBitmap.Decode(imagePath);
+            SkiaSharp.SKBitmap result = bitmap.GrayScale();
+            IsGrayScale(result).Should().BeTrue();
+        }
     }
 }

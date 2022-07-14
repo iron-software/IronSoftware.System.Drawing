@@ -169,11 +169,12 @@ namespace IronSoftware.Drawing
 
         public static double GetSkewAngle(this SKBitmap bitmap, int? MaxAngle = null)
         {
-            SKBitmap toBitmap = new SKBitmap(bitmap.Info);
+            SKBitmap grayScale = bitmap.GrayScale();
+            SKBitmap toBitmap = new SKBitmap(grayScale.Info);
 
             using (SKCanvas canvas = new SKCanvas(toBitmap))
             {
-                canvas.DrawBitmap(bitmap, new SKPoint(), CreateHighQualityPaint());
+                canvas.DrawBitmap(grayScale, new SKPoint(), CreateHighQualityPaint());
                 return SkewImageLib.GetSkewAngle(toBitmap);
             }
         }
@@ -319,6 +320,31 @@ namespace IronSoftware.Drawing
             bitmap.Dispose();
 
             return result;
+        }
+
+        public static SkiaSharp.SKBitmap GrayScale(this SkiaSharp.SKBitmap bitmap)
+        {
+            SKImageInfo info = new SKImageInfo(bitmap.Width, bitmap.Height);
+            SKBitmap toBitmap = new SKBitmap(info);
+
+            using (SKPaint paint = new SKPaint())
+            {
+                paint.ColorFilter =
+                    SKColorFilter.CreateColorMatrix(new float[]
+                    {
+                    0.21f, 0.72f, 0.07f, 0, 0,
+                    0.21f, 0.72f, 0.07f, 0, 0,
+                    0.21f, 0.72f, 0.07f, 0, 0,
+                    0,     0,     0,     1, 0
+                    });
+
+                using (SKCanvas canvas = new SKCanvas(toBitmap))
+                {
+                    canvas.DrawBitmap(bitmap, info.Rect, paint);
+                }
+            }
+
+            return toBitmap;
         }
 
         internal static SkiaSharp.SKBitmap DecodeSVG(string strInput)
