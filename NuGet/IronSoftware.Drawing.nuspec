@@ -10,19 +10,23 @@
     <description>IronSoftware.Drawing</description>
     <summary>IronSoftware.Drawing</summary>
     <releaseNotes>IronSoftware.Drawing</releaseNotes>
-    <copyright>Copyright https://ironpdf.com 2017-2021</copyright>
+    <copyright>Copyright https://ironsoftware.com 2022</copyright>
     <tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, Tiff, Gif, Jpeg, Png, Color, Rectangle, Drawing, C#, VB.NET, aspx, create, render, generate, standard, netstandard2.0, core, netcore</tags>
+	<dependencies>
+      <group targetFramework=".NETFramework4.6.2">
+        <dependency id="BitMiracle.LibTiff.NET" version="2.4.649" exclude="Build,Analyzers" />
+        <dependency id="IronSoftware.CommonLibraries" version="1.0.6037" exclude="Build,Analyzers" />
+        <dependency id="SkiaSharp" version="2.88.0" exclude="Build,Analyzers" />
+        <dependency id="SkiaSharp.NativeAssets.Linux" version="2.88.0" exclude="Build,Analyzers" />
+        <dependency id="SkiaSharp.Svg" version="1.60.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="BitMiracle.LibTiff.NET" version="2.4.649" exclude="Build,Analyzers" />
+        <dependency id="IronSoftware.CommonLibraries" version="1.0.6037" exclude="Build,Analyzers" />
+        <dependency id="SkiaSharp" version="2.88.0" exclude="Build,Analyzers" />
+        <dependency id="SkiaSharp.NativeAssets.Linux" version="2.88.0" exclude="Build,Analyzers" />
+        <dependency id="SkiaSharp.Svg" version="1.60.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
   </metadata>
-  <files>
-    <!-- Deployment -->
-    <file src=".\IronSoftware.Drawing.targets" target="build\netstandard" />
-    <file src=".\IronSoftware.Drawing.targets" target="build\net" />
-    <!-- Assemblies -->
-    <file src="..\bin\$configuration$\net462\**" target="lib\net462\" />
-    <file src="..\bin\$configuration$\netstandard2.0\**" target="lib\netstandard2.0\" />
-	<!-- SkiaSharp -->
-	<file src="..\bin\$configuration$\net462\arm64\**" target="lib\netstandard2.0\arm64\" />
-	<file src="..\bin\$configuration$\net462\musl-x64\**" target="lib\netstandard2.0\musl-x64\" />
-	<file src="..\bin\$configuration$\net462\x64\**" target="lib\netstandard2.0\x64\" />
-  </files>
 </package>
