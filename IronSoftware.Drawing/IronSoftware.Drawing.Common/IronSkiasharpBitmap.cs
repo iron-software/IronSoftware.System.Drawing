@@ -4,6 +4,7 @@ using SkiaSharp;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 
 namespace IronSoftware.Drawing
 {
@@ -151,7 +152,7 @@ namespace IronSoftware.Drawing
 
                 using (SKCanvas canvas = new SKCanvas(rotatedBitmap))
                 {
-                    canvas.Clear();
+                    canvas.Clear(SKColors.White);
                     canvas.Translate(rotatedWidth / 2, rotatedHeight / 2);
                     canvas.RotateDegrees((float)angle);
                     canvas.Translate(-originalWidth / 2, -originalHeight / 2);
@@ -163,6 +164,17 @@ namespace IronSoftware.Drawing
             else
             {
                 throw new Exception("Please provide a bitmap to process.");
+            }
+        }
+
+        public static double GetSkewAngle(this SKBitmap bitmap, int? MaxAngle = null)
+        {
+            SKBitmap toBitmap = new SKBitmap(bitmap.Info);
+
+            using (SKCanvas canvas = new SKCanvas(toBitmap))
+            {
+                canvas.DrawBitmap(bitmap, new SKPoint(), CreateHighQualityPaint());
+                return SkewImageLib.GetSkewAngle(toBitmap);
             }
         }
 

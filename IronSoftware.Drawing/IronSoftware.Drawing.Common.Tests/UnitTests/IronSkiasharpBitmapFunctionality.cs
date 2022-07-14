@@ -135,5 +135,24 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             trimmed.Dispose();
             sharpped.Dispose();
         }
+
+        [FactWithAutomaticDisplayName]
+        public void GetDeskew_SKBitmap()
+        {
+            string imagePath = GetRelativeFilePath(@"IronBitmap/rotated-image.jpg");
+            SkiaSharp.SKBitmap bitmap = SkiaSharp.SKBitmap.Decode(imagePath);
+            SkiaSharp.SKBitmap result = bitmap.RotateImage(-IronSkiasharpBitmap.GetSkewAngle(bitmap));
+            IronSkiasharpBitmap.GetSkewAngle(result).Should().BeApproximately(0, 1);
+            result.Dispose();
+            bitmap.Dispose();
+
+            imagePath = GetRelativeFilePath(@"IronBitmap/bcnotdetected.gif");
+            bitmap = SkiaSharp.SKBitmap.Decode(imagePath);
+            result = bitmap.RotateImage(-IronSkiasharpBitmap.GetSkewAngle(bitmap));
+            IronSkiasharpBitmap.GetSkewAngle(result).Should().BeApproximately(0, 1);
+            result.Dispose();
+            bitmap.Dispose();
+
+        }
     }
 }
