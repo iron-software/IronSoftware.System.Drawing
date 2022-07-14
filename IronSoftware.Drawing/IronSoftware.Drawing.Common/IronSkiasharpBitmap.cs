@@ -135,11 +135,12 @@ namespace IronSoftware.Drawing
         /// <param name="bitmap">Original bitmap to rotate.</param>
         /// <param name="angle">Angle to rotate the image.</param>
         /// <return>IronSoftware.Drawing.AnyBitmap.</return>
-        public static SKBitmap RotateImage(this SKBitmap bitmap, double angle)
+        public static SKBitmap RotateImage(this SKBitmap bitmap, double? angle = null)
         {
             if (bitmap != null)
             {
-                double radians = Math.PI * angle / 180;
+                double deskewAngle = angle.HasValue ? angle.Value : -GetSkewAngle(bitmap);
+                double radians = Math.PI * deskewAngle / 180;
                 float sine = (float)Math.Abs(Math.Sin(radians));
                 float cosine = (float)Math.Abs(Math.Cos(radians));
 
@@ -154,7 +155,7 @@ namespace IronSoftware.Drawing
                 {
                     canvas.Clear(SKColors.White);
                     canvas.Translate(rotatedWidth / 2, rotatedHeight / 2);
-                    canvas.RotateDegrees((float)angle);
+                    canvas.RotateDegrees((float)deskewAngle);
                     canvas.Translate(-originalWidth / 2, -originalHeight / 2);
                     canvas.DrawBitmap(bitmap, new SKPoint(), CreateHighQualityPaint());
                 }
