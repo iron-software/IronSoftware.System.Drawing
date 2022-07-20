@@ -73,8 +73,8 @@ steps:
     command: 'build'
     projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
     arguments: '--configuration $(buildConfiguration) --no-restore --verbosity normal'
-  versioningScheme: byEnvVar
-  versionEnvVar: AssemblyVersion
+    versioningScheme: byEnvVar
+    versionEnvVar: AssemblyVersion
 
 - task: DotNetCoreCLI@2
   displayName: Execute .Net70 Unit Tests
