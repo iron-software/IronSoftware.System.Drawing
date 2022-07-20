@@ -74,7 +74,6 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             {
                 font.FamilyName.Should().Be("Times New Roman");
             }
-            font.FamilyName.Should().Be("Times New Roman");
             font.Size.Should().Be(20);
             font.Style.Should().Be(FontStyle.Bold | FontStyle.Italic);
             font.Bold.Should().BeTrue();
