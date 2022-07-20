@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using System;
+using System.Runtime.InteropServices;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -50,7 +51,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
             SkiaSharp.SKFont skFont = SkiaSharp.SKTypeface.FromFamilyName("Courier New", SkiaSharp.SKFontStyleWeight.Normal, SkiaSharp.SKFontStyleWidth.Normal, SkiaSharp.SKFontStyleSlant.Upright).ToFont(30);
             Font font = skFont;
-            font.FamilyName.Should().Be("Courier New");
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                font.FamilyName.Should().Be("Liberation Mono");
+            }
+            else
+            {
+                font.FamilyName.Should().Be("Courier New");
+            }
             font.Size.Should().Be(30);
             font.Style.Should().Be(FontStyle.Regular);
             font.Bold.Should().BeFalse();
@@ -70,7 +78,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
             Font font = new Font("Courier New", 30);
             SkiaSharp.SKFont skFont = font;
-            skFont.Typeface.FamilyName.Should().Be("Courier New");
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                font.FamilyName.Should().Be("Liberation Mono");
+            }
+            else
+            {
+                font.FamilyName.Should().Be("Courier New");
+            }
             skFont.Size.Should().Be(30);
             skFont.Typeface.FontStyle.Slant.Should().Be(SkiaSharp.SKFontStyleSlant.Upright);
             skFont.Typeface.FontStyle.Weight.Should().Be((int)SkiaSharp.SKFontStyleWeight.Normal);
@@ -99,7 +114,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 #else
             System.Drawing.Font drawingFont = new System.Drawing.Font("Courier New", 30);
             Font font = drawingFont;
-            font.FamilyName.Should().Be("Courier New");
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                font.FamilyName.Should().Be("Liberation Mono");
+            }
+            else
+            {
+                font.FamilyName.Should().Be("Courier New");
+            }
             font.Size.Should().Be(30);
             font.Style.Should().Be(FontStyle.Regular);
             font.Bold.Should().BeFalse();
@@ -127,7 +149,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 #else
             Font font = new Font("Courier New", 30);
             System.Drawing.Font drawingFont = font;
-            drawingFont.FontFamily.Name.Should().Be("Courier New");
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                font.FamilyName.Should().Be("Liberation Mono");
+            }
+            else
+            {
+                font.FamilyName.Should().Be("Courier New");
+            }
             drawingFont.Size.Should().Be(30);
             drawingFont.Style.Should().Be(System.Drawing.FontStyle.Regular);
             drawingFont.Bold.Should().BeFalse();
