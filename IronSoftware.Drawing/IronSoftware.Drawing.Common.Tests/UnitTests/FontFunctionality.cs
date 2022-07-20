@@ -121,11 +121,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void CastSystemDrawingFont_to_Font()
         {
-#if NETCOREAPP2_1
-            System.Drawing.Font drawingFont;
-            var ex = Assert.Throws<PlatformNotSupportedException>(() => drawingFont = new System.Drawing.Font("Courier New", 30));
-            Assert.Equal("System.Drawing is not supported on this platform.", ex.Message);
-#else
+#if NET472
             System.Drawing.Font drawingFont = new System.Drawing.Font("Courier New", 30);
             Font font = drawingFont;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
@@ -155,6 +151,10 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             font.Style.Should().Be(FontStyle.Bold | FontStyle.Italic);
             font.Bold.Should().BeTrue();
             font.Italic.Should().BeTrue();
+#else
+            System.Drawing.Font drawingFont;
+            var ex = Assert.Throws<PlatformNotSupportedException>(() => drawingFont = new System.Drawing.Font("Courier New", 30));
+            Assert.Equal("System.Drawing is not supported on this platform.", ex.Message);
 #endif
         }
 
@@ -162,12 +162,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void CastSystemDrawingFont_from_Font()
         {
 
-#if NETCOREAPP2_1
-            Font font = new Font("Courier New", 30);
-            System.Drawing.Font drawingFont;
-            var ex = Assert.Throws<PlatformNotSupportedException>(() => drawingFont = font);
-            Assert.Equal("System.Drawing is not supported on this platform.", ex.Message);
-#else
+#if NET472
             Font font = new Font("Courier New", 30);
             System.Drawing.Font drawingFont = font;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
@@ -197,6 +192,11 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             drawingFont.Style.Should().Be(System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic);
             drawingFont.Bold.Should().BeTrue();
             drawingFont.Italic.Should().BeTrue();
+#else
+            Font font = new Font("Courier New", 30);
+            System.Drawing.Font drawingFont;
+            var ex = Assert.Throws<PlatformNotSupportedException>(() => drawingFont = font);
+            Assert.Equal("System.Drawing is not supported on this platform.", ex.Message);
 #endif
         }
     }

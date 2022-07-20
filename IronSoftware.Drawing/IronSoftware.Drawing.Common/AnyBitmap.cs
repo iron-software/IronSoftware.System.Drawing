@@ -32,7 +32,6 @@ namespace IronSoftware.Drawing
                     }
                     catch { }
                 }
-#if NETSTANDARD
                 if (IsLoadedType("SixLabors.ImageSharp.Image"))
                 {
                     try
@@ -51,17 +50,6 @@ namespace IronSoftware.Drawing
                     }
                     catch { }
                 }
-#else                
-                if (IsLoadedType("System.Drawing.Imaging"))
-                {
-                    try
-                    {
-                        using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
-                        return img.Width;
-                    }
-                    catch { }
-                }
-#endif
                 return -1;
             }
         }
@@ -82,7 +70,6 @@ namespace IronSoftware.Drawing
                     }
                     catch { }
                 }
-#if NETSTANDARD
                 if (IsLoadedType("SixLabors.ImageSharp.Image"))
                 {
                     try
@@ -101,17 +88,6 @@ namespace IronSoftware.Drawing
                     }
                     catch { }
                 }
-#else
-                if (IsLoadedType("System.Drawing.Imaging"))
-                {
-                    try
-                    {
-                        using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
-                        return img.Height;
-                    }
-                    catch { }
-                }
-#endif
                 return -1;
             }
         }
@@ -254,7 +230,6 @@ namespace IronSoftware.Drawing
                     return;
                 }
             }
-#if NETSTANDARD
             if (IsLoadedType("SixLabors.ImageSharp.Image"))
             {
                 using SixLabors.ImageSharp.Image img = this; // magic implicit cast
@@ -277,7 +252,6 @@ namespace IronSoftware.Drawing
                     return;
                 }
             }
-#else
             if (IsLoadedType("System.Drawing.Bitmap"))
             {
                 using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
@@ -312,7 +286,6 @@ namespace IronSoftware.Drawing
 
                 return;
             }
-#endif
             throw NoConverterException(Format, null);
         }
 
@@ -497,7 +470,6 @@ namespace IronSoftware.Drawing
             Binary = System.IO.File.ReadAllBytes(File);
         }
 
-#if NETSTANDARD
         /// <summary>
         /// Implicitly casts ImageSharp objects to <see cref="AnyBitmap"/>.
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters and return types, you now automatically support ImageSharp as well.</para>
@@ -521,8 +493,6 @@ namespace IronSoftware.Drawing
         {
             return SixLabors.ImageSharp.Image.Load(bitmap.Binary);
         }
-        
-#endif
 
         /// <summary>
         /// Implicitly casts SkiaSharp.SKImage objects to <see cref="AnyBitmap"/>.
@@ -587,7 +557,6 @@ namespace IronSoftware.Drawing
             return OpenTiffToSKBitmap(bitmap);
         }
 
-#if NETSTANDARD
         /// <summary>
         /// Implicitly casts Microsoft.Maui.Graphics.Platform.PlatformImage objects to <see cref="AnyBitmap"/>.
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters and return types, you now automatically support Microsoft.Maui.Graphics as well.</para>
@@ -612,7 +581,6 @@ namespace IronSoftware.Drawing
         {
             return (Microsoft.Maui.Graphics.Platform.PlatformImage)Microsoft.Maui.Graphics.Platform.PlatformImage.FromStream(bitmap.GetStream());
         }
-#endif
 
         /// <summary>
         /// Implicitly casts System.Drawing.Bitmap objects to <see cref="AnyBitmap"/>.
@@ -647,12 +615,10 @@ namespace IronSoftware.Drawing
             {
                 if (e is PlatformNotSupportedException || e is TypeInitializationException)
                 {
-#if NETSTANDARD
                     if (!System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
                     {
                         throw SystemDotDrawingPlatformNotSupported(e);
                     }
-#endif
                 }
                 throw e;
             }
@@ -675,12 +641,10 @@ namespace IronSoftware.Drawing
             {
                 if (e is PlatformNotSupportedException || e is TypeInitializationException)
                 {
-#if NETSTANDARD
                     if (!System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
                     {
                         throw SystemDotDrawingPlatformNotSupported(e);
                     }
-#endif
                 }
                 throw e;
             }
