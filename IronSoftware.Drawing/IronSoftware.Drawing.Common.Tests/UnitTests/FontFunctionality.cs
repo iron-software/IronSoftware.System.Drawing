@@ -66,6 +66,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             skFont = new SkiaSharp.SKFont(SkiaSharp.SKTypeface.FromFamilyName("Times New Roman", SkiaSharp.SKFontStyleWeight.Bold, SkiaSharp.SKFontStyleWidth.Normal, SkiaSharp.SKFontStyleSlant.Italic), 20);
             font = skFont;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                font.FamilyName.Should().Be("Liberation Serif");
+            }
+            else
+            {
+                font.FamilyName.Should().Be("Times New Roman");
+            }
             font.FamilyName.Should().Be("Times New Roman");
             font.Size.Should().Be(20);
             font.Style.Should().Be(FontStyle.Bold | FontStyle.Italic);
@@ -80,11 +88,11 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             SkiaSharp.SKFont skFont = font;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                font.FamilyName.Should().Be("Liberation Mono");
+                skFont.Typeface.FamilyName.Should().Be("Liberation Mono");
             }
             else
             {
-                font.FamilyName.Should().Be("Courier New");
+                skFont.Typeface.FamilyName.Should().Be("Courier New");
             }
             skFont.Size.Should().Be(30);
             skFont.Typeface.FontStyle.Slant.Should().Be(SkiaSharp.SKFontStyleSlant.Upright);
@@ -95,7 +103,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             font = new Font("Times New Roman", FontStyle.Bold | FontStyle.Italic, 20);
             skFont = font;
-            skFont.Typeface.FamilyName.Should().Be("Times New Roman");
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                skFont.Typeface.FamilyName.Should().Be("Liberation Serif");
+            }
+            else
+            {
+                skFont.Typeface.FamilyName.Should().Be("Times New Roman");
+            }
             skFont.Size.Should().Be(20);
             skFont.Typeface.FontStyle.Slant.Should().Be(SkiaSharp.SKFontStyleSlant.Italic);
             skFont.Typeface.FontStyle.Weight.Should().Be((int)SkiaSharp.SKFontStyleWeight.Bold);
@@ -129,7 +144,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             drawingFont = new System.Drawing.Font("Times New Roman", 20, System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic);
             font = drawingFont;
-            font.FamilyName.Should().Be("Times New Roman");
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                font.FamilyName.Should().Be("Liberation Serif");
+            }
+            else
+            {
+                font.FamilyName.Should().Be("Times New Roman");
+            }
             font.Size.Should().Be(20);
             font.Style.Should().Be(FontStyle.Bold | FontStyle.Italic);
             font.Bold.Should().BeTrue();
@@ -151,11 +173,11 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             System.Drawing.Font drawingFont = font;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                font.FamilyName.Should().Be("Liberation Mono");
+                drawingFont.FontFamily.Name.Should().Be("Liberation Mono");
             }
             else
             {
-                font.FamilyName.Should().Be("Courier New");
+                drawingFont.FontFamily.Name.Should().Be("Courier New");
             }
             drawingFont.Size.Should().Be(30);
             drawingFont.Style.Should().Be(System.Drawing.FontStyle.Regular);
@@ -164,7 +186,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             font = new Font("Times New Roman", FontStyle.Bold | FontStyle.Italic, 20);
             drawingFont = font;
-            drawingFont.FontFamily.Name.Should().Be("Times New Roman");
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                drawingFont.FontFamily.Name.Should().Be("Liberation Serif");
+            }
+            else
+            {
+                drawingFont.FontFamily.Name.Should().Be("Times New Roman");
+            }
             drawingFont.Size.Should().Be(20);
             drawingFont.Style.Should().Be(System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic);
             drawingFont.Bold.Should().BeTrue();
