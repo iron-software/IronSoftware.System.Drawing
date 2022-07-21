@@ -32,11 +32,6 @@ steps:
   lfs: true      
 
 - task: UseDotNet@2
-  displayName: 'Install .Netcoreapp2.1 Core sdk'
-  inputs:
-    packageType: 'sdk'
-    version: '2.x'
-- task: UseDotNet@2
   displayName: 'Install .Netcoreapp3.1 Core sdk'
   inputs:
     packageType: 'sdk'
@@ -109,15 +104,6 @@ steps:
     command: 'test'
     projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
     arguments: '--configuration "$(buildConfiguration)" -f "net60" --verbosity n --no-build'
-    testRunTitle: 'Execute Unit Tests'
-  condition: succeededOrFailed()
-
-- task: DotNetCoreCLI@2
-  displayName: Execute .Netcoreapp2.1 Unit Tests
-  inputs:
-    command: 'test'
-    projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
-    arguments: '--configuration "$(buildConfiguration)" -f "netcoreapp2.1" --verbosity n --no-build'
     testRunTitle: 'Execute Unit Tests'
   condition: succeededOrFailed()
 

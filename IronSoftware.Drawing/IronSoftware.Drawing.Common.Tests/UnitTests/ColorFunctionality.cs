@@ -1,6 +1,4 @@
-using SkiaSharp;
 using System;
-using System.Drawing.Imaging;
 using Xunit;
 using Xunit.Abstractions;
 

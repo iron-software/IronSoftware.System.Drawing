@@ -1,10 +1,10 @@
+using Newtonsoft.Json.Linq;
+using SixLabors.ImageSharp;
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using Xunit;
 using Xunit.Abstractions;
-#if NET5_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER
-using SixLabors.ImageSharp;
-#endif
 
 namespace IronSoftware.Drawing.Common.Tests.UnitTests
 {
@@ -120,11 +120,6 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void CastBitmap_to_AnyBitmap()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-#if NETCOREAPP2_1
-            System.Drawing.Bitmap bitmap;
-            var ex = Assert.Throws<PlatformNotSupportedException>(() => bitmap = new System.Drawing.Bitmap(imagePath));
-            Assert.Equal("System.Drawing is not supported on this platform.", ex.Message);
-#else
             System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(imagePath);
             AnyBitmap anyBitmap = bitmap;
 
@@ -132,32 +127,18 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             anyBitmap.SaveAs("result.bmp");
 
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
-#endif
         }
 
         [FactWithAutomaticDisplayName]
         public void CastBitmap_from_AnyBitmap()
         {
             AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
-#if NETCOREAPP2_1
-            System.Drawing.Bitmap bitmap;
-            var ex = Assert.Throws<PlatformNotSupportedException>(() => bitmap = anyBitmap);
-            if (IsUnix())
-            {
-                Assert.Equal($"Microsoft has chosen to no longer support System.Drawing.Common on Linux or MacOS. To solve this please use another Bitmap type such as {typeof(System.Drawing.Bitmap).ToString()}, SkiaSharp or ImageSharp.\n\nhttps://docs.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/system-drawing-common-windows-only", ex.Message);
-            }
-            else
-            {
-                Assert.Equal("System.Drawing is not supported on this platform.", ex.Message);
-            }
-#else
             System.Drawing.Bitmap bitmap = anyBitmap;
 
             anyBitmap.SaveAs("expected.bmp");
             bitmap.Save("result.bmp");
 
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
-#endif
         }
 
         [FactWithAutomaticDisplayName]
@@ -342,32 +323,55 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             AssertImageAreEqual("expected.png", "result.png", true);
         }
 
-#if NET5_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER
-
         [FactWithAutomaticDisplayName]
         public void CastSixLabors_to_AnyBitmap()
         {
-            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-            SixLabors.ImageSharp.Image imgSharp = SixLabors.ImageSharp.Image.Load(imagePath);
-            AnyBitmap anyBitmap = imgSharp;
+#if NET7_0
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                string imagePath = GetRelativeFilePath("mountainclimbers.jpg");
+                SixLabors.ImageSharp.Image imgSharp;
+                var exception = Assert.Throws<System.PlatformNotSupportedException>(() => imgSharp = SixLabors.ImageSharp.Image.Load(imagePath));
+                Assert.Equal("Operation is not supported on this platform.", exception.Message);
+            }
+            else
+#endif
+            {
+                string imagePath = GetRelativeFilePath("mountainclimbers.jpg");
+                SixLabors.ImageSharp.Image imgSharp = SixLabors.ImageSharp.Image.Load(imagePath);
+                AnyBitmap anyBitmap = imgSharp;
 
-            imgSharp.Save("expected.bmp");
-            anyBitmap.SaveAs("result.bmp");
+                imgSharp.Save("expected.bmp");
+                anyBitmap.SaveAs("result.bmp");
 
-            AssertImageAreEqual("expected.bmp", "result.bmp", true);
+                AssertImageAreEqual("expected.bmp", "result.bmp", true);
+            }
         }
 
         [FactWithAutomaticDisplayName]
         public void CastSixLabors_from_AnyBitmap()
         {
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
-            SixLabors.ImageSharp.Image imgSharp = anyBitmap;
+#if NET7_0
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("mountainclimbers.jpg"));
+                SixLabors.ImageSharp.Image imgSharp;
+                var exception = Assert.Throws<System.PlatformNotSupportedException>(() => imgSharp = anyBitmap);
+                Assert.Equal("Operation is not supported on this platform.", exception.Message);
+            }
+            else
+#endif
+            { 
+                AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("mountainclimbers.jpg"));
+                SixLabors.ImageSharp.Image imgSharp = anyBitmap;
 
-            anyBitmap.SaveAs("expected.bmp");
-            imgSharp.Save("result.bmp");
+                anyBitmap.SaveAs("expected.bmp");
+                imgSharp.Save("result.bmp");
 
-            AssertImageAreEqual("expected.bmp", "result.bmp", true);
+                AssertImageAreEqual("expected.bmp", "result.bmp", true);            
+            }
         }
+
 
         [FactWithAutomaticDisplayName]
         public void CastMaui_to_AnyBitmap()
@@ -394,8 +398,6 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
-
-#endif
 
     }
 }
