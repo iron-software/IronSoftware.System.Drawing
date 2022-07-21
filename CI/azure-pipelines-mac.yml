@@ -17,8 +17,7 @@ pr:
 
 
 pool:
-  name: SelfHosted
-  demands: PlatformArchitecture -equals MacArm64
+  vmImage: 'macOS-latest'
 
 variables:
   - group: IronDrawingVersions
