@@ -1,8 +1,19 @@
 trigger:
-- main
+  branches:
+    include:
+    - main
+    - master
+  paths:
+    exclude:
+    - NuGet
 pr:
-  - master
-  - main
+  branches:
+    include:
+    - master
+    - main
+  paths:
+    exclude:
+    - NuGet
 
 
 pool:
