@@ -100,6 +100,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             }
         }
 
+#if NET5_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER
         protected void SaveMauiImages(Microsoft.Maui.Graphics.IImage image, string filename)
         {
             using MemoryStream memStream = new MemoryStream();
@@ -108,6 +109,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             memStream.Seek(0, SeekOrigin.Begin);
             memStream.CopyTo(fileStream);
         }
+#endif
 
         protected bool IsGrayScale(SkiaSharp.SKBitmap image)
         {

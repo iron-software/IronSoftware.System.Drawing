@@ -94,12 +94,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             rotatedBitmap.SaveAs("result-rotated.jpg");
             AssertImageAreEqual(GetRelativeFilePath("IronBitmap", "expected-rotated-45.jpg"), "result-rotated.jpg");
 
-#if NET472
-            Assert.Equal(45, System.Math.Ceiling(IronBitmap.DetermineSkewAngle(anyBitmap)));
-            rotatedBitmap = anyBitmap.RotateImage();
-            rotatedBitmap.SaveAs("result-rotated.jpg");
-            AssertImageAreEqual(GetRelativeFilePath("IronBitmap", "expected-rotated-45.jpg"), "result-rotated.jpg");
-#else
+#if NETCOREAPP2_1
             System.Drawing.Bitmap bitmap;
             var ex = Assert.Throws<PlatformNotSupportedException>(() => System.Math.Ceiling(IronBitmap.DetermineSkewAngle(anyBitmap)));
             if (IsUnix())
@@ -120,6 +115,11 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             {
                 Assert.Equal("System.Drawing is not supported on this platform.", ex.Message);
             }
+#else
+            Assert.Equal(45, System.Math.Ceiling(IronBitmap.DetermineSkewAngle(anyBitmap)));
+            rotatedBitmap = anyBitmap.RotateImage();
+            rotatedBitmap.SaveAs("result-rotated.jpg");
+            AssertImageAreEqual(GetRelativeFilePath("IronBitmap", "expected-rotated-45.jpg"), "result-rotated.jpg");
 #endif
         }
 
