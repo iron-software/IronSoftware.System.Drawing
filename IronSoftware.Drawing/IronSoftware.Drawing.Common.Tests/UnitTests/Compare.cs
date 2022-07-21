@@ -69,6 +69,13 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             if (!msArray1.SequenceEqual(msArray2))
                 throw new AssertActualExpectedException($"Expected: {expected}", $"Actual: {actual}", $"Actual Stream sequence not equal to Expected.");
         }
+        protected void AssertStreamAreEqual(MemoryStream expected, Func<Stream> actual)
+        {
+            using (MemoryStream actualStream = (MemoryStream)actual.Invoke())
+            {
+                AssertStreamAreEqual(expected, actualStream);
+            }
+        }
 
         protected void AssertBytesAreEqual(byte[] expected, byte[] actual)
         {

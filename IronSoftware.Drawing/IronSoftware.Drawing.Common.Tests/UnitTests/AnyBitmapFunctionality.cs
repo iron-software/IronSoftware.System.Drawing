@@ -185,6 +185,9 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             result = anyBitmap.ToStream();
             AssertStreamAreEqual(expected, result);
 
+            Func<Stream> funcStream = anyBitmap.ToStreamFn();
+            AssertStreamAreEqual(expected, funcStream);
+
             using var resultExport = new System.IO.MemoryStream();
             anyBitmap.ExportStream(resultExport);
             AssertStreamAreEqual(expected, (MemoryStream)resultExport);

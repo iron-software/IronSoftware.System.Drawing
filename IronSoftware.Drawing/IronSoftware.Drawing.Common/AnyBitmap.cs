@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.SqlServer.Server;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -192,6 +193,21 @@ namespace IronSoftware.Drawing
             var stream = new System.IO.MemoryStream();
             ExportStream(stream, Format, Lossy);
             return stream;
+        }
+
+        /// <summary>
+        /// Exports the Bitmap as a Func<<see cref="MemoryStream"/>> encoded in the <see cref="ImageFormat"/> of your choice.
+        /// <para>Add SkiaSharp, System.Drawing.Common or SixLabors.ImageSharp to your project to enable the encoding feature.</para>
+        /// </summary>
+        /// <param name="Format">An image encoding format.</param>
+        /// <param name="Lossy">Jped and WebP encoding quality (ignored for all other values of <see cref="ImageFormat"/>). Higher values return larger file sizes. 0 is lowest quality, 100 is highest.</param>
+        /// <returns>Transcoded image bytes in a Func<<see cref="MemoryStream"/>>.</returns>
+        public Func<Stream> ToStreamFn(ImageFormat Format = ImageFormat.Default, int Lossy = 100)
+        {
+            var stream = new System.IO.MemoryStream();
+            ExportStream(stream, Format, Lossy);
+            stream.Position = 0;
+            return () => stream;
         }
 
         /// <summary>
