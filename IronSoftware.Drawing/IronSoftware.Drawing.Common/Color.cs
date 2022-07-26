@@ -872,7 +872,7 @@ namespace IronSoftware.Drawing
         /// Implicitly casts SkiaSharp.SKColor objects to <see cref="Color"/>.  
         /// <para>When your .NET Class methods to use <see cref="Color"/> as parameters and return types, you now automatically support SKColor as well.</para>
         /// </summary>
-        /// <param name="Color">System.Drawing.Color will automatically be cast to <see cref="Color"/> </param>
+        /// <param name="Color">SkiaSharp.SKColor will automatically be cast to <see cref="Color"/> </param>
         public static implicit operator Color(SkiaSharp.SKColor Color)
         {
             return new Color(Color.Alpha, Color.Red, Color.Green, Color.Blue);
@@ -888,6 +888,27 @@ namespace IronSoftware.Drawing
             return new SkiaSharp.SKColor(Color.R, Color.G, Color.B, Color.A);
         }
 
+        /// <summary>
+        /// Implicitly casts SixLabors.ImageSharp.Color objects to <see cref="Color"/>.  
+        /// <para>When your .NET Class methods to use <see cref="Color"/> as parameters and return types, you now automatically support SKColor as well.</para>
+        /// </summary>
+        /// <param name="Color">SixLabors.ImageSharp.Color will automatically be cast to <see cref="Color"/> </param>
+        public static implicit operator Color(SixLabors.ImageSharp.Color Color)
+        {
+            string hex = Color.ToHex(); // Rgba
+            return new Color(ConvertToHexNumberByte(hex, 6, 2), ConvertToHexNumberByte(hex, 0, 2), ConvertToHexNumberByte(hex, 2, 2), ConvertToHexNumberByte(hex, 4, 2));
+        }
+
+        /// <summary>
+        /// Implicitly casts SixLabors.ImageSharp.Color objects from <see cref="Color"/>.  
+        /// <para>When your .NET Class methods to use <see cref="Color"/> as parameters and return types, you now automatically support SKColor as well.</para>
+        /// </summary>
+        /// <param name="Color"><see cref="Color"/> is explicitly cast to an SixLabors.ImageSharp.Color </param>
+        static public implicit operator SixLabors.ImageSharp.Color(Color Color)
+        {
+            return SixLabors.ImageSharp.Color.FromRgba(Color.R, Color.G, Color.B, Color.A);
+        }
+
         #region Private Method
 
         private static InvalidOperationException NoConverterException(string color, Exception innerException)
@@ -900,7 +921,7 @@ namespace IronSoftware.Drawing
             return (value * 100) / (double)total;
         }
 
-        private byte ConvertToHexNumberByte(string colorcode, int start, int length)
+        private static byte ConvertToHexNumberByte(string colorcode, int start, int length)
         {
             if (length == 2)
             {
