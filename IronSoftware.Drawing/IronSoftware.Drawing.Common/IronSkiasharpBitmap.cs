@@ -276,8 +276,6 @@ namespace IronSoftware.Drawing
                     var ptr = System.Runtime.InteropServices.GCHandle.Alloc(raster, System.Runtime.InteropServices.GCHandleType.Pinned);
                     bitmap.InstallPixels(info, ptr.AddrOfPinnedObject(), info.RowBytes, (addr, ctx) => ptr.Free(), null);
 
-                    //tifImg.NumberOfDirectories()
-
                     // read the image into the memory buffer
                     if (!tifImg.ReadRGBAImageOriented(width, height, raster, BitMiracle.LibTiff.Classic.Orientation.TOPLEFT))
                     {
