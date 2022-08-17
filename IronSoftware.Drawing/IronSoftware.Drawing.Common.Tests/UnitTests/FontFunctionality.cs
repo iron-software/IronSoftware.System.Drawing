@@ -185,5 +185,71 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             drawingFont.Bold.Should().BeTrue();
             drawingFont.Italic.Should().BeTrue();
         }
+
+        [FactWithAutomaticDisplayName]
+        public void CastSixLaborsFont_to_Font()
+        {
+            SixLabors.Fonts.Font sixLaborsFont = SixLabors.Fonts.SystemFonts.CreateFont("Courier New", 30);
+            Font font = sixLaborsFont;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                font.FamilyName.Should().Be("Liberation Mono");
+            }
+            else
+            {
+                font.FamilyName.Should().Be("Courier New");
+            }
+            font.Size.Should().Be(30);
+            font.Style.Should().Be(FontStyle.Regular);
+            font.Bold.Should().BeFalse();
+            font.Italic.Should().BeFalse();
+
+            sixLaborsFont = SixLabors.Fonts.SystemFonts.CreateFont("Times New Roman", 20, SixLabors.Fonts.FontStyle.BoldItalic);
+            font = sixLaborsFont;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                font.FamilyName.Should().Be("Liberation Serif");
+            }
+            else
+            {
+                font.FamilyName.Should().Be("Times New Roman");
+            }
+            font.Size.Should().Be(20);
+            font.Style.Should().Be(FontStyle.Bold | FontStyle.Italic);
+            font.Bold.Should().BeTrue();
+            font.Italic.Should().BeTrue();
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CastSixLaborsFont_from_Font()
+        {
+            Font font = new Font("Courier New", 30);
+            SixLabors.Fonts.Font sixLaborsFont = font;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                sixLaborsFont.Family.Name.Should().Be("Liberation Mono");
+            }
+            else
+            {
+                sixLaborsFont.Family.Name.Should().Be("Courier New");
+            }
+            sixLaborsFont.Size.Should().Be(30);
+            sixLaborsFont.IsBold.Should().BeFalse();
+            sixLaborsFont.IsItalic.Should().BeFalse();
+
+            font = new Font("Times New Roman", FontStyle.Bold | FontStyle.Italic, 20);
+            sixLaborsFont = font;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                sixLaborsFont.Family.Name.Should().Be("Liberation Serif");
+            }
+            else
+            {
+                sixLaborsFont.Family.Name.Should().Be("Times New Roman");
+            }
+            sixLaborsFont.Size.Should().Be(20);
+            sixLaborsFont.IsBold.Should().BeTrue();
+            sixLaborsFont.IsItalic.Should().BeTrue();
+        }
     }
 }

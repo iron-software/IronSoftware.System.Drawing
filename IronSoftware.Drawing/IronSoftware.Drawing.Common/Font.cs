@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Drawing;
 
 namespace IronSoftware.Drawing
@@ -130,6 +131,43 @@ namespace IronSoftware.Drawing
         static public implicit operator System.Drawing.Font(Font Font)
         {
             return new System.Drawing.Font(new FontFamily(Font.FamilyName), Font.Size, (System.Drawing.FontStyle)Font.Style);
+        }
+
+        /// <summary>
+        /// Implicitly casts SixLabors.Fonts.Font objects to <see cref="Font"/>.  
+        /// <para>When your .NET Class methods to use <see cref="Font"/> as parameters and return types, you now automatically support Font as well.</para>
+        /// </summary>
+        /// <param name="Font">SixLabors.Fonts.Font will automatically be cast to <see cref="Font"/> </param>
+        public static implicit operator Font(SixLabors.Fonts.Font Font)
+        {
+            FontStyle fontStyle;
+            if (Font.IsBold && Font.IsItalic)
+            {
+                fontStyle = FontStyle.Bold | FontStyle.Italic;
+            }
+            else if (Font.IsBold)
+            {
+                fontStyle = FontStyle.Bold;
+            }
+            else if (Font.IsItalic)
+            {
+                fontStyle = FontStyle.Italic;
+            }
+            else
+            {
+                fontStyle = FontStyle.Regular;
+            }
+            return new Font(Font.Family.Name, fontStyle, Font.Size);
+        }
+
+        /// <summary>
+        /// Implicitly casts SixLabors.Fonts.Font objects from <see cref="Font"/>.  
+        /// <para>When your .NET Class methods to use <see cref="Font"/> as parameters and return types, you now automatically support Font as well.</para>
+        /// </summary>
+        /// <param name="Font"><see cref="Font"/> is explicitly cast to an SixLabors.Fonts.Font </param>
+        static public implicit operator SixLabors.Fonts.Font(Font Font)
+        {
+            return SixLabors.Fonts.SystemFonts.CreateFont(Font.FamilyName, Font.Size, (SixLabors.Fonts.FontStyle)Font.Style);
         }
 
         /// <summary>
