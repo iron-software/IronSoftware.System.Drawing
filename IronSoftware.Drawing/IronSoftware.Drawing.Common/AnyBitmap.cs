@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SixLabors.ImageSharp;
+using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -13,6 +14,7 @@ namespace IronSoftware.Drawing
     /// </summary>
     public partial class AnyBitmap
     {
+        private Image Image { get; set; }
         private byte[] Binary { get; set; }
 
         /// <summary>
@@ -22,34 +24,7 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                if (IsLoadedType("SixLabors.ImageSharp.Image"))
-                {
-                    try
-                    {
-                        using SixLabors.ImageSharp.Image img = this; // magic implicit cast
-                        return img.Width;
-                    }
-                    catch { }
-                }
-                if (IsLoadedType("SkiaSharp.SKImage"))
-                {
-                    try
-                    {
-                        using SkiaSharp.SKImage img = this; // magic implicit cast
-                        return img.Width;
-                    }
-                    catch { }
-                }
-                if (IsLoadedType("System.Drawing.Imaging"))
-                {
-                    try
-                    {
-                        using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
-                        return img.Width;
-                    }
-                    catch { }
-                }
-                return -1;
+                return Image.Width;
             }
         }
 
@@ -60,34 +35,7 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                if (IsLoadedType("SixLabors.ImageSharp.Image"))
-                {
-                    try
-                    {
-                        using SixLabors.ImageSharp.Image img = this; // magic implicit cast
-                        return img.Height;
-                    }
-                    catch { }
-                }
-                if (IsLoadedType("SkiaSharp.SKImage"))
-                {
-                    try
-                    {
-                        using SkiaSharp.SKImage img = this; // magic implicit cast
-                        return img.Height;
-                    }
-                    catch { }
-                }
-                if (IsLoadedType("System.Drawing.Imaging"))
-                {
-                    try
-                    {
-                        using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
-                        return img.Height;
-                    }
-                    catch { }
-                }
-                return -1;
+                return Image.Height;
             }
         }
 
@@ -227,80 +175,8 @@ namespace IronSoftware.Drawing
 
             if (Lossy < 0 || Lossy > 100) { Lossy = 100; }
 
-            if (IsLoadedType("SkiaSharp.SKImage"))
-            {
-                using SkiaSharp.SKImage img = this; // magic implicit cast
-
-                if (Format == ImageFormat.Gif || Format == ImageFormat.Tiff || Format == ImageFormat.Bmp)
-                {
-                    var writer = new BinaryWriter(Stream);
-                    writer.Write(Binary);
-                    return;
-                }
-                else
-                {
-                    var skdata = img.Encode((SkiaSharp.SKEncodedImageFormat)((int)Format), Lossy);
-                    skdata.SaveTo(Stream);
-                    return;
-                }
-            }
-            if (IsLoadedType("SixLabors.ImageSharp.Image"))
-            {
-                using SixLabors.ImageSharp.Image img = this; // magic implicit cast
-
-                if (img != null)
-                {
-                    SixLabors.ImageSharp.Formats.IImageEncoder enc;
-                    switch (Format)
-                    {
-                        case ImageFormat.Jpeg: enc = new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder() { Quality = Lossy }; break;
-                        case ImageFormat.Gif: enc = new SixLabors.ImageSharp.Formats.Gif.GifEncoder(); break;
-                        case ImageFormat.Png: enc = new SixLabors.ImageSharp.Formats.Png.PngEncoder(); break;
-                        case ImageFormat.Webp: enc = new SixLabors.ImageSharp.Formats.Webp.WebpEncoder() { Quality = Lossy }; break;
-                        case ImageFormat.Tiff: enc = new SixLabors.ImageSharp.Formats.Tiff.TiffEncoder(); break;
-
-                        default: enc = new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder(); break;
-                    }
-
-                    img.Save(Stream, enc);
-                    return;
-                }
-            }
-            if (IsLoadedType("System.Drawing.Bitmap"))
-            {
-                using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
-
-                System.Drawing.Imaging.ImageFormat exportFormat;
-                switch (Format)
-                {
-                    case ImageFormat.Jpeg: exportFormat = System.Drawing.Imaging.ImageFormat.Jpeg; break;
-                    case ImageFormat.Gif: exportFormat = System.Drawing.Imaging.ImageFormat.Gif; break;
-                    case ImageFormat.Png: exportFormat = System.Drawing.Imaging.ImageFormat.Png; break;
-                    case ImageFormat.Tiff: exportFormat = System.Drawing.Imaging.ImageFormat.Tiff; break;
-                    case ImageFormat.Wmf: exportFormat = System.Drawing.Imaging.ImageFormat.Wmf; break;
-                    case ImageFormat.Icon: exportFormat = System.Drawing.Imaging.ImageFormat.Icon; break;
-                    default: exportFormat = System.Drawing.Imaging.ImageFormat.Bmp; break;
-                }
-
-                if (exportFormat == System.Drawing.Imaging.ImageFormat.Jpeg)
-                {
-                    try
-                    {
-                        var encoderParams = new System.Drawing.Imaging.EncoderParameters(1);
-                        encoderParams.Param[0] = new System.Drawing.Imaging.EncoderParameter(System.Drawing.Imaging.Encoder.Quality, Lossy);
-                        var jpegEncoder = System.Drawing.Imaging.ImageCodecInfo.GetImageEncoders().FirstOrDefault(t => t.MimeType == "image/jpeg");
-                        img.Save(Stream, jpegEncoder, encoderParams);
-                    }
-                    catch { }
-                }
-                else
-                {
-                    img.Save(Stream, exportFormat);
-                }
-
-                return;
-            }
-            throw NoConverterException(Format, null);
+            if (!TryExportStream(Stream, Format, Lossy))
+                throw NoConverterException(Format, null);
         }
 
         /// <summary>
@@ -430,7 +306,7 @@ namespace IronSoftware.Drawing
 
         public AnyBitmap(byte[] Bytes)
         {
-            Binary = Bytes;
+            LoadImage(Bytes);
         }
 
         /// <summary>
@@ -452,7 +328,7 @@ namespace IronSoftware.Drawing
         /// <seealso cref="AnyBitmap"/>
         public AnyBitmap(System.IO.MemoryStream Stream)
         {
-            Binary = Stream.ToArray();
+            LoadImage(Stream.ToArray());
         }
 
         /// <summary>
@@ -465,7 +341,7 @@ namespace IronSoftware.Drawing
         {
             if (File.ToLower().EndsWith(".svg"))
             {
-                return new AnyBitmap(IronSkiasharpBitmap.DecodeSVG(File).Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray());
+                return LoadSVGImage(File);
             }
             else
             {
@@ -481,7 +357,31 @@ namespace IronSoftware.Drawing
         /// <seealso cref="AnyBitmap"/>
         public AnyBitmap(string File)
         {
-            Binary = System.IO.File.ReadAllBytes(File);
+            LoadImage(File);
+        }
+
+        /// <summary>
+        /// Implicitly casts ImageSharp objects to <see cref="AnyBitmap"/>.
+        /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters and return types, you now automatically support ImageSharp as well.</para>
+        /// </summary>
+        /// <param name="Image">SixLabors.ImageSharp.Image will automatically be cast to <see cref="AnyBitmap"/>.</param>
+        public static implicit operator AnyBitmap(SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> Image)
+        {
+            using (var memoryStream = new System.IO.MemoryStream())
+            {
+                Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder());
+                return new AnyBitmap(memoryStream.ToArray());
+            }
+        }
+
+        /// <summary>
+        /// Implicitly casts ImageSharp objects from <see cref="AnyBitmap"/>.
+        /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters and return types, you now automatically support ImageSharp as well.</para>
+        /// </summary>
+        /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to a SixLabors.ImageSharp.Image.</param>
+        static public implicit operator SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(AnyBitmap bitmap)
+        {
+            return SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(bitmap.Binary);
         }
 
         /// <summary>
@@ -505,7 +405,7 @@ namespace IronSoftware.Drawing
         /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to a SixLabors.ImageSharp.Image.</param>
         static public implicit operator SixLabors.ImageSharp.Image(AnyBitmap bitmap)
         {
-            return SixLabors.ImageSharp.Image.Load(bitmap.Binary);
+            return SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(bitmap.Binary);
         }
 
         /// <summary>
@@ -709,6 +609,30 @@ namespace IronSoftware.Drawing
 
 #region Private Method
 
+        private void LoadImage(byte[] Bytes)
+        {
+            Image = Image.Load(Bytes);
+            Binary = Bytes;
+        }
+
+        private void LoadImage(string File)
+        {
+            Image = Image.Load(File);
+            Binary = System.IO.File.ReadAllBytes(File);
+        }
+
+        private static AnyBitmap LoadSVGImage(string File)
+        {
+            if (IsLoadedType("SkiaSharp.SKImage"))
+            {
+                return new AnyBitmap(IronSkiasharpBitmap.DecodeSVG(File).Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray());
+            }
+            else
+            {
+                throw new PlatformNotSupportedException($"IronSoftware.Drawing does not support SVG format.");
+            }
+        }
+
         private static PlatformNotSupportedException SystemDotDrawingPlatformNotSupported(Exception innerException)
         {
             return new PlatformNotSupportedException($"Microsoft has chosen to no longer support System.Drawing.Common on Linux or MacOS. To solve this please use another Bitmap type such as {typeof(System.Drawing.Bitmap).ToString()}, SkiaSharp or ImageSharp.\n\nhttps://docs.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/system-drawing-common-windows-only", innerException);
@@ -724,7 +648,7 @@ namespace IronSoftware.Drawing
             return new InvalidOperationException($"{typeof(AnyBitmap)} is unable to convert your image data to {Format.ToString()} because it requires a suitable encoder to be added to your project via Nuget.\nPlease try SkiaSharp, System.Drawing.Common, SixLabors.ImageSharp, Microsoft.Maui.Graphics; or alternatively save using ImageFormat.Default", innerException);
         }
 
-        private bool IsLoadedType(string typeName)
+        private static bool IsLoadedType(string typeName)
         {
             foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
             {
@@ -809,7 +733,85 @@ namespace IronSoftware.Drawing
             return anyBitmap;
         }
 
-#endregion
+        private bool TryExportStream(System.IO.Stream Stream, ImageFormat Format = ImageFormat.Default, int Lossy = 100)
+        {
+            if (IsLoadedType("SixLabors.ImageSharp.Image"))
+            {
+                using SixLabors.ImageSharp.Image img = this; // magic implicit cast
+
+                if (img != null)
+                {
+                    SixLabors.ImageSharp.Formats.IImageEncoder enc;
+                    switch (Format)
+                    {
+                        case ImageFormat.Jpeg: enc = new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder() { Quality = Lossy }; break;
+                        case ImageFormat.Gif: enc = new SixLabors.ImageSharp.Formats.Gif.GifEncoder(); break;
+                        case ImageFormat.Png: enc = new SixLabors.ImageSharp.Formats.Png.PngEncoder(); break;
+                        case ImageFormat.Webp: enc = new SixLabors.ImageSharp.Formats.Webp.WebpEncoder() { Quality = Lossy }; break;
+                        case ImageFormat.Tiff: enc = new SixLabors.ImageSharp.Formats.Tiff.TiffEncoder(); break;
+
+                        default: enc = new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder(); break;
+                    }
+
+                    img.Save(Stream, enc);
+                    return true;
+                }
+            }
+            if (IsLoadedType("SkiaSharp.SKImage"))
+            {
+                using SkiaSharp.SKImage img = this; // magic implicit cast
+
+                if (Format == ImageFormat.Gif || Format == ImageFormat.Tiff || Format == ImageFormat.Bmp)
+                {
+                    var writer = new BinaryWriter(Stream);
+                    writer.Write(Binary);
+                    return true;
+                }
+                else
+                {
+                    var skdata = img.Encode((SkiaSharp.SKEncodedImageFormat)((int)Format), Lossy);
+                    skdata.SaveTo(Stream);
+                    return true;
+                }
+            }
+            if (IsLoadedType("System.Drawing.Bitmap"))
+            {
+                using System.Drawing.Bitmap img = (System.Drawing.Bitmap)this; // magic implicit cast
+
+                System.Drawing.Imaging.ImageFormat exportFormat;
+                switch (Format)
+                {
+                    case ImageFormat.Jpeg: exportFormat = System.Drawing.Imaging.ImageFormat.Jpeg; break;
+                    case ImageFormat.Gif: exportFormat = System.Drawing.Imaging.ImageFormat.Gif; break;
+                    case ImageFormat.Png: exportFormat = System.Drawing.Imaging.ImageFormat.Png; break;
+                    case ImageFormat.Tiff: exportFormat = System.Drawing.Imaging.ImageFormat.Tiff; break;
+                    case ImageFormat.Wmf: exportFormat = System.Drawing.Imaging.ImageFormat.Wmf; break;
+                    case ImageFormat.Icon: exportFormat = System.Drawing.Imaging.ImageFormat.Icon; break;
+                    default: exportFormat = System.Drawing.Imaging.ImageFormat.Bmp; break;
+                }
+
+                if (exportFormat == System.Drawing.Imaging.ImageFormat.Jpeg)
+                {
+                    try
+                    {
+                        var encoderParams = new System.Drawing.Imaging.EncoderParameters(1);
+                        encoderParams.Param[0] = new System.Drawing.Imaging.EncoderParameter(System.Drawing.Imaging.Encoder.Quality, Lossy);
+                        var jpegEncoder = System.Drawing.Imaging.ImageCodecInfo.GetImageEncoders().FirstOrDefault(t => t.MimeType == "image/jpeg");
+                        img.Save(Stream, jpegEncoder, encoderParams);
+                    }
+                    catch { }
+                }
+                else
+                {
+                    img.Save(Stream, exportFormat);
+                }
+
+                return true;
+            }
+            return false;
+        }
+
+        #endregion
     }
 }
 
