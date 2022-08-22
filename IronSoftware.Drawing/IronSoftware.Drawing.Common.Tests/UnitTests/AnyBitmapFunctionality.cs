@@ -326,53 +326,28 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void CastSixLabors_to_AnyBitmap()
         {
-#if NET7_0
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                string imagePath = GetRelativeFilePath("mountainclimbers.jpg");
-                SixLabors.ImageSharp.Image imgSharp;
-                var exception = Assert.Throws<System.PlatformNotSupportedException>(() => imgSharp = SixLabors.ImageSharp.Image.Load(imagePath));
-                Assert.Equal("Operation is not supported on this platform.", exception.Message);
-            }
-            else
-#endif
-            {
-                string imagePath = GetRelativeFilePath("mountainclimbers.jpg");
-                SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> imgSharp = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(imagePath);
-                AnyBitmap anyBitmap = imgSharp;
+            string imagePath = GetRelativeFilePath("mountainclimbers.jpg");
+            SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> imgSharp = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(imagePath);
+            AnyBitmap anyBitmap = imgSharp;
 
-                imgSharp.Save("expected.bmp");
-                anyBitmap.SaveAs("result.bmp");
+            imgSharp.Save("expected.bmp");
+            anyBitmap.SaveAs("result.bmp");
 
-                AssertImageAreEqual("expected.bmp", "result.bmp", true);
-            }
+            AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
 
         [FactWithAutomaticDisplayName]
         public void CastSixLabors_from_AnyBitmap()
         {
-#if NET7_0
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("mountainclimbers.jpg"));
-                SixLabors.ImageSharp.Image imgSharp;
-                var exception = Assert.Throws<System.PlatformNotSupportedException>(() => imgSharp = anyBitmap);
-                Assert.Equal("Operation is not supported on this platform.", exception.Message);
-            }
-            else
-#endif
-            { 
-                AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("mountainclimbers.jpg"));
-                SixLabors.ImageSharp.Image imgSharp = anyBitmap;
+            AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("mountainclimbers.jpg"));
+            SixLabors.ImageSharp.Image imgSharp = anyBitmap;
 
-                anyBitmap.SaveAs("expected.bmp");
-                imgSharp.Save("result.bmp");
+            anyBitmap.SaveAs("expected.bmp");
+            imgSharp.Save("result.bmp");
 
-                AssertImageAreEqual("expected.bmp", "result.bmp", true);            
-            }
+            AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
 
-#if !NET472
         [FactWithAutomaticDisplayName]
         public void CastMaui_to_AnyBitmap()
         {
@@ -398,7 +373,6 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
-#endif
 
     }
 }
