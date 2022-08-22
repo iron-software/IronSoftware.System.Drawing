@@ -338,7 +338,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 #endif
             {
                 string imagePath = GetRelativeFilePath("mountainclimbers.jpg");
-                SixLabors.ImageSharp.Image imgSharp = SixLabors.ImageSharp.Image.Load(imagePath);
+                SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> imgSharp = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(imagePath);
                 AnyBitmap anyBitmap = imgSharp;
 
                 imgSharp.Save("expected.bmp");
@@ -372,7 +372,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             }
         }
 
-
+#if !NET472
         [FactWithAutomaticDisplayName]
         public void CastMaui_to_AnyBitmap()
         {
@@ -398,6 +398,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
+#endif
 
     }
 }
