@@ -77,24 +77,34 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void Try_Save_Bitmap_with_Format()
         {
-            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-            AnyBitmap anyBitmap = new AnyBitmap(imagePath);
+#if NET7_0
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                var exception = Assert.Throws<System.PlatformNotSupportedException>(() => AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg")));
+                Assert.Equal("Operation is not supported on this platform.", exception.Message);
+            }
+            else
+#endif
+            {
+                string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
+                AnyBitmap anyBitmap = new AnyBitmap(imagePath);
 
-            anyBitmap.SaveAs("result-png.png", AnyBitmap.ImageFormat.Png);
-            Assert.True(File.Exists("result-png.png"));
-            CleanResultFile("result-png.png");
+                anyBitmap.SaveAs("result-png.png", AnyBitmap.ImageFormat.Png);
+                Assert.True(File.Exists("result-png.png"));
+                CleanResultFile("result-png.png");
 
-            anyBitmap.SaveAs("result-png-loss.png", AnyBitmap.ImageFormat.Png, 50);
-            Assert.True(File.Exists("result-png-loss.png"));
-            CleanResultFile("result-png-loss.png");
+                anyBitmap.SaveAs("result-png-loss.png", AnyBitmap.ImageFormat.Png, 50);
+                Assert.True(File.Exists("result-png-loss.png"));
+                CleanResultFile("result-png-loss.png");
 
-            anyBitmap.TrySaveAs("result-try-png.png", AnyBitmap.ImageFormat.Png);
-            Assert.True(File.Exists("result-try-png.png"));
-            CleanResultFile("result-try-png.png");
+                anyBitmap.TrySaveAs("result-try-png.png", AnyBitmap.ImageFormat.Png);
+                Assert.True(File.Exists("result-try-png.png"));
+                CleanResultFile("result-try-png.png");
 
-            anyBitmap.TrySaveAs("result-try-png-loss.png", AnyBitmap.ImageFormat.Png, 50);
-            Assert.True(File.Exists("result-try-png-loss.png"));
-            CleanResultFile("result-try-png-loss.png");
+                anyBitmap.TrySaveAs("result-try-png-loss.png", AnyBitmap.ImageFormat.Png, 50);
+                Assert.True(File.Exists("result-try-png-loss.png"));
+                CleanResultFile("result-try-png-loss.png");
+            }
         }
 
         [FactWithAutomaticDisplayName]
@@ -193,14 +203,24 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void AnyBitmap_should_ToString()
         {
-            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(imagePath);
+#if NET7_0
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                var exception = Assert.Throws<System.PlatformNotSupportedException>(() => AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg")));
+                Assert.Equal("Operation is not supported on this platform.", exception.Message);
+            }
+            else
+#endif
+            {
+                string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
+                AnyBitmap anyBitmap = AnyBitmap.FromFile(imagePath);
 
-            byte[] bytes = File.ReadAllBytes(imagePath);
-            string expected = Convert.ToBase64String(bytes, 0, bytes.Length);
+                byte[] bytes = File.ReadAllBytes(imagePath);
+                string expected = Convert.ToBase64String(bytes, 0, bytes.Length);
 
-            string result = anyBitmap.ToString();
-            Assert.Equal(expected, result);
+                string result = anyBitmap.ToString();
+                Assert.Equal(expected, result);
+            }
         }
 
         [FactWithAutomaticDisplayName]
@@ -264,21 +284,31 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void CastSKBitmap_from_AnyBitmap()
         {
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
-            SkiaSharp.SKBitmap skBitmap = anyBitmap;
+#if NET7_0
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                var exception = Assert.Throws<System.PlatformNotSupportedException>(() => AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg")));
+                Assert.Equal("Operation is not supported on this platform.", exception.Message);
+            }
+            else
+#endif
+            {
+                AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
+                SkiaSharp.SKBitmap skBitmap = anyBitmap;
 
-            anyBitmap.SaveAs("expected.png");
-            SaveSkiaBitmap(skBitmap, "result.png");
+                anyBitmap.SaveAs("expected.png");
+                SaveSkiaBitmap(skBitmap, "result.png");
 
-            AssertImageAreEqual("expected.png", "result.png", true);
+                AssertImageAreEqual("expected.png", "result.png", true);
 
-            anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("Sample-Tiff-File-download-for-Testing.tiff"));
-            skBitmap = anyBitmap;
+                anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("Sample-Tiff-File-download-for-Testing.tiff"));
+                skBitmap = anyBitmap;
 
-            anyBitmap.SaveAs("expected.png");
-            SaveSkiaBitmap(skBitmap, "result.png");
+                anyBitmap.SaveAs("expected.png");
+                SaveSkiaBitmap(skBitmap, "result.png");
 
-            AssertImageAreEqual("expected.png", "result.png", true);
+                AssertImageAreEqual("expected.png", "result.png", true);
+            }
         }
 
         [FactWithAutomaticDisplayName]
@@ -354,14 +384,12 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 #if NET7_0
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("mountainclimbers.jpg"));
-                SixLabors.ImageSharp.Image imgSharp;
-                var exception = Assert.Throws<System.PlatformNotSupportedException>(() => imgSharp = anyBitmap);
+                var exception = Assert.Throws<System.PlatformNotSupportedException>(() => AnyBitmap.FromFile(GetRelativeFilePath("mountainclimbers.jpg")));
                 Assert.Equal("Operation is not supported on this platform.", exception.Message);
             }
             else
 #endif
-            { 
+            {
                 AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("mountainclimbers.jpg"));
                 SixLabors.ImageSharp.Image imgSharp = anyBitmap;
 
@@ -372,7 +400,6 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             }
         }
 
-#if !NET472
         [FactWithAutomaticDisplayName]
         public void CastMaui_to_AnyBitmap()
         {
@@ -390,15 +417,24 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void CastMaui_from_AnyBitmap()
         {
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
-            Microsoft.Maui.Graphics.Platform.PlatformImage image = anyBitmap;
-
-            anyBitmap.SaveAs("expected.bmp");
-            SaveMauiImages(image, "result.bmp");
-
-            AssertImageAreEqual("expected.bmp", "result.bmp", true);
-        }
+#if NET7_0
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                var exception = Assert.Throws<System.PlatformNotSupportedException>(() => AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg")));
+                Assert.Equal("Operation is not supported on this platform.", exception.Message);
+            }
+            else
 #endif
+            {
+                AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
+                Microsoft.Maui.Graphics.Platform.PlatformImage image = anyBitmap;
+
+                anyBitmap.SaveAs("expected.bmp");
+                SaveMauiImages(image, "result.bmp");
+
+                AssertImageAreEqual("expected.bmp", "result.bmp", true);
+            }
+        }
 
     }
 }
