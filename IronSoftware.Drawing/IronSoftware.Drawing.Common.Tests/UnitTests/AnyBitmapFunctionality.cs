@@ -1,10 +1,10 @@
+using Newtonsoft.Json.Linq;
+using SixLabors.ImageSharp;
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using Xunit;
 using Xunit.Abstractions;
-#if NET5_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER
-using SixLabors.ImageSharp;
-#endif
 
 namespace IronSoftware.Drawing.Common.Tests.UnitTests
 {
@@ -66,6 +66,15 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void Create_SVG_AnyBitmap()
+        {
+            string imagePath = GetRelativeFilePath("Example_barcode.svg");
+            AnyBitmap bitmap = AnyBitmap.FromFile(imagePath);
+            bitmap.SaveAs("result.bmp");
+            AssertImageAreEqual(imagePath, "result.bmp");
+        }
+
+        [FactWithAutomaticDisplayName]
         public void Try_Save_Bitmap_with_Format()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
@@ -111,11 +120,6 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void CastBitmap_to_AnyBitmap()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-#if NETCOREAPP2_1
-            System.Drawing.Bitmap bitmap;
-            var ex = Assert.Throws<PlatformNotSupportedException>(() => bitmap = new System.Drawing.Bitmap(imagePath));
-            Assert.Equal("System.Drawing is not supported on this platform.", ex.Message);
-#else
             System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(imagePath);
             AnyBitmap anyBitmap = bitmap;
 
@@ -123,56 +127,18 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             anyBitmap.SaveAs("result.bmp");
 
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
-#endif
         }
 
         [FactWithAutomaticDisplayName]
         public void CastBitmap_from_AnyBitmap()
         {
             AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
-#if NETCOREAPP2_1
-            System.Drawing.Bitmap bitmap;
-            var ex = Assert.Throws<PlatformNotSupportedException>(() => bitmap = anyBitmap);
-            if (IsUnix())
-            {
-                Assert.Equal($"Microsoft has chosen to no longer support System.Drawing.Common on Linux or MacOS. To solve this please use another Bitmap type such as {typeof(System.Drawing.Bitmap).ToString()}, SkiaSharp or ImageSharp.\n\nhttps://docs.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/6.0/system-drawing-common-windows-only", ex.Message);
-            }
-            else
-            {
-                Assert.Equal("System.Drawing is not supported on this platform.", ex.Message);
-            }
-#else
             System.Drawing.Bitmap bitmap = anyBitmap;
 
             anyBitmap.SaveAs("expected.bmp");
             bitmap.Save("result.bmp");
 
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
-#endif
-        }
-
-        [FactWithAutomaticDisplayName]
-        public void AnyBitmap_should_equal_Bitmap()
-        {
-            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(imagePath);
-#if NETCOREAPP2_1
-            System.Drawing.Bitmap bitmap;
-            var ex = Assert.Throws<PlatformNotSupportedException>(() => bitmap = new System.Drawing.Bitmap(imagePath));
-            Assert.Equal("System.Drawing is not supported on this platform.", ex.Message);
-#else
-            System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(imagePath);
-            AnyBitmap compareAnyBitmap = bitmap;
-
-            if (!IsUnix())
-            { 
-                Assert.True(anyBitmap.Equals(compareAnyBitmap));
-            }
-
-            anyBitmap.SaveAs("expected.bmp");
-            bitmap.Save("result.bmp");
-            AssertImageAreEqual("expected.bmp", "result.bmp", true);
-#endif
         }
 
         [FactWithAutomaticDisplayName]
@@ -201,6 +167,9 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             result = anyBitmap.ToStream();
             AssertStreamAreEqual(expected, result);
+
+            Func<Stream> funcStream = anyBitmap.ToStreamFn();
+            AssertStreamAreEqual(expected, funcStream);
 
             using var resultExport = new System.IO.MemoryStream();
             anyBitmap.ExportStream(resultExport);
@@ -254,7 +223,39 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             SkiaSharp.SKBitmap skBitmap = SkiaSharp.SKBitmap.Decode(imagePath);
             AnyBitmap anyBitmap = skBitmap;
 
-            SaveSkiaImage(skBitmap, "expected.png");
+            SaveSkiaBitmap(skBitmap, "expected.png");
+            anyBitmap.SaveAs("result.png");
+
+            AssertImageAreEqual("expected.png", "result.png", true);
+
+            imagePath = GetRelativeFilePath("Sample-Tiff-File-download-for-Testing.tiff");
+            skBitmap = IronSkiasharpBitmap.OpenTiffToSKBitmap(imagePath);
+            anyBitmap = skBitmap;
+
+            SaveSkiaBitmap(skBitmap, "expected.png");
+            anyBitmap.SaveAs("result.png");
+
+            AssertImageAreEqual("expected.png", "result.png", true);
+
+            byte[] bytes = File.ReadAllBytes(imagePath);
+            skBitmap = IronSkiasharpBitmap.OpenTiffToSKBitmap(bytes);
+            anyBitmap = skBitmap;
+
+            SaveSkiaBitmap(skBitmap, "expected.png");
+            anyBitmap.SaveAs("result.png");
+
+            AssertImageAreEqual("expected.png", "result.png", true);
+
+            MemoryStream memStream = new MemoryStream();
+            using (FileStream fs = File.OpenRead(imagePath))
+            {
+                fs.CopyTo(memStream);
+                memStream.Position = 0;
+            }
+            skBitmap = IronSkiasharpBitmap.OpenTiffToSKBitmap(memStream);
+            anyBitmap = skBitmap;
+
+            SaveSkiaBitmap(skBitmap, "expected.png");
             anyBitmap.SaveAs("result.png");
 
             AssertImageAreEqual("expected.png", "result.png", true);
@@ -267,7 +268,15 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             SkiaSharp.SKBitmap skBitmap = anyBitmap;
 
             anyBitmap.SaveAs("expected.png");
-            SaveSkiaImage(skBitmap, "result.png");
+            SaveSkiaBitmap(skBitmap, "result.png");
+
+            AssertImageAreEqual("expected.png", "result.png", true);
+
+            anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("Sample-Tiff-File-download-for-Testing.tiff"));
+            skBitmap = anyBitmap;
+
+            anyBitmap.SaveAs("expected.png");
+            SaveSkiaBitmap(skBitmap, "result.png");
 
             AssertImageAreEqual("expected.png", "result.png", true);
         }
@@ -278,6 +287,15 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
             SkiaSharp.SKImage skImage = SkiaSharp.SKImage.FromBitmap(SkiaSharp.SKBitmap.Decode(imagePath));
             AnyBitmap anyBitmap = skImage;
+
+            SaveSkiaImage(skImage, "expected.png");
+            anyBitmap.SaveAs("result.png");
+
+            AssertImageAreEqual("expected.png", "result.png", true);
+
+            imagePath = GetRelativeFilePath("Sample-Tiff-File-download-for-Testing.tiff");
+            skImage = SkiaSharp.SKImage.FromBitmap(IronSkiasharpBitmap.OpenTiffToSKBitmap(imagePath));
+            anyBitmap = skImage;
 
             SaveSkiaImage(skImage, "expected.png");
             anyBitmap.SaveAs("result.png");
@@ -295,15 +313,21 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             SaveSkiaImage(skImage, "result.png");
 
             AssertImageAreEqual("expected.png", "result.png", true);
-        }
 
-#if NET5_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER
+            anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("Sample-Tiff-File-download-for-Testing.tiff"));
+            skImage = anyBitmap;
+
+            anyBitmap.SaveAs("expected.png");
+            SaveSkiaImage(skImage, "result.png");
+
+            AssertImageAreEqual("expected.png", "result.png", true);
+        }
 
         [FactWithAutomaticDisplayName]
         public void CastSixLabors_to_AnyBitmap()
         {
-            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-            SixLabors.ImageSharp.Image imgSharp = SixLabors.ImageSharp.Image.Load(imagePath);
+            string imagePath = GetRelativeFilePath("mountainclimbers.jpg");
+            SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> imgSharp = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(imagePath);
             AnyBitmap anyBitmap = imgSharp;
 
             imgSharp.Save("expected.bmp");
@@ -315,7 +339,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void CastSixLabors_from_AnyBitmap()
         {
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
+            AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("mountainclimbers.jpg"));
             SixLabors.ImageSharp.Image imgSharp = anyBitmap;
 
             anyBitmap.SaveAs("expected.bmp");
@@ -349,8 +373,6 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
-
-#endif
 
     }
 }

@@ -850,7 +850,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Implicitly casts System.Drawing.Color objects to <see cref="Color"/>.  
-        /// <para>When your .NET Class methods to use <see cref="Color"/> as parameters and return types, you now automatically support Color as well.</para>
+        /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support Color as well.</para>
         /// </summary>
         /// <param name="Color">System.Drawing.Color will automatically be cast to <see cref="Color"/> </param>
         public static implicit operator Color(System.Drawing.Color Color)
@@ -860,7 +860,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Implicitly casts System.Drawing.Color objects from <see cref="Color"/>.  
-        /// <para>When your .NET Class methods to use <see cref="Color"/> as parameters and return types, you now automatically support SKColor as well.</para>
+        /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support SKColor as well.</para>
         /// </summary>
         /// <param name="Color"><see cref="Color"/> is explicitly cast to an System.Drawing.Rectangle </param>
         static public implicit operator System.Drawing.Color(Color Color)
@@ -870,9 +870,9 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Implicitly casts SkiaSharp.SKColor objects to <see cref="Color"/>.  
-        /// <para>When your .NET Class methods to use <see cref="Color"/> as parameters and return types, you now automatically support SKColor as well.</para>
+        /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support SKColor as well.</para>
         /// </summary>
-        /// <param name="Color">System.Drawing.Color will automatically be cast to <see cref="Color"/> </param>
+        /// <param name="Color">SkiaSharp.SKColor will automatically be cast to <see cref="Color"/> </param>
         public static implicit operator Color(SkiaSharp.SKColor Color)
         {
             return new Color(Color.Alpha, Color.Red, Color.Green, Color.Blue);
@@ -880,12 +880,54 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Implicitly casts SkiaSharp.SKColor objects from <see cref="Color"/>.  
-        /// <para>When your .NET Class methods to use <see cref="Color"/> as parameters and return types, you now automatically support SKColor as well.</para>
+        /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support SKColor as well.</para>
         /// </summary>
         /// <param name="Color"><see cref="Color"/> is explicitly cast to an SkiaSharp.SKColor </param>
         static public implicit operator SkiaSharp.SKColor(Color Color)
         {
             return new SkiaSharp.SKColor(Color.R, Color.G, Color.B, Color.A);
+        }
+
+        /// <summary>
+        /// Implicitly casts SixLabors.ImageSharp.Color objects to <see cref="Color"/>.  
+        /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support SKColor as well.</para>
+        /// </summary>
+        /// <param name="Color">SixLabors.ImageSharp.Color will automatically be cast to <see cref="Color"/> </param>
+        public static implicit operator Color(SixLabors.ImageSharp.Color Color)
+        {
+            string hex = Color.ToHex();
+            return new Color(ConvertToHexNumberByte(hex, 6, 2), ConvertToHexNumberByte(hex, 0, 2), ConvertToHexNumberByte(hex, 2, 2), ConvertToHexNumberByte(hex, 4, 2));
+        }
+
+        /// <summary>
+        /// Implicitly casts SixLabors.ImageSharp.Color objects from <see cref="Color"/>.  
+        /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support SKColor as well.</para>
+        /// </summary>
+        /// <param name="Color"><see cref="Color"/> is explicitly cast to an SixLabors.ImageSharp.Color </param>
+        static public implicit operator SixLabors.ImageSharp.PixelFormats.Rgba32(Color Color)
+        {
+            return SixLabors.ImageSharp.Color.FromRgba(Color.R, Color.G, Color.B, Color.A);
+        }
+
+        /// <summary>
+        /// Implicitly casts SixLabors.ImageSharp.Color objects to <see cref="Color"/>.  
+        /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support SKColor as well.</para>
+        /// </summary>
+        /// <param name="Color">SixLabors.ImageSharp.Color will automatically be cast to <see cref="Color"/> </param>
+        public static implicit operator Color(SixLabors.ImageSharp.PixelFormats.Rgba32 Color)
+        {
+            string hex = Color.ToHex(); // Rgba
+            return new Color(ConvertToHexNumberByte(hex, 6, 2), ConvertToHexNumberByte(hex, 0, 2), ConvertToHexNumberByte(hex, 2, 2), ConvertToHexNumberByte(hex, 4, 2));
+        }
+
+        /// <summary>
+        /// Implicitly casts SixLabors.ImageSharp.Color objects from <see cref="Color"/>.  
+        /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support SKColor as well.</para>
+        /// </summary>
+        /// <param name="Color"><see cref="Color"/> is explicitly cast to an SixLabors.ImageSharp.Color </param>
+        static public implicit operator SixLabors.ImageSharp.Color(Color Color)
+        {
+            return SixLabors.ImageSharp.Color.FromRgba(Color.R, Color.G, Color.B, Color.A);
         }
 
         #region Private Method
@@ -900,7 +942,7 @@ namespace IronSoftware.Drawing
             return (value * 100) / (double)total;
         }
 
-        private byte ConvertToHexNumberByte(string colorcode, int start, int length)
+        private static byte ConvertToHexNumberByte(string colorcode, int start, int length)
         {
             if (length == 2)
             {

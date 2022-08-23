@@ -69,6 +69,13 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             if (!msArray1.SequenceEqual(msArray2))
                 throw new AssertActualExpectedException($"Expected: {expected}", $"Actual: {actual}", $"Actual Stream sequence not equal to Expected.");
         }
+        protected void AssertStreamAreEqual(MemoryStream expected, Func<Stream> actual)
+        {
+            using (MemoryStream actualStream = (MemoryStream)actual.Invoke())
+            {
+                AssertStreamAreEqual(expected, actualStream);
+            }
+        }
 
         protected void AssertBytesAreEqual(byte[] expected, byte[] actual)
         {
@@ -78,7 +85,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
                 throw new AssertActualExpectedException($"Expected: {expected}", $"Actual: {actual}", $"{assertName} failed.");
         }
 
-        protected void SaveSkiaImage(SkiaSharp.SKBitmap bitmap, string filename, AnyBitmap.ImageFormat imageFormat = AnyBitmap.ImageFormat.Png)
+        protected void SaveSkiaBitmap(SkiaSharp.SKBitmap bitmap, string filename, AnyBitmap.ImageFormat imageFormat = AnyBitmap.ImageFormat.Png)
         {
             SkiaSharp.SKImage image = SkiaSharp.SKImage.FromBitmap(bitmap);
             SaveSkiaImage(image, filename, imageFormat);
@@ -93,7 +100,6 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             }
         }
 
-#if NET5_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER
         protected void SaveMauiImages(Microsoft.Maui.Graphics.IImage image, string filename)
         {
             using MemoryStream memStream = new MemoryStream();
@@ -102,6 +108,24 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             memStream.Seek(0, SeekOrigin.Begin);
             memStream.CopyTo(fileStream);
         }
-#endif
+
+        protected bool IsGrayScale(SkiaSharp.SKBitmap image)
+        {
+            bool res = true;
+            for (int i = 0; i < image.Width; i++)
+            {
+                for (int j = 0; j < image.Height; j++)
+                {
+                    SkiaSharp.SKColor color = image.GetPixel(i, j);
+
+                    if (color.Alpha != 0 && (color.Red != color.Green || color.Green != color.Blue))
+                    {
+                        res = false;
+                        break;
+                    }
+                }
+            }
+            return res;
+        }
     }
 }

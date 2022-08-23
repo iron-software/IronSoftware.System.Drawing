@@ -71,6 +71,40 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void CastImageSharp_Rectangle_to_CropRectangle()
+        {
+            SixLabors.ImageSharp.Rectangle rectangle = new SixLabors.ImageSharp.Rectangle(10, 10, 150, 150);
+            CropRectangle cropRectangle = rectangle;
+            Assert.NotNull(cropRectangle);
+            Assert.Equal(150, cropRectangle.Width);
+            Assert.Equal(150, cropRectangle.Height);
+            Assert.Equal(10, cropRectangle.X);
+            Assert.Equal(10, cropRectangle.Y);
+
+            rectangle = new SixLabors.ImageSharp.Rectangle(new SixLabors.ImageSharp.Point(15, 15), new SixLabors.ImageSharp.Size(75, 75));
+            cropRectangle = rectangle;
+            Assert.NotNull(cropRectangle);
+            Assert.Equal(75, cropRectangle.Width);
+            Assert.Equal(75, cropRectangle.Height);
+            Assert.Equal(15, cropRectangle.X);
+            Assert.Equal(15, cropRectangle.Y);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CastImageSharp_Rectangle_from_CropRectangle()
+        {
+            CropRectangle cropRectangle = new CropRectangle(5, 5, 50, 50);
+
+            SixLabors.ImageSharp.Rectangle rectangle = cropRectangle;
+
+            Assert.NotNull(cropRectangle);
+            Assert.Equal(50, rectangle.Width);
+            Assert.Equal(50, rectangle.Height);
+            Assert.Equal(5, rectangle.X);
+            Assert.Equal(5, rectangle.Y);
+        }
+
+        [FactWithAutomaticDisplayName]
         public void CastSKRect_to_CropRectangle()
         {
             SkiaSharp.SKRect rect = new SkiaSharp.SKRect(50, 100, 150, 25);

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>IronSoftware.Drawing</id>
+    <version>$version$</version>
+    <title>IronSoftware.Drawing</title>
+    <authors>https://ironsoftware.com/</authors>
+    <owners></owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>IronSoftware.Drawing</description>
+    <summary>IronSoftware.Drawing</summary>
+    <releaseNotes>IronSoftware.Drawing</releaseNotes>
+    <copyright>Copyright https://ironsoftware.com 2022</copyright>
+    <tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, Tiff, Gif, Jpeg, Png, Color, Rectangle, Drawing, C#, VB.NET, aspx, create, render, generate, standard, netstandard2.0, core, netcore</tags>
+  </metadata>
+  <files>
+	<file src="..\bin\$configuration$\netstandard2.0\*" exclude="..\bin\$configuration$\netstandard2.0\System.Threading.Tasks.Parallel.dll" target="lib\netstandard2.0" />
+  </files>
+</package>

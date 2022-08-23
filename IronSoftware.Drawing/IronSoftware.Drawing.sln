@@ -9,6 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronSoftware.Drawing.Common
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{87EDECFE-F93E-4E05-A735-D4E0C3B39967}"
 	ProjectSection(SolutionItems) = preProject
+		..\CI\azure-pipelines-build.yml = ..\CI\azure-pipelines-build.yml
 		..\CI\azure-pipelines-linux.yml = ..\CI\azure-pipelines-linux.yml
 		..\CI\azure-pipelines-mac.yml = ..\CI\azure-pipelines-mac.yml
 		..\CI\azure-pipelines-windows.yml = ..\CI\azure-pipelines-windows.yml

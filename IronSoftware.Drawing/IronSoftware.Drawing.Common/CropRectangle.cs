@@ -93,6 +93,26 @@ namespace IronSoftware.Drawing
             return SkiaSharp.SKRectI.Create(CropRectangle.X, CropRectangle.Y, CropRectangle.Width, CropRectangle.Height);
         }
 
+        /// <summary>
+        /// Implicitly casts SixLabors.ImageSharp.Rectangle objects to <see cref="CropRectangle"/>.
+        /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SixLabors.ImageSharp.Rectangle as well.</para>
+        /// </summary>
+        /// <param name="Rectangle">SixLabors.ImageSharp.Rectangle will automatically be cast to <see cref="CropRectangle"/>.</param>
+        public static implicit operator CropRectangle(SixLabors.ImageSharp.Rectangle Rectangle)
+        {
+            return new CropRectangle(Rectangle.X, Rectangle.Y, Rectangle.Width, Rectangle.Height);
+        }
+
+        /// <summary>
+        /// Implicitly casts SixLabors.ImageSharp.Rectangle objects from <see cref="CropRectangle"/>.
+        /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SixLabors.ImageSharp.Rectangle as well.</para>
+        /// </summary>
+        /// <param name="CropRectangle"><see cref="CropRectangle"/> is explicitly cast to a SixLabors.ImageSharp.Rectangle.</param>
+        static public implicit operator SixLabors.ImageSharp.Rectangle(CropRectangle CropRectangle)
+        {
+            return new SixLabors.ImageSharp.Rectangle(CropRectangle.X, CropRectangle.Y, CropRectangle.Width, CropRectangle.Height);
+        }
+
         #region Private Method
 
         private static CropRectangle CreateCropRectangle(int left, int top, int right, int bottom)
