@@ -65,7 +65,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Gets the em-size of this Font measured in the units specified by the Unit property.
+        /// Gets the "em-size of this Font measured in the units specified by the Unit property.
         /// </summary>
         public float Size { get; internal set; } = 12;
 
@@ -115,7 +115,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Implicitly casts System.Drawing.Font objects to <see cref="Font"/>.  
-        /// <para>When your .NET Class methods to use <see cref="Font"/> as parameters and return types, you now automatically support Font as well.</para>
+        /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
         /// <param name="Font">System.Drawing.Font will automatically be cast to <see cref="Font"/> </param>
         public static implicit operator Font(System.Drawing.Font Font)
@@ -125,7 +125,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Implicitly casts System.Drawing.Font objects from <see cref="Font"/>.  
-        /// <para>When your .NET Class methods to use <see cref="Font"/> as parameters and return types, you now automatically support Font as well.</para>
+        /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
         /// <param name="Font"><see cref="Font"/> is explicitly cast to an System.Drawing.Font </param>
         static public implicit operator System.Drawing.Font(Font Font)
@@ -135,7 +135,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Implicitly casts SixLabors.Fonts.Font objects to <see cref="Font"/>.  
-        /// <para>When your .NET Class methods to use <see cref="Font"/> as parameters and return types, you now automatically support Font as well.</para>
+        /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
         /// <param name="Font">SixLabors.Fonts.Font will automatically be cast to <see cref="Font"/> </param>
         public static implicit operator Font(SixLabors.Fonts.Font Font)
@@ -162,7 +162,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Implicitly casts SixLabors.Fonts.Font objects from <see cref="Font"/>.  
-        /// <para>When your .NET Class methods to use <see cref="Font"/> as parameters and return types, you now automatically support Font as well.</para>
+        /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
         /// <param name="Font"><see cref="Font"/> is explicitly cast to an SixLabors.Fonts.Font </param>
         static public implicit operator SixLabors.Fonts.Font(Font Font)
@@ -172,7 +172,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Implicitly casts SkiaSharp.SKFont objects to <see cref="Font"/>.  
-        /// <para>When your .NET Class methods to use <see cref="Font"/> as parameters and return types, you now automatically support Font as well.</para>
+        /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
         /// <param name="Font">SkiaSharp.SKFont will automatically be cast to <see cref="Font"/> </param>
         public static implicit operator Font(SkiaSharp.SKFont Font)
@@ -201,7 +201,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Implicitly casts System.Drawing.Font objects from <see cref="Font"/>.  
-        /// <para>When your .NET Class methods to use <see cref="Font"/> as parameters and return types, you now automatically support Font as well.</para>
+        /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
         /// <param name="Font"><see cref="Font"/> is explicitly cast to an SkiaSharp.SKFont </param>
         static public implicit operator SkiaSharp.SKFont(Font Font)
@@ -220,7 +220,7 @@ namespace IronSoftware.Drawing
     }
 
     /// <summary>
-    /// Specifies style information applied to text.
+    /// Specifies font style information applied to text.
     /// </summary>
     [Flags]
     public enum FontStyle

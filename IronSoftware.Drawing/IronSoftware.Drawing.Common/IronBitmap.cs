@@ -189,8 +189,6 @@ namespace IronSoftware.Drawing
         /// <return>Image's angle of skew.</return>
         public static double DetermineSkewAngle(AnyBitmap bitmap, int? MaxAngle = null)
         {
-            // TODO find Image's angle
-            // Now the working solution is AForge.Imaging.DocumentSkewChecker but it required System.Drawing.Bitmap
             return GetSkewAngle(bitmap, MaxAngle);
         }
 

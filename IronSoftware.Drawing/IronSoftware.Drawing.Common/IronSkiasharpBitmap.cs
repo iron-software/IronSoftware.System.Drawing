@@ -1,10 +1,7 @@
-﻿using AForge.Imaging.Filters;
-using BitMiracle.LibTiff.Classic;
-using SkiaSharp;
+﻿using SkiaSharp;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 
 namespace IronSoftware.Drawing
 {
