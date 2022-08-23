@@ -14,6 +14,6 @@
     <tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, Tiff, Gif, Jpeg, Png, Color, Rectangle, Drawing, C#, VB.NET, aspx, create, render, generate, standard, netstandard2.0, core, netcore</tags>
   </metadata>
   <files>
-	<file src="..\bin\$configuration$\netstandard2.0\*" exclude="..\bin\$configuration$\netstandard2.0\System.Threading.Tasks.Parallel.dll" target="lib\netstandard2.0" />
+	  <file src="..\bin\$configuration$\netstandard2.0\*" exclude="..\bin\$configuration$\netstandard2.0\System.Threading.Tasks.Parallel.dll" target="lib\netstandard2.0" />
   </files>
 </package>
