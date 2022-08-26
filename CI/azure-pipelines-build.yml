@@ -317,7 +317,7 @@ stages:
         command: 'pack'
         packagesToPack: 'NuGet/IronSoftware.Drawing.nuspec'
         configuration: $(Configuration)
-        buildProperties: 'version=$(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingRevisionVersion).$(Build.BuildID)-ci;IncludeSymbols=true;SymbolPackageFormat=snupkg'
+        buildProperties: 'version=$(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingRevisionVersion).$(Build.BuildID);IncludeSymbols=true;SymbolPackageFormat=snupkg'
         includeSymbols: true
     - task: NuGetCommand@2
       inputs:
