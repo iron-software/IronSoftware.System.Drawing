@@ -294,14 +294,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(0, red.G);
             Assert.Equal(0, red.B);
 
-            imgColor = SixLabors.ImageSharp.Color.FromRgba(0, 255, 0, 255);
+            imgColor = new SixLabors.ImageSharp.PixelFormats.Rgba32(0, 255, 0, 255);
             Color green = imgColor;
             Assert.Equal(255, green.A);
             Assert.Equal(0, green.R);
             Assert.Equal(255, green.G);
             Assert.Equal(0, green.B);
 
-            imgColor = SixLabors.ImageSharp.Color.FromRgb(0, 0, 255);
+            imgColor = new SixLabors.ImageSharp.PixelFormats.Rgba32(0, 0, 255);
             Color blue = imgColor;
             Assert.Equal(255, blue.A);
             Assert.Equal(0, blue.R);
@@ -327,6 +327,57 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             color = Color.FromArgb(Convert.ToInt32("1e81b0", 16));
             SixLabors.ImageSharp.PixelFormats.Rgba32 imgColor = color;
             Assert.Equal("1E81B0FF", imgColor.ToHex());
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Cast_ImageSharp_Rgb24_from_Color()
+        {
+            SixLabors.ImageSharp.PixelFormats.Rgb24 imgColor = SixLabors.ImageSharp.Color.Red;
+            Color red = imgColor;
+            Assert.Equal(255, red.R);
+            Assert.Equal(0, red.G);
+            Assert.Equal(0, red.B);
+
+            imgColor = new SixLabors.ImageSharp.PixelFormats.Rgb24(0, 255, 0);
+            Color green = imgColor;
+            Assert.Equal(255, green.A);
+            Assert.Equal(0, green.R);
+            Assert.Equal(255, green.G);
+            Assert.Equal(0, green.B);
+
+            imgColor = new SixLabors.ImageSharp.PixelFormats.Rgb24(0, 0, 255);
+            Color blue = imgColor;
+            Assert.Equal(0, blue.R);
+            Assert.Equal(0, blue.G);
+            Assert.Equal(255, blue.B);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Cast_ImageSharp_Rgb24_to_Color()
+        {
+            Color color = Color.Red;
+            SixLabors.ImageSharp.PixelFormats.Rgb24 red = color;
+            Assert.Equal(255, red.R);
+            Assert.Equal(0, red.G);
+            Assert.Equal(0, red.B);
+
+            color = new Color(0, 255, 0);
+            SixLabors.ImageSharp.PixelFormats.Rgb24 green = color;
+            Assert.Equal(0, green.R);
+            Assert.Equal(255, green.G);
+            Assert.Equal(0, green.B);
+
+            color = new Color("#0000FF");
+            SixLabors.ImageSharp.PixelFormats.Rgb24 blue = color;
+            Assert.Equal(0, blue.R);
+            Assert.Equal(0, blue.G);
+            Assert.Equal(255, blue.B);
+
+            color = Color.FromArgb(Convert.ToInt32("1e81b0", 16));
+            SixLabors.ImageSharp.PixelFormats.Rgb24 imgColor = color;
+            Assert.Equal(30, imgColor.R);
+            Assert.Equal(129, imgColor.G);
+            Assert.Equal(176, imgColor.B);
         }
     }
 }
