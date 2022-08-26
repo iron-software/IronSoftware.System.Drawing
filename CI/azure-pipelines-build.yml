@@ -5,8 +5,12 @@ variables:
   - name: Configuration
     value: 'Debug'
   - name: AssemblyVersion
-    value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingRevisionVersion).$(Build.BuildID)
-    
+    value: 1.0.0.$(Build.BuildID)
+# Build Trigger
+trigger:
+    branches:
+      include:
+      - master
 # Virtual Machine
 pool:
   vmImage: 'windows-latest'
@@ -317,7 +321,7 @@ stages:
         command: 'pack'
         packagesToPack: 'NuGet/IronSoftware.Drawing.nuspec'
         configuration: $(Configuration)
-        buildProperties: 'version=$(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingRevisionVersion).$(Build.BuildID)-ci;IncludeSymbols=true;SymbolPackageFormat=snupkg'
+        buildProperties: 'version=1.0.$(Build.BuildID)-ci;IncludeSymbols=true;SymbolPackageFormat=snupkg'
         includeSymbols: true
     - task: NuGetCommand@2
       inputs:
