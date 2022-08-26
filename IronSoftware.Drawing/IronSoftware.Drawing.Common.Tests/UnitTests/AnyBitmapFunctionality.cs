@@ -1,8 +1,6 @@
-using Newtonsoft.Json.Linq;
 using SixLabors.ImageSharp;
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -227,38 +225,6 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             anyBitmap.SaveAs("result.png");
 
             AssertImageAreEqual("expected.png", "result.png", true);
-
-            imagePath = GetRelativeFilePath("Sample-Tiff-File-download-for-Testing.tiff");
-            skBitmap = IronSkiasharpBitmap.OpenTiffToSKBitmap(imagePath);
-            anyBitmap = skBitmap;
-
-            SaveSkiaBitmap(skBitmap, "expected.png");
-            anyBitmap.SaveAs("result.png");
-
-            AssertImageAreEqual("expected.png", "result.png", true);
-
-            byte[] bytes = File.ReadAllBytes(imagePath);
-            skBitmap = IronSkiasharpBitmap.OpenTiffToSKBitmap(bytes);
-            anyBitmap = skBitmap;
-
-            SaveSkiaBitmap(skBitmap, "expected.png");
-            anyBitmap.SaveAs("result.png");
-
-            AssertImageAreEqual("expected.png", "result.png", true);
-
-            MemoryStream memStream = new MemoryStream();
-            using (FileStream fs = File.OpenRead(imagePath))
-            {
-                fs.CopyTo(memStream);
-                memStream.Position = 0;
-            }
-            skBitmap = IronSkiasharpBitmap.OpenTiffToSKBitmap(memStream);
-            anyBitmap = skBitmap;
-
-            SaveSkiaBitmap(skBitmap, "expected.png");
-            anyBitmap.SaveAs("result.png");
-
-            AssertImageAreEqual("expected.png", "result.png", true);
         }
 
         [FactWithAutomaticDisplayName]
@@ -287,15 +253,6 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
             SkiaSharp.SKImage skImage = SkiaSharp.SKImage.FromBitmap(SkiaSharp.SKBitmap.Decode(imagePath));
             AnyBitmap anyBitmap = skImage;
-
-            SaveSkiaImage(skImage, "expected.png");
-            anyBitmap.SaveAs("result.png");
-
-            AssertImageAreEqual("expected.png", "result.png", true);
-
-            imagePath = GetRelativeFilePath("Sample-Tiff-File-download-for-Testing.tiff");
-            skImage = SkiaSharp.SKImage.FromBitmap(IronSkiasharpBitmap.OpenTiffToSKBitmap(imagePath));
-            anyBitmap = skImage;
 
             SaveSkiaImage(skImage, "expected.png");
             anyBitmap.SaveAs("result.png");
@@ -348,6 +305,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
 
+#if !NET472
         [FactWithAutomaticDisplayName]
         public void CastMaui_to_AnyBitmap()
         {
@@ -373,6 +331,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
+#endif
 
     }
 }
