@@ -9,8 +9,15 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>IronSoftware.Drawing</description>
     <summary>IronSoftware.Drawing</summary>
-    <releaseNotes>IronSoftware.Drawing</releaseNotes>
-    <copyright>Copyright https://ironsoftware.com 2022</copyright>
+    <releaseNotes>Support and Compatibility
+* Universal compatiblity for .NET 7, .NET 6, .NET 5, and .NET Core
+* Support for Windows, macOS, Linux, Azure, AWS, Mobile, iOS, Android, Xamarin, NanoServer, and IIS
+All new classes developed to support conversion between: (System.Drawing, SixLabors.ImageSharp, SkiaSharp, and Microsoft.Maui)
+* AnyBitmap: A universally compatible Bitmap class
+* Color: A universally compatible Color class
+* Font: A universally compatible Font class
+* CropRectangle: A universally compatible Rectangle class</releaseNotes>
+    <copyright>Copyright © Iron Software 2022</copyright>
     <tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, Tiff, Gif, Jpeg, Png, Color, Rectangle, Drawing, C#, VB.NET, aspx, create, render, generate, standard, netstandard2.0, core, netcore</tags>
   </metadata>
   <files>
