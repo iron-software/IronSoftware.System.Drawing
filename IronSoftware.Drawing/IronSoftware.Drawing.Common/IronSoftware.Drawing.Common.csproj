@@ -18,7 +18,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="BitMiracle.LibTiff.NET" Version="2.4.649" />
-		<PackageReference Include="IronSoftware.CommonLibraries" Version="1.0.7677-ci" />
 		<PackageReference Include="Microsoft.Maui.Graphics" Version="6.0.403" PrivateAssets="all" />
 		<PackageReference Include="SixLabors.ImageSharp" Version="2.1.3" PrivateAssets="all" />
 		<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta15" />

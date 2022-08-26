@@ -1,8 +1,6 @@
-using Newtonsoft.Json.Linq;
 using SixLabors.ImageSharp;
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using Xunit;
 using Xunit.Abstractions;
 
