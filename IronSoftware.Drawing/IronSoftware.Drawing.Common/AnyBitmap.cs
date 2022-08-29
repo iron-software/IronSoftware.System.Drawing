@@ -731,28 +731,36 @@ namespace IronSoftware.Drawing
             {
                 throw new DllNotFoundException("Please install SkiaSharp from NuGet.");
             }
-            if (!IsLoadedType("SkiaSharp.Svg"))
-            {
-                throw new DllNotFoundException("Please install SkiaSharp.Svg from NuGet.");
-            }
 
             return new AnyBitmap(DecodeSVG(File).Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray());
         }
 
         private static SkiaSharp.SKBitmap DecodeSVG(string strInput)
         {
-            SkiaSharp.Extended.Svg.SKSvg svg = new SkiaSharp.Extended.Svg.SKSvg();
-            svg.Load(strInput);
-
-            SkiaSharp.SKBitmap toBitmap = new SkiaSharp.SKBitmap((int)svg.Picture.CullRect.Width, (int)svg.Picture.CullRect.Height);
-            using (SkiaSharp.SKCanvas canvas = new SkiaSharp.SKCanvas(toBitmap))
+            try
             {
-                canvas.Clear(SkiaSharp.SKColors.White);
-                canvas.DrawPicture(svg.Picture);
-                canvas.Flush();
-            }
+                SkiaSharp.Extended.Svg.SKSvg svg = new SkiaSharp.Extended.Svg.SKSvg();
+                svg.Load(strInput);
 
-            return toBitmap;
+                SkiaSharp.SKBitmap toBitmap = new SkiaSharp.SKBitmap((int)svg.Picture.CullRect.Width, (int)svg.Picture.CullRect.Height);
+                using (SkiaSharp.SKCanvas canvas = new SkiaSharp.SKCanvas(toBitmap))
+                {
+                    canvas.Clear(SkiaSharp.SKColors.White);
+                    canvas.DrawPicture(svg.Picture);
+                    canvas.Flush();
+                }
+
+                return toBitmap;
+
+            }
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException("Please install SkiaSharp.Svg from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while reading SVG image format.", e);
+            }
         }
 
         private List<Exception> TryExportStream(System.IO.Stream Stream, ImageFormat Format = ImageFormat.Default, int Lossy = 100)
