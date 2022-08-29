@@ -176,9 +176,30 @@ namespace IronSoftware.Drawing
 
             if (Lossy < 0 || Lossy > 100) { Lossy = 100; }
 
-            List<Exception> exceptions = TryExportStream(Stream, Format, Lossy);
-            if (exceptions != null && exceptions.Count > 0)
-                throw NoConverterException(Format, exceptions);
+            try
+            {
+                SixLabors.ImageSharp.Formats.IImageEncoder enc;
+                switch (Format)
+                {
+                    case ImageFormat.Jpeg: enc = new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder() { Quality = Lossy }; break;
+                    case ImageFormat.Gif: enc = new SixLabors.ImageSharp.Formats.Gif.GifEncoder(); break;
+                    case ImageFormat.Png: enc = new SixLabors.ImageSharp.Formats.Png.PngEncoder(); break;
+                    case ImageFormat.Webp: enc = new SixLabors.ImageSharp.Formats.Webp.WebpEncoder() { Quality = Lossy }; break;
+                    case ImageFormat.Tiff: enc = new SixLabors.ImageSharp.Formats.Tiff.TiffEncoder(); break;
+
+                    default: enc = new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder(); break;
+                }
+
+                Image.Save(Stream, enc);
+            }
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException($"Please install SixLabors.ImageSharp from NuGet.", e);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Cannot export stream with SixLabors.ImageSharp, {ex.Message}");
+            }
         }
 
         /// <summary>
@@ -369,15 +390,22 @@ namespace IronSoftware.Drawing
         /// <param name="Image">SixLabors.ImageSharp.Image will automatically be cast to <see cref="AnyBitmap"/>.</param>
         public static implicit operator AnyBitmap(SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgb24> Image)
         {
-            if (!IsLoadedType("SixLabors.ImageSharp.Image"))
+            try
             {
-                throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.");
-            }
+                using (var memoryStream = new System.IO.MemoryStream())
+                {
+                    Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder());
+                    return new AnyBitmap(memoryStream.ToArray());
+                }
 
-            using (var memoryStream = new System.IO.MemoryStream())
+            }
+            catch (DllNotFoundException e)
             {
-                Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder());
-                return new AnyBitmap(memoryStream.ToArray());
+                throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while casting AnyBitmap from SixLabors.ImageSharp.Image", e);
             }
         }
 
@@ -388,12 +416,18 @@ namespace IronSoftware.Drawing
         /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to a SixLabors.ImageSharp.Image.</param>
         static public implicit operator SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgb24>(AnyBitmap bitmap)
         {
-            if (!IsLoadedType("SixLabors.ImageSharp.Image"))
+            try
             {
-                throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.");
+                return SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgb24>(bitmap.Binary);
             }
-
-            return SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgb24>(bitmap.Binary);
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while casting AnyBitmap to SixLabors.ImageSharp.Image", e);
+            }
         }
 
         /// <summary>
@@ -403,15 +437,21 @@ namespace IronSoftware.Drawing
         /// <param name="Image">SixLabors.ImageSharp.Image will automatically be cast to <see cref="AnyBitmap"/>.</param>
         public static implicit operator AnyBitmap(SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> Image)
         {
-            if (!IsLoadedType("SixLabors.ImageSharp.Image"))
+            try
             {
-                throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.");
+                using (var memoryStream = new System.IO.MemoryStream())
+                {
+                    Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder());
+                    return new AnyBitmap(memoryStream.ToArray());
+                }
             }
-
-            using (var memoryStream = new System.IO.MemoryStream())
+            catch (DllNotFoundException e)
             {
-                Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder());
-                return new AnyBitmap(memoryStream.ToArray());
+                throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while casting AnyBitmap from SixLabors.ImageSharp.Image", e);
             }
         }
 
@@ -422,12 +462,18 @@ namespace IronSoftware.Drawing
         /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to a SixLabors.ImageSharp.Image.</param>
         static public implicit operator SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(AnyBitmap bitmap)
         {
-            if (!IsLoadedType("SixLabors.ImageSharp.Image"))
+            try
             {
-                throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.");
+                return SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(bitmap.Binary);
             }
-
-            return SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(bitmap.Binary);
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while casting AnyBitmap to SixLabors.ImageSharp.Image", e);
+            }
         }
 
         /// <summary>
@@ -437,15 +483,21 @@ namespace IronSoftware.Drawing
         /// <param name="Image">SixLabors.ImageSharp.Image will automatically be cast to <see cref="AnyBitmap"/>.</param>
         public static implicit operator AnyBitmap(SixLabors.ImageSharp.Image Image)
         {
-            if (!IsLoadedType("SixLabors.ImageSharp.Image"))
+            try
             {
-                throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.");
+                using (var memoryStream = new System.IO.MemoryStream())
+                {
+                    Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder());
+                    return new AnyBitmap(memoryStream.ToArray());
+                }
             }
-
-            using (var memoryStream = new System.IO.MemoryStream())
+            catch (DllNotFoundException e)
             {
-                Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder());
-                return new AnyBitmap(memoryStream.ToArray());
+                throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while casting AnyBitmap from SixLabors.ImageSharp.Image", e);
             }
         }
 
@@ -456,12 +508,18 @@ namespace IronSoftware.Drawing
         /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to a SixLabors.ImageSharp.Image.</param>
         static public implicit operator SixLabors.ImageSharp.Image(AnyBitmap bitmap)
         {
-            if (!IsLoadedType("SixLabors.ImageSharp.Image"))
+            try
             {
-                throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.");
+                return SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(bitmap.Binary);
             }
-
-            return SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(bitmap.Binary);
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while casting AnyBitmap to SixLabors.ImageSharp.Image", e);
+            }
         }
 
         /// <summary>
@@ -471,12 +529,18 @@ namespace IronSoftware.Drawing
         /// <param name="Image">SkiaSharp.SKImage will automatically be cast to <see cref="AnyBitmap"/>.</param>
         public static implicit operator AnyBitmap(SkiaSharp.SKImage Image)
         {
-            if (!IsLoadedType("SkiaSharp.SKImage"))
+            try
             {
-                throw new DllNotFoundException("Please install SkiaSharp from NuGet.");
+                return new AnyBitmap(Image.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray());
             }
-
-            return new AnyBitmap(Image.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray());
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException("Please install SkiaSharp from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while casting AnyBitmap from SkiaSharp", e);
+            }
         }
 
         /// <summary>
@@ -486,24 +550,30 @@ namespace IronSoftware.Drawing
         /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to an SkiaSharp.SKImage.</param>
         static public implicit operator SkiaSharp.SKImage(AnyBitmap bitmap)
         {
-            if (!IsLoadedType("SkiaSharp.SKImage"))
-            {
-                throw new DllNotFoundException("Please install SkiaSharp from NuGet.");
-            }
-
-            SkiaSharp.SKImage result = null;
             try
             {
-                result = SkiaSharp.SKImage.FromBitmap(SkiaSharp.SKBitmap.Decode(bitmap.Binary));
-            }
-            catch { }
+                SkiaSharp.SKImage result = null;
+                try
+                {
+                    result = SkiaSharp.SKImage.FromBitmap(SkiaSharp.SKBitmap.Decode(bitmap.Binary));
+                }
+                catch { }
 
-            if (result != null)
+                if (result != null)
+                {
+                    return result;
+                }
+
+                return OpenTiffToSKImage(bitmap);
+            }
+            catch (DllNotFoundException e)
             {
-                return result;
+                throw new DllNotFoundException("Please install SkiaSharp from NuGet.", e);
             }
-
-            return OpenTiffToSKImage(bitmap);
+            catch (Exception e)
+            {
+                throw new Exception("Error while casting AnyBitmap to SkiaSharp", e);
+            }
         }
         /// <summary>
         /// Implicitly casts SkiaSharp.SKBitmap objects to <see cref="AnyBitmap"/>.
@@ -512,12 +582,18 @@ namespace IronSoftware.Drawing
         /// <param name="Image">SkiaSharp.SKBitmap will automatically be cast to <see cref="AnyBitmap"/>.</param>
         public static implicit operator AnyBitmap(SkiaSharp.SKBitmap Image)
         {
-            if (!IsLoadedType("SkiaSharp.SKBitmap"))
+            try
             {
-                throw new DllNotFoundException("Please install SkiaSharp from NuGet.");
+                return new AnyBitmap(Image.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray());
             }
-
-            return new AnyBitmap(Image.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray());
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException("Please install SkiaSharp from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while casting AnyBitmap from SkiaSharp", e);
+            }
         }
 
         /// <summary>
@@ -527,24 +603,30 @@ namespace IronSoftware.Drawing
         /// <param name="bitmap"><see cref="AnyBitmap"/> is explicitly cast to a SkiaSharp.SKBitmap.</param>
         static public implicit operator SkiaSharp.SKBitmap(AnyBitmap bitmap)
         {
-            if (!IsLoadedType("SkiaSharp.SKBitmap"))
-            {
-                throw new DllNotFoundException("Please install SkiaSharp from NuGet.");
-            }
-
-            SkiaSharp.SKBitmap result = null;
             try
             {
-                result = SkiaSharp.SKBitmap.Decode(bitmap.Binary);
-            }
-            catch { }
+                SkiaSharp.SKBitmap result = null;
+                try
+                {
+                    result = SkiaSharp.SKBitmap.Decode(bitmap.Binary);
+                }
+                catch { }
 
-            if (result != null)
+                if (result != null)
+                {
+                    return result;
+                }
+
+                return OpenTiffToSKBitmap(bitmap);
+            }
+            catch (DllNotFoundException e)
             {
-                return result;
+                throw new DllNotFoundException("Please install SkiaSharp from NuGet.", e);
             }
-
-            return OpenTiffToSKBitmap(bitmap);
+            catch (Exception e)
+            {
+                throw new Exception("Error while casting AnyBitmap to SkiaSharp", e);
+            }
         }
 
         /// <summary>
@@ -555,15 +637,21 @@ namespace IronSoftware.Drawing
 
         public static implicit operator AnyBitmap(Microsoft.Maui.Graphics.Platform.PlatformImage Image)
         {
-            if (!IsLoadedType("Microsoft.Maui.Graphics.Platform.PlatformImage"))
+            try
             {
-                throw new DllNotFoundException("Please install Microsoft.Maui.Graphics from NuGet.");
+                using (var memoryStream = new System.IO.MemoryStream())
+                {
+                    Image.Save(memoryStream);
+                    return new AnyBitmap(memoryStream.ToArray());
+                }
             }
-
-            using (var memoryStream = new System.IO.MemoryStream())
+            catch (DllNotFoundException e)
             {
-                Image.Save(memoryStream);
-                return new AnyBitmap(memoryStream.ToArray());
+                throw new DllNotFoundException("Please install Microsoft.Maui.Graphics from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while casting AnyBitmap from Microsoft.Maui.Graphics", e);
             }
         }
         /// <summary>
@@ -574,12 +662,18 @@ namespace IronSoftware.Drawing
 
         static public implicit operator Microsoft.Maui.Graphics.Platform.PlatformImage(AnyBitmap bitmap)
         {
-            if (!IsLoadedType("Microsoft.Maui.Graphics.Platform.PlatformImage"))
+            try
             {
-                throw new DllNotFoundException("Please install Microsoft.Maui.Graphics from NuGet.");
+                return (Microsoft.Maui.Graphics.Platform.PlatformImage)Microsoft.Maui.Graphics.Platform.PlatformImage.FromStream(bitmap.GetStream());
             }
-
-            return (Microsoft.Maui.Graphics.Platform.PlatformImage)Microsoft.Maui.Graphics.Platform.PlatformImage.FromStream(bitmap.GetStream());
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException("Please install Microsoft.Maui.Graphics from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while casting AnyBitmap to Microsoft.Maui.Graphics", e);
+            }
         }
 
         /// <summary>
@@ -590,11 +684,6 @@ namespace IronSoftware.Drawing
 
         public static implicit operator AnyBitmap(System.Drawing.Bitmap Image)
         {
-            if (!IsLoadedType("System.Drawing.Bitmap"))
-            {
-                throw new DllNotFoundException("Please install System.Drawing from NuGet.");
-            }
-
             Byte[] data;
             try
             {
@@ -615,6 +704,10 @@ namespace IronSoftware.Drawing
                     data = memoryStream.ToArray();
                     return new AnyBitmap(data);
                 }
+            }
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException("Please install System.Drawing from NuGet.", e);
             }
             catch (Exception e)
             {
@@ -638,14 +731,13 @@ namespace IronSoftware.Drawing
         /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to an System.Drawing.Bitmap.</param>
         static public implicit operator System.Drawing.Bitmap(AnyBitmap bitmap)
         {
-            if (!IsLoadedType("System.Drawing.Bitmap"))
-            {
-                throw new DllNotFoundException("Please install System.Drawing from NuGet.");
-            }
-
             try
             {
                 return (System.Drawing.Bitmap)System.Drawing.Bitmap.FromStream(new System.IO.MemoryStream(bitmap.Binary));
+            }
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException("Please install System.Drawing from NuGet.", e);
             }
             catch (Exception e)
             {
@@ -701,38 +793,57 @@ namespace IronSoftware.Drawing
             Default = -1,
         }
 
-#region Private Method
+        #region Private Method
 
         private void LoadImage(byte[] Bytes)
         {
-            if (!IsLoadedType("SixLabors.ImageSharp.Image"))
+            try
             {
-                throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.");
+                Image = Image.Load(Bytes);
+                Binary = Bytes;
             }
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while loading image bytes.", e);
 
-            Image = Image.Load(Bytes);
-            Binary = Bytes;
+            }
         }
 
         private void LoadImage(string File)
         {
-            if (!IsLoadedType("SixLabors.ImageSharp.Image"))
+            try
             {
-                throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.");
+                Image = Image.Load(File);
+                Binary = System.IO.File.ReadAllBytes(File);
             }
-
-            Image = Image.Load(File);
-            Binary = System.IO.File.ReadAllBytes(File);
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while loading image file.", e);
+            }
         }
 
         private static AnyBitmap LoadSVGImage(string File)
         {
-            if (!IsLoadedType("SkiaSharp.SKBitmap"))
+            try
             {
-                throw new DllNotFoundException("Please install SkiaSharp from NuGet.");
+                return new AnyBitmap(DecodeSVG(File).Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray());
             }
-
-            return new AnyBitmap(DecodeSVG(File).Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray());
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException("Please install SkiaSharp from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while reading SVG image format.", e);
+            }
         }
 
         private static SkiaSharp.SKBitmap DecodeSVG(string strInput)
@@ -931,55 +1042,53 @@ namespace IronSoftware.Drawing
 
         private static SkiaSharp.SKBitmap OpenTiffToSKBitmap(AnyBitmap anyBitmap)
         {
-            if (IsLoadedType("BitMiracle.LibTiff.Classic.Tiff"))
+            try
             {
-                try
+                // create a memory stream out of them
+                MemoryStream tiffStream = new MemoryStream(anyBitmap.Binary);
+
+                // open a TIFF stored in the stream
+                using (var tifImg = BitMiracle.LibTiff.Classic.Tiff.ClientOpen("in-memory", "r", tiffStream, new BitMiracle.LibTiff.Classic.TiffStream()))
                 {
-                    // create a memory stream out of them
-                    MemoryStream tiffStream = new MemoryStream(anyBitmap.Binary);
+                    // read the dimensions
+                    var width = tifImg.GetField(BitMiracle.LibTiff.Classic.TiffTag.IMAGEWIDTH)[0].ToInt();
+                    var height = tifImg.GetField(BitMiracle.LibTiff.Classic.TiffTag.IMAGELENGTH)[0].ToInt();
 
-                    // open a TIFF stored in the stream
-                    using (var tifImg = BitMiracle.LibTiff.Classic.Tiff.ClientOpen("in-memory", "r", tiffStream, new BitMiracle.LibTiff.Classic.TiffStream()))
+                    // create the bitmap
+                    var bitmap = new SkiaSharp.SKBitmap();
+                    var info = new SkiaSharp.SKImageInfo(width, height);
+
+                    // create the buffer that will hold the pixels
+                    var raster = new int[width * height];
+
+                    // get a pointer to the buffer, and give it to the bitmap
+                    var ptr = System.Runtime.InteropServices.GCHandle.Alloc(raster, System.Runtime.InteropServices.GCHandleType.Pinned);
+                    bitmap.InstallPixels(info, ptr.AddrOfPinnedObject(), info.RowBytes, (addr, ctx) => ptr.Free(), null);
+
+                    // read the image into the memory buffer
+                    if (!tifImg.ReadRGBAImageOriented(width, height, raster, BitMiracle.LibTiff.Classic.Orientation.TOPLEFT))
                     {
-                        // read the dimensions
-                        var width = tifImg.GetField(BitMiracle.LibTiff.Classic.TiffTag.IMAGEWIDTH)[0].ToInt();
-                        var height = tifImg.GetField(BitMiracle.LibTiff.Classic.TiffTag.IMAGELENGTH)[0].ToInt();
-
-                        // create the bitmap
-                        var bitmap = new SkiaSharp.SKBitmap();
-                        var info = new SkiaSharp.SKImageInfo(width, height);
-
-                        // create the buffer that will hold the pixels
-                        var raster = new int[width * height];
-
-                        // get a pointer to the buffer, and give it to the bitmap
-                        var ptr = System.Runtime.InteropServices.GCHandle.Alloc(raster, System.Runtime.InteropServices.GCHandleType.Pinned);
-                        bitmap.InstallPixels(info, ptr.AddrOfPinnedObject(), info.RowBytes, (addr, ctx) => ptr.Free(), null);
-
-                        // read the image into the memory buffer
-                        if (!tifImg.ReadRGBAImageOriented(width, height, raster, BitMiracle.LibTiff.Classic.Orientation.TOPLEFT))
-                        {
-                            // not a valid TIF image.
-                            return null;
-                        }
-
-                        // swap the red and blue because SkiaSharp may differ from the tiff
-                        if (SkiaSharp.SKImageInfo.PlatformColorType == SkiaSharp.SKColorType.Bgra8888)
-                        {
-                            SkiaSharp.SKSwizzle.SwapRedBlue(ptr.AddrOfPinnedObject(), raster.Length);
-                        }
-
-                        return bitmap;
+                        // not a valid TIF image.
+                        return null;
                     }
 
-                }
-                catch { }
+                    // swap the red and blue because SkiaSharp may differ from the tiff
+                    if (SkiaSharp.SKImageInfo.PlatformColorType == SkiaSharp.SKColorType.Bgra8888)
+                    {
+                        SkiaSharp.SKSwizzle.SwapRedBlue(ptr.AddrOfPinnedObject(), raster.Length);
+                    }
 
-                return anyBitmap;
+                    return bitmap;
+                }
+
             }
-            else
+            catch (DllNotFoundException e)
             {
-                throw new DllNotFoundException("Please install BitMiracle.LibTiff.NET from NuGet.");
+                throw new DllNotFoundException("Please install BitMiracle.LibTiff.NET from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while reading TIFF image format.", e);
             }
         }
 
