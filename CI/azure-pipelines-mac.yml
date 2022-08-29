@@ -83,15 +83,6 @@ steps:
     versionEnvVar: AssemblyVersion
 
 - task: DotNetCoreCLI@2
-  displayName: Execute .Net70 Unit Tests
-  inputs:
-    command: 'test'
-    projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
-    arguments: '--configuration "$(buildConfiguration)" -f "net70" --verbosity n --no-build'
-    testRunTitle: 'Execute Unit Tests'
-  condition: succeededOrFailed()
-
-- task: DotNetCoreCLI@2
   name: UnitTestsNet50
   displayName: Execute .Net50 Unit Tests
   inputs:
