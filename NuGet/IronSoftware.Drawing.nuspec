@@ -1,14 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
-    <id>IronSoftware.Drawing</id>
+    <id>IronDrawing</id>
     <version>$version$</version>
-    <title>IronSoftware.Drawing</title>
+    <title>IronDrawing</title>
     <authors>https://ironsoftware.com/</authors>
     <owners></owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>IronSoftware.Drawing</description>
-    <summary>IronSoftware.Drawing</summary>
+    <description>IronDrawing - The C# Image Library
+
+A universally compatible Bitmap format for .NET 7 and .NET 6, .NET 5, .NET Core on Windows, macOS, Linux, Docker, AWS, Azure, NanoServer, IIS, Mobile, Xamarin, iOS, Android, and Google Compute.
+
+Works seamlessly with popular Image and Bitmap formats such as System.Drawing.Bitmap, SkiaSharp, SixLabors.ImageSharp, Microsoft.Maui.Graphics.
+
+Implicit casting means that using this class to input and output Bitmap and image types from public API's gives full compatibility to all image type fully supported by Microsoft.
+
+Key library features include:
+  * AnyBitmap: A universally compatible Bitmap class. Implicit casting between System.Drawing.Bitmap, System.Drawing.Image, SkiaSharp.SKBitmap, SkiaSharp.SKImage, SixLabors.ImageSharp, Microsoft.Maui.Graphics.Platform.PlatformImage to IronDrawing.AnyBitmap
+  * Color: A universally compatible Color class. Implicit casting between System.Drawing.Color, SkiaSharp.SKColor, SixLabors.ImageSharp.Color, SixLabors.ImageSharp.PixelFormats to IronDrawing.Color
+  * CropRectangle: A universally compatible Rectangle class. Implicit casting between System.Drawing.Rectangle, SkiaSharp.SKRect, SkiaSharp.SKRectI, SixLabors.ImageSharp.Rectangle to IronDrawing.CropRectangle
+  * Font: A universally compatible Font class. Implicit casting between System.Drawing.Font, SkiaSharp.SKFont, SixLabors.Fonts.Font to IronDrawing.Font
+
+IronDrawing can be used within C#, VB.NET, F#, ASP.NET projects, MVC, Web Services, Console &amp; Desktop Applications.
+
+Supports:
+* .NET Framework 4.6.1 +
+* .NET Core 2.0 +
+* .NET 5
+* .NET 6
+* .NET 7
+
+Licensing &amp; Support available for commercial deployments.
+
+For support please email us at developers@ironsoftware.com</description>
+    <summary>IronDrawing</summary>
     <releaseNotes>Support and Compatibility
 * Universal compatiblity for .NET 7, .NET 6, .NET 5, and .NET Core
 * Support for Windows, macOS, Linux, Azure, AWS, Mobile, iOS, Android, Xamarin, NanoServer, and IIS
