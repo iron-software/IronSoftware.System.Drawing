@@ -97,7 +97,7 @@ stages:
       displayName: Execute Windows (.NET Core x64) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.runsettings --framework "netcoreapp3.1" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\netcoreapp3.1\testhost.log"'
         testRunTitle: 'Windows (.NET Core) Tests'
         publishTestResults: true
@@ -105,7 +105,7 @@ stages:
       displayName: Execute Windows (.NET Core x86) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.x86.runsettings --framework "netcoreapp3.1" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\netcoreapp3.1\testhost.log"'
         testRunTitle: 'Windows (.NET Core) Tests'
         publishTestResults: true
@@ -127,7 +127,7 @@ stages:
       displayName: Execute Windows (.NET 6.0 x64) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/net60/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/net60/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.runsettings --framework "net60" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net60\testhost.log"'
         testRunTitle: 'Windows (.NET 6.0) Tests'
         publishTestResults: true
@@ -135,7 +135,7 @@ stages:
       displayName: Execute Windows (.NET 6.0 x86) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/net60/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/net60/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.x86.runsettings --framework "net60" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net60\testhost.log"'
         testRunTitle: 'Windows (.NET 6.0) Tests'
         publishTestResults: true
@@ -158,7 +158,7 @@ stages:
       displayName: Execute Windows (.NET 7.0 x64) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/net70/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/net70/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.runsettings --framework "net70" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net70\testhost.log"'
         testRunTitle: 'Windows (.NET 7.0) Tests'
         publishTestResults: true
@@ -166,7 +166,7 @@ stages:
       displayName: Execute Windows (.NET 7.0 x86) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/net70/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/net70/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.x86.runsettings --framework "net70" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net70\testhost.log"'
         testRunTitle: 'Windows (.NET 7.0) Tests'
         publishTestResults: true
@@ -189,7 +189,7 @@ stages:
       displayName: Execute Linux (.NET Core) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.runsettings --framework "netcoreapp3.1" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\netcoreapp3.1\testhost.log"'
         testRunTitle: 'Linux (.NET Core) Tests'
         publishTestResults: true
@@ -209,7 +209,7 @@ stages:
       displayName: Execute Linux (.NET 6.0) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/net60/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/net60/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.runsettings --framework "net60" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net60\testhost.log"'
         testRunTitle: 'Linux (.NET 6.0) Tests'
         publishTestResults: true
@@ -230,7 +230,7 @@ stages:
       displayName: Execute Linux (.NET 7.0) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/net70/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/net70/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.runsettings --framework "net70" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net70\testhost.log"'
         testRunTitle: 'Linux (.NET 6.0) Tests'
         publishTestResults: true
@@ -253,7 +253,7 @@ stages:
       displayName: Execute MacOs (.NET Core) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.runsettings --framework "netcoreapp3.1" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\netcoreapp3.1\testhost.log"'
         testRunTitle: 'MacOs (.NET Core) Tests'
         publishTestResults: true
@@ -273,7 +273,7 @@ stages:
       displayName: Execute MacOs (.NET 6.0) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/net60/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/net60/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.runsettings --framework "net60" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net60\testhost.log"'
         testRunTitle: 'MacOs (.NET 6.0) Tests'
         publishTestResults: true
@@ -294,7 +294,7 @@ stages:
       displayName: Execute MacOs (.NET 7.0) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/net70/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/net70/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.runsettings --framework "net70" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net70\testhost.log"'
         testRunTitle: 'MacOs (.NET 6.0) Tests'
         publishTestResults: true
