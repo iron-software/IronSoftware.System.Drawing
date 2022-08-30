@@ -9,7 +9,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>IronDrawing - The C# Image Library
 
-A universally compatible Bitmap format for .NET Core, .NET 5 .NET 6 and .NET 7. Windows, NanoServer, IIS,  MacOS, Mobile, Xamarin, iOS, Android, Google Compute, Azure, AWS and Linux compatibility.
+A universally compatible Bitmap format for .NET 7 and .NET 6, .NET 5, .NET Core. Windows, NanoServer, IIS,  macOS, Mobile, Xamarin, iOS, Android, Google Compute, Azure, AWS and Linux compatibility.
 
 Works nicely with popular Image and Bitmap formats such as System.Drawing.Bitmap, SkiaSharp, SixLabors.ImageSharp, Microsoft.Maui.Graphics.
 
