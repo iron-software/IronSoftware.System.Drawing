@@ -305,6 +305,11 @@ stages:
   - job: DeployDrawingLibraries
     steps:
     - checkout: none
+    - task: DownloadSecureFile@1
+      displayName: Download IronBarCode Code-Signing Cert
+      name: DownloadSigningCert
+      inputs:
+        secureFile: 'ironcert.pfx'
     - task: DownloadPipelineArtifact@2
       inputs:
         buildType: 'current'
@@ -315,6 +320,11 @@ stages:
         buildType: 'current'
         artifactName: 'IronDrawingNuGet'
         targetPath: 'NuGet'
+    - task: CmdLine@2
+      displayName: 'Sign IronSoftware.Drawing.Common.dll .NET Standard'
+      inputs:
+          workingDirectory: 'IronDrawingAssemblies/netstandard2.0'
+          script: '$(Build.SourcesDirectory)\NuGet\signtool.exe sign /v /d IronPdf /f $(Agent.TempDirectory)/ironcert.pfx /p ironcert /t http://timestamp.digicert.com /fd SHA256 "IronSoftware.Drawing.Common.dll"'
     - task: NuGetCommand@2
       displayName: 'Build DrawingLibraries NuGet Package'
       inputs:
@@ -323,6 +333,12 @@ stages:
         configuration: $(Configuration)
         buildProperties: 'version=1.0.$(Build.BuildID)-ci;IncludeSymbols=true;SymbolPackageFormat=snupkg'
         includeSymbols: true
+    # Sign NuGet Packages
+    - task: NuGetCommand@2
+      displayName: Sign IronDrawing NuGet Package
+      inputs:
+        command: 'custom'
+        arguments: 'sign $(Agent.BuildDirectory)\irondrawing.$(NuGetVersion).nupkg -CertificatePath $(Agent.TempDirectory)\ironcert.pfx -Timestamper http://timestamp.digicert.com -NonInteractive -CertificatePassword ironcert'
     - task: NuGetCommand@2
       inputs:
         command: 'push'
