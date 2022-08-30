@@ -1,5 +1,5 @@
 # IronDrawing
-![Nuget](https://img.shields.io/nuget/v/IronDrawing?color=informational&label=latest)  ![Installs](https://img.shields.io/nuget/dt/IronDrawing?color=informational&label=installs&logo=nuget)  ![Passed](https://img.shields.io/badge/build-%20%E2%9C%93%20258%20tests%20passed%20(0%20failed)%20-107C10?logo=visualstudio)  ![windows](https://img.shields.io/badge/%E2%80%8E%20-%20%E2%9C%93-107C10?logo=windows)  ![macOS](https://img.shields.io/badge/%E2%80%8E%20-%20%E2%9C%93-107C10?logo=apple)  ![linux](https://img.shields.io/badge/%E2%80%8E%20-%20%E2%9C%93-107C10?logo=linux&logoColor=white)  ![docker](https://img.shields.io/badge/%E2%80%8E%20-%20%E2%9C%93-107C10?logo=docker&logoColor=white)  ![aws](https://img.shields.io/badge/%E2%80%8E%20-%20%E2%9C%93-107C10?logo=amazonaws)  ![microsoftazure](https://img.shields.io/badge/%E2%80%8E%20-%20%E2%9C%93-107C10?logo=microsoftazure)  ![livechat](https://img.shields.io/badge/Live%20Chat-Active-purple?logo=googlechat&logoColor=white)
+![Nuget](https://img.shields.io/nuget/v/IronDrawing?color=informational&label=latest)  ![Installs](https://img.shields.io/nuget/dt/IronDrawing?color=informational&label=installs&logo=nuget)  ![Passed](https://img.shields.io/badge/build-%20%E2%9C%93%20258%20tests%20passed%20(0%20failed)%20-107C10?logo=visualstudio)  ![windows](https://img.shields.io/badge/%E2%80%8E%20-%20%E2%9C%93-107C10?logo=windows)  ![macOS](https://img.shields.io/badge/%E2%80%8E%20-%20%E2%9C%93-107C10?logo=apple)  ![linux](https://img.shields.io/badge/%E2%80%8E%20-%20%E2%9C%93-107C10?logo=linux&logoColor=white)  ![docker](https://img.shields.io/badge/%E2%80%8E%20-%20%E2%9C%93-107C10?logo=docker&logoColor=white)  ![aws](https://img.shields.io/badge/%E2%80%8E%20-%20%E2%9C%93-107C10?logo=amazonaws)  ![microsoftazure](https://img.shields.io/badge/%E2%80%8E%20-%20%E2%9C%93-107C10?logo=microsoftazure)
 ​
 # IronDrawing - Image, Color, Rectangle, and Font class for .NET Applications
 ​
@@ -30,7 +30,7 @@ IronDrawing is a library developed and maintained by Iron Software that helps C#
   - `SixLabors.Fonts.Font`
 ​
 ### IronDrawing has cross platform support compatibility with:
-- .NET7, .NET 6, .NET 5, .NET Core, Standard, and Framework
+- .NET 7, .NET 6, .NET 5, .NET Core, Standard, and Framework
 - Windows, macOS, Linux, Docker, Azure, and AWS
 ​
 ## Using IronDrawing
@@ -75,6 +75,7 @@ ironDrawingColor.A;
 ironDrawingColor.R;
 ironDrawingColor.G;
 ironDrawingColor.B;
+
 // Luminance is a value from 0 (black) to 100 (white) where 50 is the perceptual "middle grey"
 ironDrawingColor.GetLuminance();
 ```
