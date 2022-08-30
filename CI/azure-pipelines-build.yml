@@ -53,6 +53,12 @@ stages:
           versioningScheme: byEnvVar
           versionEnvVar: AssemblyVersion
       # Publish Pipeline Artifacts
+      - task: CopyFiles@2
+        displayName: 'Copy tests.runsettings file'
+        inputs:
+          SourceFolder: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests'
+          Contents: 'tests.runsettings'
+          TargetFolder: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/bin/$(Configuration)'
       - task: PublishPipelineArtifact@1
         displayName: Publish IronDrawing Test Assemblies
         inputs:
@@ -275,27 +281,6 @@ stages:
         command: 'test'
         projects: 'IronDrawingTests/net60/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.runsettings --framework "net60" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net60\testhost.log"'
-        testRunTitle: 'MacOs (.NET 6.0) Tests'
-        publishTestResults: true
-  - job: MacOsNet70Tests
-    steps:
-    - checkout: none
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: 'current'
-        artifactName: 'IronDrawingTests'
-        targetPath: 'IronDrawingTests'
-    - task: UseDotNet@2
-      inputs:
-        version: '7.x'
-        packageType: runtime
-        includePreviewVersions: true
-    - task: DotNetCoreCLI@2
-      displayName: Execute MacOs (.NET 7.0) Tests
-      inputs:
-        command: 'test'
-        projects: 'IronDrawingTests/net70/IronSoftware.Drawing.Common.Tests.dll'
-        arguments: '-s IronDrawingTests/tests.runsettings --framework "net70" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net70\testhost.log"'
         testRunTitle: 'MacOs (.NET 6.0) Tests'
         publishTestResults: true
 ## Push NuGet Package
