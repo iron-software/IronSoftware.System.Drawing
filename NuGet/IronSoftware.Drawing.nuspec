@@ -9,9 +9,9 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>IronDrawing - The C# Image Library
 
-A universally compatible Bitmap format for .NET 7 and .NET 6, .NET 5, .NET Core. Windows, NanoServer, IIS,  macOS, Mobile, Xamarin, iOS, Android, Google Compute, Azure, AWS and Linux compatibility.
+A universally compatible Bitmap format for .NET 7 and .NET 6, .NET 5, .NET Core on Windows, macOS, Linux, Docker, AWS, Azure, NanoServer, IIS, Mobile, Xamarin, iOS, Android, and Google Compute.
 
-Works nicely with popular Image and Bitmap formats such as System.Drawing.Bitmap, SkiaSharp, SixLabors.ImageSharp, Microsoft.Maui.Graphics.
+Works seamlessly with popular Image and Bitmap formats such as System.Drawing.Bitmap, SkiaSharp, SixLabors.ImageSharp, Microsoft.Maui.Graphics.
 
 Implicit casting means that using this class to input and output Bitmap and image types from public API's gives full compatibility to all image type fully supported by Microsoft.
 
@@ -21,7 +21,7 @@ Key library features include:
   * CropRectangle: A universally compatible Rectangle class. Implicit casting between System.Drawing.Rectangle, SkiaSharp.SKRect, SkiaSharp.SKRectI, SixLabors.ImageSharp.Rectangle to IronDrawing.CropRectangle
   * Font: A universally compatible Font class. Implicit casting between System.Drawing.Font, SkiaSharp.SKFont, SixLabors.Fonts.Font to IronDrawing.Font
 
-IronDrawing can be used within C#, VB.NET, ASP.NET projects, MVC, Web Services, Console &amp; Desktop Applications.
+IronDrawing can be used within C#, VB.NET, F#, ASP.NET projects, MVC, Web Services, Console &amp; Desktop Applications.
 
 Supports:
 * .NET Framework 4.6.1 +
