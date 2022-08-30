@@ -8,10 +8,10 @@ using System.Reflection;
 namespace IronSoftware.Drawing
 {
     /// <summary>
-    /// <para>A universally compatible Bitmap format for .Net Core, .Net 5 .Net 6 and .Net 7. Windows, NanoServer, IIS,  MacOS, Mobile, Xamarin, iOS, Android, Google Compute, Azure, AWS and Linux compatibility.</para>
-    /// <para>Plays nicely with popular Image and Bitmap formats such as System.Drawing.Bitmap, SkiaSharp, SixLabors.ImageSharp, Microsoft.Maui.Graphics.</para>
+    /// <para>A universally compatible Bitmap format for .NET 7 and .NET 6, .NET 5, .NET Core. Windows, NanoServer, IIS,  macOS, Mobile, Xamarin, iOS, Android, Google Compute, Azure, AWS and Linux compatibility.</para>
+    /// <para>Works nicely with popular Image and Bitmap formats such as System.Drawing.Bitmap, SkiaSharp, SixLabors.ImageSharp, Microsoft.Maui.Graphics.</para>
     /// <para>Implicit casting means that using this class to input and output Bitmap and image types from public API's gives full compatibility to all image type fully supported by Microsoft.</para>
-    /// <para>Unlike System.Drawing.Bitmap this bitmap object is self memory managing and does not need to be explicitly 'used' or 'disposed'</para>
+    /// <para>Unlike System.Drawing.Bitmap this bitmap object is self-memory-managing and does not need to be explicitly 'used' or 'disposed'.</para>
     /// </summary>
     public partial class AnyBitmap
     {
