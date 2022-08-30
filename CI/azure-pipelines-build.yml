@@ -65,6 +65,12 @@ stages:
           targetPath: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common/bin/$(Configuration)'
           artifact: 'IronDrawingAssemblies'
           publishLocation: 'pipeline'
+      - task: CopyFiles@2
+        displayName: 'Copy REAMD.md file'
+        inputs:
+          SourceFolder: '$(Build.SourcesDirectory)'
+          Contents: 'README.md'
+          TargetFolder: '$(Build.SourcesDirectory)/NuGet'
       - task: PublishPipelineArtifact@1
         displayName: Publish IronDrawing NuGet Files
         inputs:
