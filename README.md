@@ -24,10 +24,11 @@ PM> Install-Package IronDrawing
 ```
 Once installed, you can get started by adding `using IronDrawing` to the top of your C# code. Here is is sample HTML to PDF example to get started:
 ```
-// HTML to PDF
+// IronDrawing.AnyBitmap
 using IronDrawing;
 
-var bitmap = AnyBitmap.FromFile("FILE_PATH"); // Created new AnyBitmap object
+// Created new AnyBitmap object
+var bitmap = AnyBitmap.FromFile("FILE_PATH");
 bitmap.SaveAs("result.jpg");
 
 var bytes = bitmap.ExportBytes();
@@ -35,6 +36,7 @@ var bytes = bitmap.ExportBytes();
 var resultExport = new System.IO.MemoryStream();
 bimtap.ExportStream(resultExport, AnyBitmap.ImageFormat.Jpeg, 100);
 
+// Casting between System.Drawing.Bitmap to IronDrawing.AnyBitmap
 System.Drawing.Bitmap image = new new System.Drawing.Bitmap("FILE_PATH");
 var anyBitmap = image;
 anyBitmap.SaveAs("result-from-casting.png");
