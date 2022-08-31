@@ -1,28 +1,133 @@
 https://ironsoftware.com/
-
 Iron Drawing End User License Agreement
-Iron Software LLC hereby grants you a non-exclusive license to the IronDrawing Software Library for .Net ("the Software").
 
-Do No Harm
-By downloading or using the Software, the Licensee agrees not to utilize the software in a manner which is disparaging to Iron Software LLC, and not to rent, lease or otherwise transfer rights to the Software. The Licensee agrees that no attempt will be made by the Licensee or associated parties to translate, reverse engineer, modify, decompile, disassemble or distribute the Software.
+License Agreement
+Terms and Conditions
+This License Agreement (“Agreement”) is by Iron Software LLC (“Iron”) and the person or entity licensing the Iron Software (“Company”). This Agreement consists of each Order and these Terms and Conditions (“Terms”).
 
-License Types
-License terms are offered on the following terms. 
+1. Overview
+a. Iron is the owner and licensor of several software libraries and packages, as described by Iron on Iron’s website and in Iron’s marketing materials (the “Iron Software”). Iron offers Company one or more options to use the Iron Software as documented by Iron subject to the restrictions stated in this Agreement. Iron may also provide support services (“Support and Updates”) and other services, including consulting services regarding Company’s use of the Iron Software (collectively with Support and Updates, the “Services”).
 
-Free Trial License - Grants the use of the TRIAL VERSION of the software for private evaluation purposes only. The Software should not be published in any internet, software, SaaS nor intranet project.
+b. Iron makes the Iron Software and Services available to Company directly or through a third party (such as an authorized reseller) using a written online or offline order process (each written document, an “Order”). Related sets of Iron Software and Services may require more than one Order (each set of related Orders, a “Project”).
 
-Ownership
-Iron Software LLC shall at all times retain ownership of the Iron Drawing Software Library and all subsequent copies.
+c. Pursuant to the terms of this Agreement, Iron will provide to Company the Iron Software or Services described in each Order. An Order may be amended or supplemented from time to time by a subsequent Order that expressly replaces or amends a prior Order.
 
-Copyright
-Title, ownership rights, and intellectual property rights in and to the Software shall remain with Iron Software LLC. The Software is protected by the international copyright laws. Title, ownership rights, and intellectual property rights in and to the content accessed through the Software is the property of the applicable content owner and may be protected by applicable copyright or other law. This License gives you no rights to such content.
+2. Iron Software and Services
+a. During the term of this Agreement, Iron grants to Company and Company accepts a non-exclusive, non-transferable, revocable and limited license to use each item of Iron Software listed on an Order by Company for Company’s own internal use (and not for resale in a materially unaltered form), subject to the terms, obligations, and restrictions set forth in the Order and in this Agreement (“Iron Software License”).
 
-Upgrades & Support
-This license does not indicate a Service Level Agreement, nor does it imply that Iron Software is responsible for successful deployment, maintenance nor business function of The Software.
+b. Each Iron Software License and each Service is subject to permissions, limitations and responsibilities stated in the applicable Order (“Metrics”), which may state whether Company is permitted to:
 
-Limitation Of Liability
-THIS SOFTWARE IS PROVIDED "AS IS," WITHOUT A WARRANTY OF ANY KIND. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY EXCLUDED. IRON SOFTWARE AND ITS LICENSORS SHALL NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR DISTRIBUTING THE SOFTWARE OR ITS DERIVATIVES. IN NO EVENT WILL IRON SOFTWARE OR ITS LICENSORS BE LIABLE FOR ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL, CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR INABILITY TO USE SOFTWARE, EVEN IF IRON SOFTWARE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+		use the Iron Software for a limited trial only, for a stated time period, or perpetually;
+		evaluate the Iron Software or use it in a production environment;
+		use the Iron Software at no charge or for a stated fee;
+		permit access to the Iron Software to an unlimited number of authorized users or to a limited number of authorized users;
+		install and use the Iron Software in one computing device (“Machine”) or multiple Machines;
+		use a single copy or multiple copies of the Iron Software (“Copies”);
+		use the Iron Software solely for internal development use (“Internal Use”);
+		combine the Iron Software with Company’s own software (“Company Software”);
+		distributing to one or more of Company’s customers (“Customers”);
+		install the Iron Software in Company’s or Customer’s systems (“Installed”) or made available by Company on a website owned or controlled by Company as software as a service (“SaaS”);
+		use the Iron Software in one geographic location or in multiple geographic locations (each, a “Site”);
+		receive Support and Updates for a limited period of time or not at all;
+		receive new versions of the Iron Software made available by Company to the general public (“New Versions”) while Support and Updates is current and active, or receive new versions only when Company pays additional fees.
 
-Miscellaneous
-This software is not designed or intended for use in on-line control of aircraft, air traffic, aircraft navigation or aircraft communications; or in the design, construction, operation or maintenance of any nuclear facility. Licensee represents and warrants that it will not use or redistribute the Software for such purposes.
+c. Currently, Iron offers Iron Software Licenses in the following combination of Metrics (each license type expressly excludes any rights not specifically granted):
 
+Free Trial License. Grants the use of the Iron Software for private non-production evaluation purposes only (“Trial License”). The Iron Software may not be used in any production, Installed, SaaS, or intranet project.
+
+d. Regardless of the type of Iron Software License, Iron and Company expressly agree that Company will not compete with any current Iron Software or Service.
+
+e. Company may not redistribute, republish, or otherwise make available the Iron Software or Services to any third party without the prior written consent of Iron as stated in an Order or this Agreement.
+
+f. At Iron’s request, Company will inform Iron of the Site of each Company Machine and Customer Machine containing Iron Software.
+
+g. The EULA is set for all licenses. Any EULA customizations require a bespoke license purchase and can be arranged by contacting ordersupport@ironsoftware.com.
+
+3. Data and Content
+a. Company retains any and all rights in any information, content and data provided by Company, including all rights in new versions and derivative works of Company’s information, content and data. Iron retains any and all rights in any information, content and data provided by Iron, including all rights in new versions and derivative works of Iron’s information, content and data.
+
+b. Iron may collect, store, use and share personal information about Company and its customers (“Personal Data”) and non-personal information (“Non-Personal Data”), including about how Company and its customers use the Iron Software and any Services. Details about how Iron currently processes Personal Data are stated in Iron’s Privacy Statement, which Iron may modify from time to time to reflect Iron’s current practices and in response to evolving laws and regulations around the world.
+
+4. Financial
+a. Company payment shall be as outlined in each Order. Unless otherwise stated in the Order, payment in full is due to be received by Iron on or prior to delivery of the Iron Software or Services. All fees and payments are non-refundable.
+
+b. All of the prices hereunder are exclusive of any taxes. Company shall be responsible for any federal, state, or local sales, use, Canadian Goods and Services, property, VAT or similar taxes that are or may be imposed on transactions. In addition to all of its other rights and remedies, if payment is not made by the due date, then Iron may suspend or terminate performance of any or all Services, and suspend or terminate the Iron Software License on all Iron Software.
+
+c. Any amounts not paid by the due date will accrue late payment charges in the amount of one percent (1.0%) per month of the overdue amount. In addition, Iron will have the right to recover all costs of collection, including attorney’s fees and expenses, accrued or incurred by Iron in any court or other tribunal action to collect unpaid amounts due.
+
+5. Intellectual Property
+a. The Iron Software and the results of any Services are owned solely by Iron and are protected by copyright, trademark and trade secret law, among other types of law. All right, title and interest to the Iron Software and Services reside in and shall remain with Iron. Company receives only the limited and non-exclusive use rights expressly stated in the Order and in this Agreement. Company may not sell, license, assign, pledge or otherwise transfer the Iron Software or Services, or any copies thereof, to any third party, or permit or allow any third party to use the Iron Software or Services, except as expressly permitted by this Agreement. Any unauthorized sale, sublicense, assignment, pledge, other transfer, or impermissible use of the Iron Software or Services shall be void and will be a violation of Iron’s rights in the Iron Software and Services.
+
+b. Company acknowledges that without Iron’s written permission in an Order: (i) Company may not duplicate the Iron Software or Services for resale, publication, transfer, conveyance, licensing or sublicensing, or redistribution to any third party; (ii) Company will neither duplicate the Iron Software or Services for redistribution to any third party; (iii) Company will not duplicate or otherwise dispose of the Iron Software of Services in any manner violative of the United States Copyright Act (Title 17, U.S. Code); (iv) the Iron Software and Services may be used only by the aggregate number of authorized users at any given time; (v) the Iron Software and Services may be installed, accessed and used only on as many processors as there are authorized users; (vi) if the Company uses networked equipment, Company will never allow more than the maximum number of authorized users to use the Iron Software or Services at any given time; and (vii) Company may not modify, disassemble, decode, or decompile the Iron Software or Services, in whole or in part.
+
+c. Regardless as to the number of authorized users or uses, Company may make one (1) copy of the Iron Software as an archival or back-up copy, which shall bear Iron’s copyright notice and other proprietary markings. Company shall make no other copies of the Iron Software for any purpose.
+
+d. Company shall submit to Iron for approval, prior to use, distribution, or disclosure, any advertising, promotion, or publicity that refer to Iron or that use the trade names, trademarks, or service marks of Iron (“Iron Marks”). Iron shall have the right to require at its discretion the correction or deletion of any incorrect or misleading material regarding Iron or the Iron Marks in any advertising, promotion, or publicity. Iron may use the name and trademark of Company (“Company Marks”) to list or highlight Company as a licensee of Iron. The use of each Mark, and the goodwill generated thereby, shall inure to the benefit of the owner of the Mark.
+
+6. Confidentiality
+a. For purposes of this Agreement, “Confidential Information” shall mean non-public information and data received by either party (“receiving party”) from the other party (“disclosing party”).
+
+b. Notwithstanding the foregoing, information and data shall not be deemed to be Confidential Information if such information or data: (i) was known by the receiving party at the time of such disclosure; (ii) was known to the general public at the time of such disclosure or becomes known to the general public (other than by act of the receiving party) subsequent to such disclosure; (iii) is disclosed lawfully to the receiving party by a third party without restriction; (iv) is developed independently by the receiving party without reference to the disclosing party’s Confidential Information; or (v) is approved in writing by the disclosing party for disclosure by the receiving party.
+
+c. The receiving party may disclose the disclosing party’s Confidential Information when the receiving party is required by law (e.g., by subpoena), provided however the receiving party will give the disclosing party prior written notice of such required disclosure (unless notifying the disclosing party is prohibited by law), and will work with the disclosing party to limit the required disclosure or have the requirement revoked (e.g., a court revokes a subpoena for the Confidential Information).
+
+d. The receiving hereunder shall not disclose to any third party firm, corporation, individual, or other entity, any Confidential Information which it receives from the disclosing party. For clarity, Iron may disclose the Company’s Confidential Information to Iron’s employees and independent contractors in connection with providing the Iron Software and performing the Services hereunder. The receiving party shall use the same degree of care in safeguarding the Confidential Information as the receiving party uses for its own confidential and proprietary information, but in no event less than a standard of reasonable care.
+
+7. Term and Termination
+a. For each item of Iron Software and each Service, the Initial Term will be stated in the Order, and may renew for additional periods stated as Renewal Terms on the Order. If no Initial Term is specified on the Order, then the Initial Term will be one year from the Effective Date. If no Renewal Term is specified on the Order, then each Renewal Term will be one year beginning with the expiration of the preceding term, but only if Iron receives any renewal payment at least thirty (30) days prior to the first day of the applicable Renewal Term.
+
+b. This Agreement may be terminated by either party for material breach by the other party provided that the terminating party gives thirty (30) days prior written notice specifying the breach, and the breaching party fails to cure or correct the breach within the thirty-day notice period. In the event of any such termination, Company shall pay Iron for all Iron Software provided and for all Services performed by Iron and for all work-in-progress up to the date of termination.
+
+c. This Agreement shall be deemed to be automatically terminated upon any material breach of Company’s obligations under Sections 3 (Iron Software and Services), 4 (Financial), 5 (Intellectual Property), or 6 (Confidentiality).
+
+d. Upon termination of this Agreement for any reason, Company shall immediately return to Iron any Iron Software, related materials, and all copies thereof or, with Iron’s prior written permission, Company shall destroy all such materials and certify in writing as to their destruction.
+
+e. Sections 4-7 (Financial), (Intellectual Property), Confidentiality), and (Term and Termination) respectively, and 8-11 (Representations and Warranties), (Disclaimers and Limitations of Liability), (Indemnification), and (General Provisions) respectively, of this Agreement shall survive any expiration or termination of this Agreement.
+
+f. Company recognizes that Iron has expended considerable amounts of time, effort, and money to develop the Iron Software and Services, and that Company’s unauthorized copying, use, transfer, or disclosure of the Iron Software or Services, or their contents, may cause Iron to sustain substantial, irreparable harm and damage. Similarly, each party has expended considerable amounts of time, effort, and money to develop and protect their respective Confidential Information. In addition to all other legal and equitable remedies available to a party, each party may seek from an arbitrator (pursuant to the arbitration provisions of this Agreement) temporary and permanent injunctive relief to remedy any breach of the other party’s obligations under Sections 5 (Intellectual Property), or 6 (Confidentiality) of this Agreement.
+
+8. Representations and Warranties
+a. The parties hereby covenant, represent and warrant to each other that they are duly authorized and empowered to enter into this Agreement, and that this Agreement constitutes a valid and binding, enforceable Agreement. Company further represents, covenants, and warrants that this Agreement is not inconsistent with any Agreement or obligation binding Company or its property or assets.
+
+9. Disclaimers and Limitations of Liability
+a. THE IRON SOFTWARE AND SERVICES ARE PROVIDED “AS IS” AND “AS AVAILABLE” WITH ALL FAULTS. IRON SHALL NOT BE LIABLE FOR ANY DAMAGES, LOSSES, OR EXPENSES, OF ANY TYPE, KIND OR DESCRIPTION, INCURRED OR SUSTAINED BY COMPANY OR BY ANY OTHER PERSON OR ENTITY FOR ANY REASON.
+
+b. THE WARRANTIES STATED IN THIS AGREEMENT ARE EXCLUSIVE AND IN LIEU OF ANY OTHER WARRANTIES, EXPRESS, IMPLIED, OR STATUTORY, INCLUDING WITHOUT LIMITATION ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FOR FITNESS FOR A PARTICULAR PURPOSE.
+
+c. NEITHER IRON NOR ITS AFFILIATES, NOR ANY OF THEIR RESPECTIVE THIRD PARTY LICENSORS MAKE ANY WARRANTIES, EXPRESS OR IMPLIED, AS TO RESULTS TO BE OBTAINED FROM THE USE OF ANY IRON SOFTWARE OR SERVICES OR THAT THE IRON SOFTWARE OR SERVICES WILL BE ERROR-FREE.
+
+d. IN NO EVENT SHALL IRON NOR ITS AFFILIATES, NOR ANY OF THEIR RESPECTIVE THIRD PARTY LICENSORS HAVE ANY LIABILITY FOR LOST PROFITS OR FOR INDIRECT, SPECIAL, PUNITIVE OR CONSEQUENTIAL DAMAGES, OR ANY LIABILITY TO ANY PERSON ARISING OUT OF THIS AGREEMENT, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES OR LIABILITY.
+
+e. IN NO EVENT SHALL THE CUMULATIVE LIABILITY OF IRON, ITS AFFILIATES, AND THEIR RESPECTIVE THIRD PARTY LICENSORS HEREUNDER EXCEED THE GREATER OF (I) THE AMOUNTS RECEIVED BY IRON FROM COMPANY DURING THE TWELVE (12) MONTHS PRIOR TO THE MAKING OF THE CLAIM, AND (II) $100, WHICH SHALL BE COMPANY’S EXCLUSIVE REMEDY AGAINST IRON, ITS AFFILIATES AND THEIR RESPECTIVE THIRD PARTY LICENSORS UNDER THIS AGREEMENT.
+
+f. All disclaimers herein shall not be applicable to liabilities that cannot be waived under the applicable laws or regulations of the United States (including US State and Federal law) or any other applicable country or jurisdiction.
+
+10. Indemnification
+a. Should any portion of the Iron Software become, or in Iron’s opinion be likely to become the subject of a claim of infringement, Iron may, as Company’s sole and exclusive remedy, elect to (1) obtain for Company at Iron’s expense the right to use such portion, or (2) replace or modify the Iron Software so that it becomes non-infringing, or (3) remove the infringing portion and grant to Company a credit prorated to reflect the portion of the overall fees paid by Company attributable to such portion of the Iron Software. The foregoing states the entire liability of Iron with respect to allegation or claim of infringement of any intellectual property rights.
+
+b. Company will defend, indemnify and hold Iron harmless at Company’s expense for any claim that alleges that the Company Software, Company’s data or Company’s materials infringes upon a copyright, patent or other right, and Company will pay all damages and costs awarded by a court in connection with such claim. In the event Company redistributes, republishes or otherwise permits use of the Iron Software or Services, as provided by Iron or as modified by Company, in violation of this Agreement, Company shall indemnify, defend and hold Iron harmless from any loss, damage or claim arising therefrom. Each indemnification claim requires that Iron: (i) gives prompt written notice of the claim to the Company; (ii) gives Company sole control of the defense or settlement of the claim; and (iii) provides to Company all necessary information, assistance, and authority to defend. Company shall promptly defend or settle the claim at Company’s sole cost and with Company’s counsel, but Company shall not have the right to admit liability on behalf of Iron, or assess any blame, responsibility, costs or fees to Iron.
+
+11. General Provisions
+a. Entire Agreement. The parties acknowledge and agree that this Agreement (including each Order) embodies the complete and exclusive understanding and Agreement of the parties with respect to the Iron Software and Services, and supersedes any prior or contemporaneous proposal, agreement, or license whether oral or written, and any other communication between the parties.
+
+b. Changes to this Agreement. This Agreement shall not be modified or amended except by a written instrument, signed by both parties. The version of this Agreement posted to Iron’s website is the current set of Terms that Iron may modify from time to time. For each Order placed by Company, the current version of this Agreement will apply to that Order, unless the parties have otherwise signed a hard copy or digital version of these Terms independent of the web-based Terms, in which case the signed version of the Terms will control.
+
+c. Export Control. Company will comply with all export control laws and regulations of the United States and all other countries and jurisdictions. Company will not remove or export from the United States or allow the export or re-export of any part of the Iron Software or any direct product thereof: (a) into (or to a national or resident of) any embargoed or terrorist-supporting country; (b) to anyone on the U.S. Commerce Department's Table of Denial Orders or U.S. Treasury Department's list of Specially Designated Nationals (or any list that replaces such list); (c) to any country to which such export or re-export is restricted or prohibited, or as to which the United States government or any agency thereof requires an export license or other governmental approval at the time of export or re-export without first obtaining such license or approval; or (d) otherwise in violation of any export or import restrictions, laws or regulations of any United States or foreign agency or authority that has jurisdiction. Company agrees to the foregoing and warrants that it is not located in, under the control of, or a national or resident of any such prohibited country or on any such prohibited party list. The Iron Software is further restricted from being used for terrorist activity, or for the design or development of nuclear, chemical, or biological weapons or missile technology without the prior permission of the U.S. government.
+
+d. Governing Law. This Agreement shall be governed by and construed in accordance with the laws of the State of Wyoming and the federal laws of the United States, without reference to conflicts of laws provisions and policies. Any dispute between the parties shall be determined by one arbitrator in binding arbitration administered by the American Arbitration Association (adr.org) if all parties are based in the United States; otherwise the arbitration shall be administered by the International Centre for Dispute Resolution (icdr.org). The arbitrator shall decide all questions of arbitrability, and shall be empowered to issue preliminary, temporary and injunctive relief by issuing an initial award. All hearings will be conducted by audio conference or video conference. The language of the arbitration shall be English. The arbitrator’s awards will be binding on the parties, and may be entered and enforced in any courts or tribunals of competent jurisdiction.
+
+e. Severability. If any provision of this Agreement shall be determined to be void or unenforceable by a court of competent jurisdiction, the remaining provisions shall remain in full force and effect.
+
+f. Waiver. Any waiver of a breach or of performance of a term or condition of this Agreement shall be in writing, signed by both parties hereto. The failure of either party to insist on strict adherence to any term of this Agreement on any occasion shall not be deemed a waiver of its right thereafter to insist on such adherence.
+
+g. Headings. Headings are for convenience only and are not part of this Agreement. They shall not be used to modify or construe the terms of the sections they introduce.
+
+h. Notice. All notices required to be given by this Agreement shall be sent by certified mail, return receipt requested, or by courier, to the party to be notified at the address set forth in the Order, or to such other or new address as to which notice has been given. All notices made under this Agreement shall be effective twenty calendar days after mailing.
+
+i. Successors and Assigns. This Agreement is not assignable by either party without the other party’s written permission and is binding upon the permitted successors of each party to this Agreement. However, either party may assign no less than all of its rights under this Agreement to an affiliate or successor as a result of a merger, acquisition or reorganization, and the assignment will be effective on receipt of written notice by the non-assigning party.
+
+j. Independent Contractor. The relationship of the parties is that of independent contractors. This Agreement does not create any actual or apparent agency, partnership or relationship of employer and employee between the parties hereto.
+
+k. Force Majeure. Except for a party’s payment obligations, neither party shall have any liability for any defaults or delays resulting from circumstances reasonably beyond its reasonable control.
+
+l. Company Documents. The provisions and terms of any document issued by Company in conjunction with this Agreement shall be of no effect and shall not in any way extend, affect or amend the terms and conditions set forth in this Agreement (including any Order) unless expressly accepted in writing by Iron.
