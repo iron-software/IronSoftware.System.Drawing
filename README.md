@@ -1,4 +1,3 @@
-# IronDrawing
 ![Nuget](https://img.shields.io/nuget/v/IronDrawing?color=informational&label=latest)  ![Installs](https://img.shields.io/nuget/dt/IronDrawing?color=informational&label=installs&logo=nuget)  ![Passed](https://img.shields.io/badge/build-%20%E2%9C%93%20258%20tests%20passed%20(0%20failed)%20-107C10?logo=visualstudio)  ![windows](https://img.shields.io/badge/%E2%80%8E%20-%20%E2%9C%93-107C10?logo=windows)  ![macOS](https://img.shields.io/badge/%E2%80%8E%20-%20%E2%9C%93-107C10?logo=apple)  ![linux](https://img.shields.io/badge/%E2%80%8E%20-%20%E2%9C%93-107C10?logo=linux&logoColor=white)  ![docker](https://img.shields.io/badge/%E2%80%8E%20-%20%E2%9C%93-107C10?logo=docker&logoColor=white)  ![aws](https://img.shields.io/badge/%E2%80%8E%20-%20%E2%9C%93-107C10?logo=amazonaws)  ![microsoftazure](https://img.shields.io/badge/%E2%80%8E%20-%20%E2%9C%93-107C10?logo=microsoftazure)
 ​
 # IronDrawing - Image, Color, Rectangle, and Font class for .NET Applications
