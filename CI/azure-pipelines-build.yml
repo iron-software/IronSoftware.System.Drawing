@@ -3,7 +3,7 @@
 variables:
   - group: IronDrawingVersions
   - name: Configuration
-    value: 'Debug'
+    value: 'Release'
   - name: AssemblyVersion
     value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingRevisionVersion).$(Build.BuildID)
     
@@ -49,6 +49,18 @@ stages:
           versioningScheme: byEnvVar
           versionEnvVar: AssemblyVersion
       # Publish Pipeline Artifacts
+      - task: CopyFiles@2
+        displayName: 'Copy tests.runsettings file'
+        inputs:
+          SourceFolder: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests'
+          Contents: 'tests*.runsettings'
+          TargetFolder: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/bin/$(Configuration)'
+      - task: PublishPipelineArtifact@1
+        displayName: Publish IronDrawing Test Data
+        inputs:
+          targetPath: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/Data'
+          artifact: 'IronDrawingDataTests'
+          publishLocation: 'pipeline'
       - task: PublishPipelineArtifact@1
         displayName: Publish IronDrawing Test Assemblies
         inputs:
@@ -61,6 +73,12 @@ stages:
           targetPath: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common/bin/$(Configuration)'
           artifact: 'IronDrawingAssemblies'
           publishLocation: 'pipeline'
+      - task: CopyFiles@2
+        displayName: 'Copy REAMD.md file'
+        inputs:
+          SourceFolder: '$(Build.SourcesDirectory)'
+          Contents: 'README.md'
+          TargetFolder: '$(Build.SourcesDirectory)/NuGet'
       - task: PublishPipelineArtifact@1
         displayName: Publish IronDrawing NuGet Files
         inputs:
@@ -83,11 +101,16 @@ stages:
         buildType: 'current'
         artifactName: 'IronDrawingTests'
         targetPath: 'IronDrawingTests'
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'IronDrawingDataTests'
+        targetPath: '$(Agent.BuildDirectory)/Data'
     - task: DotNetCoreCLI@2
       displayName: Execute Windows (.NET Core x64) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.runsettings --framework "netcoreapp3.1" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\netcoreapp3.1\testhost.log"'
         testRunTitle: 'Windows (.NET Core) Tests'
         publishTestResults: true
@@ -95,7 +118,7 @@ stages:
       displayName: Execute Windows (.NET Core x86) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.x86.runsettings --framework "netcoreapp3.1" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\netcoreapp3.1\testhost.log"'
         testRunTitle: 'Windows (.NET Core) Tests'
         publishTestResults: true
@@ -108,6 +131,11 @@ stages:
         buildType: 'current'
         artifactName: 'IronDrawingTests'
         targetPath: 'IronDrawingTests'
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'IronDrawingDataTests'
+        targetPath: '$(Agent.BuildDirectory)/Data'
     - task: UseDotNet@2
       displayName: 'Use .NET Core sdk'
       inputs:
@@ -117,16 +145,8 @@ stages:
       displayName: Execute Windows (.NET 6.0 x64) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/net60/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/net60/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.runsettings --framework "net60" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net60\testhost.log"'
-        testRunTitle: 'Windows (.NET 6.0) Tests'
-        publishTestResults: true
-    - task: DotNetCoreCLI@2
-      displayName: Execute Windows (.NET 6.0 x86) Tests
-      inputs:
-        command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/net60/IronSoftware.Drawing.Common.Tests.dll'
-        arguments: '-s IronDrawingTests/tests.x86.runsettings --framework "net60" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net60\testhost.log"'
         testRunTitle: 'Windows (.NET 6.0) Tests'
         publishTestResults: true
   # Windows .NET 7.0 Tests
@@ -138,6 +158,11 @@ stages:
         buildType: 'current'
         artifactName: 'IronDrawingTests'
         targetPath: 'IronDrawingTests'
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'IronDrawingDataTests'
+        targetPath: '$(Agent.BuildDirectory)/Data'
     - task: UseDotNet@2
       displayName: 'Use .NET Core sdk'
       inputs:
@@ -148,16 +173,8 @@ stages:
       displayName: Execute Windows (.NET 7.0 x64) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/net70/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/net70/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.runsettings --framework "net70" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net70\testhost.log"'
-        testRunTitle: 'Windows (.NET 7.0) Tests'
-        publishTestResults: true
-    - task: DotNetCoreCLI@2
-      displayName: Execute Windows (.NET 7.0 x86) Tests
-      inputs:
-        command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/net70/IronSoftware.Drawing.Common.Tests.dll'
-        arguments: '-s IronDrawingTests/tests.x86.runsettings --framework "net70" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net70\testhost.log"'
         testRunTitle: 'Windows (.NET 7.0) Tests'
         publishTestResults: true
 ## Test Linux
@@ -175,11 +192,16 @@ stages:
         buildType: 'current'
         artifactName: 'IronDrawingTests'
         targetPath: 'IronDrawingTests'
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'IronDrawingDataTests'
+        targetPath: '$(Agent.BuildDirectory)/Data'
     - task: DotNetCoreCLI@2
       displayName: Execute Linux (.NET Core) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.runsettings --framework "netcoreapp3.1" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\netcoreapp3.1\testhost.log"'
         testRunTitle: 'Linux (.NET Core) Tests'
         publishTestResults: true
@@ -191,15 +213,20 @@ stages:
         buildType: 'current'
         artifactName: 'IronDrawingTests'
         targetPath: 'IronDrawingTests'
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'IronDrawingDataTests'
+        targetPath: '$(Agent.BuildDirectory)/Data'
     - task: UseDotNet@2
       inputs:
         version: '6.x'
-        packageType: runtime
+        packageType: 'sdk'
     - task: DotNetCoreCLI@2
       displayName: Execute Linux (.NET 6.0) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/net60/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/net60/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.runsettings --framework "net60" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net60\testhost.log"'
         testRunTitle: 'Linux (.NET 6.0) Tests'
         publishTestResults: true
@@ -211,16 +238,21 @@ stages:
         buildType: 'current'
         artifactName: 'IronDrawingTests'
         targetPath: 'IronDrawingTests'
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'IronDrawingDataTests'
+        targetPath: '$(Agent.BuildDirectory)/Data'
     - task: UseDotNet@2
       inputs:
         version: '7.x'
-        packageType: runtime
+        packageType: 'sdk'
         includePreviewVersions: true
     - task: DotNetCoreCLI@2
       displayName: Execute Linux (.NET 7.0) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/net70/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/net70/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.runsettings --framework "net70" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net70\testhost.log"'
         testRunTitle: 'Linux (.NET 6.0) Tests'
         publishTestResults: true
@@ -234,58 +266,51 @@ stages:
   - job: MacOsNetCoreTests
     steps:
     - checkout: none
+    - bash: 'brew update && brew install mono-libgdiplus'
+      displayName: Install GdiPlus
     - task: DownloadPipelineArtifact@2
       inputs:
         buildType: 'current'
         artifactName: 'IronDrawingTests'
         targetPath: 'IronDrawingTests'
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'IronDrawingDataTests'
+        targetPath: '$(Agent.BuildDirectory)/Data'
     - task: DotNetCoreCLI@2
       displayName: Execute MacOs (.NET Core) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.runsettings --framework "netcoreapp3.1" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\netcoreapp3.1\testhost.log"'
         testRunTitle: 'MacOs (.NET Core) Tests'
         publishTestResults: true
   - job: MacOsNet60Tests
     steps:
     - checkout: none
+    - bash: 'brew update && brew install mono-libgdiplus'
+      displayName: Install GdiPlus
     - task: DownloadPipelineArtifact@2
       inputs:
         buildType: 'current'
         artifactName: 'IronDrawingTests'
         targetPath: 'IronDrawingTests'
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'IronDrawingDataTests'
+        targetPath: '$(Agent.BuildDirectory)/Data'
     - task: UseDotNet@2
       inputs:
-        version: '6.x'
-        packageType: runtime
+        packageType: 'sdk'
+        version: '6.0.x'
     - task: DotNetCoreCLI@2
       displayName: Execute MacOs (.NET 6.0) Tests
       inputs:
         command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/net60/IronSoftware.Drawing.Common.Tests.dll'
+        projects: 'IronDrawingTests/net60/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.runsettings --framework "net60" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net60\testhost.log"'
-        testRunTitle: 'MacOs (.NET 6.0) Tests'
-        publishTestResults: true
-  - job: MacOsNet70Tests
-    steps:
-    - checkout: none
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: 'current'
-        artifactName: 'IronDrawingTests'
-        targetPath: 'IronDrawingTests'
-    - task: UseDotNet@2
-      inputs:
-        version: '7.x'
-        packageType: runtime
-        includePreviewVersions: true
-    - task: DotNetCoreCLI@2
-      displayName: Execute MacOs (.NET 7.0) Tests
-      inputs:
-        command: 'test'
-        projects: 'IronDrawingTests/bin/$(Configuration)/net70/IronSoftware.Drawing.Common.Tests.dll'
-        arguments: '-s IronDrawingTests/tests.runsettings --framework "net70" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net70\testhost.log"'
         testRunTitle: 'MacOs (.NET 6.0) Tests'
         publishTestResults: true
 ## Push NuGet Package
@@ -301,6 +326,11 @@ stages:
   - job: DeployDrawingLibraries
     steps:
     - checkout: none
+    - task: DownloadSecureFile@1
+      displayName: Download IronBarCode Code-Signing Cert
+      name: DownloadSigningCert
+      inputs:
+        secureFile: 'ironcert.pfx'
     - task: DownloadPipelineArtifact@2
       inputs:
         buildType: 'current'
@@ -311,14 +341,25 @@ stages:
         buildType: 'current'
         artifactName: 'IronDrawingNuGet'
         targetPath: 'NuGet'
+    - task: CmdLine@2
+      displayName: 'Sign IronSoftware.Drawing.Common.dll .NET Standard'
+      inputs:
+          workingDirectory: 'bin\$(Configuration)\netstandard2.0'
+          script: '$(Build.SourcesDirectory)\NuGet\signtool.exe sign /v /d IronDrawing /f $(Agent.TempDirectory)/ironcert.pfx /p ironcert /t http://timestamp.digicert.com /fd SHA256 "IronSoftware.Drawing.Common.dll"'
     - task: NuGetCommand@2
       displayName: 'Build DrawingLibraries NuGet Package'
       inputs:
         command: 'pack'
-        packagesToPack: 'NuGet/IronSoftware.Drawing.nuspec'
+        packagesToPack: 'NuGet\IronSoftware.Drawing.nuspec'
         configuration: $(Configuration)
         buildProperties: 'version=$(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingRevisionVersion).$(Build.BuildID);IncludeSymbols=true;SymbolPackageFormat=snupkg'
         includeSymbols: true
+    # Sign NuGet Packages
+    - task: NuGetCommand@2
+      displayName: Sign IronDrawing NuGet Package
+      inputs:
+        command: 'custom'
+        arguments: 'sign $(Build.ArtifactStagingDirectory)\IronDrawing.1.0.$(Build.BuildID)-ci.symbols.nupkg -CertificatePath $(Agent.TempDirectory)\ironcert.pfx -Timestamper http://timestamp.digicert.com -NonInteractive -CertificatePassword ironcert'
     - task: NuGetCommand@2
       inputs:
         command: 'push'
