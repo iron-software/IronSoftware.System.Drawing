@@ -6,6 +6,8 @@ variables:
     value: 'Release'
   - name: AssemblyVersion
     value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingRevisionVersion).$(Build.BuildID)
+  - name: NuGetVersion
+    value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(Build.BuildID)
     
 # Virtual Machine
 pool:
@@ -352,14 +354,14 @@ stages:
         command: 'pack'
         packagesToPack: 'NuGet\IronSoftware.Drawing.nuspec'
         configuration: $(Configuration)
-        buildProperties: 'version=$(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingRevisionVersion).$(Build.BuildID);IncludeSymbols=true;SymbolPackageFormat=snupkg'
+        buildProperties: 'version=$(NuGetVersion);IncludeSymbols=true;SymbolPackageFormat=snupkg'
         includeSymbols: true
     # Sign NuGet Packages
     - task: NuGetCommand@2
       displayName: Sign IronDrawing NuGet Package
       inputs:
         command: 'custom'
-        arguments: 'sign $(Build.ArtifactStagingDirectory)\IronDrawing.1.0.$(Build.BuildID)-ci.symbols.nupkg -CertificatePath $(Agent.TempDirectory)\ironcert.pfx -Timestamper http://timestamp.digicert.com -NonInteractive -CertificatePassword ironcert'
+        arguments: 'sign $(Build.ArtifactStagingDirectory)\IronDrawing.$(NuGetVersion).symbols.nupkg -CertificatePath $(Agent.TempDirectory)\ironcert.pfx -Timestamper http://timestamp.digicert.com -NonInteractive -CertificatePassword ironcert'
     - task: NuGetCommand@2
       inputs:
         command: 'push'
