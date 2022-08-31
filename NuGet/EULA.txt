@@ -1,0 +1,28 @@
+https://ironsoftware.com/
+
+Iron Drawing End User License Agreement
+Iron Software LLC hereby grants you a non-exclusive license to the IronDrawing Software Library for .Net ("the Software").
+
+Do No Harm
+By downloading or using the Software, the Licensee agrees not to utilize the software in a manner which is disparaging to Iron Software LLC, and not to rent, lease or otherwise transfer rights to the Software. The Licensee agrees that no attempt will be made by the Licensee or associated parties to translate, reverse engineer, modify, decompile, disassemble or distribute the Software.
+
+License Types
+License terms are offered on the following terms. 
+
+Free Trial License - Grants the use of the TRIAL VERSION of the software for private evaluation purposes only. The Software should not be published in any internet, software, SaaS nor intranet project.
+
+Ownership
+Iron Software LLC shall at all times retain ownership of the Iron Drawing Software Library and all subsequent copies.
+
+Copyright
+Title, ownership rights, and intellectual property rights in and to the Software shall remain with Iron Software LLC. The Software is protected by the international copyright laws. Title, ownership rights, and intellectual property rights in and to the content accessed through the Software is the property of the applicable content owner and may be protected by applicable copyright or other law. This License gives you no rights to such content.
+
+Upgrades & Support
+This license does not indicate a Service Level Agreement, nor does it imply that Iron Software is responsible for successful deployment, maintenance nor business function of The Software.
+
+Limitation Of Liability
+THIS SOFTWARE IS PROVIDED "AS IS," WITHOUT A WARRANTY OF ANY KIND. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY EXCLUDED. IRON SOFTWARE AND ITS LICENSORS SHALL NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR DISTRIBUTING THE SOFTWARE OR ITS DERIVATIVES. IN NO EVENT WILL IRON SOFTWARE OR ITS LICENSORS BE LIABLE FOR ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL, CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR INABILITY TO USE SOFTWARE, EVEN IF IRON SOFTWARE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+Miscellaneous
+This software is not designed or intended for use in on-line control of aircraft, air traffic, aircraft navigation or aircraft communications; or in the design, construction, operation or maintenance of any nuclear facility. Licensee represents and warrants that it will not use or redistribute the Software for such purposes.
+
