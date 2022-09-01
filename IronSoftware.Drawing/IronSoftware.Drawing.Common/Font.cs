@@ -217,6 +217,53 @@ namespace IronSoftware.Drawing
             }
             return new SkiaSharp.SKFont(SkiaSharp.SKTypeface.FromFamilyName(Font.FamilyName, sKFontStyle), Font.Size);
         }
+
+        /// <summary>
+        /// Implicitly casts Microsoft.Maui.Graphics.Font objects to <see cref="Font"/>.  
+        /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
+        /// </summary>
+        /// <param name="Font">Microsoft.Maui.Graphics.Font will automatically be cast to <see cref="Font"/> </param>
+        public static implicit operator Font(Microsoft.Maui.Graphics.Font Font)
+        {
+            FontStyle style;
+            if (Font.Weight >= 700 && (Font.StyleType == Microsoft.Maui.Graphics.FontStyleType.Italic || Font.StyleType == Microsoft.Maui.Graphics.FontStyleType.Oblique))
+            {
+                style = FontStyle.Bold | FontStyle.Italic;
+            }
+            else if (Font.Weight >= 700)
+            {
+                style = FontStyle.Bold;
+            }
+            else if (Font.StyleType == Microsoft.Maui.Graphics.FontStyleType.Italic || Font.StyleType == Microsoft.Maui.Graphics.FontStyleType.Oblique)
+            {
+                style = FontStyle.Italic;
+            }
+            else
+            {
+                style = FontStyle.Regular;
+            }
+            return new Font(Font.Name, style);
+        }
+
+        /// <summary>
+        /// Implicitly casts Microsoft.Maui.Graphics.Font objects from <see cref="Font"/>.  
+        /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
+        /// </summary>
+        /// <param name="Font"><see cref="Font"/> is explicitly cast to an Microsoft.Maui.Graphics.Font </param>
+        static public implicit operator Microsoft.Maui.Graphics.Font(Font Font)
+        {
+            int fontWeight = 400;
+            Microsoft.Maui.Graphics.FontStyleType fontStyleType = Microsoft.Maui.Graphics.FontStyleType.Normal;
+            if (Font.Bold)
+            {
+                fontWeight = 700;
+            }
+            if (Font.Italic)
+            {
+                fontStyleType = Microsoft.Maui.Graphics.FontStyleType.Italic;
+            }
+            return new Microsoft.Maui.Graphics.Font(Font.FamilyName, fontWeight, fontStyleType);
+        }
     }
 
     /// <summary>

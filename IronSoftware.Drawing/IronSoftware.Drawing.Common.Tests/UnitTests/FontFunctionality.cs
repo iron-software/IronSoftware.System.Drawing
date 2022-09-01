@@ -296,5 +296,84 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
                 sixLaborsFont.IsItalic.Should().BeTrue();
             }
         }
+
+#if !NET472
+
+
+        [FactWithAutomaticDisplayName]
+        public void CastMauiFont_to_Font()
+        {
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                Microsoft.Maui.Graphics.Font mFont = new Microsoft.Maui.Graphics.Font("Liberation Mono");
+                Font font = mFont;
+                font.FamilyName.Should().Be("Liberation Mono");
+                font.Size.Should().Be(30);
+                font.Style.Should().Be(FontStyle.Regular);
+                font.Bold.Should().BeFalse();
+                font.Italic.Should().BeFalse();
+
+                mFont = new Microsoft.Maui.Graphics.Font("Liberation Serif", 800, Microsoft.Maui.Graphics.FontStyleType.Italic);
+                font = mFont;
+                font.FamilyName.Should().Be("Liberation Serif");
+                font.Size.Should().Be(20);
+                font.Style.Should().Be(FontStyle.Bold | FontStyle.Italic);
+                font.Bold.Should().BeTrue();
+                font.Italic.Should().BeTrue();
+            }
+            else
+            {
+                Microsoft.Maui.Graphics.Font mFont = new Microsoft.Maui.Graphics.Font("Courier New");
+                Font font = mFont;
+                font.FamilyName.Should().Be("Courier New");
+                font.Size.Should().Be(30);
+                font.Style.Should().Be(FontStyle.Regular);
+                font.Bold.Should().BeFalse();
+                font.Italic.Should().BeFalse();
+
+                mFont = new Microsoft.Maui.Graphics.Font("Times New Roman", 800, Microsoft.Maui.Graphics.FontStyleType.Italic);
+                font = mFont;
+                font.FamilyName.Should().Be("Times New Roman");
+                font.Size.Should().Be(20);
+                font.Style.Should().Be(FontStyle.Bold | FontStyle.Italic);
+                font.Bold.Should().BeTrue();
+                font.Italic.Should().BeTrue();
+            }
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CastMauiFont_from_Font()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                Font font = new Font("Liberation Mono", 30);
+                Microsoft.Maui.Graphics.Font mFont = font;
+                mFont.Name.Should().Be("Liberation Mono");
+                mFont.Weight.Should().Be(400);
+                mFont.StyleType.Should().Be(Microsoft.Maui.Graphics.FontStyleType.Normal);
+
+                font = new Font("Liberation Serif", FontStyle.Bold | FontStyle.Italic, 20);
+                mFont = font;
+                mFont.Name.Should().Be("Liberation Serif");
+                mFont.Weight.Should().Be(700);
+                mFont.StyleType.Should().Be(Microsoft.Maui.Graphics.FontStyleType.Italic);
+            }
+            else
+            {
+                Font font = new Font("Courier New", 30);
+                Microsoft.Maui.Graphics.Font mFont = font;
+                mFont.Name.Should().Be("Courier New");
+                mFont.Weight.Should().Be(400);
+                mFont.StyleType.Should().Be(Microsoft.Maui.Graphics.FontStyleType.Normal);
+
+                font = new Font("Times New Roman", FontStyle.Bold | FontStyle.Italic, 20);
+                mFont = font;
+                mFont.Name.Should().Be("Times New Roman");
+                mFont.Weight.Should().Be(700);
+                mFont.StyleType.Should().Be(Microsoft.Maui.Graphics.FontStyleType.Italic);
+            }
+        }
+#endif
     }
 }
