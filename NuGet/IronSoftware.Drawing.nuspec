@@ -7,6 +7,8 @@
     <authors>https://ironsoftware.com/</authors>
     <owners></owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+	<projectUrl>https://ironsoftware.com/</projectUrl>
+	<readme>docs\README.md</readme>
     <description>IronDrawing - The C# Image Library
 
 A universally compatible Bitmap format for .NET 7 and .NET 6, .NET 5, .NET Core on Windows, macOS, Linux, Docker, AWS, Azure, NanoServer, IIS, Mobile, Xamarin, iOS, Android, and Google Compute.
@@ -32,14 +34,8 @@ Supports:
 
 For support please email us at developers@ironsoftware.com</description>
     <summary>IronDrawing</summary>
-    <releaseNotes>Support and Compatibility
-* Universal compatiblity for .NET 7, .NET 6, .NET 5, and .NET Core
-* Support for Windows, macOS, Linux, Azure, AWS, Mobile, iOS, Android, Xamarin, NanoServer, and IIS
-All new classes developed to support conversion between: (System.Drawing, SixLabors.ImageSharp, SkiaSharp, and Microsoft.Maui)
-* AnyBitmap: A universally compatible Bitmap class
-* Color: A universally compatible Color class
-* Font: A universally compatible Font class
-* CropRectangle: A universally compatible Rectangle class</releaseNotes>
+    <releaseNotes>* Supported implicit casting Color, CropRectangle, and Font for Microsoft.Maui
+* Supported implicit cast between Rgb48, Rgba64 and IronDrawing.Color</releaseNotes>
     <copyright>Copyright © Iron Software 2022</copyright>
     <tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, Tiff, Gif, Jpeg, Png, Color, Rectangle, Drawing, C#, VB.NET, aspx, create, render, generate, standard, netstandard2.0, core, netcore</tags>
 	<dependencies>
