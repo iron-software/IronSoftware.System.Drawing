@@ -309,7 +309,6 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
                 Microsoft.Maui.Graphics.Font mFont = new Microsoft.Maui.Graphics.Font("Liberation Mono");
                 Font font = mFont;
                 font.FamilyName.Should().Be("Liberation Mono");
-                font.Size.Should().Be(30);
                 font.Style.Should().Be(FontStyle.Regular);
                 font.Bold.Should().BeFalse();
                 font.Italic.Should().BeFalse();
@@ -317,7 +316,6 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
                 mFont = new Microsoft.Maui.Graphics.Font("Liberation Serif", 800, Microsoft.Maui.Graphics.FontStyleType.Italic);
                 font = mFont;
                 font.FamilyName.Should().Be("Liberation Serif");
-                font.Size.Should().Be(20);
                 font.Style.Should().Be(FontStyle.Bold | FontStyle.Italic);
                 font.Bold.Should().BeTrue();
                 font.Italic.Should().BeTrue();
@@ -327,7 +325,6 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
                 Microsoft.Maui.Graphics.Font mFont = new Microsoft.Maui.Graphics.Font("Courier New");
                 Font font = mFont;
                 font.FamilyName.Should().Be("Courier New");
-                font.Size.Should().Be(30);
                 font.Style.Should().Be(FontStyle.Regular);
                 font.Bold.Should().BeFalse();
                 font.Italic.Should().BeFalse();
@@ -335,7 +332,6 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
                 mFont = new Microsoft.Maui.Graphics.Font("Times New Roman", 800, Microsoft.Maui.Graphics.FontStyleType.Italic);
                 font = mFont;
                 font.FamilyName.Should().Be("Times New Roman");
-                font.Size.Should().Be(20);
                 font.Style.Should().Be(FontStyle.Bold | FontStyle.Italic);
                 font.Bold.Should().BeTrue();
                 font.Italic.Should().BeTrue();
