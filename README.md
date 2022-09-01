@@ -38,7 +38,7 @@ Installing the IronDrawing NuGet package is quick and easy, please install the p
 ```
 PM> Install-Package IronDrawing
 ```
-Once installed, you can get started by adding `using IronDrawing` to the top of your C# code. Here is is sample HTML to PDF example to get started:
+Once installed, you can get started by adding `using IronDrawing` to the top of your C# code.
 ### `AnyBitmap` Code Example
 ```csharp
 using IronDrawing;
