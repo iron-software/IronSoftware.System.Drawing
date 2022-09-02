@@ -35,7 +35,8 @@ Supports:
 For general support and technical inquiries, please email us at: developers@ironsoftware.com</description>
     <summary>IronDrawing</summary>
     <releaseNotes>* Added support for implicit casting for existing Color, CropRectangle, and Font with those of Microsoft.Maui
-* Added support for implicit casting between Rgb48, Rgba64, and IronDrawing.Color</releaseNotes>
+* Added support for implicit casting between Rgb48, Rgba64, and IronDrawing.Color
+* Made amendment which solved a dependency issue. As such, .NET Framework is only supported for versions 4.6.1 and above.</releaseNotes>
     <copyright>Copyright © Iron Software 2022</copyright>
     <tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, Tiff, Gif, Jpeg, Png, Color, Rectangle, Drawing, C#, VB.NET, aspx, create, render, generate, standard, netstandard2.0, core, netcore</tags>
 	<dependencies>
