@@ -45,7 +45,7 @@ namespace IronSoftware.Drawing
         /// Implicitly casts to System.Drawing.Rectangle objects from <see cref="CropRectangle"/>.
         /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support Rectangle as well.</para>
         /// </summary>
-        /// <param name="CropRectangle"><see cref="CropRectangle"/> is explicitly cast to an System.Drawing.Rectangle.</param>
+        /// <param name="CropRectangle"><see cref="CropRectangle"/> is explicitly cast to a System.Drawing.Rectangle.</param>
         static public implicit operator System.Drawing.Rectangle(CropRectangle CropRectangle)
         {
             return new System.Drawing.Rectangle(CropRectangle.X, CropRectangle.Y, CropRectangle.Width, CropRectangle.Height);
@@ -66,7 +66,7 @@ namespace IronSoftware.Drawing
         /// Implicitly casts to SkiaSharp.SKRect objects from <see cref="CropRectangle"/>.
         /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SkiaSharp.SKRect as well.</para>
         /// </summary>
-        /// <param name="CropRectangle"><see cref="CropRectangle"/> is explicitly cast to an SkiaSharp.SKRect.</param>
+        /// <param name="CropRectangle"><see cref="CropRectangle"/> is explicitly cast to a SkiaSharp.SKRect.</param>
         static public implicit operator SkiaSharp.SKRect(CropRectangle CropRectangle)
         {
             return SkiaSharp.SKRect.Create(CropRectangle.X, CropRectangle.Y, CropRectangle.Width, CropRectangle.Height);
