@@ -3,7 +3,6 @@
 # IronDrawing - Image, Color, Rectangle, and Font class for .NET Applications
 ​
 IronDrawing is a library developed and maintained by Iron Software that helps C# Software Engineers to replace System.Drawing.Common in .NET projects.
- 
 ​
 ### IronDrawing Features and Capabilities:
 - AnyBitmap: A universally compatible Bitmap class. Implicit casting between `IronDrawing.AnyBitmap` and the following:
@@ -38,7 +37,7 @@ Installing the IronDrawing NuGet package is quick and easy, please install the p
 ```
 PM> Install-Package IronDrawing
 ```
-Once installed, you can get started by adding `using IronDrawing` to the top of your C# code. Here is is sample HTML to PDF example to get started:
+Once installed, you can get started by adding `using IronDrawing` to the top of your C# code.
 ### `AnyBitmap` Code Example
 ```csharp
 using IronDrawing;
@@ -53,42 +52,42 @@ var resultExport = new System.IO.MemoryStream();
 bimtap.ExportStream(resultExport, AnyBitmap.ImageFormat.Jpeg, 100);
 ​
 // Casting between System.Drawing.Bitmap to IronDrawing.AnyBitmap
-System.Drawing.Bitmap image = new new System.Drawing.Bitmap("FILE_PATH");
+System.Drawing.Bitmap image = new System.Drawing.Bitmap("FILE_PATH");
 var anyBitmap = image;
 anyBitmap.SaveAs("result-from-casting.png");
 ```
 ### `Color` Code Example
 ```csharp
 using IronDrawing;
-
+​
 // Create a new Color object
 Color fromHex = new Color("#191919");
 Color fromRgb = new Color(255, 255, 0);
 Color fromEnum = Color.Crimson;
-
+​
 // Casting between System.Drawing.Color to IronDrawing.Color
 System.Drawing.Color drawingColor = System.Drawing.Color.Red;
 IronDrawing.Color ironDrawingColor = drawingColor;
-
+​
 ironDrawingColor.A;
 ironDrawingColor.R;
 ironDrawingColor.G;
 ironDrawingColor.B;
-
+​
 // Luminance is a value from 0 (black) to 100 (white) where 50 is the perceptual "middle grey"
 ironDrawingColor.GetLuminance();
 ```
 ### `CropRectangle` Code Example
 ```csharp
 using IronDrawing;
-
+​
 // Create a new CropRectangle object
 CropRectangle cropRectangle = new CropRectangle(5, 5, 50, 50);
-
+​
 // Casting between System.Drawing.Rectangle to IronDrawing.CropRectangle
 System.Drawing.Rectangle rectangle = new System.Drawing.Rectangle(10, 10, 150, 150);
 CropRectangle ironDrawingCropRectangle = rectangle;
-
+​
 ironDrawingCropRectangle.Width;
 ironDrawingCropRectangle.Height;
 ironDrawingCropRectangle.X;
@@ -97,14 +96,14 @@ ironDrawingCropRectangle.Y;
 ### `Font` Code Example
 ```csharp
 using IronDrawing;
-
+​
 // Create a new Font object
 Font font = new Font("Times New Roman", FontStyle.Italic | FontStyle.Bold, 30);
-
+​
 // Casting between System.Drawing.Font to IronDrawing.Font
 System.Drawing.Font drawingFont = new System.Drawing.Font("Courier New", 30);
 IronDrawing.Font ironDrawingFont = drawingFont;
-
+​
 ironDrawingFont.FamilyName;
 ironDrawingFont.Style;
 ironDrawingFont.Size;
@@ -113,6 +112,8 @@ ironDrawingFont.Bold;
 ```
 ​
 ## Support Available
+​
 For more information on Iron Software please visit: [https://ironsoftware.com/](https://ironsoftware.com/)
 ​
-For more support and inquiries, please email us at: developers@ironsoftware.com
+​
+For general support and technical inquiries, please email us at: developers@ironsoftware.com

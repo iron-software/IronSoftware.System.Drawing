@@ -384,7 +384,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts ImageSharp objects to <see cref="AnyBitmap"/>.
+        /// Implicitly casts SixLabors.ImageSharp.Image objects to <see cref="AnyBitmap"/>.
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support ImageSharp as well.</para>
         /// </summary>
         /// <param name="Image">SixLabors.ImageSharp.Image will automatically be cast to <see cref="AnyBitmap"/>.</param>
@@ -410,7 +410,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts ImageSharp objects from <see cref="AnyBitmap"/>.
+        /// Implicitly casts to SixLabors.ImageSharp.Image objects from <see cref="AnyBitmap"/>.
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support ImageSharp as well.</para>
         /// </summary>
         /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to a SixLabors.ImageSharp.Image.</param>
@@ -431,7 +431,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts ImageSharp objects to <see cref="AnyBitmap"/>.
+        /// Implicitly casts SixLabors.ImageSharp.Image objects to <see cref="AnyBitmap"/>.
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support ImageSharp as well.</para>
         /// </summary>
         /// <param name="Image">SixLabors.ImageSharp.Image will automatically be cast to <see cref="AnyBitmap"/>.</param>
@@ -456,7 +456,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts ImageSharp objects from <see cref="AnyBitmap"/>.
+        /// Implicitly casts to SixLabors.ImageSharp.Image objects from <see cref="AnyBitmap"/>.
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support ImageSharp as well.</para>
         /// </summary>
         /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to a SixLabors.ImageSharp.Image.</param>
@@ -477,7 +477,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts ImageSharp objects to <see cref="AnyBitmap"/>.
+        /// Implicitly casts SixLabors.ImageSharp.Image objects to <see cref="AnyBitmap"/>.
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support ImageSharp as well.</para>
         /// </summary>
         /// <param name="Image">SixLabors.ImageSharp.Image will automatically be cast to <see cref="AnyBitmap"/>.</param>
@@ -502,7 +502,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts ImageSharp objects from <see cref="AnyBitmap"/>.
+        /// Implicitly casts to SixLabors.ImageSharp.Image objects from <see cref="AnyBitmap"/>.
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support ImageSharp as well.</para>
         /// </summary>
         /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to a SixLabors.ImageSharp.Image.</param>
@@ -544,10 +544,10 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts SkiaSharp.SKImage objects from <see cref="AnyBitmap"/>.
+        /// Implicitly casts to SkiaSharp.SKImage objects from <see cref="AnyBitmap"/>.
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support SkiaSharp.SKImage as well.</para>
         /// </summary>
-        /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to an SkiaSharp.SKImage.</param>
+        /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to a SkiaSharp.SKImage.</param>
         static public implicit operator SkiaSharp.SKImage(AnyBitmap bitmap)
         {
             try
@@ -597,7 +597,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts SkiaSharp.SKBitmap objects from <see cref="AnyBitmap"/>.
+        /// Implicitly casts to SkiaSharp.SKBitmap objects from <see cref="AnyBitmap"/>.
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support SkiaSharp.SKBitmap as well.</para>
         /// </summary>
         /// <param name="bitmap"><see cref="AnyBitmap"/> is explicitly cast to a SkiaSharp.SKBitmap.</param>
@@ -655,10 +655,10 @@ namespace IronSoftware.Drawing
             }
         }
         /// <summary>
-        /// Implicitly casts Microsoft.Maui.Graphics.Platform.PlatformImage objects from <see cref="AnyBitmap"/>.
+        /// Implicitly casts to Microsoft.Maui.Graphics.Platform.PlatformImage objects from <see cref="AnyBitmap"/>.
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support Microsoft.Maui.Graphics as well.</para>
         /// </summary>
-        /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to an Microsoft.Maui.Graphics.Platform.PlatformImage.</param>
+        /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to a Microsoft.Maui.Graphics.Platform.PlatformImage.</param>
 
         static public implicit operator Microsoft.Maui.Graphics.Platform.PlatformImage(AnyBitmap bitmap)
         {
@@ -725,10 +725,10 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts System.Drawing.Bitmap objects from <see cref="AnyBitmap"/>.
+        /// Implicitly casts to System.Drawing.Bitmap objects from <see cref="AnyBitmap"/>.
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support System.Drawing.Common as well.</para>
         /// </summary>
-        /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to an System.Drawing.Bitmap.</param>
+        /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to a System.Drawing.Bitmap.</param>
         static public implicit operator System.Drawing.Bitmap(AnyBitmap bitmap)
         {
             try
