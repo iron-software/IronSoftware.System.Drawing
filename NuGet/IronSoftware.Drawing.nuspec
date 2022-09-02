@@ -39,7 +39,6 @@ For general support and technical inquiries, please email us at: developers@iron
     <copyright>Copyright © Iron Software 2022</copyright>
     <tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, Tiff, Gif, Jpeg, Png, Color, Rectangle, Drawing, C#, VB.NET, aspx, create, render, generate, standard, netstandard2.0, core, netcore</tags>
 	<dependencies>
-		<dependency id="SixLabors.ImageSharp" version="2.1.3" />
 		<dependency id="SixLabors.ImageSharp.Drawing" version="1.0.0-beta15" />
 	</dependencies>
   </metadata>
