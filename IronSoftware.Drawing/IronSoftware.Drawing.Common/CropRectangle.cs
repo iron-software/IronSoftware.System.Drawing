@@ -42,7 +42,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts System.Drawing.Rectangle objects from <see cref="CropRectangle"/>.
+        /// Implicitly casts to System.Drawing.Rectangle objects from <see cref="CropRectangle"/>.
         /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support Rectangle as well.</para>
         /// </summary>
         /// <param name="CropRectangle"><see cref="CropRectangle"/> is explicitly cast to an System.Drawing.Rectangle.</param>
@@ -63,7 +63,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts SkiaSharp.SKRect objects from <see cref="CropRectangle"/>.
+        /// Implicitly casts to SkiaSharp.SKRect objects from <see cref="CropRectangle"/>.
         /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SkiaSharp.SKRect as well.</para>
         /// </summary>
         /// <param name="CropRectangle"><see cref="CropRectangle"/> is explicitly cast to an SkiaSharp.SKRect.</param>
@@ -84,7 +84,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts SkiaSharp.SKRectI objects from <see cref="CropRectangle"/>.
+        /// Implicitly casts to SkiaSharp.SKRectI objects from <see cref="CropRectangle"/>.
         /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SkiaSharp.SKRectI as well.</para>
         /// </summary>
         /// <param name="CropRectangle"><see cref="CropRectangle"/> is explicitly cast to a SkiaSharp.SKRectI.</param>
@@ -104,7 +104,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts SixLabors.ImageSharp.Rectangle objects from <see cref="CropRectangle"/>.
+        /// Implicitly casts to SixLabors.ImageSharp.Rectangle objects from <see cref="CropRectangle"/>.
         /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SixLabors.ImageSharp.Rectangle as well.</para>
         /// </summary>
         /// <param name="CropRectangle"><see cref="CropRectangle"/> is explicitly cast to a SixLabors.ImageSharp.Rectangle.</param>
@@ -124,7 +124,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts SixLabors.ImageSharp.RectangleF objects from <see cref="CropRectangle"/>.
+        /// Implicitly casts to SixLabors.ImageSharp.RectangleF objects from <see cref="CropRectangle"/>.
         /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SixLabors.ImageSharp.RectangleF as well.</para>
         /// </summary>
         /// <param name="CropRectangle"><see cref="CropRectangle"/> is explicitly cast to a SixLabors.ImageSharp.RectangleF.</param>
@@ -144,7 +144,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts Microsoft.Maui.Graphics.Rect objects from <see cref="CropRectangle"/>.
+        /// Implicitly casts to Microsoft.Maui.Graphics.Rect objects from <see cref="CropRectangle"/>.
         /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support Microsoft.Maui.Graphics.Rect as well.</para>
         /// </summary>
         /// <param name="CropRectangle"><see cref="CropRectangle"/> is explicitly cast to a Microsoft.Maui.Graphics.Rect.</param>
@@ -164,7 +164,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts Microsoft.Maui.Graphics.RectF objects from <see cref="CropRectangle"/>.
+        /// Implicitly casts to Microsoft.Maui.Graphics.RectF objects from <see cref="CropRectangle"/>.
         /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support Microsoft.Maui.Graphics.RectF as well.</para>
         /// </summary>
         /// <param name="CropRectangle"><see cref="CropRectangle"/> is explicitly cast to a Microsoft.Maui.Graphics.RectF.</param>

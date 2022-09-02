@@ -124,7 +124,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts System.Drawing.Font objects from <see cref="Font"/>.  
+        /// Implicitly casts to System.Drawing.Font objects from <see cref="Font"/>.  
         /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
         /// <param name="Font"><see cref="Font"/> is explicitly cast to an System.Drawing.Font </param>
@@ -161,7 +161,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts SixLabors.Fonts.Font objects from <see cref="Font"/>.  
+        /// Implicitly casts to SixLabors.Fonts.Font objects from <see cref="Font"/>.  
         /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
         /// <param name="Font"><see cref="Font"/> is explicitly cast to an SixLabors.Fonts.Font </param>
@@ -200,7 +200,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts System.Drawing.Font objects from <see cref="Font"/>.  
+        /// Implicitly casts to System.Drawing.Font objects from <see cref="Font"/>.  
         /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
         /// <param name="Font"><see cref="Font"/> is explicitly cast to an SkiaSharp.SKFont </param>
@@ -246,7 +246,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts Microsoft.Maui.Graphics.Font objects from <see cref="Font"/>.  
+        /// Implicitly casts to Microsoft.Maui.Graphics.Font objects from <see cref="Font"/>.  
         /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
         /// <param name="Font"><see cref="Font"/> is explicitly cast to an Microsoft.Maui.Graphics.Font </param>
