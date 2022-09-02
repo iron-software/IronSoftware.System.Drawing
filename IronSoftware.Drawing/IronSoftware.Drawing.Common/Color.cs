@@ -859,10 +859,10 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts System.Drawing.Color objects from <see cref="Color"/>.  
+        /// Implicitly casts to System.Drawing.Color objects from <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support System.Drawing.Color as well.</para>
         /// </summary>
-        /// <param name="Color"><see cref="Color"/> is explicitly cast to an System.Drawing.Rectangle </param>
+        /// <param name="Color"><see cref="Color"/> is explicitly cast to a System.Drawing.Rectangle </param>
         static public implicit operator System.Drawing.Color(Color Color)
         {
             return System.Drawing.Color.FromArgb(Color.A, Color.R, Color.G, Color.B);
@@ -879,10 +879,10 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts SkiaSharp.SKColor objects from <see cref="Color"/>.  
+        /// Implicitly casts to SkiaSharp.SKColor objects from <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support SkiaSharp.SKColor as well.</para>
         /// </summary>
-        /// <param name="Color"><see cref="Color"/> is explicitly cast to an SkiaSharp.SKColor </param>
+        /// <param name="Color"><see cref="Color"/> is explicitly cast to a SkiaSharp.SKColor </param>
         static public implicit operator SkiaSharp.SKColor(Color Color)
         {
             return new SkiaSharp.SKColor(Color.R, Color.G, Color.B, Color.A);
@@ -900,21 +900,11 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts SixLabors.ImageSharp.Color objects from <see cref="Color"/>.  
+        /// Implicitly casts to SixLabors.ImageSharp.Color objects from <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support SixLabors.ImageSharp.Color as well.</para>
         /// </summary>
-        /// <param name="Color"><see cref="Color"/> is explicitly cast to an SixLabors.ImageSharp.Color </param>
+        /// <param name="Color"><see cref="Color"/> is explicitly cast to a SixLabors.ImageSharp.Color </param>
         static public implicit operator SixLabors.ImageSharp.Color(Color Color)
-        {
-            return SixLabors.ImageSharp.Color.FromRgba(Color.R, Color.G, Color.B, Color.A);
-        }
-
-        /// <summary>
-        /// Implicitly casts SixLabors.ImageSharp.Rgba32 objects from <see cref="Color"/>.  
-        /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support SixLabors.ImageSharp.Rgba32 as well.</para>
-        /// </summary>
-        /// <param name="Color"><see cref="Color"/> is explicitly cast to an SixLabors.ImageSharp.Rgba32 </param>
-        static public implicit operator SixLabors.ImageSharp.PixelFormats.Rgba32(Color Color)
         {
             return SixLabors.ImageSharp.Color.FromRgba(Color.R, Color.G, Color.B, Color.A);
         }
@@ -931,13 +921,13 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts SixLabors.ImageSharp.Rgb24 objects from <see cref="Color"/>.  
-        /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support SixLabors.ImageSharp.Rgb24 as well.</para>
+        /// Implicitly casts to SixLabors.ImageSharp.Rgba32 objects from <see cref="Color"/>.  
+        /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support SixLabors.ImageSharp.Rgba32 as well.</para>
         /// </summary>
-        /// <param name="Color"><see cref="Color"/> is explicitly cast to an SixLabors.ImageSharp.Rgb24 </param>
-        static public implicit operator SixLabors.ImageSharp.PixelFormats.Rgb24(Color Color)
+        /// <param name="Color"><see cref="Color"/> is explicitly cast to a SixLabors.ImageSharp.Rgba32 </param>
+        static public implicit operator SixLabors.ImageSharp.PixelFormats.Rgba32(Color Color)
         {
-            return SixLabors.ImageSharp.Color.FromRgb(Color.R, Color.G, Color.B);
+            return SixLabors.ImageSharp.Color.FromRgba(Color.R, Color.G, Color.B, Color.A);
         }
 
         /// <summary>
@@ -948,6 +938,77 @@ namespace IronSoftware.Drawing
         public static implicit operator Color(SixLabors.ImageSharp.PixelFormats.Rgb24 Color)
         {
             return new Color(Color.R, Color.G, Color.B);
+        }
+
+        /// <summary>
+        /// Implicitly casts to SixLabors.ImageSharp.Rgb24 objects from <see cref="Color"/>.  
+        /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support SixLabors.ImageSharp.Rgb24 as well.</para>
+        /// </summary>
+        /// <param name="Color"><see cref="Color"/> is explicitly cast to a SixLabors.ImageSharp.Rgb24 </param>
+        static public implicit operator SixLabors.ImageSharp.PixelFormats.Rgb24(Color Color)
+        {
+            return SixLabors.ImageSharp.Color.FromRgb(Color.R, Color.G, Color.B);
+        }
+
+        /// <summary>
+        /// Implicitly casts SixLabors.ImageSharp.Rgb48 objects to <see cref="Color"/>.  
+        /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support SixLabors.ImageSharp.Rgb48 as well.</para>
+        /// </summary>
+        /// <param name="Color">SixLabors.ImageSharp.Rgb48 will automatically be cast to <see cref="Color"/> </param>
+        public static implicit operator Color(SixLabors.ImageSharp.PixelFormats.Rgb48 Color)
+        {
+            return new Color(Color.R, Color.G, Color.B);
+        }
+
+        /// <summary>
+        /// Implicitly casts to SixLabors.ImageSharp.Rgb48 objects from <see cref="Color"/>.  
+        /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support SixLabors.ImageSharp.Rgb48 as well.</para>
+        /// </summary>
+        /// <param name="Color"><see cref="Color"/> is explicitly cast to a SixLabors.ImageSharp.Rgb48 </param>
+        static public implicit operator SixLabors.ImageSharp.PixelFormats.Rgb48(Color Color)
+        {
+            return new SixLabors.ImageSharp.PixelFormats.Rgb48(Color.R, Color.G, Color.B);
+        }
+
+        /// <summary>
+        /// Implicitly casts SixLabors.ImageSharp.Rgba64 objects to <see cref="Color"/>.  
+        /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support SixLabors.ImageSharp.Rgba64 as well.</para>
+        /// </summary>
+        /// <param name="Color">SixLabors.ImageSharp.Rgba64 will automatically be cast to <see cref="Color"/> </param>
+        public static implicit operator Color(SixLabors.ImageSharp.PixelFormats.Rgba64 Color)
+        {
+            return new Color(Color.A, Color.R, Color.G, Color.B);
+        }
+
+        /// <summary>
+        /// Implicitly casts to SixLabors.ImageSharp.Rgba64 objects from <see cref="Color"/>.  
+        /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support SixLabors.ImageSharp.Rgba64 as well.</para>
+        /// </summary>
+        /// <param name="Color"><see cref="Color"/> is explicitly cast to a SixLabors.ImageSharp.Rgba64 </param>
+        static public implicit operator SixLabors.ImageSharp.PixelFormats.Rgba64(Color Color)
+        {
+            return SixLabors.ImageSharp.Color.FromRgba(Color.R, Color.G, Color.B, Color.A);
+        }
+
+        /// <summary>
+        /// Implicitly casts Microsoft.Maui.Graphics.Color objects to <see cref="Color"/>.  
+        /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support Microsoft.Maui.Graphics.Color as well.</para>
+        /// </summary>
+        /// <param name="Color">Microsoft.Maui.Graphics.Color will automatically be cast to <see cref="Color"/> </param>
+        public static implicit operator Color(Microsoft.Maui.Graphics.Color Color)
+        {
+            Color.ToRgba(out byte r, out byte g, out byte b, out byte a);
+            return new Color(a, r, g, b);
+        }
+
+        /// <summary>
+        /// Implicitly casts to Microsoft.Maui.Graphics.Color objects from <see cref="Color"/>.  
+        /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support Microsoft.Maui.Graphics.Color as well.</para>
+        /// </summary>
+        /// <param name="Color"><see cref="Color"/> is explicitly cast to a Microsoft.Maui.Graphics.Color </param>
+        static public implicit operator Microsoft.Maui.Graphics.Color(Color Color)
+        {
+            return Microsoft.Maui.Graphics.Color.FromRgba(Color.R, Color.G, Color.B, Color.A);
         }
 
         #region Private Method

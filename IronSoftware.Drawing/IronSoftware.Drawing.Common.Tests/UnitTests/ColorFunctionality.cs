@@ -379,5 +379,178 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(129, imgColor.G);
             Assert.Equal(176, imgColor.B);
         }
+
+        [FactWithAutomaticDisplayName]
+        public void Cast_ImageSharp_Rgb48_from_Color()
+        {
+            SixLabors.ImageSharp.PixelFormats.Rgb48 imgColor = new SixLabors.ImageSharp.PixelFormats.Rgb48(255, 0, 0);
+            Color red = imgColor;
+            Assert.Equal(255, red.R);
+            Assert.Equal(0, red.G);
+            Assert.Equal(0, red.B);
+
+            imgColor = new SixLabors.ImageSharp.PixelFormats.Rgb48(0, 255, 0);
+            Color green = imgColor;
+            Assert.Equal(255, green.A);
+            Assert.Equal(0, green.R);
+            Assert.Equal(255, green.G);
+            Assert.Equal(0, green.B);
+
+            imgColor = new SixLabors.ImageSharp.PixelFormats.Rgb48(0, 0, 255);
+            Color blue = imgColor;
+            Assert.Equal(0, blue.R);
+            Assert.Equal(0, blue.G);
+            Assert.Equal(255, blue.B);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Cast_ImageSharp_Rgb48_to_Color()
+        {
+            Color color = Color.Red;
+            SixLabors.ImageSharp.PixelFormats.Rgb48 red = color;
+            Assert.Equal(255, red.R);
+            Assert.Equal(0, red.G);
+            Assert.Equal(0, red.B);
+
+            color = new Color(0, 255, 0);
+            SixLabors.ImageSharp.PixelFormats.Rgb48 green = color;
+            Assert.Equal(0, green.R);
+            Assert.Equal(255, green.G);
+            Assert.Equal(0, green.B);
+
+            color = new Color("#0000FF");
+            SixLabors.ImageSharp.PixelFormats.Rgb48 blue = color;
+            Assert.Equal(0, blue.R);
+            Assert.Equal(0, blue.G);
+            Assert.Equal(255, blue.B);
+
+            color = Color.FromArgb(Convert.ToInt32("1e81b0", 16));
+            SixLabors.ImageSharp.PixelFormats.Rgb48 imgColor = color;
+            Assert.Equal(30, imgColor.R);
+            Assert.Equal(129, imgColor.G);
+            Assert.Equal(176, imgColor.B);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Cast_ImageSharp_Rgba64_from_Color()
+        {
+            SixLabors.ImageSharp.PixelFormats.Rgba64 imgColor = SixLabors.ImageSharp.Color.Red;
+            Color red = imgColor;
+            Assert.Equal(255, red.R);
+            Assert.Equal(0, red.G);
+            Assert.Equal(0, red.B);
+
+            imgColor = new SixLabors.ImageSharp.PixelFormats.Rgba64(0, 255, 0, 255);
+            Color green = imgColor;
+            Assert.Equal(255, green.A);
+            Assert.Equal(0, green.R);
+            Assert.Equal(255, green.G);
+            Assert.Equal(0, green.B);
+
+            imgColor = new SixLabors.ImageSharp.PixelFormats.Rgba64(0, 0, 255, 255);
+            Color blue = imgColor;
+            Assert.Equal(255, green.A);
+            Assert.Equal(0, blue.R);
+            Assert.Equal(0, blue.G);
+            Assert.Equal(255, blue.B);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Cast_ImageSharp_Rgba64_to_Color()
+        {
+            Color color = Color.Red;
+            SixLabors.ImageSharp.PixelFormats.Rgba64 red = color;
+            Assert.Equal(65535, red.A);
+            Assert.Equal(65535, red.R);
+            Assert.Equal(0, red.G);
+            Assert.Equal(0, red.B);
+
+            color = new Color(0, 255, 0);
+            SixLabors.ImageSharp.PixelFormats.Rgba64 green = color;
+            Assert.Equal(65535, green.A);
+            Assert.Equal(0, green.R);
+            Assert.Equal(65535, green.G);
+            Assert.Equal(0, green.B);
+
+            color = new Color("#0000FF");
+            SixLabors.ImageSharp.PixelFormats.Rgba64 blue = color;
+            Assert.Equal(65535, blue.A);
+            Assert.Equal(0, blue.R);
+            Assert.Equal(0, blue.G);
+            Assert.Equal(65535, blue.B);
+
+            color = Color.FromArgb(Convert.ToInt32("1e81b0", 16));
+            SixLabors.ImageSharp.PixelFormats.Rgba64 imgColor = color;
+            Assert.Equal(65535, imgColor.A);
+            Assert.Equal(7710, imgColor.R);
+            Assert.Equal(33153, imgColor.G);
+            Assert.Equal(45232, imgColor.B);
+        }
+
+#if !NET472
+        [FactWithAutomaticDisplayName]
+        public void Cast_Maui_from_Color()
+        {
+            Microsoft.Maui.Graphics.Color mColor = Microsoft.Maui.Graphics.Colors.Red;
+            Color red = mColor;
+            Assert.Equal(255, red.A);
+            Assert.Equal(255, red.R);
+            Assert.Equal(0, red.G);
+            Assert.Equal(0, red.B);
+
+            mColor = new Microsoft.Maui.Graphics.Color(0, 255, 0, 255);
+            Color green = mColor;
+            Assert.Equal(255, green.A);
+            Assert.Equal(0, green.R);
+            Assert.Equal(255, green.G);
+            Assert.Equal(0, green.B);
+
+            mColor = new Microsoft.Maui.Graphics.Color(0, 0, 255);
+            Color blue = mColor;
+            Assert.Equal(255, blue.A);
+            Assert.Equal(0, blue.R);
+            Assert.Equal(0, blue.G);
+            Assert.Equal(255, blue.B);
+
+            mColor = Microsoft.Maui.Graphics.Color.FromArgb("ff1e81b0");
+            Color color = mColor;
+            Assert.Equal(255, color.A);
+            Assert.Equal(30, color.R);
+            Assert.Equal(129, color.G);
+            Assert.Equal(176, color.B);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Cast_Maui_to_Color()
+        {
+            Color color = Color.Red;
+            Microsoft.Maui.Graphics.Color red = color;
+            Assert.Equal(1, red.Alpha);
+            Assert.Equal(1, red.Red);
+            Assert.Equal(0, red.Green);
+            Assert.Equal(0, red.Blue);
+
+            color = new Color(0, 255, 0);
+            Microsoft.Maui.Graphics.Color green = color;
+            Assert.Equal(1, green.Alpha);
+            Assert.Equal(0, green.Red);
+            Assert.Equal(1, green.Green);
+            Assert.Equal(0, green.Blue);
+
+            color = new Color("#0000FF");
+            Microsoft.Maui.Graphics.Color blue = color;
+            Assert.Equal(1, blue.Alpha);
+            Assert.Equal(0, blue.Red);
+            Assert.Equal(0, blue.Green);
+            Assert.Equal(1, blue.Blue);
+
+            color = Color.FromArgb(Convert.ToInt32("1e81b0", 16));
+            Microsoft.Maui.Graphics.Color skColor = color;
+            Assert.Equal(1, skColor.Alpha);
+            Assert.Equal("0.118", skColor.Red.ToString("0.000"));
+            Assert.Equal("0.506", skColor.Green.ToString("0.000"));
+            Assert.Equal("0.690", skColor.Blue.ToString("0.000"));
+        }
+#endif
     }
 }

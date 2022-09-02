@@ -124,10 +124,10 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts System.Drawing.Font objects from <see cref="Font"/>.  
+        /// Implicitly casts to System.Drawing.Font objects from <see cref="Font"/>.  
         /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
-        /// <param name="Font"><see cref="Font"/> is explicitly cast to an System.Drawing.Font </param>
+        /// <param name="Font"><see cref="Font"/> is explicitly cast to a System.Drawing.Font </param>
         static public implicit operator System.Drawing.Font(Font Font)
         {
             return new System.Drawing.Font(new FontFamily(Font.FamilyName), Font.Size, (System.Drawing.FontStyle)Font.Style);
@@ -161,10 +161,10 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts SixLabors.Fonts.Font objects from <see cref="Font"/>.  
+        /// Implicitly casts to SixLabors.Fonts.Font objects from <see cref="Font"/>.  
         /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
-        /// <param name="Font"><see cref="Font"/> is explicitly cast to an SixLabors.Fonts.Font </param>
+        /// <param name="Font"><see cref="Font"/> is explicitly cast to a SixLabors.Fonts.Font </param>
         static public implicit operator SixLabors.Fonts.Font(Font Font)
         {
             return SixLabors.Fonts.SystemFonts.CreateFont(Font.FamilyName, Font.Size, (SixLabors.Fonts.FontStyle)Font.Style);
@@ -200,10 +200,10 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts System.Drawing.Font objects from <see cref="Font"/>.  
+        /// Implicitly casts to System.Drawing.Font objects from <see cref="Font"/>.  
         /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
-        /// <param name="Font"><see cref="Font"/> is explicitly cast to an SkiaSharp.SKFont </param>
+        /// <param name="Font"><see cref="Font"/> is explicitly cast to a SkiaSharp.SKFont </param>
         static public implicit operator SkiaSharp.SKFont(Font Font)
         {
             SkiaSharp.SKFontStyle sKFontStyle;
@@ -216,6 +216,53 @@ namespace IronSoftware.Drawing
                 default: sKFontStyle = SkiaSharp.SKFontStyle.Normal; break;
             }
             return new SkiaSharp.SKFont(SkiaSharp.SKTypeface.FromFamilyName(Font.FamilyName, sKFontStyle), Font.Size);
+        }
+
+        /// <summary>
+        /// Implicitly casts Microsoft.Maui.Graphics.Font objects to <see cref="Font"/>.  
+        /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
+        /// </summary>
+        /// <param name="Font">Microsoft.Maui.Graphics.Font will automatically be cast to <see cref="Font"/> </param>
+        public static implicit operator Font(Microsoft.Maui.Graphics.Font Font)
+        {
+            FontStyle style;
+            if (Font.Weight >= 700 && (Font.StyleType == Microsoft.Maui.Graphics.FontStyleType.Italic || Font.StyleType == Microsoft.Maui.Graphics.FontStyleType.Oblique))
+            {
+                style = FontStyle.Bold | FontStyle.Italic;
+            }
+            else if (Font.Weight >= 700)
+            {
+                style = FontStyle.Bold;
+            }
+            else if (Font.StyleType == Microsoft.Maui.Graphics.FontStyleType.Italic || Font.StyleType == Microsoft.Maui.Graphics.FontStyleType.Oblique)
+            {
+                style = FontStyle.Italic;
+            }
+            else
+            {
+                style = FontStyle.Regular;
+            }
+            return new Font(Font.Name, style);
+        }
+
+        /// <summary>
+        /// Implicitly casts to Microsoft.Maui.Graphics.Font objects from <see cref="Font"/>.  
+        /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
+        /// </summary>
+        /// <param name="Font"><see cref="Font"/> is explicitly cast to a Microsoft.Maui.Graphics.Font </param>
+        static public implicit operator Microsoft.Maui.Graphics.Font(Font Font)
+        {
+            int fontWeight = 400;
+            Microsoft.Maui.Graphics.FontStyleType fontStyleType = Microsoft.Maui.Graphics.FontStyleType.Normal;
+            if (Font.Bold)
+            {
+                fontWeight = 700;
+            }
+            if (Font.Italic)
+            {
+                fontStyleType = Microsoft.Maui.Graphics.FontStyleType.Italic;
+            }
+            return new Microsoft.Maui.Graphics.Font(Font.FamilyName, fontWeight, fontStyleType);
         }
     }
 
