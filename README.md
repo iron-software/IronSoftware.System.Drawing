@@ -116,4 +116,4 @@ ironDrawingFont.Bold;
 For more information on Iron Software please visit: [https://ironsoftware.com/](https://ironsoftware.com/)
 ​
 ​
-For more support and inquiries, please email us at: developers@ironsoftware.com
+For general support and technical inquiries, please email us at: developers@ironsoftware.com
