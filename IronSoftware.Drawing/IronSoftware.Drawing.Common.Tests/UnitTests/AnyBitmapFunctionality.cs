@@ -140,6 +140,31 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void CastImage_to_AnyBitmap()
+        {
+            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
+            System.Drawing.Image bitmap = System.Drawing.Image.FromFile(imagePath);
+            AnyBitmap anyBitmap = bitmap;
+
+            bitmap.Save("expected.bmp");
+            anyBitmap.SaveAs("result.bmp");
+
+            AssertImageAreEqual("expected.bmp", "result.bmp", true);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CastImage_from_AnyBitmap()
+        {
+            AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
+            System.Drawing.Image bitmap = anyBitmap;
+
+            anyBitmap.SaveAs("expected.bmp");
+            bitmap.Save("result.bmp");
+
+            AssertImageAreEqual("expected.bmp", "result.bmp", true);
+        }
+
+        [FactWithAutomaticDisplayName]
         public void AnyBitmap_should_get_Bytes()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");

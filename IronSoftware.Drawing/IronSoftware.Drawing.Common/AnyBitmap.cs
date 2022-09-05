@@ -681,7 +681,6 @@ namespace IronSoftware.Drawing
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support System.Drawing.Common as well.</para>
         /// </summary>
         /// <param name="Image">System.Drawing.Bitmap will automatically be cast to <see cref="AnyBitmap"/> </param>
-
         public static implicit operator AnyBitmap(System.Drawing.Bitmap Image)
         {
             Byte[] data;
@@ -734,6 +733,83 @@ namespace IronSoftware.Drawing
             try
             {
                 return (System.Drawing.Bitmap)System.Drawing.Bitmap.FromStream(new System.IO.MemoryStream(bitmap.Binary));
+            }
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException("Please install System.Drawing from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                if (e is PlatformNotSupportedException || e is TypeInitializationException)
+                {
+#if NETSTANDARD
+                    if (!System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+                    {
+                        throw SystemDotDrawingPlatformNotSupported(e);
+                    }
+#endif
+                }
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// Implicitly casts System.Drawing.Image objects to <see cref="AnyBitmap"/>.
+        /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support System.Drawing.Common as well.</para>
+        /// </summary>
+        /// <param name="Image">System.Drawing.Image will automatically be cast to <see cref="AnyBitmap"/> </param>
+        public static implicit operator AnyBitmap(System.Drawing.Image Image)
+        {
+            Byte[] data;
+            try
+            {
+                System.Drawing.Bitmap blank = new System.Drawing.Bitmap(Image.Width, Image.Height);
+                System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(blank);
+                g.Clear(Color.White);
+                g.DrawImage(Image, 0, 0, Image.Width, Image.Height);
+
+                System.Drawing.Bitmap tempImage = new System.Drawing.Bitmap(blank);
+                blank.Dispose();
+
+                System.Drawing.Imaging.ImageFormat imageFormat = GetMimeType(Image) != "image/unknown" ? Image.RawFormat : System.Drawing.Imaging.ImageFormat.Bmp;
+                using (var memoryStream = new System.IO.MemoryStream())
+                {
+                    tempImage.Save(memoryStream, imageFormat);
+                    tempImage.Dispose();
+
+                    data = memoryStream.ToArray();
+                    return new AnyBitmap(data);
+                }
+            }
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException("Please install System.Drawing from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                if (e is PlatformNotSupportedException || e is TypeInitializationException)
+                {
+#if NETSTANDARD
+                    if (!System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+                    {
+                        throw SystemDotDrawingPlatformNotSupported(e);
+                    }
+#endif
+                }
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// Implicitly casts to System.Drawing.Image objects from <see cref="AnyBitmap"/>.
+        /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support System.Drawing.Common as well.</para>
+        /// </summary>
+        /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to a System.Drawing.Image.</param>
+        static public implicit operator System.Drawing.Image(AnyBitmap bitmap)
+        {
+            try
+            {
+                return System.Drawing.Image.FromStream(new System.IO.MemoryStream(bitmap.Binary));
             }
             catch (DllNotFoundException e)
             {
@@ -1019,6 +1095,17 @@ namespace IronSoftware.Drawing
         }
 
         private static string GetMimeType(System.Drawing.Bitmap Image)
+        {
+            var imgguid = Image.RawFormat.Guid;
+            foreach (System.Drawing.Imaging.ImageCodecInfo codec in System.Drawing.Imaging.ImageCodecInfo.GetImageDecoders())
+            {
+                if (codec.FormatID == imgguid)
+                    return codec.MimeType;
+            }
+            return "image/unknown";
+        }
+
+        private static string GetMimeType(System.Drawing.Image Image)
         {
             var imgguid = Image.RawFormat.Guid;
             foreach (System.Drawing.Imaging.ImageCodecInfo codec in System.Drawing.Imaging.ImageCodecInfo.GetImageDecoders())
