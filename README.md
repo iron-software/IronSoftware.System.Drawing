@@ -8,10 +8,10 @@
 - [Features](#ironsoftwaredrawing-features)
   - [Compatibility](#ironsoftwaredrawing-has-cross-platform-support-compatibility-with)
 - [Using IronSoftware.Drawing](#using-ironsoftwaredrawing)
-  - [AnyBitmap Code Example](#anybitmap-code-example)
-  - [Color Code Example](#color-code-example)
-  - [CropRectangle Code Example](#croprectangle-code-example)
-  - [Font Code Example](#font-code-example)
+  - [AnyBitmap Example](#anybitmap-code-example)
+  - [Color Example](#color-code-example)
+  - [CropRectangle Example](#croprectangle-code-example)
+  - [Font Example](#font-code-example)
 - [Support](#support-available)
 
 ## IronSoftware.Drawing Features:
