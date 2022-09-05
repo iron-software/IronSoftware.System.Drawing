@@ -3,7 +3,18 @@
 ​
 **IronSoftware.Drawing** is an open-source library originally developed by Iron Software that helps C# Software Engineers to replace System.Drawing.Common in .NET projects.
 ​
-### IronSoftware.Drawing Features and Capabilities:
+## Table of Contents
+
+- [Features](#ironsoftwaredrawing-features)
+  - [Compatibility](#ironsoftwaredrawing-has-cross-platform-support-compatibility-with)
+- [Using IronSoftware.Drawing](#using-ironsoftwaredrawing)
+  - [AnyBitmap Code Example](#anybitmap-code-example)
+  - [Color Code Example](#color-code-example)
+  - [CropRectangle Code Example](#croprectangle-code-example)
+  - [Font Code Example](#font-code-example)
+- [Support](#support-available)
+
+## IronSoftware.Drawing Features:
 - **AnyBitmap**: A universally compatible Bitmap class. Implicit casting between `IronSoftware.Drawing.AnyBitmap` and the following supported:
   - `System.Drawing.Bitmap`
   - `System.Drawing.Image`
