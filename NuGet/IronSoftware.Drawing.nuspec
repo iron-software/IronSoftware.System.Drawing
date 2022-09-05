@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
-  <metadata>
-    <id>IronDrawing</id>
-    <version>$version$</version>
-    <title>IronDrawing</title>
-    <authors>https://ironsoftware.com/</authors>
-    <owners></owners>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-	<projectUrl>https://ironsoftware.com/</projectUrl>
-	<readme>docs\README.md</readme>
-    <description>IronDrawing - The C# Image Library
+	<metadata>
+		<id>IronSoftware.System.Drawing</id>
+		<version>$version$</version>
+		<title>IronSoftware.System.Drawing</title>
+		<authors>https://ironsoftware.com/</authors>
+		<owners></owners>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<projectUrl>https://ironsoftware.com/</projectUrl>
+		<readme>docs\README.md</readme>
+		<description>IronSoftware.System.Drawing - The C# Image Library
 
 A universally compatible Bitmap format for .NET 7 and .NET 6, .NET 5, .NET Core on Windows, macOS, Linux, Docker, AWS, Azure, NanoServer, IIS, Mobile, Xamarin, iOS, Android, and Google Compute.
 
@@ -26,26 +26,30 @@ Key library features include:
 IronDrawing can be used within C#, VB.NET, F#, ASP.NET projects, MVC, Web Services, Console &amp; Desktop Applications.
 
 Supports:
-* .NET Framework 4.6.1 +
+* .NET Framework 4.6.2 +
 * .NET Core 2.0 +
 * .NET 5
 * .NET 6
 * .NET 7
 
 For general support and technical inquiries, please email us at: developers@ironsoftware.com</description>
-    <summary>IronDrawing</summary>
-    <releaseNotes>* Added support for implicit casting for existing Color, CropRectangle, and Font with those of Microsoft.Maui
+		<summary>IronDrawing</summary>
+		<releaseNotes>* Added support for implicit casting for existing Color, CropRectangle, and Font with those of Microsoft.Maui
 * Added support for implicit casting between Rgb48, Rgba64, and IronDrawing.Color</releaseNotes>
-    <copyright>Copyright © Iron Software 2022</copyright>
-    <tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, Tiff, Gif, Jpeg, Png, Color, Rectangle, Drawing, C#, VB.NET, aspx, create, render, generate, standard, netstandard2.0, core, netcore</tags>
-	<dependencies>
-		<dependency id="SixLabors.ImageSharp" version="2.1.3" />
-		<dependency id="SixLabors.ImageSharp.Drawing" version="1.0.0-beta15" />
-	</dependencies>
-  </metadata>
-  <files>
-	<file src=".\README.md" target="docs\" />
-	<file src=".\EULA.txt" target=".\" />
-	<file src="..\bin\$configuration$\netstandard2.0\IronSoftware.Drawing.Common.*" target="lib\netstandard2.0" />
-  </files>
+		<copyright>Copyright © Iron Software 2022</copyright>
+		<tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, Tiff, Gif, Jpeg, Png, Color, Rectangle, Drawing, C#, VB.NET, aspx, create, render, generate, standard, netstandard2.0, core, netcore</tags>
+		<dependencies>
+			<group targetFramework="net462">
+				<dependency id="SixLabors.ImageSharp.Drawing" version="1.0.0-beta15" />	
+			</group>
+			<group targetFramework="netstandard20">			
+				<dependency id="SixLabors.ImageSharp.Drawing" version="1.0.0-beta15" />
+			</group>
+		</dependencies>	
+	</metadata>
+	<files>
+		<file src=".\README.md" target="docs\" />
+		<file src=".\EULA.txt" target=".\" />
+		<file src="..\bin\$configuration$\netstandard2.0\IronSoftware.Drawing.Common.*" target="lib\netstandard2.0" />
+	</files>
 </package>
