@@ -357,7 +357,7 @@ stages:
         command: 'pack'
         packagesToPack: 'NuGet\IronSoftware.Drawing.nuspec'
         configuration: $(Configuration)
-        buildProperties: 'version=$(NuGetVersion);IncludeSymbols=true;SymbolPackageFormat=snupkg'
+        buildProperties: 'version=$(NuGetVersion);commit=$(Build.SourceVersion);IncludeSymbols=true;SymbolPackageFormat=snupkg'
         includeSymbols: true
     # Sign NuGet Packages
     - task: NuGetCommand@2
