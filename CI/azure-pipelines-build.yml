@@ -8,8 +8,6 @@ variables:
     value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingRevisionVersion).$(Build.BuildID)
   - name: NuGetVersion
     value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(Build.BuildID)
-  - name: AssembliesToMerge
-    value: 'SixLabors.Fonts.dll SixLabors.ImageSharp.Drawing.dll'
     
 # Virtual Machine
 pool:
@@ -345,18 +343,6 @@ stages:
         buildType: 'current'
         artifactName: 'IronDrawingNuGet'
         targetPath: 'NuGet'
-    - task: DownloadSecureFile@1
-      displayName: Download IronBarCode Signing Key
-      name: DownloadKeyFile
-      inputs:
-        secureFile: 'IronSoftware.Drawing.Common.snk'
-    # Merge Assemblies
-    - task: CmdLine@2
-      condition: succeeded()
-      displayName: 'Condense .NET Standard Assemblies'
-      inputs:
-        workingDirectory: 'bin\$(Configuration)\netstandard2.0'
-        script: '"$(Build.SourcesDirectory)\NuGet\ILRepack.exe" /verbose /parallel /union /wildcards /internalize /xmldocs /keyfile:"$(DownloadKeyFile.secureFilePath)" /out:"$(Build.SourcesDirectory)\Merge\netstandard2.0\IronSoftware.Drawing.Common.dll" /log:"netcore_merge.log" /ver:$(AssemblyVersion) "IronSoftware.Drawing.Common.dll" $(AssembliesToMerge)'
     - task: CmdLine@2
       displayName: 'Sign IronSoftware.Drawing.Common.dll .NET Standard'
       inputs:
