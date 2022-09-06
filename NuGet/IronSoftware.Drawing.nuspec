@@ -18,12 +18,12 @@ Works seamlessly with popular Image and Bitmap formats such as System.Drawing.Bi
 Implicit casting means that using this class to input and output Bitmap and image types from public API's gives full compatibility to all image type fully supported by Microsoft.
 
 Key library features include:
-  * AnyBitmap: A universally compatible Bitmap class. Implicit casting between System.Drawing.Bitmap, System.Drawing.Image, SkiaSharp.SKBitmap, SkiaSharp.SKImage, SixLabors.ImageSharp, Microsoft.Maui.Graphics.Platform.PlatformImage to IronDrawing.AnyBitmap
-  * Color: A universally compatible Color class. Implicit casting between System.Drawing.Color, SkiaSharp.SKColor, SixLabors.ImageSharp.Color, SixLabors.ImageSharp.PixelFormats to IronDrawing.Color
-  * CropRectangle: A universally compatible Rectangle class. Implicit casting between System.Drawing.Rectangle, SkiaSharp.SKRect, SkiaSharp.SKRectI, SixLabors.ImageSharp.Rectangle to IronDrawing.CropRectangle
-  * Font: A universally compatible Font class. Implicit casting between System.Drawing.Font, SkiaSharp.SKFont, SixLabors.Fonts.Font to IronDrawing.Font
+  * AnyBitmap: A universally compatible Bitmap class. Implicit casting between System.Drawing.Bitmap, System.Drawing.Image, SkiaSharp.SKBitmap, SkiaSharp.SKImage, SixLabors.ImageSharp, Microsoft.Maui.Graphics.Platform.PlatformImage to IronSoftware.Drawing.AnyBitmap
+  * Color: A universally compatible Color class. Implicit casting between System.Drawing.Color, SkiaSharp.SKColor, SixLabors.ImageSharp.Color, SixLabors.ImageSharp.PixelFormats to IronSoftware.Drawing.Color
+  * CropRectangle: A universally compatible Rectangle class. Implicit casting between System.Drawing.Rectangle, SkiaSharp.SKRect, SkiaSharp.SKRectI, SixLabors.ImageSharp.Rectangle to IronSoftware.Drawing.CropRectangle
+  * Font: A universally compatible Font class. Implicit casting between System.Drawing.Font, SkiaSharp.SKFont, SixLabors.Fonts.Font to IronSoftware.Drawing.Font
 
-IronDrawing can be used within C#, VB.NET, F#, ASP.NET projects, MVC, Web Services, Console &amp; Desktop Applications.
+IronSoftware.Drawing can be used within C#, VB.NET, F#, ASP.NET projects, MVC, Web Services, Console &amp; Desktop Applications.
 
 Supports:
 * .NET Framework 4.6.2 +
@@ -33,7 +33,7 @@ Supports:
 * .NET 7
 
 For general support and technical inquiries, please email us at: developers@ironsoftware.com</description>
-		<summary>IronDrawing</summary>
+		<summary>IronSoftware.System.Drawing helps C# Software Engineers to replace System.Drawing.Common in .NET projects.</summary>
 		<releaseNotes>Support and Compatibility
 * Universal compatiblity for .NET 7, .NET 6, .NET 5, and .NET Core
 * Support for Windows, macOS, Linux, Azure, AWS, Mobile, iOS, Android, Xamarin, NanoServer, and IIS
