@@ -33,7 +33,7 @@ Supports:
 * .NET 7
 
 For general support and technical inquiries, please email us at: developers@ironsoftware.com</description>
-		<summary>IronDrawing</summary>
+		<summary>IronSoftware.System.Drawing helps C# Software Engineers to replace System.Drawing.Common in .NET projects.</summary>
 		<releaseNotes>* Added support for implicit casting for existing Color, CropRectangle, and Font with those of Microsoft.Maui
 * Added support for implicit casting between Rgb48, Rgba64, and IronDrawing.Color</releaseNotes>
 		<copyright>Copyright © Iron Software 2022</copyright>
