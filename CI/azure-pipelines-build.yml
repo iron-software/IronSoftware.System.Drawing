@@ -364,7 +364,7 @@ stages:
       displayName: Sign IronDrawing NuGet Package
       inputs:
         command: 'custom'
-        arguments: 'sign $(Build.ArtifactStagingDirectory)\IronSoftware.System.Drawing.1.0.$(Build.BuildID)-ci.symbols.nupkg -CertificatePath $(Agent.TempDirectory)\ironcert.pfx -Timestamper http://timestamp.digicert.com -NonInteractive -CertificatePassword $(CertificatePassword)'
+        arguments: 'sign $(Build.ArtifactStagingDirectory)\IronSoftware.System.Drawing.$(NuGetVersion).symbols.nupkg -CertificatePath $(Agent.TempDirectory)\ironcert.pfx -Timestamper http://timestamp.digicert.com -NonInteractive -CertificatePassword $(CertificatePassword)'
     - task: NuGetCommand@2
       inputs:
         command: 'push'
