@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Drawing;
+using System;
 
 namespace IronSoftware.Drawing
 {
@@ -130,7 +128,7 @@ namespace IronSoftware.Drawing
         /// <param name="Font"><see cref="Font"/> is explicitly cast to a System.Drawing.Font </param>
         static public implicit operator System.Drawing.Font(Font Font)
         {
-            return new System.Drawing.Font(new FontFamily(Font.FamilyName), Font.Size, (System.Drawing.FontStyle)Font.Style);
+            return new System.Drawing.Font(new System.Drawing.FontFamily(Font.FamilyName), Font.Size, (System.Drawing.FontStyle)Font.Style);
         }
 
         /// <summary>

@@ -1,5 +1,3 @@
-﻿using SkiaSharp;
-
 namespace IronSoftware.Drawing
 {
     public partial class CropRectangle
