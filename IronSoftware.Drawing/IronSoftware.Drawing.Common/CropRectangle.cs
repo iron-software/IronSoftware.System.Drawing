@@ -1,5 +1,3 @@
- 
-
 namespace IronSoftware.Drawing
 {
     public partial class CropRectangle
