@@ -48,11 +48,15 @@ All new classes developed to support conversion between: (System.Drawing, SixLab
 		<dependencies>
 			<group targetFramework="net472">
 				<dependency id="SixLabors.ImageSharp" version="2.1.3" />
+				<dependency id="System.Drawing.Common" version="6.0.0" />
 			</group>
 			<group targetFramework="netstandard20">
-				<dependency id="SixLabors.ImageSharp" version="2.1.3" />
+				<dependency id="SixLabors.ImageSharp.Drawing" version="1.0.0-beta15" />
 			</group>
-		</dependencies>	
+		</dependencies>
+		<frameworkAssemblies>
+			<frameworkAssembly assemblyName="System.Drawing"  />
+		</frameworkAssemblies
 	</metadata>
 	<files>
 		<file src=".\README.md" target="docs\" />
