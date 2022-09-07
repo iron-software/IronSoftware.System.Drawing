@@ -56,7 +56,7 @@ All new classes developed to support conversion between: (System.Drawing, SixLab
 		</dependencies>
 		<frameworkAssemblies>
 			<frameworkAssembly assemblyName="System.Drawing"  />
-		</frameworkAssemblies
+		</frameworkAssemblies>
 	</metadata>
 	<files>
 		<file src=".\README.md" target="docs\" />
