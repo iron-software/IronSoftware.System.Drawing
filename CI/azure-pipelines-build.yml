@@ -184,7 +184,7 @@ stages:
 ## Test Linux
 - stage: LinuxTests
   pool:
-    vmImage: 'ubuntu-18.04'
+    vmImage: 'ubuntu-latest'
   displayName: Execute Linux Tests
   dependsOn: BuildDrawingLibraries
   jobs:
@@ -263,7 +263,7 @@ stages:
 ## Test MacOs
 - stage: MacOsTests
   pool:
-    vmImage: 'macOS-10.15'
+    vmImage: 'macOS-latest'
   displayName: Execute MacOs Tests
   dependsOn: BuildDrawingLibraries
   jobs:
