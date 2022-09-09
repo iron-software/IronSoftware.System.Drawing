@@ -8,6 +8,7 @@
 		<owners></owners>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<projectUrl>https://github.com/iron-software/IronSoftware.Drawing.Common/</projectUrl>
+		<iconUrl>https://ironsoftware.com/brand/iron-logo-128.png</iconUrl>
 		<readme>docs\README.md</readme>
 		<description>IronSoftware.System.Drawing - The C# Image Library
 
