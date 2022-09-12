@@ -7,9 +7,9 @@
 		<authors>https://ironsoftware.com/</authors>
 		<owners></owners>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <license type="file">EULA.txt</license>
+		<license type="file">EULA.txt</license>
 		<projectUrl>https://github.com/iron-software/IronSoftware.Drawing.Common/</projectUrl>
-    <icon>images/ironsoftware-logo.png</icon>
+		<icon>images/ironsoftware-logo.png</icon>
 		<readme>docs\README.md</readme>
 		<description>IronSoftware.System.Drawing - The C# Image Library
 
