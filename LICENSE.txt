@@ -63,7 +63,7 @@ Summary of Commercial Licensing Benefits:
 --------------------------------------------
 It is often worth paying for something that is free:
 * Developer support is available to Commercial Licensing customers when purchased and agreed by both parties.
-* If purchase this gives you the option to replace the MIT Open Source license below with Commercial Licensing
+* Purchasing gives you the option to replace the MIT Open Source license below with Commercial Licensing
     *  Commercial Licensing Terms are found at: https://github.com/iron-software/IronSoftware.System.Drawing/blob/master/NuGet/EULA.txt and within this software.
     *  The MIT public license agreement no longer applies and the MIT license below need not be shipped inside or alongside your software
 * Enhanced versions of IronSoftware.Drawing with additional features may be released and available to Commercial Licensing users.
