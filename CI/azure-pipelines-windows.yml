@@ -105,14 +105,15 @@ steps:
     arguments: '-s $(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/tests.runsettings --configuration "$(buildConfiguration)" -f "net60" --verbosity n --no-build --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura'
     testRunTitle: 'Execute Unit Tests'
   condition: succeededOrFailed()
-- task: DotNetCoreCLI@2
-  displayName: Execute .NET60 x86 Unit Tests
-  inputs:
-    command: 'test'
-    projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
-    arguments: '-s $(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/tests.x86.runsettings --configuration "$(buildConfiguration)" -f "net60" --verbosity n --no-build --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura'
-    testRunTitle: 'Execute Unit Tests'
-  condition: succeededOrFailed()
+# https://github.com/microsoft/azure-pipelines-tasks/issues/16501 UseDotNet@2 not working on x86
+#- task: DotNetCoreCLI@2
+#  displayName: Execute .NET60 x86 Unit Tests
+#  inputs:
+#    command: 'test'
+#    projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/IronSoftware.Drawing.Common.Tests.csproj'
+#    arguments: '-s $(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/tests.x86.runsettings --configuration "$(buildConfiguration)" -f "net60" --verbosity n --no-build --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura'
+#    testRunTitle: 'Execute Unit Tests'
+#  condition: succeededOrFailed()
 
 - task: DotNetCoreCLI@2
   displayName: Execute .Netcoreapp3.1 x64 Unit Tests
