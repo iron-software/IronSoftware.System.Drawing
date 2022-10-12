@@ -344,6 +344,17 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
+        /// Create a new Bitmap from a <see cref="Stream"/> (bytes).
+        /// </summary>
+        /// <param name="Stream">A <see cref="Stream"/> of image data in any common format.</param>
+        /// <seealso cref="FromStream"/>
+        /// <seealso cref="AnyBitmap"/>
+        public static AnyBitmap FromStream(System.IO.Stream Stream)
+        {
+            return new AnyBitmap(Stream);
+        }
+
+        /// <summary>
         /// Construct a new Bitmap from a <see cref="Stream"/> (bytes).
         /// </summary>
         /// <param name="Stream">A <see cref="Stream"/> of image data in any common format.</param>
@@ -352,6 +363,26 @@ namespace IronSoftware.Drawing
         public AnyBitmap(System.IO.MemoryStream Stream)
         {
             LoadImage(Stream.ToArray());
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from a <see cref="Stream"/> (bytes).
+        /// </summary>
+        /// <param name="Stream">A <see cref="Stream"/> of image data in any common format.</param>
+        /// <seealso cref="FromStream"/>
+        /// <seealso cref="AnyBitmap"/>
+        public AnyBitmap(System.IO.Stream Stream)
+        {
+            byte[] buffer = new byte[16 * 1024];
+            using (MemoryStream ms = new MemoryStream())
+            {
+                int read;
+                while ((read = Stream.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    ms.Write(buffer, 0, read);
+                }
+                LoadImage(ms.ToArray());
+            }
         }
 
         /// <summary>

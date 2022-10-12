@@ -52,6 +52,23 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
             string imagePath = GetRelativeFilePath("Mona-Lisa-oil-wood-panel-Leonardo-da.webp");
             byte[] bytes = File.ReadAllBytes(imagePath);
+            Stream ms = new MemoryStream(bytes);
+
+            AnyBitmap bitmap = AnyBitmap.FromStream(ms);
+            bitmap.TrySaveAs("result.bmp");
+            AssertImageAreEqual(imagePath, "result.bmp");
+
+            ms.Position = 0;
+            bitmap = new AnyBitmap(ms);
+            bitmap.SaveAs("result.bmp");
+            AssertImageAreEqual(imagePath, "result.bmp");
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Create_AnyBitmap_by_MemoryStream()
+        {
+            string imagePath = GetRelativeFilePath("Mona-Lisa-oil-wood-panel-Leonardo-da.webp");
+            byte[] bytes = File.ReadAllBytes(imagePath);
             MemoryStream ms = new MemoryStream(bytes);
 
             AnyBitmap bitmap = AnyBitmap.FromStream(ms);
