@@ -341,7 +341,7 @@ stages:
       displayName: 'Sign IronSoftware.Drawing.Common.dll .NET Standard'
       inputs:
           workingDirectory: 'bin\$(Configuration)\netstandard2.0'
-          script: '$(Build.SourcesDirectory)\NuGet\signtool.exe sign /v /d IronDrawing /f $(Agent.TempDirectory)/ironcert.pfx /p ironcert /t http://timestamp.digicert.com /fd SHA256 "IronSoftware.Drawing.Common.dll"'
+          script: '$(Build.SourcesDirectory)\NuGet\signtool.exe sign /v /d IronDrawing /f $(Agent.TempDirectory)/ironcert.pfx /p $(CertificatePassword) /t http://timestamp.digicert.com /fd SHA256 "IronSoftware.Drawing.Common.dll"'
     - task: NuGetToolInstaller@1
       inputs:
         versionSpec: 6.2.1
@@ -376,7 +376,7 @@ stages:
     - task: GitHubRelease@1
       inputs:
         isPreRelease: true
-        gitHubConnection: 'iron-software'
+        gitHubConnection: $(GitHubConnection)
         repositoryName: 'iron-software/IronSoftware.System.Drawing'
         action: 'create'
         target: '$(Build.SourceVersion)'
