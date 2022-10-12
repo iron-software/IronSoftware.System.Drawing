@@ -47,6 +47,9 @@ Installing the IronSoftware.Drawing NuGet package is quick and easy, please inst
 ```
 PM> Install-Package IronSoftware.System.Drawing
 ```
+Alternatively, download directly from the [official NuGet website](https://www.nuget.org/packages/IronSoftware.System.Drawing).
+
+
 Once installed, you can get started by adding `using IronSoftware.Drawing;` to the top of your C# code.
 ### `AnyBitmap` Code Example
 ```csharp

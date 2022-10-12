@@ -75,12 +75,6 @@ stages:
           targetPath: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common/bin/$(Configuration)'
           artifact: 'IronDrawingAssemblies'
           publishLocation: 'pipeline'
-      - task: CopyFiles@2
-        displayName: 'Copy REAMD.md file'
-        inputs:
-          SourceFolder: '$(Build.SourcesDirectory)'
-          Contents: 'README.md'
-          TargetFolder: '$(Build.SourcesDirectory)/NuGet'
       - task: PublishPipelineArtifact@1
         displayName: Publish IronDrawing NuGet Files
         inputs:
@@ -379,3 +373,16 @@ stages:
         publishSymbols: true
         symbolServerType: TeamServices
         detailedLog: true
+    - task: GitHubRelease@1
+      inputs:
+        isPreRelease: true
+        gitHubConnection: 'iron-software'
+        repositoryName: 'iron-software/IronSoftware.System.Drawing'
+        action: 'create'
+        target: '$(Build.SourceVersion)'
+        tagSource: 'userSpecifiedTag'
+        tag: '$(NuGetVersion)'
+        title: 'IronSoftware.System.Drawing v$(NuGetVersion)'
+        releaseNotesSource: 'inline'
+        changeLogCompareToRelease: 'lastFullRelease'
+        changeLogType: 'commitBased'

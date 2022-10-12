@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Reflection;
 
 namespace IronSoftware.Drawing
@@ -344,6 +346,17 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
+        /// Create a new Bitmap from a <see cref="Stream"/> (bytes).
+        /// </summary>
+        /// <param name="Stream">A <see cref="Stream"/> of image data in any common format.</param>
+        /// <seealso cref="FromStream"/>
+        /// <seealso cref="AnyBitmap"/>
+        public static AnyBitmap FromStream(System.IO.Stream Stream)
+        {
+            return new AnyBitmap(Stream);
+        }
+
+        /// <summary>
         /// Construct a new Bitmap from a <see cref="Stream"/> (bytes).
         /// </summary>
         /// <param name="Stream">A <see cref="Stream"/> of image data in any common format.</param>
@@ -352,6 +365,17 @@ namespace IronSoftware.Drawing
         public AnyBitmap(System.IO.MemoryStream Stream)
         {
             LoadImage(Stream.ToArray());
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from a <see cref="Stream"/> (bytes).
+        /// </summary>
+        /// <param name="Stream">A <see cref="Stream"/> of image data in any common format.</param>
+        /// <seealso cref="FromStream"/>
+        /// <seealso cref="AnyBitmap"/>
+        public AnyBitmap(System.IO.Stream Stream)
+        {
+            LoadImage(Stream);
         }
 
         /// <summary>
@@ -381,6 +405,49 @@ namespace IronSoftware.Drawing
         public AnyBitmap(string File)
         {
             LoadImage(File);
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from a Uri
+        /// </summary>
+        /// <param name="Uri">The uri of the image.</param>
+        /// <seealso cref="FromUri"/>
+        /// <seealso cref="AnyBitmap"/>
+        public AnyBitmap(Uri Uri)
+        {
+            try
+            {
+                using (WebClient client = new WebClient())
+                {
+                    LoadImage(client.OpenRead(Uri));
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while loading AnyBitmap from Uri", e);
+            }
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from a Uri
+        /// </summary>
+        /// <param name="Uri">The uri of the image.</param>
+        /// <returns></returns>
+        /// <seealso cref="AnyBitmap"/>
+        /// <seealso cref="FromUri"/>
+        public static AnyBitmap FromUri(Uri Uri)
+        {
+            try
+            {
+                using (WebClient client = new WebClient())
+                {
+                    return new AnyBitmap(client.OpenRead(Uri));
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while loading AnyBitmap from Uri", e);
+            }
         }
 
         /// <summary>
@@ -903,6 +970,20 @@ namespace IronSoftware.Drawing
             catch (Exception e)
             {
                 throw new Exception("Error while loading image file.", e);
+            }
+        }
+
+        private void LoadImage(Stream stream)
+        {
+            byte[] buffer = new byte[16 * 1024];
+            using (MemoryStream ms = new MemoryStream())
+            {
+                int read;
+                while ((read = stream.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    ms.Write(buffer, 0, read);
+                }
+                LoadImage(ms.ToArray());
             }
         }
 

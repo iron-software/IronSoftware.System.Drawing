@@ -7,7 +7,9 @@
 		<authors>https://ironsoftware.com/</authors>
 		<owners></owners>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<license type="file">LICENSE.txt</license>
 		<projectUrl>https://github.com/iron-software/IronSoftware.Drawing.Common/</projectUrl>
+		<icon>images/ironsoftware-logo.png</icon>
 		<readme>docs\README.md</readme>
 		<description>IronSoftware.System.Drawing - The C# Image Library
 
@@ -26,14 +28,14 @@ Key library features include:
 IronSoftware.Drawing can be used within C#, VB.NET, F#, ASP.NET projects, MVC, Web Services, Console &amp; Desktop Applications.
 
 Supports:
-* .NET Framework 4.6.2 +
-* .NET Core 2.0 +
-* .NET 5
-* .NET 6
 * .NET 7
+* .NET 6
+* .NET 5
+* .NET Core 2.0 +
+* .NET Framework 4.6.2 +
 
 For general support and technical inquiries, please email us at: developers@ironsoftware.com</description>
-		<summary>IronSoftware.System.Drawing helps C# Software Engineers to replace System.Drawing.Common in .NET projects.</summary>
+		<summary>IronSoftware.System.Drawing is an open-source solution for .NET developers to replace System.Drawing.Common with a universal and flexible library.</summary>
 		<releaseNotes>Support and Compatibility
 * Universal compatiblity for .NET 7, .NET 6, .NET 5, and .NET Core
 * Support for Windows, macOS, Linux, Azure, AWS, Mobile, iOS, Android, Xamarin, NanoServer, and IIS
@@ -43,7 +45,7 @@ All new classes developed to support conversion between: (System.Drawing, SixLab
 * Font: A universally compatible Font class
 * CropRectangle: A universally compatible Rectangle class</releaseNotes>
 		<copyright>Copyright © Iron Software 2022</copyright>
-		<tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, Tiff, Gif, Jpeg, Png, Color, Rectangle, Drawing, C#, VB.NET, aspx, create, render, generate, standard, netstandard2.0, core, netcore</tags>
+		<tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, TIFF, TIF, GIF, JPEG, PNG, Color, Rectangle, Drawing, C#, VB.NET, ASPX, create, render, generate, standard, netstandard2.0, core, netcore</tags>
 		<repository type="git" url="https://github.com/iron-software/IronSoftware.Drawing.Common" commit="$commit$" />
 		<dependencies>
 			<group targetFramework="net462">
@@ -55,6 +57,7 @@ All new classes developed to support conversion between: (System.Drawing, SixLab
 		</dependencies>
 	</metadata>
 	<files>
+    <file src=".\README.txt" target=".\" />
 		<file src=".\README.md" target="docs\" />
 		<file src=".\EULA.txt" target=".\" />
 		<file src="..\bin\$configuration$\netstandard2.0\IronSoftware.Drawing.Common.dll" target="lib\netstandard2.0" />
