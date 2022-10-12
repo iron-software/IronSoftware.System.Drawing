@@ -81,6 +81,20 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void Create_AnyBitmap_by_Uri()
+        {
+            Uri uri = new Uri("https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1200px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg");
+
+            AnyBitmap bitmap = AnyBitmap.FromUri(uri);
+            bitmap.TrySaveAs("result.bmp");
+            AssertImageExist("result.bmp", true);
+
+            bitmap = new AnyBitmap(uri);
+            bitmap.TrySaveAs("result.bmp");
+            AssertImageExist("result.bmp", true);
+        }
+
+        [FactWithAutomaticDisplayName]
         public void Create_SVG_AnyBitmap()
         {
             string imagePath = GetRelativeFilePath("Example_barcode.svg");

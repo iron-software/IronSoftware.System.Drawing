@@ -85,6 +85,22 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
                 throw new AssertActualExpectedException($"Expected: {expected}", $"Actual: {actual}", $"{assertName} failed.");
         }
 
+        protected void AssertImageExist(string resultImagePath, bool isCleanAll = false)
+        {
+            string assertName = "AssertFile.Exist";
+            if (File.Exists(resultImagePath))
+            {
+                if (isCleanAll)
+                {
+                    CleanResultFile(resultImagePath);
+                }
+            }
+            else
+            {
+                throw new AssertActualExpectedException($"Expected: File should exist in {resultImagePath}.", $"Actual: File does not exist in {resultImagePath}.", $"{assertName} failed.");
+            }
+        }
+
         protected void SaveSkiaBitmap(SkiaSharp.SKBitmap bitmap, string filename, AnyBitmap.ImageFormat imageFormat = AnyBitmap.ImageFormat.Png)
         {
             SkiaSharp.SKImage image = SkiaSharp.SKImage.FromBitmap(bitmap);
