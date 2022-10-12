@@ -52,6 +52,23 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
             string imagePath = GetRelativeFilePath("Mona-Lisa-oil-wood-panel-Leonardo-da.webp");
             byte[] bytes = File.ReadAllBytes(imagePath);
+            Stream ms = new MemoryStream(bytes);
+
+            AnyBitmap bitmap = AnyBitmap.FromStream(ms);
+            bitmap.TrySaveAs("result.bmp");
+            AssertImageAreEqual(imagePath, "result.bmp");
+
+            ms.Position = 0;
+            bitmap = new AnyBitmap(ms);
+            bitmap.SaveAs("result.bmp");
+            AssertImageAreEqual(imagePath, "result.bmp");
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Create_AnyBitmap_by_MemoryStream()
+        {
+            string imagePath = GetRelativeFilePath("Mona-Lisa-oil-wood-panel-Leonardo-da.webp");
+            byte[] bytes = File.ReadAllBytes(imagePath);
             MemoryStream ms = new MemoryStream(bytes);
 
             AnyBitmap bitmap = AnyBitmap.FromStream(ms);
@@ -61,6 +78,20 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             bitmap = new AnyBitmap(ms);
             bitmap.SaveAs("result.bmp");
             AssertImageAreEqual(imagePath, "result.bmp");
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Create_AnyBitmap_by_Uri()
+        {
+            Uri uri = new Uri("https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1200px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg");
+
+            AnyBitmap bitmap = AnyBitmap.FromUri(uri);
+            bitmap.TrySaveAs("result.bmp");
+            AssertImageExist("result.bmp", true);
+
+            bitmap = new AnyBitmap(uri);
+            bitmap.TrySaveAs("result.bmp");
+            AssertImageExist("result.bmp", true);
         }
 
         [FactWithAutomaticDisplayName]
