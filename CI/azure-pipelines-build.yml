@@ -376,7 +376,7 @@ stages:
     - task: GitHubRelease@1
       inputs:
         isPreRelease: true
-        gitHubConnection: $(GitHubConnection)
+        gitHubConnection: 'github.com_djrecipe'
         repositoryName: 'iron-software/IronSoftware.System.Drawing'
         action: 'create'
         target: '$(Build.SourceVersion)'
