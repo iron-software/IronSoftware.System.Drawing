@@ -1,0 +1,99 @@
+IronSoftware.Drawing Split License Version 1.0 Sep 2022
+Copyright (c) Iron Software LLC “Iron”
+
+IronSoftware.Drawing License v1.0 Sept 2022
+============================================
+
+Summary:
+1. You may license this software Commercially or Open Source at your own choice.
+2. You are actively encouraged to report bugs and contribute to this repository.
+3. Contributors have a voice, but are not the project or software owners.
+
+Iron Contribution Agreement
+============================================
+This Iron Software LLC (aka “Iron” or “IronSoftware”) project and everyone participating in it is governed by the following Contribution Agreement which may evolve over time.  By participating, you are expected to uphold this code of conduct. Please report unacceptable behavior to developers@ironsoftware.com
+
+Contributions Are Appreciated and Welcome
+--------------------------------------------
+* If you are skilled enough to improve this library please share:
+    * Please make a pull request to: https://github.com/iron-software/IronSoftware.System.Drawing/pulls
+* Contributions to this repository, any Fork, or copy remains with Iron Software LLC under the MIT license terms.
+* You may add a note to any significant code contributions you have made, but may not copyright or patent your changes.
+    *  Not all code or documentation is valuable. Iron may edit, use or discard your changes at their discretion.
+    * You may not modify licensing or copyright of any part or any derivative work (including a fork) of this software in any way without formal written consent.
+    * The software in this repository and all derivative works and related patents remain the property of Iron Software LLC
+    * Notwithstanding, you may request a shoutout on our README or other documentation.
+    * Iron may invite and badge you as a formal project contributor if you make significant improvement to this codebase.
+
+Bugs and Issues
+--------------------------------------------
+* If you find a bug please try and fix it yourself before delegating to a stranger.
+  * Check the README file incase your bug is a feature (lol)
+  * Check the issue log in case your issue is already documented.
+  * Make a Pull Request if you are technically capable.
+  * To make a Pull Request: https://github.com/iron-software/IronSoftware.System.Drawing/pulls
+  * To post an issue: https://github.com/iron-software/IronSoftware.System.Drawing/issues
+* Commercial Licensing users may be entitled to support and SLA as purchased.   All other issues reports are merely requests.
+
+License Awareness
+--------------------------------------------
+Obey copyright and patents. The software industry revolves on trust.
+ You should be aware of the license of all required or optional Nuget dependencies including .NET libraries published on nuget.org or elsewhere including:
+* Six Labors ImageSharp under Split commercial & Apache split licensing. Commercial licensing fees may apply to your project based on revenue and usage intent.  Their license may evolve over time.
+        *  https://github.com/SixLabors/ImageSharp/blob/main/LICENSE
+        * They deserve your funding if you can support this amazing project
+        *  Optional Commercial Licensing of our software may unlock software versions with no reference to Six Labors ImageSharp and its license.
+    * System.Drawing.Common under MIT licensing (like us)
+    * Microsoft.Maui.Graphics under MIT licensing (like us)
+    * SkiaSharp under BSD 3 Clause from Microsoft, Inc and Xamarin  (compatible with us)
+        *  https://github.com/mono/SkiaSharp/blob/main/LICENSE.md
+* Please check all other dependencies and their dependencies recursively.
+
+Permissive Split Licensing
+--------------------------------------------
+Works in Source or Object form are split licensed and may be licensed your choice of either:
+1. Iron Software Commercial Licensing documented below
+2. MIT Open Source License included in this document
+
+Iron Commercial Licensing
+============================================
+You may choose Commercial Licensing for this software and / or its derived works by purchasing “Iron Suite for .NET” at https://ironsoftware.com/suite/
+
+Summary of Commercial Licensing Benefits:
+--------------------------------------------
+It is often worth paying for something that is free:
+* Developer support is available to Commercial Licensing customers when purchased and agreed by both parties.
+* Purchasing gives you the option to replace the MIT Open Source license below with Commercial Licensing
+    *  Commercial Licensing Terms are found at: https://github.com/iron-software/IronSoftware.System.Drawing/blob/master/NuGet/EULA.txt and within this software.
+    *  The MIT public license agreement no longer applies and the MIT license below need not be shipped inside or alongside your software
+* Enhanced versions of IronSoftware.Drawing with additional features may be released and available to Commercial Licensing users.
+    * This may include:
+        * Additional features and documentation
+        * The option for no dependency to SixLabors.ImageSharp and its commercial licensing fees for some use cases.
+
+Open Source Licensing
+============================================
+If Commercial Licensing is not purchased, then Open Source Licensing applies. The MIT License within this license should be included inside your product or project as clearly as possible.
+
+The MIT License (MIT)
+----------------------------
+Copyright (c) IronSotware LLC
+All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the “Software”), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
