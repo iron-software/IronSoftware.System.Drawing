@@ -1,5 +1,10 @@
 ##### DECLARATIONS #####
 # Variables
+parameters:
+  - name: githubRelease
+    displayName: GitHub Release
+    type: boolean
+    default: True
 variables:
   - group: IronDrawingVersions
   - name: Configuration
@@ -378,6 +383,7 @@ stages:
         symbolServerType: TeamServices
         detailedLog: true
     - task: GitHubRelease@1
+      condition: and(succeeded(), eq('${{ parameters.githubRelease }}', true))
       inputs:
         isPreRelease: true
         gitHubConnection: 'github.com_djrecipe'
@@ -388,5 +394,7 @@ stages:
         tag: '$(NuGetVersion)'
         title: 'IronSoftware.System.Drawing v$(NuGetVersion)'
         releaseNotesSource: 'inline'
+        # Uncomment when create zip package
+        # assets: '$(Build.ArtifactStagingDirectory)/*.zip'
         changeLogCompareToRelease: 'lastFullRelease'
         changeLogType: 'commitBased'
