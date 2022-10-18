@@ -51,6 +51,7 @@ For general support and technical inquiries, please email us at: developers@iron
 		</dependencies>
 	</metadata>
 	<files>
+		<file src=".\ironsoftware-logo.png" target=".\images\" />
 		<file src=".\LICENSE.txt" target=".\" />
 		<file src=".\README.txt" target=".\" />
 		<file src=".\README.md" target="docs\" />

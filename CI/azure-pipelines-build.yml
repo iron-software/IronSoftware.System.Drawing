@@ -386,7 +386,7 @@ stages:
       condition: and(succeeded(), eq('${{ parameters.githubRelease }}', true))
       inputs:
         isPreRelease: true
-        gitHubConnection: 'github.com_djrecipe'
+        gitHubConnection: 'ironsoftwarebuild'
         repositoryName: 'iron-software/IronSoftware.System.Drawing'
         action: 'create'
         target: '$(Build.SourceVersion)'
