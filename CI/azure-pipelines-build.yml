@@ -378,7 +378,7 @@ stages:
     - task: GitHubRelease@1
       inputs:
         isPreRelease: true
-        gitHubConnection: 'iron-software'
+        gitHubConnection: 'ironsoftwarebuild'
         repositoryName: 'iron-software/IronSoftware.System.Drawing'
         action: 'create'
         target: '$(Build.SourceVersion)'
