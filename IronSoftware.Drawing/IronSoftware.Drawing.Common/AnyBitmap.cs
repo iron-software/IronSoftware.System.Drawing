@@ -1,4 +1,6 @@
 ﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Advanced;
+using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -97,6 +99,19 @@ namespace IronSoftware.Drawing
         public AnyBitmap Clone()
         {
             return new AnyBitmap(this.Binary);
+        }
+
+        /// <summary>
+        /// Creates an exact duplicate <see cref="AnyBitmap"/>
+        /// </summary>
+        /// <param name="Rectangle">Defines the portion of this <see cref="AnyBitmap"/> to copy.</param>
+        /// <returns></returns>
+        public AnyBitmap Clone(CropRectangle Rectangle)
+        {
+            using SixLabors.ImageSharp.Image image = Image.Clone(img => img.Crop(Rectangle));
+            using var memoryStream = new System.IO.MemoryStream();
+            image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder());
+            return new AnyBitmap(memoryStream.ToArray());
         }
 
         /// <summary>
@@ -447,6 +462,17 @@ namespace IronSoftware.Drawing
             catch (Exception e)
             {
                 throw new Exception("Error while loading AnyBitmap from Uri", e);
+            }
+        }
+
+        /// <summary>
+        /// Gets colors depth, in number of bits per pixel.
+        /// </summary>
+        public int BitsPerPixel
+        {
+            get
+            {
+                return Image.PixelType.BitsPerPixel;
             }
         }
 

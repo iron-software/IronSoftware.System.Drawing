@@ -1,4 +1,5 @@
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 using System;
 using System.IO;
 using Xunit;
@@ -266,6 +267,16 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             anyBitmap.SaveAs("expected.png");
             clonedAnyBitmap.SaveAs("result.png");
+
+            AssertImageAreEqual("expected.png", "result.png", true);
+
+
+            using Image image = anyBitmap;
+            image.Mutate(img => img.Crop(new Rectangle(0, 0, 100, 100)));
+            AnyBitmap clonedWithRect = anyBitmap.Clone(new CropRectangle(0, 0, 100, 100));
+
+            image.SaveAsPng("expected.png");
+            clonedWithRect.SaveAs("result.png");
 
             AssertImageAreEqual("expected.png", "result.png", true);
         }
