@@ -375,16 +375,3 @@ stages:
         publishSymbols: true
         symbolServerType: TeamServices
         detailedLog: true
-    - task: GitHubRelease@1
-      inputs:
-        isPreRelease: true
-        gitHubConnection: 'ironsoftwarebuild'
-        repositoryName: 'iron-software/IronSoftware.System.Drawing'
-        action: 'create'
-        target: '$(Build.SourceVersion)'
-        tagSource: 'userSpecifiedTag'
-        tag: '$(NuGetVersion)'
-        title: 'IronSoftware.System.Drawing v$(NuGetVersion)'
-        releaseNotesSource: 'inline'
-        changeLogCompareToRelease: 'lastFullRelease'
-        changeLogType: 'commitBased'
