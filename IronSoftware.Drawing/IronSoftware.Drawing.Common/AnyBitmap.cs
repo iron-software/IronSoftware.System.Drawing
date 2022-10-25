@@ -1,5 +1,7 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Advanced;
+using SixLabors.ImageSharp.Formats.Tiff;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
@@ -473,6 +475,17 @@ namespace IronSoftware.Drawing
             get
             {
                 return Image.PixelType.BitsPerPixel;
+            }
+        }
+
+        /// <summary>
+        /// Gets FrameCount from image. Will return more than 1 if multiple page image.
+        /// </summary>
+        public int FrameCount
+        {
+            get
+            {
+                return Image.Frames.Count;
             }
         }
 
@@ -993,9 +1006,54 @@ namespace IronSoftware.Drawing
             {
                 throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.", e);
             }
+            catch (NotSupportedException e)
+            {
+                if (e.Message == "Images with different sizes are not supported")
+                {
+                    Image = Image.Load(File, new TiffDecoder() { DecodingMode = SixLabors.ImageSharp.Metadata.FrameDecodingMode.First });
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        Image.Save(memoryStream, FindEncoder(File));
+                        memoryStream.Seek(0, SeekOrigin.Begin);
+                        Binary = memoryStream.ToArray();
+                    }
+                }
+                else
+                {
+                    throw new NotSupportedException("Image cannot be loaded. File format doesn't supported.");
+                }
+            }
             catch (Exception e)
             {
                 throw new Exception("Error while loading image file.", e);
+            }
+        }
+
+        private SixLabors.ImageSharp.Formats.IImageEncoder FindEncoder(string File)
+        {
+            if (File.ToLower().EndsWith(".jpg") || File.ToLower().EndsWith(".jpeg"))
+            {
+                return new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder();
+            }
+            else if (File.ToLower().EndsWith(".gif"))
+            {
+                return new SixLabors.ImageSharp.Formats.Gif.GifEncoder();
+            }
+            else if (File.ToLower().EndsWith(".png"))
+            {
+                return new SixLabors.ImageSharp.Formats.Png.PngEncoder();
+            }
+            else if (File.ToLower().EndsWith(".webp"))
+            {
+                return new SixLabors.ImageSharp.Formats.Webp.WebpEncoder();
+            }
+            else if (File.ToLower().EndsWith(".tif") || File.ToLower().EndsWith(".tiff"))
+            {
+                return new SixLabors.ImageSharp.Formats.Tiff.TiffEncoder();
+            }
+            else
+            {
+                return new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder();
             }
         }
 

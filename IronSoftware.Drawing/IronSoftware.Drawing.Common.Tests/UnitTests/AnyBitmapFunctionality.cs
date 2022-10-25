@@ -372,6 +372,16 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
 
+        [FactWithAutomaticDisplayName]
+        public void Load_Tiff_Image()
+        {
+            AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("IRON-274-39065.tif"));
+            Assert.Equal(1, anyBitmap.FrameCount);
+
+            AnyBitmap multiPage = AnyBitmap.FromFile(GetRelativeFilePath("animated_qr.gif"));
+            Assert.Equal(4, multiPage.FrameCount);
+        }
+
 #if !NET472
         [FactWithAutomaticDisplayName]
         public void CastMaui_to_AnyBitmap()
