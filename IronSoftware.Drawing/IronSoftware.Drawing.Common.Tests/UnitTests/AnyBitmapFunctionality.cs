@@ -385,6 +385,19 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             multiPage.Frames[3].SaveAs("last.png");
             AssertImageAreEqual(GetRelativeFilePath("first-animated-qr.png"), "first.png");
             AssertImageAreEqual(GetRelativeFilePath("last-animated-qr.png"), "last.png");
+
+            byte[] bytes = File.ReadAllBytes(GetRelativeFilePath("IRON-274-39065.tif"));
+            anyBitmap = AnyBitmap.FromBytes(bytes);
+            Assert.Equal(1, anyBitmap.FrameCount);
+
+            byte[] multiPageBytes = File.ReadAllBytes(GetRelativeFilePath("animated_qr.gif"));
+            multiPage = AnyBitmap.FromBytes(multiPageBytes);
+            Assert.Equal(4, multiPage.FrameCount);
+            Assert.Equal(4, multiPage.Frames.Count);
+            multiPage.Frames[0].SaveAs("first.png");
+            multiPage.Frames[3].SaveAs("last.png");
+            AssertImageAreEqual(GetRelativeFilePath("first-animated-qr.png"), "first.png");
+            AssertImageAreEqual(GetRelativeFilePath("last-animated-qr.png"), "last.png");
         }
 
 #if !NET472
