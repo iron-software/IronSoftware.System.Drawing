@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Reflection;
 
 namespace IronSoftware.Drawing
@@ -486,6 +485,30 @@ namespace IronSoftware.Drawing
             get
             {
                 return Image.Frames.Count;
+            }
+        }
+
+        /// <summary>
+        /// Gets All images. Will return more than 1 if multiple page image.
+        /// </summary>
+        public List<AnyBitmap> Frames
+        {
+            get
+            {
+                if (FrameCount > 1)
+                {
+                    List<AnyBitmap> images = new List<AnyBitmap>();
+
+                    for (int currFrameIndex = 0; currFrameIndex < FrameCount; currFrameIndex++)
+                    {
+                        images.Add(Image.Frames.CloneFrame(currFrameIndex));
+                    }
+                    return images;
+                }
+                else
+                {
+                    return new List<AnyBitmap>() { this.Clone() };
+                }
             }
         }
 

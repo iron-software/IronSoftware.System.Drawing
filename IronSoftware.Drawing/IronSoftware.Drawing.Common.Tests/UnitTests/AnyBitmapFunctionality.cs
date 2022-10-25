@@ -380,6 +380,11 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             AnyBitmap multiPage = AnyBitmap.FromFile(GetRelativeFilePath("animated_qr.gif"));
             Assert.Equal(4, multiPage.FrameCount);
+            Assert.Equal(4, multiPage.Frames.Count);
+            multiPage.Frames[0].SaveAs("first.png");
+            multiPage.Frames[3].SaveAs("last.png");
+            AssertImageAreEqual(GetRelativeFilePath("first-animated-qr.png"), "first.png");
+            AssertImageAreEqual(GetRelativeFilePath("last-animated-qr.png"), "last.png");
         }
 
 #if !NET472
