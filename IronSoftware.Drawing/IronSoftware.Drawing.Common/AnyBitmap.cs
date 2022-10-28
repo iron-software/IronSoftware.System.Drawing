@@ -1,5 +1,5 @@
-﻿using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Advanced;
+﻿using BitMiracle.LibTiff.Classic;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Tiff;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -478,8 +478,9 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Gets FrameCount from image. Will return more than 1 if multiple page image.
+        /// Returns the number of frames in our loaded Image.  Each “frame” is a page of an image such as  Tiff or Gif.  All other image formats return 1. 
         /// </summary>
+        /// <seealso cref="GetAllFrames" />
         public int FrameCount
         {
             get
@@ -489,9 +490,11 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Gets All images. Will return more than 1 if multiple page image.
+        /// Returns all of the cloned frames in our loaded Image. Each "frame" is a page of an image such as Tiff or Gif. All other image formats return an IEnumerable of length 1.
         /// </summary>
-        public List<AnyBitmap> Frames
+        /// <seealso cref="FrameCount" />
+        /// <seealso cref="System.Linq" />
+        public IEnumerable<AnyBitmap> GetAllFrames
         {
             get
             {
@@ -510,6 +513,40 @@ namespace IronSoftware.Drawing
                     return new List<AnyBitmap>() { this.Clone() };
                 }
             }
+        }
+
+        /// <summary>
+        /// Creates a multi-frame TIFF image from multiple AnyBitmaps.
+        /// <para>All images should have the same dimension.</para>
+        /// <para>If not dimension will be scaling to the largest width and height.</para>
+        /// <para>The image dimension still the same with original dimension with black background.</para>
+        /// </summary>
+        public static AnyBitmap CreateMultiFrameTiff(IEnumerable<AnyBitmap> images)
+        {
+            MemoryStream stream = CreateMultiFrameImage(images);
+
+            if (stream == null)
+                throw new NotSupportedException($"Image cannot be loaded. File format doesn't supported.");
+
+            stream.Seek(0, SeekOrigin.Begin);
+            return AnyBitmap.FromStream(stream);
+        }
+
+        /// <summary>
+        /// Creates a multi-frame GIF image from multiple AnyBitmaps.
+        /// <para>All images should have the same dimension.</para>
+        /// <para>If not dimension will be scaling to the largest width and height.</para>
+        /// <para>The image dimension still the same with original dimension with background transparent.</para>
+        /// </summary>
+        public static AnyBitmap CreateMultiFrameGif(IEnumerable<AnyBitmap> images)
+        {
+            MemoryStream stream = CreateMultiFrameImage(images, ImageFormat.Gif);
+
+            if (stream == null)
+                throw new NotSupportedException($"Image cannot be loaded. File format doesn't supported.");
+
+            stream.Seek(0, SeekOrigin.Begin);
+            return AnyBitmap.FromStream(stream);
         }
 
         /// <summary>
@@ -1013,19 +1050,13 @@ namespace IronSoftware.Drawing
             }
             catch (NotSupportedException e)
             {
-                if (e.Message == "Images with different sizes are not supported")
+                try
                 {
-                    Image = Image.Load(Bytes, new TiffDecoder() { DecodingMode = SixLabors.ImageSharp.Metadata.FrameDecodingMode.First });
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Tiff.TiffEncoder());
-                        memoryStream.Seek(0, SeekOrigin.Begin);
-                        Binary = memoryStream.ToArray();
-                    }
+                    OpenTiffToImageSharp(Bytes);
                 }
-                else
+                catch
                 {
-                    throw new NotSupportedException("Image cannot be loaded. File format doesn't supported.");
+                    throw new NotSupportedException("Image cannot be loaded. File format doesn't supported.", e);
                 }
             }
             catch (Exception e)
@@ -1048,24 +1079,28 @@ namespace IronSoftware.Drawing
             }
             catch (NotSupportedException e)
             {
-                if (e.Message == "Images with different sizes are not supported")
+                try
                 {
-                    Image = Image.Load(File, new TiffDecoder() { DecodingMode = SixLabors.ImageSharp.Metadata.FrameDecodingMode.First });
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        Image.Save(memoryStream, FindEncoder(File));
-                        memoryStream.Seek(0, SeekOrigin.Begin);
-                        Binary = memoryStream.ToArray();
-                    }
+                    OpenTiffToImageSharp(System.IO.File.ReadAllBytes(File));
                 }
-                else
+                catch
                 {
-                    throw new NotSupportedException("Image cannot be loaded. File format doesn't supported.");
+                    throw new NotSupportedException("Image cannot be loaded. File format doesn't supported.", e);
                 }
             }
             catch (Exception e)
             {
                 throw new Exception("Error while loading image file.", e);
+            }
+        }
+
+        private void SetBinaryFromImageSharp()
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Tiff.TiffEncoder());
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                Binary = memoryStream.ToArray();
             }
         }
 
@@ -1381,6 +1416,192 @@ namespace IronSoftware.Drawing
             catch (Exception e)
             {
                 throw new Exception("Error while reading TIFF image format.", e);
+            }
+        }
+
+        private void OpenTiffToImageSharp(byte[] bytes)
+        {
+            try
+            {
+                List<Image> images = new List<Image>();
+
+                // create a memory stream out of them
+                MemoryStream tiffStream = new MemoryStream(bytes);
+
+                // open a TIFF stored in the stream
+                using (var tif = BitMiracle.LibTiff.Classic.Tiff.ClientOpen("in-memory", "r", tiffStream, new BitMiracle.LibTiff.Classic.TiffStream()))
+                {
+                    var num = tif.NumberOfDirectories();
+                    for (short i = 0; i < num; i++)
+                    {
+                        tif.SetDirectory(i);
+
+                        // Find the width and height of the image
+                        FieldValue[] value = tif.GetField(TiffTag.IMAGEWIDTH);
+                        int width = value[0].ToInt();
+
+                        value = tif.GetField(TiffTag.IMAGELENGTH);
+                        int height = value[0].ToInt();
+
+                        // Read the image into the memory buffer
+                        int[] raster = new int[height * width];
+                        if (!tif.ReadRGBAImageOriented(width, height, raster, Orientation.TOPLEFT))
+                        {
+                            throw new Exception("Could not read image");
+                        }
+
+                        using Image<Rgba32> bmp = new Image<Rgba32>(width, height);
+                        SixLabors.ImageSharp.Rectangle rect = new SixLabors.ImageSharp.Rectangle(0, 0, bmp.Width, bmp.Height);
+
+                        int stride = 4 * ((bmp.Width * bmp.PixelType.BitsPerPixel + 31) / 32);
+
+                        bmp.ProcessPixelRows(accessor =>
+                        {
+                            for (int y = 0; y < accessor.Height; y++)
+                            {
+                                int rasterOffset = y * bmp.Width;
+                                int bitsOffset = (bmp.Height - y - 1) * stride;
+                                Span<Rgba32> pixelRow = accessor.GetRowSpan(y);
+
+                                for (int x = 0; x < pixelRow.Length; x++)
+                                {
+                                    ref Rgba32 pixel = ref pixelRow[x];
+
+                                    int rgba = raster[rasterOffset++];
+                                    pixel.R = (byte)((rgba >> 16) & 0xff);
+                                    pixel.G = (byte)((rgba >> 8) & 0xff);
+                                    pixel.B = (byte)(rgba & 0xff);
+                                    pixel.A = (byte)((rgba >> 24) & 0xff);
+                                }
+                            }
+                        });
+
+                        images.Add(bmp.Clone());
+                    }
+                }
+
+                if (Image != null)
+                    Image.Dispose();
+
+                FindMaxWidthAndHeight(images, out int maxWidth, out int maxHeight);
+
+                for (int i = 0; i < images.Count; i++)
+                {
+                    if (i == 0)
+                    {
+                        Image = CloneAndResizeImageSharp(images[i], maxWidth, maxHeight);
+                    }
+                    else
+                    {
+                        Image<Rgba32> image = CloneAndResizeImageSharp(images[i], maxWidth, maxHeight);
+                        Image.Frames.AddFrame(image.Frames.RootFrame);
+                    }
+                }
+                SetBinaryFromImageSharp();
+            }
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException("Please install BitMiracle.LibTiff.NET from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while reading TIFF image format.", e);
+            }
+        }
+
+        private static MemoryStream CreateMultiFrameImage(IEnumerable<AnyBitmap> images, ImageFormat imageFormat = ImageFormat.Tiff)
+        {
+            FindMaxWidthAndHeight(images, out int maxWidth, out int maxHeight);
+
+            Image<Rgba32> result = null;
+            for (int i = 0; i < images.Count(); i++)
+            {
+                if (i == 0)
+                {
+                    result = LoadAndResizeImageSharp(images.ElementAt(i).GetBytes(), maxWidth, maxHeight, i);
+                }
+                else
+                {
+                    if (result == null)
+                    {
+                        result = LoadAndResizeImageSharp(images.ElementAt(i).GetBytes(), maxWidth, maxHeight, i);
+                    }
+                    else
+                    {
+                        Image<Rgba32> image = LoadAndResizeImageSharp(images.ElementAt(i).GetBytes(), maxWidth, maxHeight, i);
+                        result.Frames.AddFrame(image.Frames.RootFrame);
+                    }
+                }
+            }
+
+            MemoryStream resultStream = null;
+            if (result != null)
+            {
+                resultStream = new MemoryStream();
+                if (imageFormat == ImageFormat.Gif)
+                {
+                    result.SaveAsGif(resultStream);
+                }
+                else
+                {
+                    result.SaveAsTiff(resultStream);
+                }
+            }
+
+            return resultStream;
+        }
+
+        private static void FindMaxWidthAndHeight(IEnumerable<Image> images, out int maxWidth, out int maxHeight)
+        {
+            maxWidth = images.Select(img => img.Width).Max();
+            maxHeight = images.Select(img => img.Height).Max();
+        }
+
+        private static void FindMaxWidthAndHeight(IEnumerable<AnyBitmap> images, out int maxWidth, out int maxHeight)
+        {
+            maxWidth = images.Select(img => img.Width).Max();
+            maxHeight = images.Select(img => img.Height).Max();
+        }
+
+        private Image<Rgba32> CloneAndResizeImageSharp(Image source, int maxWidth, int maxHeight)
+        {
+            Image<Rgba32> image = source.CloneAs<Rgba32>();
+            // Keep Image dimension the same
+            return ResizeWithPadToPng(image, maxWidth, maxHeight);
+        }
+
+        private static Image<Rgba32> LoadAndResizeImageSharp(byte[] bytes, int maxWidth, int maxHeight, int index)
+        {
+            try
+            {
+                using Image<Rgba32> result = SixLabors.ImageSharp.Image.Load<Rgba32>(bytes);
+                // Keep Image dimension the same
+                return ResizeWithPadToPng(result, maxWidth, maxHeight);
+            }
+            catch (Exception e)
+            {
+                throw new NotSupportedException($"Image index {index} cannot be loaded. File format doesn't supported.", e);
+            }
+        }
+
+        private static Image<Rgba32> ResizeWithPadToPng(Image<Rgba32> result, int maxWidth, int maxHeight)
+        {
+            result.Mutate(img => img.Resize(new ResizeOptions
+            {
+                Size = new Size(maxWidth, maxHeight),
+                Mode = SixLabors.ImageSharp.Processing.ResizeMode.BoxPad,
+                PadColor = SixLabors.ImageSharp.Color.Transparent
+            }));
+
+            using (var memoryStream = new MemoryStream())
+            {
+                result.Save(memoryStream, new SixLabors.ImageSharp.Formats.Png.PngEncoder
+                {
+                    TransparentColorMode = SixLabors.ImageSharp.Formats.Png.PngTransparentColorMode.Preserve
+                });
+                memoryStream.Seek(0, SeekOrigin.Begin);
+
+                return SixLabors.ImageSharp.Image.Load<Rgba32>(memoryStream);
             }
         }
 
