@@ -487,6 +487,15 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(45232, imgColor.B);
         }
 
+        [FactWithAutomaticDisplayName]
+        public void Should_Return_Argb()
+        {
+            System.Drawing.Color bmColor = System.Drawing.Color.Azure;
+            IronSoftware.Drawing.Color ironColor = IronSoftware.Drawing.Color.Azure;
+
+            Assert.Equal(bmColor.ToArgb(), ironColor.ToArgb());
+        }
+
 #if !NET472
         [FactWithAutomaticDisplayName]
         public void Cast_Maui_from_Color()

@@ -871,6 +871,15 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
+        /// Gets the 32-bit ARGB value of this Color structure.
+        /// </summary>
+        /// <returns>The 32-bit ARGB value of this Color.</returns>
+        public int ToArgb()
+        {
+            return (this.A << 24) | (this.R << 16) | (this.G << 8) | this.B;
+        }
+
+        /// <summary>
         /// Implicitly casts System.Drawing.Color objects to <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support System.Drawing.Color as well.</para>
         /// </summary>
