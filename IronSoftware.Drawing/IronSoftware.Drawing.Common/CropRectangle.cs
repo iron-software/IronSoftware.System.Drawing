@@ -65,7 +65,7 @@ namespace IronSoftware.Drawing
         /// <param name="dpi">DPI for conversion</param>
         /// <returns>A new crop rectangle which uses the desired units of measurement</returns>
         /// <exception cref="NotImplementedException">Conversion not implemented</exception>
-        public CropRectangle ConvertTo(MeasurementUnits units, int dpi)
+        public CropRectangle ConvertTo(MeasurementUnits units, int dpi = 96)
         {
             // no conversion
             if (units == this.Units)
