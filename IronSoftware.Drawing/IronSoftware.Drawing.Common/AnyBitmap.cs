@@ -521,6 +521,8 @@ namespace IronSoftware.Drawing
         /// <para>If not dimension will be scaling to the largest width and height.</para>
         /// <para>The image dimension still the same with original dimension with black background.</para>
         /// </summary>
+        /// <param name="images">Array of <see cref="AnyBitmap"/> to merge into Tiff image.</param>
+        /// <returns></returns>
         public static AnyBitmap CreateMultiFrameTiff(IEnumerable<AnyBitmap> images)
         {
             MemoryStream stream = CreateMultiFrameImage(images);
@@ -538,6 +540,8 @@ namespace IronSoftware.Drawing
         /// <para>If not dimension will be scaling to the largest width and height.</para>
         /// <para>The image dimension still the same with original dimension with background transparent.</para>
         /// </summary>
+        /// <param name="images">Array of <see cref="AnyBitmap"/> to merge into Gif image.</param>
+        /// <returns></returns>
         public static AnyBitmap CreateMultiFrameGif(IEnumerable<AnyBitmap> images)
         {
             MemoryStream stream = CreateMultiFrameImage(images, ImageFormat.Gif);
