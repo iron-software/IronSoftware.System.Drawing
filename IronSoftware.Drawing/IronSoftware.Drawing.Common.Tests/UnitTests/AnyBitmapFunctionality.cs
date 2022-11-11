@@ -460,6 +460,16 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             AssertImageAreEqual("last-expected.jpg", "last.png", true);
         }
 
+        [FactWithAutomaticDisplayName]
+        public void Should_Return_BitsPerPixel()
+        {
+            AnyBitmap bitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
+            Assert.Equal(24, bitmap.BitsPerPixel);
+
+            bitmap = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(GetRelativeFilePath("mountainclimbers.jpg"));
+            Assert.Equal(32, bitmap.BitsPerPixel);
+        }
+
 #if !NET472
         [FactWithAutomaticDisplayName]
         public void CastMaui_to_AnyBitmap()

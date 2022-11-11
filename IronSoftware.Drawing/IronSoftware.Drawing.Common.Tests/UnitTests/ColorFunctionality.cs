@@ -492,8 +492,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
             System.Drawing.Color bmColor = System.Drawing.Color.Azure;
             IronSoftware.Drawing.Color ironColor = IronSoftware.Drawing.Color.Azure;
+            IronSoftware.Drawing.Color fromImageSharp = SixLabors.ImageSharp.Color.Azure;
+            IronSoftware.Drawing.Color rgba32 = new SixLabors.ImageSharp.PixelFormats.Rgba32(bmColor.R, bmColor.G, bmColor.B, bmColor.A);
+            IronSoftware.Drawing.Color rgb24 = new SixLabors.ImageSharp.PixelFormats.Rgb24(bmColor.R, bmColor.G, bmColor.B);
 
             Assert.Equal(bmColor.ToArgb(), ironColor.ToArgb());
+            Assert.Equal(bmColor.ToArgb(), fromImageSharp.ToArgb());
+            Assert.Equal(bmColor.ToArgb(), rgba32.ToArgb());
+            Assert.Equal(bmColor.ToArgb(), rgb24.ToArgb());
         }
 
 #if !NET472
