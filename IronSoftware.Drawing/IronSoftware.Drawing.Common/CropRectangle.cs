@@ -243,19 +243,4 @@ namespace IronSoftware.Drawing
 
         #endregion
     }
-
-    /// <summary>
-    /// Units of measurement
-    /// </summary>
-    public enum MeasurementUnits : int
-    {
-        /// <summary>
-        /// Pixels
-        /// </summary>
-        Pixels = 0,
-        /// <summary>
-        /// Millimeters
-        /// </summary>
-        Millimeters = 1
-    }
 }
