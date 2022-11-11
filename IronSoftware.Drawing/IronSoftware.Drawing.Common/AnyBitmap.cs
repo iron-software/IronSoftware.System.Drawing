@@ -521,11 +521,49 @@ namespace IronSoftware.Drawing
         /// <para>If not dimension will be scaling to the largest width and height.</para>
         /// <para>The image dimension still the same with original dimension with black background.</para>
         /// </summary>
+        /// <param name="imagePaths">Array of fully qualified file path to merge into Tiff image.</param>
+        /// <returns></returns>
+        public static AnyBitmap CreateMultiFrameTiff(IEnumerable<string> imagePaths)
+        {
+            MemoryStream stream = CreateMultiFrameImage(CreateAnyBitmaps(imagePaths));
+
+            if (stream == null)
+                throw new NotSupportedException($"Image cannot be loaded. File format doesn't supported.");
+
+            stream.Seek(0, SeekOrigin.Begin);
+            return AnyBitmap.FromStream(stream);
+        }
+
+        /// <summary>
+        /// Creates a multi-frame TIFF image from multiple AnyBitmaps.
+        /// <para>All images should have the same dimension.</para>
+        /// <para>If not dimension will be scaling to the largest width and height.</para>
+        /// <para>The image dimension still the same with original dimension with black background.</para>
+        /// </summary>
         /// <param name="images">Array of <see cref="AnyBitmap"/> to merge into Tiff image.</param>
         /// <returns></returns>
         public static AnyBitmap CreateMultiFrameTiff(IEnumerable<AnyBitmap> images)
         {
             MemoryStream stream = CreateMultiFrameImage(images);
+
+            if (stream == null)
+                throw new NotSupportedException($"Image cannot be loaded. File format doesn't supported.");
+
+            stream.Seek(0, SeekOrigin.Begin);
+            return AnyBitmap.FromStream(stream);
+        }
+
+        /// <summary>
+        /// Creates a multi-frame GIF image from multiple AnyBitmaps.
+        /// <para>All images should have the same dimension.</para>
+        /// <para>If not dimension will be scaling to the largest width and height.</para>
+        /// <para>The image dimension still the same with original dimension with background transparent.</para>
+        /// </summary>
+        /// <param name="imagePaths">Array of fully qualified file path to merge into Gif image.</param>
+        /// <returns></returns>
+        public static AnyBitmap CreateMultiFrameGif(IEnumerable<string> imagePaths)
+        {
+            MemoryStream stream = CreateMultiFrameImage(CreateAnyBitmaps(imagePaths), ImageFormat.Gif);
 
             if (stream == null)
                 throw new NotSupportedException($"Image cannot be loaded. File format doesn't supported.");
@@ -1511,6 +1549,16 @@ namespace IronSoftware.Drawing
             {
                 throw new Exception("Error while reading TIFF image format.", e);
             }
+        }
+
+        private static List<AnyBitmap> CreateAnyBitmaps(IEnumerable<string> imagePaths)
+        {
+            List<AnyBitmap> bitmaps = new List<AnyBitmap>();
+            foreach (string imagePath in imagePaths)
+            {
+                bitmaps.Add(AnyBitmap.FromFile(imagePath));
+            }
+            return bitmaps;
         }
 
         private static MemoryStream CreateMultiFrameImage(IEnumerable<AnyBitmap> images, ImageFormat imageFormat = ImageFormat.Tiff)

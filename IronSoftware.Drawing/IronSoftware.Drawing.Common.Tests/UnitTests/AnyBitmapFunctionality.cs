@@ -428,6 +428,24 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void Create_Multi_page_Tiff_Paths()
+        {
+            List<string> imagePaths = new List<string>()
+            {
+                GetRelativeFilePath("first-animated-qr.png"),
+                GetRelativeFilePath("last-animated-qr.png")
+            };
+
+            AnyBitmap anyBitmap = AnyBitmap.CreateMultiFrameTiff(imagePaths);
+            Assert.Equal(2, anyBitmap.FrameCount);
+            Assert.Equal(2, anyBitmap.GetAllFrames.Count());
+            anyBitmap.GetAllFrames.ElementAt(0).SaveAs("first.png");
+            anyBitmap.GetAllFrames.ElementAt(1).SaveAs("last.png");
+            AssertImageAreEqual(GetRelativeFilePath("first-animated-qr.png"), "first.png");
+            AssertImageAreEqual(GetRelativeFilePath("last-animated-qr.png"), "last.png");
+        }
+
+        [FactWithAutomaticDisplayName]
         public void Create_Multi_page_Gif()
         {
             List<AnyBitmap> bitmaps = new List<AnyBitmap>()
@@ -437,6 +455,39 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             };
 
             AnyBitmap anyBitmap = AnyBitmap.CreateMultiFrameGif(bitmaps);
+            Assert.Equal(2, anyBitmap.FrameCount);
+            Assert.Equal(2, anyBitmap.GetAllFrames.Count());
+            anyBitmap.GetAllFrames.ElementAt(0).SaveAs("first.png");
+            Image first = Image.Load(GetRelativeFilePath("first-animated-qr.png"));
+            first.Mutate(img => img.Resize(new ResizeOptions
+            {
+                Size = new SixLabors.ImageSharp.Size(anyBitmap.GetAllFrames.ElementAt(0).Width, anyBitmap.GetAllFrames.ElementAt(0).Height),
+                Mode = SixLabors.ImageSharp.Processing.ResizeMode.BoxPad
+            }));
+            first.Save("first-expected.jpg");
+            AssertImageAreEqual("first-expected.jpg", "first.png", true);
+
+            anyBitmap.GetAllFrames.ElementAt(1).SaveAs("last.png");
+            Image last = Image.Load(GetRelativeFilePath("mountainclimbers.jpg"));
+            last.Mutate(img => img.Resize(new ResizeOptions
+            {
+                Size = new SixLabors.ImageSharp.Size(anyBitmap.GetAllFrames.ElementAt(1).Width, anyBitmap.GetAllFrames.ElementAt(1).Height),
+                Mode = SixLabors.ImageSharp.Processing.ResizeMode.BoxPad
+            }));
+            last.Save("last-expected.jpg");
+            AssertImageAreEqual("last-expected.jpg", "last.png", true);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Create_Multi_page_Gif_paths()
+        {
+            List<string> imagePaths = new List<string>()
+            {
+                GetRelativeFilePath("first-animated-qr.png"),
+                GetRelativeFilePath("mountainclimbers.jpg")
+            };
+
+            AnyBitmap anyBitmap = AnyBitmap.CreateMultiFrameGif(imagePaths);
             Assert.Equal(2, anyBitmap.FrameCount);
             Assert.Equal(2, anyBitmap.GetAllFrames.Count());
             anyBitmap.GetAllFrames.ElementAt(0).SaveAs("first.png");
