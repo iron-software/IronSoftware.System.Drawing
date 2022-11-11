@@ -68,6 +68,27 @@ bimtap.ExportStream(resultExport, AnyBitmap.ImageFormat.Jpeg, 100);
 System.Drawing.Bitmap image = new System.Drawing.Bitmap("FILE_PATH");
 IronSoftware.Drawing.AnyBitmap anyBitmap = image;
 anyBitmap.SaveAs("result-from-casting.png");
+
+
+// Create multiple page Tiff image by Array of AnyBitmap
+List<AnyBitmap> bitmaps = new List<AnyBitmap>()
+{
+    AnyBitmap.FromFile("FILE_PATH_1"),
+	AnyBitmap.FromFile("FILE_PATH_2")
+};
+AnyBitmap anyBitmap = AnyBitmap.CreateMultiFrameTiff(bitmaps);
+
+// Create multiple page Tiff image by Array of fully qualified file path
+List<string> imagePaths = new List<string>()
+{
+    "FILE_PATH_1",
+	"FILE_PATH_2"
+};
+AnyBitmap anyBitmap = AnyBitmap.CreateMultiFrameTiff(imagePaths);
+
+// Manipulate image frames
+int frameCount = anyBitmap.FrameCount;
+List<AnyBitmap> frames = anyBitmap.GetAllFrames();
 ```
 ### `Color` Code Example
 ```csharp
@@ -88,7 +109,10 @@ ironColor.G;
 ironColor.B;
 ​
 // Luminance is a value from 0 (black) to 100 (white) where 50 is the perceptual "middle grey"
-IronDrawingColor.GetLuminance();
+ironColor.GetLuminance();
+
+// Gets the 32-bit ARGB value of this Color structure.
+ironColor.ToArgb()
 ```
 ### `CropRectangle` Code Example
 ```csharp
@@ -96,6 +120,14 @@ using IronSoftware.Drawing;
 ​
 // Create a new CropRectangle object
 CropRectangle cropRectangle = new CropRectangle(5, 5, 50, 50);
+
+// Create a new CropRectangle object with MeasurementUnits
+CropRectangle mmRectangle = new CropRectangle(5, 5, 50, 50, MeasurementUnits.Millimeters);
+
+// Convert between MeasurementUnits
+CropRectangle pxRectangle = mmRectangle.ConvertTo(MeasurementUnits.Millimeters);
+// Or specify DPI
+CropRectangle pxRectangleWithDPI = mmRectangle.ConvertTo(MeasurementUnits.Millimeters, 200);
 ​
 // Casting between System.Drawing.Rectangle and IronSoftware.Drawing.CropRectangle
 System.Drawing.Rectangle rectangle = new System.Drawing.Rectangle(10, 10, 150, 150);
