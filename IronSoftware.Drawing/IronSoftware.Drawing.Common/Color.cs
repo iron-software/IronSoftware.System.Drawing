@@ -4,33 +4,42 @@ using System.Linq;
 
 namespace IronSoftware.Drawing
 {
+    // <summary>
+    /// <para>A universally compatible Color for .NET 7, .NET 6, .NET 5, and .NET Core. As well as compatiblity with Windows, NanoServer, IIS, macOS, Mobile, Xamarin, iOS, Android, Google Compute, Azure, AWS, and Linux.</para>
+    /// <para>Works nicely with popular Image Color such as <see cref="System.Drawing.Color"/>, <see cref="SkiaSharp.SKColor"/>, <see cref="SixLabors.ImageSharp.Color"/>, <see cref="Microsoft.Maui.Graphics.Color"/>.</para>
+    /// <para>Implicit casting means that using this class to input and output Color from public APIs gives full compatibility to all Color-types fully supported by Microsoft.</para>
+    /// </summary>
     public partial class Color
     {
 
         /// <summary>
-        /// Gets the alpha component value of this System.Drawing.Color structure.
+        /// Gets the alpha component value of this IronSoftware.Drawing.Color structure.
         /// </summary>
         /// <return>The alpha component value of this IronSoftware.Drawing.Color.</return>
         public byte A { get; internal set; }
 
         /// <summary>
-        /// Gets the green component value of this System.Drawing.Color structure.
+        /// Gets the green component value of this IronSoftware.Drawing.Color structure.
         /// </summary>
         /// <return>The green component value of this IronSoftware.Drawing.Color.</return>
         public byte G { get; internal set; }
 
         /// <summary>
-        /// Gets the blue component value of this System.Drawing.Color structure.
+        /// Gets the blue component value of this IronSoftware.Drawing.Color structure.
         /// </summary>
         /// <return>The blue component value of this IronSoftware.Drawing.Color.</return>
         public byte B { get; internal set; }
 
         /// <summary>
-        /// Gets the red component value of this System.Drawing.Color structure.
+        /// Gets the red component value of this IronSoftware.Drawing.Color structure.
         /// </summary>
         /// <return>The red component value of this IronSoftware.Drawing.Color.</return>
         public byte R { get; internal set; }
 
+        /// <summary>
+        /// Construct a new Color.
+        /// </summary>
+        /// <param name="colorcode">The hexadecimal representation of the combined color components arranged in rgb, argb, rrggbb, or aarrggbb format to match web syntax.</param>
         public Color(string colorcode)
         {
             string trimmedColorcode = colorcode.TrimStart('#');
@@ -62,6 +71,13 @@ namespace IronSoftware.Drawing
             }
         }
 
+        /// <summary>
+        /// Construct a new Color.
+        /// </summary>
+        /// <param name="alpha">The alpha component. Valid values are 0 through 255.</param>
+        /// <param name="red">The red component. Valid values are 0 through 255.</param>
+        /// <param name="green">The green component. Valid values are 0 through 255.</param>
+        /// <param name="blue">The blue component. Valid values are 0 through 255.</param>
         public Color(int alpha, int red, int green, int blue)
         {
             this.A = (byte)alpha;
@@ -70,6 +86,12 @@ namespace IronSoftware.Drawing
             this.B = (byte)blue;
         }
 
+        /// <summary>
+        /// Construct a new Color.
+        /// </summary>
+        /// <param name="red">The red component. Valid values are 0 through 255.</param>
+        /// <param name="green">The green component. Valid values are 0 through 255.</param>
+        /// <param name="blue">The blue component. Valid values are 0 through 255.</param>
         public Color(int red, int green, int blue)
         {
             this.A = 255;
@@ -795,9 +817,9 @@ namespace IronSoftware.Drawing
         /// this method allows a 32-bit value to be passed for each color component, the
         /// value of each component is limited to 8 bits.
         /// </summary>
-        /// <param name="red">The red component value for the new System.Drawing.Color. Valid values are 0 through 255.</param>
-        /// <param name="green">The green component value for the new System.Drawing.Color. Valid values are 0 through 255.</param>
-        /// <param name="blue">The blue component value for the new System.Drawing.Color. Valid values are 0 through 255.</param>
+        /// <param name="red">The red component value for the new IronSoftware.Drawing.Color. Valid values are 0 through 255.</param>
+        /// <param name="green">The green component value for the new IronSoftware.Drawing.Color. Valid values are 0 through 255.</param>
+        /// <param name="blue">The blue component value for the new IronSoftware.Drawing.Color. Valid values are 0 through 255.</param>
         /// <returns></returns>
         public static Color FromArgb(int red, int green, int blue)
         {
@@ -809,10 +831,10 @@ namespace IronSoftware.Drawing
         /// (alpha, red, green, and blue). Although this method allows a 32-bit value to be passed for each color component,
         /// the value of each component is limited to 8 bits.
         /// </summary>
-        /// <param name="alpha">The alpha value for the new System.Drawing.Color. Valid values are 0 through 255.</param>
-        /// <param name="red">The red component value for the new System.Drawing.Color. Valid values are 0 through 255.</param>
-        /// <param name="green">The green component value for the new System.Drawing.Color. Valid values are 0 through 255.</param>
-        /// <param name="blue">The blue component value for the new System.Drawing.Color. Valid values are 0 through 255.</param>
+        /// <param name="alpha">The alpha value for the new IronSoftware.Drawing.Color. Valid values are 0 through 255.</param>
+        /// <param name="red">The red component value for the new IronSoftware.Drawing.Color. Valid values are 0 through 255.</param>
+        /// <param name="green">The green component value for the new IronSoftware.Drawing.Color. Valid values are 0 through 255.</param>
+        /// <param name="blue">The blue component value for the new IronSoftware.Drawing.Color. Valid values are 0 through 255.</param>
         /// <returns></returns>
         public static Color FromArgb(int alpha, int red, int green, int blue)
         {
@@ -846,6 +868,15 @@ namespace IronSoftware.Drawing
         public double GetLuminance()
         {
             return Math.Round(Percentage(255, CalculateLuminance()), MidpointRounding.AwayFromZero);
+        }
+
+        /// <summary>
+        /// Gets the 32-bit ARGB value of this Color structure.
+        /// </summary>
+        /// <returns>The 32-bit ARGB value of this Color.</returns>
+        public int ToArgb()
+        {
+            return (this.A << 24) | (this.R << 16) | (this.G << 8) | this.B;
         }
 
         /// <summary>
