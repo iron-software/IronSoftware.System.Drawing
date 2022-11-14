@@ -5,9 +5,9 @@ using System.Linq;
 namespace IronSoftware.Drawing
 {
     // <summary>
-    /// <para>A universally compatible Color for .NET 7 and .NET 6, .NET 5, .NET Core. Windows, NanoServer, IIS,  macOS, Mobile, Xamarin, iOS, Android, Google Compute, Azure, AWS and Linux compatibility.</para>
+    /// <para>A universally compatible Color for .NET 7, .NET 6, .NET 5, and .NET Core. As well as compatiblity with Windows, NanoServer, IIS, macOS, Mobile, Xamarin, iOS, Android, Google Compute, Azure, AWS, and Linux.</para>
     /// <para>Works nicely with popular Image Color such as <see cref="System.Drawing.Color"/>, <see cref="SkiaSharp.SKColor"/>, <see cref="SixLabors.ImageSharp.Color"/>, <see cref="Microsoft.Maui.Graphics.Color"/>.</para>
-    /// <para>Implicit casting means that using this class to input and output Color from public API's gives full compatibility to all Color type fully supported by Microsoft.</para>
+    /// <para>Implicit casting means that using this class to input and output Color from public APIs gives full compatibility to all Color-types fully supported by Microsoft.</para>
     /// </summary>
     public partial class Color
     {
@@ -37,7 +37,7 @@ namespace IronSoftware.Drawing
         public byte R { get; internal set; }
 
         /// <summary>
-        /// Construct a new CropRectangle.
+        /// Construct a new Color.
         /// </summary>
         /// <param name="colorcode">The hexadecimal representation of the combined color components arranged in rgb, argb, rrggbb, or aarrggbb format to match web syntax.</param>
         public Color(string colorcode)

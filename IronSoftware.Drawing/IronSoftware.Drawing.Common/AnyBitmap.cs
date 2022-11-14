@@ -1,6 +1,5 @@
 ﻿using BitMiracle.LibTiff.Classic;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Tiff;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;
@@ -13,7 +12,7 @@ using System.Reflection;
 namespace IronSoftware.Drawing
 {
     /// <summary>
-    /// <para>A universally compatible Bitmap format for .NET 7 and .NET 6, .NET 5, .NET Core. Windows, NanoServer, IIS,  macOS, Mobile, Xamarin, iOS, Android, Google Compute, Azure, AWS and Linux compatibility.</para>
+    /// <para>A universally compatible Bitmap format for .NET 7, .NET 6, .NET 5, and .NET Core. As well as compatiblity with Windows, NanoServer, IIS, macOS, Mobile, Xamarin, iOS, Android, Google Compute, Azure, AWS, and Linux.</para>
     /// <para>Works nicely with popular Image and Bitmap formats such as System.Drawing.Bitmap, SkiaSharp, SixLabors.ImageSharp, Microsoft.Maui.Graphics.</para>
     /// <para>Implicit casting means that using this class to input and output Bitmap and image types from public API's gives full compatibility to all image type fully supported by Microsoft.</para>
     /// <para>Unlike System.Drawing.Bitmap this bitmap object is self-memory-managing and does not need to be explicitly 'used' or 'disposed'.</para>
@@ -103,7 +102,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Creates an exact duplicate <see cref="AnyBitmap"/>
+        /// Creates an exact duplicate <see cref="AnyBitmap"/> of the cropped area.
         /// </summary>
         /// <param name="Rectangle">Defines the portion of this <see cref="AnyBitmap"/> to copy.</param>
         /// <returns></returns>
@@ -528,7 +527,7 @@ namespace IronSoftware.Drawing
             MemoryStream stream = CreateMultiFrameImage(CreateAnyBitmaps(imagePaths));
 
             if (stream == null)
-                throw new NotSupportedException($"Image cannot be loaded. File format doesn't supported.");
+                throw new NotSupportedException("Image could not be loaded. File format is not supported.");
 
             stream.Seek(0, SeekOrigin.Begin);
             return AnyBitmap.FromStream(stream);
@@ -546,8 +545,8 @@ namespace IronSoftware.Drawing
         {
             MemoryStream stream = CreateMultiFrameImage(images);
 
-            if (stream == null)
-                throw new NotSupportedException($"Image cannot be loaded. File format doesn't supported.");
+            if (stream == null) 
+                throw new NotSupportedException("Image could not be loaded. File format is not supported.");
 
             stream.Seek(0, SeekOrigin.Begin);
             return AnyBitmap.FromStream(stream);
@@ -566,7 +565,7 @@ namespace IronSoftware.Drawing
             MemoryStream stream = CreateMultiFrameImage(CreateAnyBitmaps(imagePaths), ImageFormat.Gif);
 
             if (stream == null)
-                throw new NotSupportedException($"Image cannot be loaded. File format doesn't supported.");
+                throw new NotSupportedException("Image could not be loaded. File format is not supported.");
 
             stream.Seek(0, SeekOrigin.Begin);
             return AnyBitmap.FromStream(stream);
@@ -585,7 +584,7 @@ namespace IronSoftware.Drawing
             MemoryStream stream = CreateMultiFrameImage(images, ImageFormat.Gif);
 
             if (stream == null)
-                throw new NotSupportedException($"Image cannot be loaded. File format doesn't supported.");
+                throw new NotSupportedException("Image could not be loaded. File format is not supported.");
 
             stream.Seek(0, SeekOrigin.Begin);
             return AnyBitmap.FromStream(stream);
@@ -1098,7 +1097,7 @@ namespace IronSoftware.Drawing
                 }
                 catch
                 {
-                    throw new NotSupportedException("Image cannot be loaded. File format doesn't supported.", e);
+                    throw new NotSupportedException("Image could not be loaded. File format is not supported.", e);
                 }
             }
             catch (Exception e)
@@ -1127,7 +1126,7 @@ namespace IronSoftware.Drawing
                 }
                 catch
                 {
-                    throw new NotSupportedException("Image cannot be loaded. File format doesn't supported.", e);
+                    throw new NotSupportedException("Image could not be loaded. File format is not supported.", e);
                 }
             }
             catch (Exception e)

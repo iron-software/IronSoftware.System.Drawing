@@ -70,19 +70,19 @@ IronSoftware.Drawing.AnyBitmap anyBitmap = image;
 anyBitmap.SaveAs("result-from-casting.png");
 
 
-// Create multiple page Tiff image by Array of AnyBitmap
+// Creates a Multi-page Tiff-style AnyBitmap from an Image array
 List<AnyBitmap> bitmaps = new List<AnyBitmap>()
 {
     AnyBitmap.FromFile("FILE_PATH_1"),
-	AnyBitmap.FromFile("FILE_PATH_2")
+    AnyBitmap.FromFile("FILE_PATH_2")
 };
 AnyBitmap anyBitmap = AnyBitmap.CreateMultiFrameTiff(bitmaps);
 
-// Create multiple page Tiff image by Array of fully qualified file path
+// Creates a Multi-page Tiff-style AnyBitmap from a fully qualified file path array
 List<string> imagePaths = new List<string>()
 {
     "FILE_PATH_1",
-	"FILE_PATH_2"
+    "FILE_PATH_2"
 };
 AnyBitmap anyBitmap = AnyBitmap.CreateMultiFrameTiff(imagePaths);
 

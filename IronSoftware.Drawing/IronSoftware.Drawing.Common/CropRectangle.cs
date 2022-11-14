@@ -3,7 +3,7 @@ using System;
 namespace IronSoftware.Drawing
 {
     // <summary>
-    /// <para>A universally compatible Rectangle for .NET 7 and .NET 6, .NET 5, .NET Core. Windows, NanoServer, IIS,  macOS, Mobile, Xamarin, iOS, Android, Google Compute, Azure, AWS and Linux compatibility.</para>
+    /// <para>A universally compatible Rectangle for .NET 7, .NET 6, .NET 5, and .NET Core. As well as compatiblity with Windows, NanoServer, IIS, macOS, Mobile, Xamarin, iOS, Android, Google Compute, Azure, AWS, and Linux.</para>
     /// <para>Works nicely with popular Image Rectangle such as System.Drawing.Rectangle, SkiaSharp.SKRect, SixLabors.ImageSharp.Rectangle, Microsoft.Maui.Graphics.Rect.</para>
     /// <para>Implicit casting means that using this class to input and output Rectangle from public API's gives full compatibility to all Rectangle type fully supported by Microsoft.</para>
     /// </summary>
@@ -22,7 +22,7 @@ namespace IronSoftware.Drawing
         /// <param name="y">The y-coordinate of the upper-left corner of this Rectangle</param>
         /// <param name="width">The width of this Rectangle</param>
         /// <param name="height">The height of this Rectangle</param>
-        /// <param name="units">The unit of measurement of this Rectangle</param>
+        /// <param name="units">The measurement unit of this Rectangle</param>
         /// <seealso cref="CropRectangle"/>
         public CropRectangle(int x, int y, int width, int height, MeasurementUnits units = MeasurementUnits.Pixels)
         {
@@ -50,7 +50,7 @@ namespace IronSoftware.Drawing
         /// </summary>
         public int Height { get; set; }
         /// <summary>
-        /// Unit of measurement. The default is Pixels
+        /// The measurement unit of this Rectangle. The default is Pixels
         /// </summary>
         public MeasurementUnits Units
         {
@@ -62,7 +62,7 @@ namespace IronSoftware.Drawing
         /// Convert this crop rectangle to the specified units of measurement using the specified DPI
         /// </summary>
         /// <param name="units">Unit of measurement</param>
-        /// <param name="dpi">DPI for conversion</param>
+        /// <param name="dpi">DPI (Dots per inch) for conversion</param>
         /// <returns>A new crop rectangle which uses the desired units of measurement</returns>
         /// <exception cref="NotImplementedException">Conversion not implemented</exception>
         public CropRectangle ConvertTo(MeasurementUnits units, int dpi = 96)
@@ -245,7 +245,7 @@ namespace IronSoftware.Drawing
     }
 
     /// <summary>
-    /// Units of measurement
+    /// A defined unit of measurement
     /// </summary>
     public enum MeasurementUnits : int
     {
