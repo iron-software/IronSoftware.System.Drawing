@@ -246,6 +246,17 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(215, rect.Bottom);
         }
 
+        [FactWithAutomaticDisplayName]
+        public void ConvertMeasurement()
+        {
+            CropRectangle pxCropRect = new CropRectangle(15, 25, 150, 175);
+            CropRectangle mmCropRect = pxCropRect.ConvertTo(MeasurementUnits.Millimeters, 96);
+            Assert.Equal(3, mmCropRect.X);
+            Assert.Equal(6, mmCropRect.Y);
+            Assert.Equal(39, mmCropRect.Width);
+            Assert.Equal(46, mmCropRect.Height);
+        }
+
 #if !NET472
 
         [FactWithAutomaticDisplayName]
