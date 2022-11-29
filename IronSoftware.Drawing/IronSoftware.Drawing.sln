@@ -15,6 +15,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\CI\azure-pipelines-windows.yml = ..\CI\azure-pipelines-windows.yml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "external", "external", "{DC1B5BE0-2310-4996-9F82-3C3C9A7DDE2A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SVGSharpie", "..\external\SVGSharpie\SVGSharpie.Svg\SVGSharpie.csproj", "{B696599A-6C90-4778-84B3-8E6DA88A7B12}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,9 +33,16 @@ Global
 		{B9418412-12AE-48D8-8B73-14DEB4FF47AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9418412-12AE-48D8-8B73-14DEB4FF47AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9418412-12AE-48D8-8B73-14DEB4FF47AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B696599A-6C90-4778-84B3-8E6DA88A7B12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B696599A-6C90-4778-84B3-8E6DA88A7B12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B696599A-6C90-4778-84B3-8E6DA88A7B12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B696599A-6C90-4778-84B3-8E6DA88A7B12}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B696599A-6C90-4778-84B3-8E6DA88A7B12} = {DC1B5BE0-2310-4996-9F82-3C3C9A7DDE2A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4D16773E-23AA-41B3-BA19-607F88328D7B}

@@ -1,4 +1,5 @@
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
@@ -104,6 +105,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             AnyBitmap bitmap = AnyBitmap.FromFile(imagePath);
             bitmap.SaveAs("result.bmp");
             AssertImageAreEqual(imagePath, "result.bmp");
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Load_SVG_ImageSharp()
+        {
+            string imagePath = GetRelativeFilePath("simple-text.svg");
+            using Image<Rgba32> image = SvgImageRenderer.LoadFromString<Rgba32>(File.ReadAllText(imagePath));
+            image.Save("svg-image.png");
         }
 
         [FactWithAutomaticDisplayName]

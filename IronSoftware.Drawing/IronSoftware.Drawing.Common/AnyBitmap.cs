@@ -1164,10 +1164,27 @@ namespace IronSoftware.Drawing
             try
             {
                 return new AnyBitmap(DecodeSVG(File).Encode(SkiaSharp.SKEncodedImageFormat.Png, 100).ToArray());
+                // return new AnyBitmap(DecodeSVGToImageSharp(File);
             }
             catch (DllNotFoundException e)
             {
                 throw new DllNotFoundException("Please install SkiaSharp from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while reading SVG image format.", e);
+            }
+        }
+
+        private static Image<Rgba32> DecodeSVGToImageSharp(string svgFullPath)
+        {
+            try
+            {
+                return SvgImageRenderer.LoadFromString<Rgba32>(File.ReadAllText(svgFullPath));
+            }
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException("Please install ImageSharp.Image from NuGet.", e);
             }
             catch (Exception e)
             {
