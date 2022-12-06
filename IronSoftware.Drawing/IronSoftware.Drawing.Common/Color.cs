@@ -820,14 +820,17 @@ namespace IronSoftware.Drawing
         /// <param name="red">The red component value for the new IronSoftware.Drawing.Color. Valid values are 0 through 255.</param>
         /// <param name="green">The green component value for the new IronSoftware.Drawing.Color. Valid values are 0 through 255.</param>
         /// <param name="blue">The blue component value for the new IronSoftware.Drawing.Color. Valid values are 0 through 255.</param>
-        /// <returns></returns>
+        /// <returns><see cref="Color"/></returns>
+        /// <seealso cref="FromArgb(int)"/>
+        /// <seealso cref="FromArgb(int, Color)"/>
+        /// <seealso cref="FromArgb(int, int, int, int)"/>
         public static Color FromArgb(int red, int green, int blue)
         {
             return new Color(red, green, blue);
         }
 
         /// <summary>
-        /// Creates a IronSoftware.Drawing.Color structure from the specified 8-bit color values
+        /// Creates a <see cref="Color"/> structure from the specified 8-bit color values
         /// (alpha, red, green, and blue). Although this method allows a 32-bit value to be passed for each color component,
         /// the value of each component is limited to 8 bits.
         /// </summary>
@@ -835,17 +838,38 @@ namespace IronSoftware.Drawing
         /// <param name="red">The red component value for the new IronSoftware.Drawing.Color. Valid values are 0 through 255.</param>
         /// <param name="green">The green component value for the new IronSoftware.Drawing.Color. Valid values are 0 through 255.</param>
         /// <param name="blue">The blue component value for the new IronSoftware.Drawing.Color. Valid values are 0 through 255.</param>
-        /// <returns></returns>
+        /// <returns><see cref="Color"/></returns>
+        /// <seealso cref="FromArgb(int)"/>
+        /// <seealso cref="FromArgb(int, Color)"/>
+        /// <seealso cref="FromArgb(int, int, int)"/>
         public static Color FromArgb(int alpha, int red, int green, int blue)
         {
             return new Color(alpha, red, green, blue);
         }
 
         /// <summary>
+        /// Creates a <see cref="Color"/> structure from the specified <see cref="Color"/> structure, but with the new specified alpha value. 
+        /// <para>Although this method allows a 32-bit value to be passed for the alpha value, the value is limited to 8 bits.</para>
+        /// </summary>
+        /// <param name="alpha">The alpha value for the new <see cref="Color"/>. Valid values are 0 through 255.</param>
+        /// <param name="baseColor">The <see cref="Color"/> from which to create the new <see cref="Color"/>.</param>
+        /// <returns><see cref="Color"/></returns>
+        /// <seealso cref="FromArgb(int)"/>
+        /// <seealso cref="FromArgb(int, int, int)"/>
+        /// <seealso cref="FromArgb(int, int, int, int)"/>
+        public static Color FromArgb(int alpha, Color baseColor)
+        {
+            return new Color(alpha, baseColor.R, baseColor.G, baseColor.B);
+        }
+
+        /// <summary>
         /// Creates a IronSoftware.Drawing.Color structure from a 32-bit ARGB value.
         /// </summary>
         /// <param name="argb">A value specifying the 32-bit ARGB value.</param>
-        /// <returns>IronSoftware.Drawing.Color</returns>
+        /// <returns><see cref="Color"/></returns>
+        /// <seealso cref="FromArgb(int, Color)"/>
+        /// <seealso cref="FromArgb(int, int, int)"/>
+        /// <seealso cref="FromArgb(int, int, int, int)"/>
         public static Color FromArgb(int argb)
         {
             return new Color(argb.ToString("X"));

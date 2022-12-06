@@ -94,6 +94,12 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(244, color.G);
             Assert.Equal(208, color.B);
             Assert.Equal("#6440F4D0", color.ToString());
+
+            Color color1 = Color.FromArgb(50, color);
+            Assert.Equal(50, color1.A);
+            Assert.Equal(64, color1.R);
+            Assert.Equal(244, color1.G);
+            Assert.Equal(208, color1.B);
         }
 
         [FactWithAutomaticDisplayName]
