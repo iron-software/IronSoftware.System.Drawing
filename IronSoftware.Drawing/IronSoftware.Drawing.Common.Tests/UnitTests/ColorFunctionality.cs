@@ -1,3 +1,4 @@
+using FluentAssertions;
 using System;
 using Xunit;
 using Xunit.Abstractions;
@@ -506,6 +507,55 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(bmColor.ToArgb(), fromImageSharp.ToArgb());
             Assert.Equal(bmColor.ToArgb(), rgba32.ToArgb());
             Assert.Equal(bmColor.ToArgb(), rgb24.ToArgb());
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Should_Create_FromName()
+        {
+            Color color = Color.FromName("red");
+            color.R.Should().Be(255);
+            color.G.Should().Be(0);
+            color.B.Should().Be(0);
+            
+            color = Color.FromName("green");
+            color.R.Should().Be(0);
+            color.G.Should().Be(128);
+            color.B.Should().Be(0);
+            
+            color = Color.FromName("blue");
+            color.R.Should().Be(0);
+            color.G.Should().Be(0);
+            color.B.Should().Be(255);
+            
+            color = Color.FromName("yellow");
+            color.R.Should().Be(255);
+            color.G.Should().Be(255);
+            color.B.Should().Be(0);
+
+            color = Color.FromName("pink");
+            color.R.Should().Be(255);
+            color.G.Should().Be(192);
+            color.B.Should().Be(203);
+
+            color = Color.FromName("brown");
+            color.R.Should().Be(165);
+            color.G.Should().Be(42);
+            color.B.Should().Be(42);
+
+            color = Color.FromName("gray");
+            color.R.Should().Be(128);
+            color.G.Should().Be(128);
+            color.B.Should().Be(128);
+
+            color = Color.FromName("black");
+            color.R.Should().Be(0);
+            color.G.Should().Be(0);
+            color.B.Should().Be(0);
+            
+            color = Color.FromName("orange");
+            color.R.Should().Be(255);
+            color.G.Should().Be(165);
+            color.B.Should().Be(0);
         }
 
 #if !NET472
