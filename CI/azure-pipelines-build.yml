@@ -31,8 +31,7 @@ stages:
         displayName: 'Install .NET7.0 sdk'
         inputs:
           packageType: 'sdk'
-          version: '7.0.x'
-          includePreviewVersions: true
+          version: '7.x'
       # Build
       - task: DotNetCoreCLI@2
         displayName: Restore Solution NuGet Packages
@@ -90,8 +89,8 @@ stages:
   displayName: Execute Windows Tests
   dependsOn: BuildDrawingLibraries
   jobs:
-  # Windows .NET Core Tests
-  - job: WindowsNetCoreTests
+  # Windows .NET Core x64 Tests
+  - job: WindowsNetCoreX64Tests
     steps:
     - checkout: none
     - task: DownloadPipelineArtifact@2
@@ -112,6 +111,20 @@ stages:
         arguments: '-s IronDrawingTests/tests.runsettings --framework "netcoreapp3.1" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\netcoreapp3.1\testhost.log"'
         testRunTitle: 'Windows (.NET Core) Tests'
         publishTestResults: true
+  # Windows .NET Core x86 Tests
+  - job: WindowsNetCoreX86Tests
+    steps:
+    - checkout: none
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'IronDrawingTests'
+        targetPath: 'IronDrawingTests'
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'IronDrawingDataTests'
+        targetPath: '$(Agent.BuildDirectory)/Data'
     - task: DotNetCoreCLI@2
       displayName: Execute Windows (.NET Core x86) Tests
       inputs:
@@ -134,11 +147,6 @@ stages:
         buildType: 'current'
         artifactName: 'IronDrawingDataTests'
         targetPath: '$(Agent.BuildDirectory)/Data'
-    - task: UseDotNet@2
-      displayName: 'Use .NET Core sdk'
-      inputs:
-        packageType: 'sdk'
-        version: '6.0.x'
     - task: DotNetCoreCLI@2
       displayName: Execute Windows (.NET 6.0 x64) Tests
       inputs:
@@ -161,12 +169,6 @@ stages:
         buildType: 'current'
         artifactName: 'IronDrawingDataTests'
         targetPath: '$(Agent.BuildDirectory)/Data'
-    - task: UseDotNet@2
-      displayName: 'Use .NET Core sdk'
-      inputs:
-        packageType: 'sdk'
-        version: '7.0.x'
-        includePreviewVersions: true
     - task: DotNetCoreCLI@2
       displayName: Execute Windows (.NET 7.0 x64) Tests
       inputs:
@@ -216,10 +218,6 @@ stages:
         buildType: 'current'
         artifactName: 'IronDrawingDataTests'
         targetPath: '$(Agent.BuildDirectory)/Data'
-    - task: UseDotNet@2
-      inputs:
-        version: '6.x'
-        packageType: 'sdk'
     - task: DotNetCoreCLI@2
       displayName: Execute Linux (.NET 6.0) Tests
       inputs:
@@ -241,11 +239,6 @@ stages:
         buildType: 'current'
         artifactName: 'IronDrawingDataTests'
         targetPath: '$(Agent.BuildDirectory)/Data'
-    - task: UseDotNet@2
-      inputs:
-        version: '7.x'
-        packageType: 'sdk'
-        includePreviewVersions: true
     - task: DotNetCoreCLI@2
       displayName: Execute Linux (.NET 7.0) Tests
       inputs:
@@ -261,7 +254,7 @@ stages:
   displayName: Execute MacOs Tests
   dependsOn: BuildDrawingLibraries
   jobs:
-  - job: MacOsNetCoreTests
+  - job: MacOsTests
     steps:
     - checkout: none
     - bash: 'brew update && brew install mono-libgdiplus'
@@ -284,25 +277,6 @@ stages:
         arguments: '-s IronDrawingTests/tests.runsettings --framework "netcoreapp3.1" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\netcoreapp3.1\testhost.log"'
         testRunTitle: 'MacOs (.NET Core) Tests'
         publishTestResults: true
-  - job: MacOsNet60Tests
-    steps:
-    - checkout: none
-    - bash: 'brew update && brew install mono-libgdiplus'
-      displayName: Install GdiPlus
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: 'current'
-        artifactName: 'IronDrawingTests'
-        targetPath: 'IronDrawingTests'
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: 'current'
-        artifactName: 'IronDrawingDataTests'
-        targetPath: '$(Agent.BuildDirectory)/Data'
-    - task: UseDotNet@2
-      inputs:
-        packageType: 'sdk'
-        version: '6.0.x'
     - task: DotNetCoreCLI@2
       displayName: Execute MacOs (.NET 6.0) Tests
       inputs:
@@ -310,6 +284,14 @@ stages:
         projects: 'IronDrawingTests/net60/IronSoftware.Drawing.Common.Tests.dll'
         arguments: '-s IronDrawingTests/tests.runsettings --framework "net60" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net60\testhost.log"'
         testRunTitle: 'MacOs (.NET 6.0) Tests'
+        publishTestResults: true
+    - task: DotNetCoreCLI@2
+      displayName: Execute MacOs (.NET 7.0) Tests
+      inputs:
+        command: 'test'
+        projects: 'IronDrawingTests/net60/IronSoftware.Drawing.Common.Tests.dll'
+        arguments: '-s IronDrawingTests/tests.runsettings --framework "net70" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net70\testhost.log"'
+        testRunTitle: 'MacOs (.NET 7.0) Tests'
         publishTestResults: true
 ## Push NuGet Package
 - stage: DeployDrawingLibraries
