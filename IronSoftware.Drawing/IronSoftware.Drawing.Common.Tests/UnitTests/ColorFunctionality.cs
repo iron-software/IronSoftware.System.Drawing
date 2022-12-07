@@ -558,6 +558,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             color.B.Should().Be(0);
         }
 
+        [FactWithAutomaticDisplayName]
+        public void Should_Equal()
+        {
+            Color.Red.Equals(Color.FromName("red")).Should().BeTrue();
+            (Color.Yellow == Color.FromName("yellow")).Should().BeTrue();
+            (Color.Gray != Color.FromName("darkgray")).Should().BeTrue();
+        }
+
 #if !NET472
         [FactWithAutomaticDisplayName]
         public void Cast_Maui_from_Color()

@@ -1083,6 +1083,57 @@ namespace IronSoftware.Drawing
             return Microsoft.Maui.Graphics.Color.FromRgba(Color.R, Color.G, Color.B, Color.A);
         }
 
+        /// <summary>
+        /// Tests whether two specified <see cref="Color"/> structures are equivalent.
+        /// </summary>
+        /// <param name="left">The <see cref="Color"/> that is to the left of the equality operator.</param>
+        /// <param name="right">The <see cref="Color"/> that is to the right of the equality operator.</param>
+        /// <returns>true if the two <see cref="Color"/> structures are equal; otherwise, false.</returns>
+        public static bool operator ==(Color left, Color right)
+        {
+            return left.R == right.R &&
+                left.G == right.G &&
+                left.B == right.B &&
+                left.A == right.A;
+        }
+
+        /// <summary>
+        /// Tests whether two specified <see cref="Color"/> structures are different.
+        /// </summary>
+        /// <param name="left">The <see cref="Color"/> that is to the left of the inequality operator.</param>
+        /// <param name="right">The <see cref="Color"/> that is to the right of the inequality operator.</param>
+        /// <returns>true if the two <see cref="Color"/> structures are different; otherwise, false.</returns>
+        public static bool operator !=(Color left, Color right)
+        {
+            return left.R != right.R ||
+                left.G != right.G ||
+                left.B != right.B ||
+                left.A != right.A;
+        }
+
+        /// <summary>
+        /// Indicates whether the current object is equal to another object of the same type.
+        /// </summary>
+        /// <param name="other">An object to compare with this object.</param>
+        /// <returns>true if the current object is equal to other; otherwise, false.</returns>
+        public override bool Equals(object other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            if (!(other is Color))
+            {
+                return false;
+            }
+
+            return this.R == ((Color)other).R &&
+                   this.G == ((Color)other).G &&
+                   this.B == ((Color)other).B &&
+                   this.A== ((Color)other).A;
+        }
+
         #region Private Method
 
         private static InvalidOperationException NoConverterException(string color, Exception innerException)
