@@ -566,7 +566,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             (Color.Gray != Color.FromName("darkgray")).Should().BeTrue();
         }
 
-#if !NET472
+#if !NETFRAMEWORK
         [FactWithAutomaticDisplayName]
         public void Cast_Maui_from_Color()
         {

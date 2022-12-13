@@ -1,7 +1,5 @@
 ﻿using FluentAssertions;
-using System;
 using System.Runtime.InteropServices;
-using Xunit;
 using Xunit.Abstractions;
 
 namespace IronSoftware.Drawing.Common.Tests.UnitTests
@@ -297,7 +295,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             }
         }
 
-#if !NET472
+#if !NETFRAMEWORK
 
 
         [FactWithAutomaticDisplayName]

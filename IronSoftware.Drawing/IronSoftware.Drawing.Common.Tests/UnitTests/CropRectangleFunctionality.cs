@@ -257,7 +257,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(46, mmCropRect.Height);
         }
 
-#if !NET472
+#if !NETFRAMEWORK
 
         [FactWithAutomaticDisplayName]
         public void CastMaui_Rect_to_CropRectangle()
