@@ -110,7 +110,7 @@ namespace IronSoftware.Drawing
         {
             using SixLabors.ImageSharp.Image image = Image.Clone(img => img.Crop(Rectangle));
             using var memoryStream = new System.IO.MemoryStream();
-            image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder());
+            image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Png.PngEncoder());
             return new AnyBitmap(memoryStream.ToArray());
         }
 
@@ -601,7 +601,7 @@ namespace IronSoftware.Drawing
             {
                 using (var memoryStream = new System.IO.MemoryStream())
                 {
-                    Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder());
+                    Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Png.PngEncoder());
                     return new AnyBitmap(memoryStream.ToArray());
                 }
 
@@ -648,7 +648,7 @@ namespace IronSoftware.Drawing
             {
                 using (var memoryStream = new System.IO.MemoryStream())
                 {
-                    Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder());
+                    Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Png.PngEncoder());
                     return new AnyBitmap(memoryStream.ToArray());
                 }
             }
@@ -694,7 +694,7 @@ namespace IronSoftware.Drawing
             {
                 using (var memoryStream = new System.IO.MemoryStream())
                 {
-                    Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder());
+                    Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Png.PngEncoder());
                     return new AnyBitmap(memoryStream.ToArray());
                 }
             }
@@ -1118,13 +1118,13 @@ namespace IronSoftware.Drawing
             {
                 throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.", e);
             }
-            catch (NotSupportedException e)
+            catch (NotSupportedException)
             {
                 try
                 {
                     OpenTiffToImageSharp(System.IO.File.ReadAllBytes(File));
                 }
-                catch
+                catch (Exception e)
                 {
                     throw new NotSupportedException("Image could not be loaded. File format is not supported.", e);
                 }
@@ -1486,7 +1486,7 @@ namespace IronSoftware.Drawing
 
                         // Read the image into the memory buffer
                         int[] raster = new int[height * width];
-                        if (!tif.ReadRGBAImageOriented(width, height, raster, Orientation.TOPLEFT))
+                        if (!tif.ReadRGBAImage(width, height, raster))
                         {
                             throw new Exception("Could not read image");
                         }
@@ -1496,28 +1496,23 @@ namespace IronSoftware.Drawing
 
                         int stride = 4 * ((bmp.Width * bmp.PixelType.BitsPerPixel + 31) / 32);
 
-                        bmp.ProcessPixelRows(accessor =>
+                        byte[] bits = new byte[stride * bmp.Height];
+                        for (int y = 0; y < bmp.Height; y++)
                         {
-                            for (int y = 0; y < accessor.Height; y++)
+                            int rasterOffset = y * bmp.Width;
+                            int bitsOffset = (bmp.Height - y - 1) * stride;
+
+                            for (int x = 0; x < bmp.Width; x++)
                             {
-                                int rasterOffset = y * bmp.Width;
-                                int bitsOffset = (bmp.Height - y - 1) * stride;
-                                Span<Rgba32> pixelRow = accessor.GetRowSpan(y);
-
-                                for (int x = 0; x < pixelRow.Length; x++)
-                                {
-                                    ref Rgba32 pixel = ref pixelRow[x];
-
-                                    int rgba = raster[rasterOffset++];
-                                    pixel.R = (byte)((rgba >> 16) & 0xff);
-                                    pixel.G = (byte)((rgba >> 8) & 0xff);
-                                    pixel.B = (byte)(rgba & 0xff);
-                                    pixel.A = (byte)((rgba >> 24) & 0xff);
-                                }
+                                int rgba = raster[rasterOffset++];
+                                bits[bitsOffset++] = (byte)(rgba & 0xff); // R
+                                bits[bitsOffset++] = (byte)((rgba >> 8) & 0xff); // G
+                                bits[bitsOffset++] = (byte)((rgba >> 16) & 0xff); // B
+                                bits[bitsOffset++] = (byte)((rgba >> 24) & 0xff); // A
                             }
-                        });
+                        }
 
-                        images.Add(bmp.Clone());
+                        images.Add(Image.LoadPixelData<Rgba32>(bits, bmp.Width, bmp.Height));
                     }
                 }
 
