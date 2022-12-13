@@ -521,7 +521,21 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(32, bitmap.BitsPerPixel);
         }
 
-#if !NET472
+        [TheoryWithAutomaticDisplayName()]
+        [InlineData("mountainclimbers.jpg", "image/jpeg", AnyBitmap.ImageFormat.Jpeg)]
+        [InlineData("watermark.deployment.png", "image/png", AnyBitmap.ImageFormat.Png)]
+        [InlineData("animated_qr.gif", "image/gif", AnyBitmap.ImageFormat.Gif)]
+        [InlineData("Mona-Lisa-oil-wood-panel-Leonardo-da.webp", "image/webp", AnyBitmap.ImageFormat.Webp)]
+        [InlineData("multiframe.tiff", "image/tiff", AnyBitmap.ImageFormat.Tiff)]
+        public void Should_Return_MimeType(string fileName, string expectedMimeType, AnyBitmap.ImageFormat expectedImageFormat)
+        {
+            string imagePath = GetRelativeFilePath(fileName);
+            AnyBitmap bitmap = AnyBitmap.FromFile(imagePath);
+            Assert.Equal(expectedMimeType, bitmap.MimeType);
+            Assert.Equal(expectedImageFormat, bitmap.GetImageFormat());
+        }
+
+#if !NETFRAMEWORK
         [FactWithAutomaticDisplayName]
         public void CastMaui_to_AnyBitmap()
         {
