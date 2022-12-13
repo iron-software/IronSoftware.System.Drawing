@@ -197,6 +197,11 @@ stages:
         buildType: 'current'
         artifactName: 'IronDrawingDataTests'
         targetPath: '$(Agent.BuildDirectory)/Data'
+    - task: UseDotNet@2
+      displayName: 'Install .Netcoreapp3.1 Core sdk'
+      inputs:
+        packageType: 'sdk'
+        version: '3.x'
     - task: DotNetCoreCLI@2
       displayName: Execute Linux (.NET Core) Tests
       inputs:
