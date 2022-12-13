@@ -111,6 +111,13 @@ stages:
         arguments: '-s IronDrawingTests/tests.runsettings --framework "netcoreapp3.1" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\netcoreapp3.1\testhost.log"'
         testRunTitle: 'Windows (.NET Core) Tests'
         publishTestResults: true
+    # Upload Log files
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\netcoreapp3.1\testhost.log'
+        artifact: 'IronDrawing testhost Windows netcoreapp3.1 x64 log'
+        publishLocation: 'pipeline'
+      condition: always()
   # Windows .NET Core x86 Tests
   - job: WindowsNetCoreX86Tests
     steps:
@@ -133,6 +140,13 @@ stages:
         arguments: '-s IronDrawingTests/tests.x86.runsettings --framework "netcoreapp3.1" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\netcoreapp3.1\testhost.log"'
         testRunTitle: 'Windows (.NET Core) Tests'
         publishTestResults: true
+    # Upload Log files
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\netcoreapp3.1\testhost.log'
+        artifact: 'IronDrawing testhost Windows netcoreapp3.1 x86 log'
+        publishLocation: 'pipeline'
+      condition: always()
   # Windows .NET 6.0 Tests
   - job: WindowsNet60Tests
     steps:
@@ -155,6 +169,13 @@ stages:
         arguments: '-s IronDrawingTests/tests.runsettings --framework "net60" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net60\testhost.log"'
         testRunTitle: 'Windows (.NET 6.0) Tests'
         publishTestResults: true
+    # Upload Log files
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net60\testhost.log'
+        artifact: 'IronDrawing testhost Windows net60 log'
+        publishLocation: 'pipeline'
+      condition: always()
   # Windows .NET 7.0 Tests
   - job: WindowsNet70Tests
     steps:
@@ -177,6 +198,13 @@ stages:
         arguments: '-s IronDrawingTests/tests.runsettings --framework "net70" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net70\testhost.log"'
         testRunTitle: 'Windows (.NET 7.0) Tests'
         publishTestResults: true
+    # Upload Log files
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net70\testhost.log'
+        artifact: 'IronDrawing testhost Windows net70 log'
+        publishLocation: 'pipeline'
+      condition: always()
 ## Test Linux
 - stage: LinuxTests
   pool:
@@ -207,9 +235,16 @@ stages:
       inputs:
         command: 'test'
         projects: 'IronDrawingTests/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
-        arguments: '-s IronDrawingTests/tests.runsettings --framework "netcoreapp3.1" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\netcoreapp3.1\testhost.log"'
+        arguments: '-s IronDrawingTests/tests.runsettings --framework "netcoreapp3.1" -v d --diag:"$(Agent.BuildDirectory)/IronDrawingTests/bin/$(Configuration)/netcoreapp3.1/testhost.log"'
         testRunTitle: 'Linux (.NET Core) Tests'
         publishTestResults: true
+    # Upload Log files
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Agent.BuildDirectory)/IronDrawingTests/bin/$(Configuration)/netcoreapp3.1/testhost.log'
+        artifact: 'IronDrawing testhost Ubuntu netcoreapp3.1 log'
+        publishLocation: 'pipeline'
+      condition: always()
   - job: LinuxNet60Tests
     steps:
     - checkout: none
@@ -228,9 +263,16 @@ stages:
       inputs:
         command: 'test'
         projects: 'IronDrawingTests/net60/IronSoftware.Drawing.Common.Tests.dll'
-        arguments: '-s IronDrawingTests/tests.runsettings --framework "net60" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net60\testhost.log"'
+        arguments: '-s IronDrawingTests/tests.runsettings --framework "net60" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)/IronDrawingTests/bin/$(Configuration)/net60/testhost.log"'
         testRunTitle: 'Linux (.NET 6.0) Tests'
         publishTestResults: true
+    # Upload Log files
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Agent.BuildDirectory)/IronDrawingTests/bin/$(Configuration)/net60/testhost.log'
+        artifact: 'IronDrawing testhost Ubuntu net60 log'
+        publishLocation: 'pipeline'
+      condition: always()
   - job: LinuxNet70Tests
     steps:
     - checkout: none
@@ -249,9 +291,16 @@ stages:
       inputs:
         command: 'test'
         projects: 'IronDrawingTests/net70/IronSoftware.Drawing.Common.Tests.dll'
-        arguments: '-s IronDrawingTests/tests.runsettings --framework "net70" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net70\testhost.log"'
+        arguments: '-s IronDrawingTests/tests.runsettings --framework "net70" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)/IronDrawingTests/bin/$(Configuration)/net70/testhost.log"'
         testRunTitle: 'Linux (.NET 6.0) Tests'
         publishTestResults: true
+    # Upload Log files
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Agent.BuildDirectory)/IronDrawingTests/bin/$(Configuration)/net70/testhost.log'
+        artifact: 'IronDrawing testhost Ubuntu net70 log'
+        publishLocation: 'pipeline'
+      condition: always()
 ## Test MacOs
 - stage: MacOsTests
   pool:
@@ -279,7 +328,7 @@ stages:
       inputs:
         command: 'test'
         projects: 'IronDrawingTests/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
-        arguments: '-s IronDrawingTests/tests.runsettings --framework "netcoreapp3.1" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\netcoreapp3.1\testhost.log"'
+        arguments: '-s IronDrawingTests/tests.runsettings --framework "netcoreapp3.1" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)/IronDrawingTests/bin/$(Configuration)/netcoreapp3.1/testhost.log"'
         testRunTitle: 'MacOs (.NET Core) Tests'
         publishTestResults: true
     - task: DotNetCoreCLI@2
@@ -287,7 +336,7 @@ stages:
       inputs:
         command: 'test'
         projects: 'IronDrawingTests/net60/IronSoftware.Drawing.Common.Tests.dll'
-        arguments: '-s IronDrawingTests/tests.runsettings --framework "net60" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net60\testhost.log"'
+        arguments: '-s IronDrawingTests/tests.runsettings --framework "net60" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)/IronDrawingTests/bin/$(Configuration)/net60/testhost.log"'
         testRunTitle: 'MacOs (.NET 6.0) Tests'
         publishTestResults: true
     - task: DotNetCoreCLI@2
@@ -295,9 +344,16 @@ stages:
       inputs:
         command: 'test'
         projects: 'IronDrawingTests/net60/IronSoftware.Drawing.Common.Tests.dll'
-        arguments: '-s IronDrawingTests/tests.runsettings --framework "net70" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\net70\testhost.log"'
+        arguments: '-s IronDrawingTests/tests.runsettings --framework "net70" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)/IronDrawingTests/bin/$(Configuration)/net70/testhost.log"'
         testRunTitle: 'MacOs (.NET 7.0) Tests'
         publishTestResults: true
+    # Upload Log files
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Agent.BuildDirectory)/IronDrawingTests/bin/$(Configuration)'
+        artifact: 'IronDrawing testhost MacOS log'
+        publishLocation: 'pipeline'
+      condition: always()
 ## Push NuGet Package
 - stage: DeployDrawingLibraries
   pool:
