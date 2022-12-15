@@ -624,7 +624,7 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Gets the address of the first pixel data in the <see cref="AnyBitmap"/>. This can also be thought of as the first scan line in the <see cref="AnyBitmap"/>.
         /// </summary>
-        /// <returns>The address of the first BGRA pixel data in the <see cref="AnyBitmap"/>.</returns>
+        /// <returns>The address of the first 32bpp BGRA pixel data in the <see cref="AnyBitmap"/>.</returns>
         public IntPtr Scan0
         {
             get
