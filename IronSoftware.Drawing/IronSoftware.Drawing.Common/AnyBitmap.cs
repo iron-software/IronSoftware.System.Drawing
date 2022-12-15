@@ -645,6 +645,10 @@ namespace IronSoftware.Drawing
             }
         }
 
+        /// <summary>
+        /// Image formats which <see cref="AnyBitmap"/> readed.
+        /// </summary>
+        /// <returns><see cref="AnyBitmap.ImageFormat"/></returns>
         public ImageFormat GetImageFormat()
         {
             switch (Format?.DefaultMimeType) 
@@ -657,6 +661,30 @@ namespace IronSoftware.Drawing
                 case "image/vnd.microsoft.icon": return ImageFormat.Icon;
 
                 default: return ImageFormat.Bmp;
+            }
+        }
+
+        /// <summary>
+        /// Gets the resolution of the image in x- direction.
+        /// </summary>
+        /// <returns></returns>
+        public double? HorizontalResolution
+        {
+            get
+            {
+                return Image?.Metadata.HorizontalResolution ?? null;
+            }
+        }
+
+        /// <summary>
+        /// Gets the resolution of the image in y- direction.
+        /// </summary>
+        /// <returns></returns>
+        public double? VerticalResolution
+        {
+            get
+            {
+                return Image?.Metadata.VerticalResolution ?? null;
             }
         }
 
