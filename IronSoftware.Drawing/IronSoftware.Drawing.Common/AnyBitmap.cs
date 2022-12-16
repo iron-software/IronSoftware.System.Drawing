@@ -699,8 +699,6 @@ namespace IronSoftware.Drawing
             {
                 using (var memoryStream = new System.IO.MemoryStream())
                 {
-                    // BMP transparency support only 32 bits
-                    // No need to set SupportTransparency to True
                     Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
                     {
                         BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel24

@@ -50,9 +50,9 @@ For general support and technical inquiries, please email us at: developers@iron
 
 Bug Fixed
   * AnyBitmap
-    - Fixed loss transparency when convert System.Drawing.Bitmap to AnyBitmap
-    - Fixed loss transparency when convert System.Drawing.Image to AnyBitmap
-    - Fixed loss transparency when convert SixLabors.ImageSharp.Image to AnyBitmap</releaseNotes>
+    - Fixed loss transparency when converting System.Drawing.Bitmap to AnyBitmap
+    - Fixed loss transparency when converting System.Drawing.Image to AnyBitmap
+    - Fixed loss transparency when converting SixLabors.ImageSharp.Image to AnyBitmap</releaseNotes>
 		<copyright>Copyright © Iron Software 2022</copyright>
 		<tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, TIFF, TIF, GIF, JPEG, PNG, Color, Rectangle, Drawing, C#, VB.NET, ASPX, create, render, generate, standard, netstandard2.0, core, netcore</tags>
 		<repository type="git" url="https://github.com/iron-software/IronSoftware.Drawing.Common" commit="$commit$" />
