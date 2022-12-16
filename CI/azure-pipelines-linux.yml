@@ -118,7 +118,7 @@ stages:
         inputs:
           command: 'test'
           projects: 'IronDrawingTests/net70/IronSoftware.Drawing.Common.Tests.dll'
-          arguments: '-s IronDrawingTests/tests.runsettings --framework "net70" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\net70\testhost.log"'
+          arguments: '-s IronDrawingTests/tests.runsettings --framework "net70" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)/IronDrawingTests/net70/testhost.log"'
           testRunTitle: 'Execute Unit Tests'
         condition: succeededOrFailed()
     # Execute NET60 Unit Tests
@@ -140,7 +140,7 @@ stages:
         inputs:
           command: 'test'
           projects: 'IronDrawingTests/net60/IronSoftware.Drawing.Common.Tests.dll'
-          arguments: '-s IronDrawingTests/tests.runsettings --framework "net60" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\net60\testhost.log" --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura'
+          arguments: '-s IronDrawingTests/tests.runsettings --framework "net60" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)/IronDrawingTests/net60/testhost.log" --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura'
           testRunTitle: 'Execute Unit Tests'
         condition: succeededOrFailed()
       - task: PublishCodeCoverageResults@1
@@ -153,6 +153,11 @@ stages:
     - job: UnitTestNetCore
       steps:
       - checkout: none
+      - task: UseDotNet@2
+        displayName: 'Install .Netcoreapp3.1 Core sdk'
+        inputs:
+          packageType: 'sdk'
+          version: '3.x'
       - task: DownloadPipelineArtifact@2
         inputs:
           buildType: 'current'
@@ -168,6 +173,6 @@ stages:
         inputs:
           command: 'test'
           projects: 'IronDrawingTests/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
-          arguments: '-s IronDrawingTests/tests.runsettings --framework "netcoreapp3.1" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\netcoreapp3.1\testhost.log"'
+          arguments: '-s IronDrawingTests/tests.runsettings --framework "netcoreapp3.1" -v d --diag:"$(Agent.BuildDirectory)/IronDrawingTests/netcoreapp3.1/testhost.log"'
           testRunTitle: 'Execute Unit Tests'
         condition: succeededOrFailed()
