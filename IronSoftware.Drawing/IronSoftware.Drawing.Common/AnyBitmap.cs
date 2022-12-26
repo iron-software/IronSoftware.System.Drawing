@@ -665,7 +665,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Gets the resolution of the image in x- direction.
+        /// Gets the resolution of the image in x-direction.
         /// </summary>
         /// <returns></returns>
         public double? HorizontalResolution
@@ -677,7 +677,7 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Gets the resolution of the image in y- direction.
+        /// Gets the resolution of the image in y-direction.
         /// </summary>
         /// <returns></returns>
         public double? VerticalResolution
