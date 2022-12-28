@@ -634,8 +634,8 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// The MIMEType must be one of the following: 
-        /// <para>image/bmp, image/jpeg, image/png, image/gif, image/tiff, image/webp, or image/unknown.</para>
+        /// Returns the <see href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">HTTP MIME types</see> of the image. 
+        /// <para>must be one of the following: image/bmp, image/jpeg, image/png, image/gif, image/tiff, image/webp, or image/unknown.</para>
         /// </summary>
         public string MimeType
         {
