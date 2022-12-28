@@ -1,3 +1,4 @@
+using FluentAssertions;
 using System;
 using Xunit;
 using Xunit.Abstractions;
@@ -94,6 +95,12 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(244, color.G);
             Assert.Equal(208, color.B);
             Assert.Equal("#6440F4D0", color.ToString());
+
+            Color color1 = Color.FromArgb(50, color);
+            Assert.Equal(50, color1.A);
+            Assert.Equal(64, color1.R);
+            Assert.Equal(244, color1.G);
+            Assert.Equal(208, color1.B);
         }
 
         [FactWithAutomaticDisplayName]
@@ -502,7 +509,64 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(bmColor.ToArgb(), rgb24.ToArgb());
         }
 
-#if !NET472
+        [FactWithAutomaticDisplayName]
+        public void Should_Create_FromName()
+        {
+            Color color = Color.FromName("red");
+            color.R.Should().Be(255);
+            color.G.Should().Be(0);
+            color.B.Should().Be(0);
+            
+            color = Color.FromName("green");
+            color.R.Should().Be(0);
+            color.G.Should().Be(128);
+            color.B.Should().Be(0);
+            
+            color = Color.FromName("blue");
+            color.R.Should().Be(0);
+            color.G.Should().Be(0);
+            color.B.Should().Be(255);
+            
+            color = Color.FromName("yellow");
+            color.R.Should().Be(255);
+            color.G.Should().Be(255);
+            color.B.Should().Be(0);
+
+            color = Color.FromName("pink");
+            color.R.Should().Be(255);
+            color.G.Should().Be(192);
+            color.B.Should().Be(203);
+
+            color = Color.FromName("brown");
+            color.R.Should().Be(165);
+            color.G.Should().Be(42);
+            color.B.Should().Be(42);
+
+            color = Color.FromName("gray");
+            color.R.Should().Be(128);
+            color.G.Should().Be(128);
+            color.B.Should().Be(128);
+
+            color = Color.FromName("black");
+            color.R.Should().Be(0);
+            color.G.Should().Be(0);
+            color.B.Should().Be(0);
+            
+            color = Color.FromName("orange");
+            color.R.Should().Be(255);
+            color.G.Should().Be(165);
+            color.B.Should().Be(0);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Should_Equal()
+        {
+            Color.Red.Equals(Color.FromName("red")).Should().BeTrue();
+            (Color.Yellow == Color.FromName("yellow")).Should().BeTrue();
+            (Color.Gray != Color.FromName("darkgray")).Should().BeTrue();
+        }
+
+#if !NETFRAMEWORK
         [FactWithAutomaticDisplayName]
         public void Cast_Maui_from_Color()
         {

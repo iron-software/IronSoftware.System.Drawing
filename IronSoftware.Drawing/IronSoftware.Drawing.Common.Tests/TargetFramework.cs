@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 #if NETFRAMEWORK
+using System.Reflection;
 #else
 using System.Runtime.InteropServices;
 #endif

@@ -1,7 +1,9 @@
+using Microsoft.Maui.Graphics;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using Xunit;
@@ -521,7 +523,42 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(32, bitmap.BitsPerPixel);
         }
 
-#if !NET472
+        [TheoryWithAutomaticDisplayName()]
+        [InlineData("mountainclimbers.jpg", "image/jpeg", AnyBitmap.ImageFormat.Jpeg)]
+        [InlineData("watermark.deployment.png", "image/png", AnyBitmap.ImageFormat.Png)]
+        [InlineData("animated_qr.gif", "image/gif", AnyBitmap.ImageFormat.Gif)]
+        [InlineData("Mona-Lisa-oil-wood-panel-Leonardo-da.webp", "image/webp", AnyBitmap.ImageFormat.Webp)]
+        [InlineData("multiframe.tiff", "image/tiff", AnyBitmap.ImageFormat.Tiff)]
+        public void Should_Return_MimeType(string fileName, string expectedMimeType, AnyBitmap.ImageFormat expectedImageFormat)
+        {
+            string imagePath = GetRelativeFilePath(fileName);
+            AnyBitmap bitmap = AnyBitmap.FromFile(imagePath);
+            Assert.Equal(expectedMimeType, bitmap.MimeType);
+            Assert.Equal(expectedImageFormat, bitmap.GetImageFormat());
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Should_Return_Scan0()
+        {
+            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
+            AnyBitmap bitmap = AnyBitmap.FromFile(imagePath);
+            Assert.NotEqual(IntPtr.Zero, bitmap.Scan0);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Should_Return_Stride()
+        {
+            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
+            AnyBitmap anyBitmap = AnyBitmap.FromFile(imagePath);
+            System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(imagePath);
+            BitmapData data = bitmap.LockBits(
+                new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), 
+                ImageLockMode.ReadOnly, 
+                PixelFormat.Format24bppRgb);
+            Assert.Equal(data.Stride, anyBitmap.Stride);
+        }
+
+#if !NETFRAMEWORK
         [FactWithAutomaticDisplayName]
         public void CastMaui_to_AnyBitmap()
         {

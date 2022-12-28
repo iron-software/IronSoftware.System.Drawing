@@ -1,5 +1,6 @@
 ﻿using BitMiracle.LibTiff.Classic;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;
@@ -8,6 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace IronSoftware.Drawing
 {
@@ -19,8 +22,9 @@ namespace IronSoftware.Drawing
     /// </summary>
     public partial class AnyBitmap
     {
-        private Image Image { get; set; }
+        private SixLabors.ImageSharp.Image Image { get; set; }
         private byte[] Binary { get; set; }
+        private IImageFormat Format { get; set; }
 
         /// <summary>
         /// Width of the image.
@@ -110,7 +114,11 @@ namespace IronSoftware.Drawing
         {
             using SixLabors.ImageSharp.Image image = Image.Clone(img => img.Crop(Rectangle));
             using var memoryStream = new System.IO.MemoryStream();
-            image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder());
+            image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
+            {
+                BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
+                SupportTransparency = true
+            });
             return new AnyBitmap(memoryStream.ToArray());
         }
 
@@ -184,7 +192,7 @@ namespace IronSoftware.Drawing
         /// <returns>Void. Saves Transcoded image bytes to you <see cref="Stream"/>.</returns>
         public void ExportStream(System.IO.Stream Stream, ImageFormat Format = ImageFormat.Default, int Lossy = 100)
         {
-            if (Format == ImageFormat.Default)
+            if (Format == ImageFormat.Default || Format == ImageFormat.RawFormat)
             {
                 var writer = new BinaryWriter(Stream);
                 writer.Write(Binary);
@@ -198,13 +206,25 @@ namespace IronSoftware.Drawing
                 SixLabors.ImageSharp.Formats.IImageEncoder enc;
                 switch (Format)
                 {
-                    case ImageFormat.Jpeg: enc = new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder() { Quality = Lossy }; break;
+                    case ImageFormat.Jpeg: 
+                        enc = new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder() 
+                        { 
+                            Quality = Lossy,
+                            ColorType = SixLabors.ImageSharp.Formats.Jpeg.JpegColorType.Rgb
+                        };
+                        break;
                     case ImageFormat.Gif: enc = new SixLabors.ImageSharp.Formats.Gif.GifEncoder(); break;
                     case ImageFormat.Png: enc = new SixLabors.ImageSharp.Formats.Png.PngEncoder(); break;
                     case ImageFormat.Webp: enc = new SixLabors.ImageSharp.Formats.Webp.WebpEncoder() { Quality = Lossy }; break;
                     case ImageFormat.Tiff: enc = new SixLabors.ImageSharp.Formats.Tiff.TiffEncoder(); break;
 
-                    default: enc = new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder(); break;
+                    default: 
+                        enc = new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
+                        {
+                            BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
+                            SupportTransparency = true
+                        };
+                        break;
                 }
 
                 Image.Save(Stream, enc);
@@ -591,6 +611,84 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
+        /// Gets the stride width (also called scan width) of the <see cref="AnyBitmap"/> object.
+        /// </summary>
+        public int Stride
+        {
+            get
+            {
+                return GetStride();
+            }
+        }
+
+        /// <summary>
+        /// Gets the address of the first pixel data in the <see cref="AnyBitmap"/>. This can also be thought of as the first scan line in the <see cref="AnyBitmap"/>.
+        /// </summary>
+        /// <returns>The address of the first 32bpp BGRA pixel data in the <see cref="AnyBitmap"/>.</returns>
+        public IntPtr Scan0
+        {
+            get
+            {
+                return GetFirstPixelData();
+            }
+        }
+
+        /// <summary>
+        /// Returns the <see href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">HTTP MIME types</see> of the image. 
+        /// <para>must be one of the following: image/bmp, image/jpeg, image/png, image/gif, image/tiff, image/webp, or image/unknown.</para>
+        /// </summary>
+        public string MimeType
+        {
+            get
+            {
+                return Format?.DefaultMimeType ?? "image/unknown";
+            }
+        }
+
+        /// <summary>
+        /// Image formats which <see cref="AnyBitmap"/> readed.
+        /// </summary>
+        /// <returns><see cref="AnyBitmap.ImageFormat"/></returns>
+        public ImageFormat GetImageFormat()
+        {
+            switch (Format?.DefaultMimeType) 
+            {
+                case "image/gif": return ImageFormat.Gif;
+                case "image/tiff": return ImageFormat.Tiff;
+                case "image/jpeg": return ImageFormat.Jpeg;
+                case "image/png": return ImageFormat.Png;
+                case "image/webp": return ImageFormat.Webp;
+                case "image/vnd.microsoft.icon": return ImageFormat.Icon;
+
+                default: return ImageFormat.Bmp;
+            }
+        }
+
+        /// <summary>
+        /// Gets the resolution of the image in x-direction.
+        /// </summary>
+        /// <returns></returns>
+        public double? HorizontalResolution
+        {
+            get
+            {
+                return Image?.Metadata.HorizontalResolution ?? null;
+            }
+        }
+
+        /// <summary>
+        /// Gets the resolution of the image in y-direction.
+        /// </summary>
+        /// <returns></returns>
+        public double? VerticalResolution
+        {
+            get
+            {
+                return Image?.Metadata.VerticalResolution ?? null;
+            }
+        }
+
+        /// <summary>
         /// Implicitly casts SixLabors.ImageSharp.Image objects to <see cref="AnyBitmap"/>.
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support ImageSharp as well.</para>
         /// </summary>
@@ -601,7 +699,10 @@ namespace IronSoftware.Drawing
             {
                 using (var memoryStream = new System.IO.MemoryStream())
                 {
-                    Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder());
+                    Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
+                    {
+                        BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel24
+                    });
                     return new AnyBitmap(memoryStream.ToArray());
                 }
 
@@ -648,7 +749,11 @@ namespace IronSoftware.Drawing
             {
                 using (var memoryStream = new System.IO.MemoryStream())
                 {
-                    Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder());
+                    Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
+                    {
+                        BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
+                        SupportTransparency = true
+                    });
                     return new AnyBitmap(memoryStream.ToArray());
                 }
             }
@@ -694,7 +799,11 @@ namespace IronSoftware.Drawing
             {
                 using (var memoryStream = new System.IO.MemoryStream())
                 {
-                    Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder());
+                    Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
+                    {
+                        BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
+                        SupportTransparency = true
+                    });
                     return new AnyBitmap(memoryStream.ToArray());
                 }
             }
@@ -895,7 +1004,7 @@ namespace IronSoftware.Drawing
             {
                 System.Drawing.Bitmap blank = new System.Drawing.Bitmap(Image.Width, Image.Height);
                 System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(blank);
-                g.Clear(Color.White);
+                g.Clear(Color.Transparent);
                 g.DrawImage(Image, 0, 0, Image.Width, Image.Height);
 
                 System.Drawing.Bitmap tempImage = new System.Drawing.Bitmap(blank);
@@ -972,7 +1081,7 @@ namespace IronSoftware.Drawing
             {
                 System.Drawing.Bitmap blank = new System.Drawing.Bitmap(Image.Width, Image.Height);
                 System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(blank);
-                g.Clear(Color.White);
+                g.Clear(Color.Transparent);
                 g.DrawImage(Image, 0, 0, Image.Width, Image.Height);
 
                 System.Drawing.Bitmap tempImage = new System.Drawing.Bitmap(blank);
@@ -1072,8 +1181,12 @@ namespace IronSoftware.Drawing
             /// <summary> The Wmf image format.</summary>
             Wmf = 8,
 
+            /// <summary> The Raw image format.</summary>
+            RawFormat = 9,
+
             /// <summary> The existing raw image format.</summary>
-            Default = -1,
+            Default = -1
+
         }
 
         #region Private Method
@@ -1082,8 +1195,10 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                Image = Image.Load(Bytes);
+                IImageFormat format;
+                Image = SixLabors.ImageSharp.Image.Load(Bytes, out format);
                 Binary = Bytes;
+                Format = format;
             }
             catch (DllNotFoundException e)
             {
@@ -1111,20 +1226,22 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                Image = Image.Load(File);
+                IImageFormat format;
+                Image = SixLabors.ImageSharp.Image.Load(File, out format);
                 Binary = System.IO.File.ReadAllBytes(File);
+                Format = format;
             }
             catch (DllNotFoundException e)
             {
                 throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.", e);
             }
-            catch (NotSupportedException e)
+            catch (NotSupportedException)
             {
                 try
                 {
                     OpenTiffToImageSharp(System.IO.File.ReadAllBytes(File));
                 }
-                catch
+                catch (Exception e)
                 {
                     throw new NotSupportedException("Image could not be loaded. File format is not supported.", e);
                 }
@@ -1135,13 +1252,13 @@ namespace IronSoftware.Drawing
             }
         }
 
-        private void SetBinaryFromImageSharp()
+        private void SetBinaryFromImageSharp(SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> tiffImage)
         {
             using (var memoryStream = new MemoryStream())
             {
-                Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Tiff.TiffEncoder());
+                tiffImage.Save(memoryStream, new SixLabors.ImageSharp.Formats.Tiff.TiffEncoder());
                 memoryStream.Seek(0, SeekOrigin.Begin);
-                Binary = memoryStream.ToArray();
+                LoadImage(memoryStream);
             }
         }
 
@@ -1200,34 +1317,6 @@ namespace IronSoftware.Drawing
             catch (Exception e)
             {
                 throw new Exception("Error while reading SVG image format.", e);
-            }
-        }
-
-        private SixLabors.ImageSharp.Formats.IImageEncoder FindEncoder(string File)
-        {
-            if (File.ToLower().EndsWith(".jpg") || File.ToLower().EndsWith(".jpeg"))
-            {
-                return new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder();
-            }
-            else if (File.ToLower().EndsWith(".gif"))
-            {
-                return new SixLabors.ImageSharp.Formats.Gif.GifEncoder();
-            }
-            else if (File.ToLower().EndsWith(".png"))
-            {
-                return new SixLabors.ImageSharp.Formats.Png.PngEncoder();
-            }
-            else if (File.ToLower().EndsWith(".webp"))
-            {
-                return new SixLabors.ImageSharp.Formats.Webp.WebpEncoder();
-            }
-            else if (File.ToLower().EndsWith(".tif") || File.ToLower().EndsWith(".tiff"))
-            {
-                return new SixLabors.ImageSharp.Formats.Tiff.TiffEncoder();
-            }
-            else
-            {
-                return new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder();
             }
         }
 
@@ -1464,7 +1553,7 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                List<Image> images = new List<Image>();
+                List<SixLabors.ImageSharp.Image> images = new List<SixLabors.ImageSharp.Image>();
 
                 // create a memory stream out of them
                 MemoryStream tiffStream = new MemoryStream(bytes);
@@ -1486,38 +1575,33 @@ namespace IronSoftware.Drawing
 
                         // Read the image into the memory buffer
                         int[] raster = new int[height * width];
-                        if (!tif.ReadRGBAImageOriented(width, height, raster, Orientation.TOPLEFT))
+                        if (!tif.ReadRGBAImage(width, height, raster))
                         {
                             throw new Exception("Could not read image");
                         }
 
-                        using Image<Rgba32> bmp = new Image<Rgba32>(width, height);
+                        using SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> bmp = new(width, height);
                         SixLabors.ImageSharp.Rectangle rect = new SixLabors.ImageSharp.Rectangle(0, 0, bmp.Width, bmp.Height);
 
-                        int stride = 4 * ((bmp.Width * bmp.PixelType.BitsPerPixel + 31) / 32);
+                        int stride = GetStride(bmp);
 
-                        bmp.ProcessPixelRows(accessor =>
+                        byte[] bits = new byte[stride * bmp.Height];
+                        for (int y = 0; y < bmp.Height; y++)
                         {
-                            for (int y = 0; y < accessor.Height; y++)
+                            int rasterOffset = y * bmp.Width;
+                            int bitsOffset = (bmp.Height - y - 1) * stride;
+
+                            for (int x = 0; x < bmp.Width; x++)
                             {
-                                int rasterOffset = y * bmp.Width;
-                                int bitsOffset = (bmp.Height - y - 1) * stride;
-                                Span<Rgba32> pixelRow = accessor.GetRowSpan(y);
-
-                                for (int x = 0; x < pixelRow.Length; x++)
-                                {
-                                    ref Rgba32 pixel = ref pixelRow[x];
-
-                                    int rgba = raster[rasterOffset++];
-                                    pixel.R = (byte)((rgba >> 16) & 0xff);
-                                    pixel.G = (byte)((rgba >> 8) & 0xff);
-                                    pixel.B = (byte)(rgba & 0xff);
-                                    pixel.A = (byte)((rgba >> 24) & 0xff);
-                                }
+                                int rgba = raster[rasterOffset++];
+                                bits[bitsOffset++] = (byte)(rgba & 0xff); // R
+                                bits[bitsOffset++] = (byte)((rgba >> 8) & 0xff); // G
+                                bits[bitsOffset++] = (byte)((rgba >> 16) & 0xff); // B
+                                bits[bitsOffset++] = (byte)((rgba >> 24) & 0xff); // A
                             }
-                        });
+                        }
 
-                        images.Add(bmp.Clone());
+                        images.Add(SixLabors.ImageSharp.Image.LoadPixelData<SixLabors.ImageSharp.PixelFormats.Rgba32>(bits, bmp.Width, bmp.Height));
                     }
                 }
 
@@ -1526,19 +1610,13 @@ namespace IronSoftware.Drawing
 
                 FindMaxWidthAndHeight(images, out int maxWidth, out int maxHeight);
 
-                for (int i = 0; i < images.Count; i++)
+                using SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> tiffImage = CloneAndResizeImageSharp(images[0], maxWidth, maxHeight);
+                for (int i = 1; i < images.Count; i++)
                 {
-                    if (i == 0)
-                    {
-                        Image = CloneAndResizeImageSharp(images[i], maxWidth, maxHeight);
-                    }
-                    else
-                    {
-                        Image<Rgba32> image = CloneAndResizeImageSharp(images[i], maxWidth, maxHeight);
-                        Image.Frames.AddFrame(image.Frames.RootFrame);
-                    }
+                    SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image = CloneAndResizeImageSharp(images[i], maxWidth, maxHeight);
+                    tiffImage.Frames.AddFrame(image.Frames.RootFrame);
                 }
-                SetBinaryFromImageSharp();
+                SetBinaryFromImageSharp(tiffImage);
             }
             catch (DllNotFoundException e)
             {
@@ -1564,7 +1642,7 @@ namespace IronSoftware.Drawing
         {
             FindMaxWidthAndHeight(images, out int maxWidth, out int maxHeight);
 
-            Image<Rgba32> result = null;
+            SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> result = null;
             for (int i = 0; i < images.Count(); i++)
             {
                 if (i == 0)
@@ -1579,7 +1657,8 @@ namespace IronSoftware.Drawing
                     }
                     else
                     {
-                        Image<Rgba32> image = LoadAndResizeImageSharp(images.ElementAt(i).GetBytes(), maxWidth, maxHeight, i);
+                        SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image = 
+                            LoadAndResizeImageSharp(images.ElementAt(i).GetBytes(), maxWidth, maxHeight, i);
                         result.Frames.AddFrame(image.Frames.RootFrame);
                     }
                 }
@@ -1602,7 +1681,7 @@ namespace IronSoftware.Drawing
             return resultStream;
         }
 
-        private static void FindMaxWidthAndHeight(IEnumerable<Image> images, out int maxWidth, out int maxHeight)
+        private static void FindMaxWidthAndHeight(IEnumerable<SixLabors.ImageSharp.Image> images, out int maxWidth, out int maxHeight)
         {
             maxWidth = images.Select(img => img.Width).Max();
             maxHeight = images.Select(img => img.Height).Max();
@@ -1614,18 +1693,22 @@ namespace IronSoftware.Drawing
             maxHeight = images.Select(img => img.Height).Max();
         }
 
-        private Image<Rgba32> CloneAndResizeImageSharp(Image source, int maxWidth, int maxHeight)
+        private SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> CloneAndResizeImageSharp(
+            SixLabors.ImageSharp.Image source, int maxWidth, int maxHeight)
         {
-            Image<Rgba32> image = source.CloneAs<Rgba32>();
+            SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image = 
+                source.CloneAs<SixLabors.ImageSharp.PixelFormats.Rgba32>();
             // Keep Image dimension the same
             return ResizeWithPadToPng(image, maxWidth, maxHeight);
         }
 
-        private static Image<Rgba32> LoadAndResizeImageSharp(byte[] bytes, int maxWidth, int maxHeight, int index)
+        private static SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> LoadAndResizeImageSharp(byte[] bytes, 
+            int maxWidth, int maxHeight, int index)
         {
             try
             {
-                using Image<Rgba32> result = SixLabors.ImageSharp.Image.Load<Rgba32>(bytes);
+                using SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> result = 
+                    SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(bytes);
                 // Keep Image dimension the same
                 return ResizeWithPadToPng(result, maxWidth, maxHeight);
             }
@@ -1635,11 +1718,12 @@ namespace IronSoftware.Drawing
             }
         }
 
-        private static Image<Rgba32> ResizeWithPadToPng(Image<Rgba32> result, int maxWidth, int maxHeight)
+        private static SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> ResizeWithPadToPng(
+            SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> result, int maxWidth, int maxHeight)
         {
             result.Mutate(img => img.Resize(new ResizeOptions
             {
-                Size = new Size(maxWidth, maxHeight),
+                Size = new SixLabors.ImageSharp.Size(maxWidth, maxHeight),
                 Mode = SixLabors.ImageSharp.Processing.ResizeMode.BoxPad,
                 PadColor = SixLabors.ImageSharp.Color.Transparent
             }));
@@ -1652,7 +1736,46 @@ namespace IronSoftware.Drawing
                 });
                 memoryStream.Seek(0, SeekOrigin.Begin);
 
-                return SixLabors.ImageSharp.Image.Load<Rgba32>(memoryStream);
+                return SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(memoryStream);
+            }
+        }
+
+        private int GetStride(SixLabors.ImageSharp.Image source = null)
+        {
+            if (source == null)
+                return 4 * ((Image.Width * Image.PixelType.BitsPerPixel + 31) / 32);
+            else
+                return 4 * ((source.Width * source.PixelType.BitsPerPixel + 31) / 32);
+        }
+
+        private IntPtr GetFirstPixelData()
+        {
+            byte[] pixelBytes = new byte[Image.Width * Image.Height * Unsafe.SizeOf<Rgba32>()];
+            var clonedImage = Image.CloneAs<SixLabors.ImageSharp.PixelFormats.Rgba32>();
+            clonedImage.CopyPixelDataTo(pixelBytes);
+            ConvertRGBAtoBGRA(pixelBytes, clonedImage.Width, clonedImage.Height);
+
+            IntPtr result = Marshal.AllocHGlobal(pixelBytes.Length);
+            Marshal.Copy(pixelBytes, 0, result, pixelBytes.Length);
+
+            return result;
+        }
+
+        private void ConvertRGBAtoBGRA(byte[] data, int width, int height, int samplesPerPixel = 4)
+        {
+            int stride = data.Length / height;
+
+            for (int y = 0; y < height; y++)
+            {
+                int offset = stride * y;
+                int strideEnd = offset + width * samplesPerPixel;
+
+                for (int i = offset; i < strideEnd; i += samplesPerPixel)
+                {
+                    byte temp = data[i + 2];
+                    data[i + 2] = data[i];
+                    data[i] = temp;
+                }
             }
         }
 
