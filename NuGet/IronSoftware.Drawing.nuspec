@@ -36,19 +36,29 @@ Supports:
 
 For general support and technical inquiries, please email us at: developers@ironsoftware.com</description>
 		<summary>IronSoftware.System.Drawing is an open-source solution for .NET developers to replace System.Drawing.Common with a universal and flexible library.</summary>
-		<releaseNotes>Support and Compatibility
-* Universal compatiblity for .NET 7, .NET 6, .NET 5, and .NET Core
-* Support for Windows, macOS, Linux, Azure, AWS, Mobile, iOS, Android, Xamarin, NanoServer, and IIS
-All new classes developed to support conversion between: (System.Drawing, SixLabors.ImageSharp, SkiaSharp, and Microsoft.Maui)
-* AnyBitmap: A universally compatible Bitmap class
-* Color: A universally compatible Color class
-* Font: A universally compatible Font class
-* CropRectangle: A universally compatible Rectangle class</releaseNotes>
+		<releaseNotes>Features Added
+* AnyBitmap
+  - Scan0 to gets the address of the first pixel data of the AnyBitmap object
+  - Stride to gets the stride width (also called scan width) of the AnyBitmap object
+  - MimeType to gets MIMEType of the AnyBitmap object including image/bmp, image/jpeg, image/png, image/gif, image/tiff, image/webp, and image/unknown
+  - GetImageFormat to gets ImageFormat of the AnyBitmap object
+  - HorizontalResolution, and VerticalResolution to gets the resolution of the image in x, y direction
+* Color
+  - Add override FromArgb(alpha, BaseColor)
+  - Add compare Color including ==, !=, and Equals
+  - Create Color from name
+
+Bug Fixed
+* AnyBitmap
+  - Fixed loss transparency when converting System.Drawing.Bitmap to AnyBitmap
+  - Fixed loss transparency when converting System.Drawing.Image to AnyBitmap
+  - Fixed loss transparency when converting SixLabors.ImageSharp.Image to AnyBitmap</releaseNotes>
 		<copyright>Copyright © Iron Software 2022</copyright>
 		<tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, TIFF, TIF, GIF, JPEG, PNG, Color, Rectangle, Drawing, C#, VB.NET, ASPX, create, render, generate, standard, netstandard2.0, core, netcore</tags>
 		<repository type="git" url="https://github.com/iron-software/IronSoftware.Drawing.Common" commit="$commit$" />
 		<dependencies>
 			<group targetFramework="net462">
+				<dependency id="System.Memory" version="4.5.5" />
 				<dependency id="SixLabors.ImageSharp" version="2.1.3" />
 				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
 			</group>
