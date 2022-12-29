@@ -168,12 +168,12 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Exports the Bitmap as a Func<<see cref="MemoryStream"/>> encoded in the <see cref="ImageFormat"/> of your choice.
+        /// Exports the Bitmap as a Func<see cref="MemoryStream"/>> encoded in the <see cref="ImageFormat"/> of your choice.
         /// <para>Add SkiaSharp, System.Drawing.Common, or SixLabors.ImageSharp to your project to enable the encoding feature.</para>
         /// </summary>
         /// <param name="Format">An image encoding format.</param>
         /// <param name="Lossy">JPEG and WebP encoding quality (ignored for all other values of <see cref="ImageFormat"/>). Higher values return larger file sizes. 0 is lowest quality, 100 is highest.</param>
-        /// <returns>Transcoded image bytes in a Func<<see cref="MemoryStream"/>>.</returns>
+        /// <returns>Transcoded image bytes in a Func<see cref="MemoryStream"/>>.</returns>
         public Func<Stream> ToStreamFn(ImageFormat Format = ImageFormat.Default, int Lossy = 100)
         {
             var stream = new System.IO.MemoryStream();
@@ -373,7 +373,7 @@ namespace IronSoftware.Drawing
         /// Create a new Bitmap from a <see cref="Stream"/> (bytes).
         /// </summary>
         /// <param name="Stream">A <see cref="Stream"/> of image data in any common format.</param>
-        /// <seealso cref="FromStream"/>
+        /// <seealso cref="FromStream(Stream)"/>
         /// <seealso cref="AnyBitmap"/>
         public static AnyBitmap FromStream(System.IO.MemoryStream Stream)
         {
@@ -384,7 +384,7 @@ namespace IronSoftware.Drawing
         /// Create a new Bitmap from a <see cref="Stream"/> (bytes).
         /// </summary>
         /// <param name="Stream">A <see cref="Stream"/> of image data in any common format.</param>
-        /// <seealso cref="FromStream"/>
+        /// <seealso cref="FromStream(MemoryStream)"/>
         /// <seealso cref="AnyBitmap"/>
         public static AnyBitmap FromStream(System.IO.Stream Stream)
         {
@@ -395,7 +395,7 @@ namespace IronSoftware.Drawing
         /// Construct a new Bitmap from a <see cref="Stream"/> (bytes).
         /// </summary>
         /// <param name="Stream">A <see cref="Stream"/> of image data in any common format.</param>
-        /// <seealso cref="FromStream"/>
+        /// <seealso cref="FromStream(Stream)"/>
         /// <seealso cref="AnyBitmap"/>
         public AnyBitmap(System.IO.MemoryStream Stream)
         {
@@ -406,7 +406,7 @@ namespace IronSoftware.Drawing
         /// Construct a new Bitmap from a <see cref="Stream"/> (bytes).
         /// </summary>
         /// <param name="Stream">A <see cref="Stream"/> of image data in any common format.</param>
-        /// <seealso cref="FromStream"/>
+        /// <seealso cref="FromStream(MemoryStream)"/>
         /// <seealso cref="AnyBitmap"/>
         public AnyBitmap(System.IO.Stream Stream)
         {
