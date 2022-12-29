@@ -238,7 +238,7 @@ namespace IronSoftware.Drawing
         /// <seealso cref="TrySaveAs(string)"/>
         public void SaveAs(string File)
         {
-            System.IO.File.WriteAllBytes(File, Binary);
+            SaveAs(File, GetImageFormat(File));
         }
 
         /// <summary>
@@ -403,6 +403,17 @@ namespace IronSoftware.Drawing
         public AnyBitmap(System.IO.Stream Stream)
         {
             LoadImage(Stream);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="original">The <see cref="IronSoftware.Drawing.AnyBitmap"/> from which to create the new <see cref="IronSoftware.Drawing.AnyBitmap"/>.</param>
+        /// <param name="width">The width of the new AnyBitmap.</param>
+        /// <param name="height">The height of the new AnyBitmap.</param>
+        public AnyBitmap(AnyBitmap original, int width, int height)
+        {
+            LoadAndResizeImage(original, width, height);
         }
 
         /// <summary>
@@ -1649,6 +1660,51 @@ namespace IronSoftware.Drawing
             else
             {
                 return (Color)Image.CloneAs<Rgba32>()[x, y];
+            }
+        }
+
+        private void LoadAndResizeImage(AnyBitmap original, int width, int height)
+        {
+            using var image = SixLabors.ImageSharp.Image.Load<Rgba32>(original.Binary, out IImageFormat format);
+            image.Mutate(img => img.Resize(width, height));
+            byte[] pixelBytes = new byte[image.Width * image.Height * Unsafe.SizeOf<Rgba32>()];
+            image.CopyPixelDataTo(pixelBytes);
+
+            Image = image.Clone();
+            Binary = pixelBytes;
+            Format = format;
+        }
+
+        private ImageFormat GetImageFormat(string filename)
+        {
+            if (string.IsNullOrEmpty(filename))
+            {
+                throw new FileNotFoundException("Please provide filename.");
+            }
+
+            if (filename.ToLower().EndsWith("png"))
+            {
+                return ImageFormat.Png;
+            }
+            else if (filename.ToLower().EndsWith("jpg") || filename.ToLower().EndsWith("jpeg"))
+            {
+                return ImageFormat.Jpeg;
+            }
+            else if (filename.ToLower().EndsWith("webp"))
+            {
+                return ImageFormat.Jpeg;
+            }
+            else if (filename.ToLower().EndsWith("gif"))
+            {
+                return ImageFormat.Gif;
+            }
+            else if (filename.ToLower().EndsWith("tif") || filename.ToLower().EndsWith("tiff"))
+            {
+                return ImageFormat.Tiff;
+            }
+            else
+            {
+                return ImageFormat.Bmp;
             }
         }
 

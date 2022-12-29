@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Microsoft.Maui.Graphics;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
@@ -567,6 +568,17 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Color anyBitmapPixel = anyBitmap.GetPixel(18, 18);
             Color bitmapPixel = (Color)bitmap.GetPixel(18, 18);
             Assert.Equal(bitmapPixel, anyBitmapPixel);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Should_Resize_Image()
+        {
+            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
+            AnyBitmap anyBitmap = AnyBitmap.FromFile(imagePath);
+            AnyBitmap resizeAnyBitmap = new AnyBitmap(anyBitmap, 100, 100);
+            resizeAnyBitmap.Width.Should().Be(100);
+            resizeAnyBitmap.Height.Should().Be(100);
+            resizeAnyBitmap.SaveAs("resize.bmp");
         }
 
 #if !NETFRAMEWORK
