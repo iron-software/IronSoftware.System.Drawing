@@ -558,6 +558,17 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(data.Stride, anyBitmap.Stride);
         }
 
+        [FactWithAutomaticDisplayName]
+        public void Should_Return_Pixel()
+        {
+            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
+            AnyBitmap anyBitmap = AnyBitmap.FromFile(imagePath);
+            System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(imagePath);
+            Color anyBitmapPixel = anyBitmap.GetPixel(18, 18);
+            Color bitmapPixel = (Color)bitmap.GetPixel(18, 18);
+            Assert.Equal(bitmapPixel, anyBitmapPixel);
+        }
+
 #if !NETFRAMEWORK
         [FactWithAutomaticDisplayName]
         public void CastMaui_to_AnyBitmap()
