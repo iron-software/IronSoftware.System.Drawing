@@ -108,712 +108,712 @@ namespace IronSoftware.Drawing
         /// Gets a system-defined color that has an ARGB value of #F0F8FF.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color AliceBlue = new Color("#F0F8FF");
+        public static Color AliceBlue = new("#F0F8FF");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FAEBD7.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color AntiqueWhite = new Color("#FAEBD7");
+        public static Color AntiqueWhite = new("#FAEBD7");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #00FFFF.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Aqua = new Color("#00FFFF");
+        public static Color Aqua = new("#00FFFF");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #7FFFD4.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Aquamarine = new Color("#7FFFD4");
+        public static Color Aquamarine = new("#7FFFD4");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #F0FFFF.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Azure = new Color("#F0FFFF");
+        public static Color Azure = new("#F0FFFF");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #F5F5DC.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Beige = new Color("#F5F5DC");
+        public static Color Beige = new("#F5F5DC");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFE4C4.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Bisque = new Color("#FFE4C4");
+        public static Color Bisque = new("#FFE4C4");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #000000.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Black = new Color("#000000");
+        public static Color Black = new("#000000");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFEBCD.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color BlanchedAlmond = new Color("#FFEBCD");
+        public static Color BlanchedAlmond = new("#FFEBCD");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #0000FF.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Blue = new Color("#0000FF");
+        public static Color Blue = new("#0000FF");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #8A2BE2.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color BlueViolet = new Color("#8A2BE2");
+        public static Color BlueViolet = new("#8A2BE2");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #A52A2A.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Brown = new Color("#A52A2A");
+        public static Color Brown = new("#A52A2A");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #DEB887.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color BurlyWood = new Color("#DEB887");
+        public static Color BurlyWood = new("#DEB887");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #5F9EA0.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color CadetBlue = new Color("#5F9EA0");
+        public static Color CadetBlue = new("#5F9EA0");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #7FFF00.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Chartreuse = new Color("#7FFF00");
+        public static Color Chartreuse = new("#7FFF00");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #D2691E.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Chocolate = new Color("#D2691E");
+        public static Color Chocolate = new("#D2691E");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FF7F50.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Coral = new Color("#FF7F50");
+        public static Color Coral = new("#FF7F50");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #6495ED.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color CornflowerBlue = new Color("#6495ED");
+        public static Color CornflowerBlue = new("#6495ED");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFF8DC.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Cornsilk = new Color("#FFF8DC");
+        public static Color Cornsilk = new("#FFF8DC");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #DC143C.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Crimson = new Color("#DC143C");
+        public static Color Crimson = new("#DC143C");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #00FFFF.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Cyan = new Color("#00FFFF");
+        public static Color Cyan = new("#00FFFF");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #00008B.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DarkBlue = new Color("#00008B");
+        public static Color DarkBlue = new("#00008B");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #008B8B.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DarkCyan = new Color("#008B8B");
+        public static Color DarkCyan = new("#008B8B");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #B8860B.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DarkGoldenrod = new Color("#B8860B");
+        public static Color DarkGoldenrod = new("#B8860B");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #A9A9A9.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DarkGray = new Color("#A9A9A9");
+        public static Color DarkGray = new("#A9A9A9");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #006400.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DarkGreen = new Color("#006400");
+        public static Color DarkGreen = new("#006400");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #BDB76B.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DarkKhaki = new Color("#BDB76B");
+        public static Color DarkKhaki = new("#BDB76B");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #8B008B.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DarkMagenta = new Color("#8B008B");
+        public static Color DarkMagenta = new("#8B008B");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #556B2F.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DarkOliveGreen = new Color("#556B2F");
+        public static Color DarkOliveGreen = new("#556B2F");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FF8C00.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DarkOrange = new Color("#FF8C00");
+        public static Color DarkOrange = new("#FF8C00");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #9932CC.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DarkOrchid = new Color("#9932CC");
+        public static Color DarkOrchid = new("#9932CC");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #8B0000.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DarkRed = new Color("#8B0000");
+        public static Color DarkRed = new("#8B0000");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #E9967A.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DarkSalmon = new Color("#E9967A");
+        public static Color DarkSalmon = new("#E9967A");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #8FBC8B.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DarkSeaGreen = new Color("#8FBC8B");
+        public static Color DarkSeaGreen = new("#8FBC8B");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #483D8B.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DarkSlateBlue = new Color("#483D8B");
+        public static Color DarkSlateBlue = new("#483D8B");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #2F4F4F.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DarkSlateGray = new Color("#2F4F4F");
+        public static Color DarkSlateGray = new("#2F4F4F");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #00CED1.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DarkTurquoise = new Color("#00CED1");
+        public static Color DarkTurquoise = new("#00CED1");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #9400D3.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DarkViolet = new Color("#9400D3");
+        public static Color DarkViolet = new("#9400D3");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FF1493.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DeepPink = new Color("#FF1493");
+        public static Color DeepPink = new("#FF1493");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #00BFFF.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DeepSkyBlue = new Color("#00BFFF");
+        public static Color DeepSkyBlue = new("#00BFFF");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #696969.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DimGray = new Color("#696969");
+        public static Color DimGray = new("#696969");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #1E90FF.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color DodgerBlue = new Color("#1E90FF");
+        public static Color DodgerBlue = new("#1E90FF");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #B22222.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Firebrick = new Color("#B22222");
+        public static Color Firebrick = new("#B22222");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFFAF0.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color FloralWhite = new Color("#FFFAF0");
+        public static Color FloralWhite = new("#FFFAF0");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #228B22.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color ForestGreen = new Color("#228B22");
+        public static Color ForestGreen = new("#228B22");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FF00FF.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Fuchsia = new Color("#FF00FF");
+        public static Color Fuchsia = new("#FF00FF");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #DCDCDC.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Gainsboro = new Color("#DCDCDC");
+        public static Color Gainsboro = new("#DCDCDC");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #F8F8FF.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color GhostWhite = new Color("#F8F8FF");
+        public static Color GhostWhite = new("#F8F8FF");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFD700.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Gold = new Color("#FFD700");
+        public static Color Gold = new("#FFD700");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #DAA520.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Goldenrod = new Color("#DAA520");
+        public static Color Goldenrod = new("#DAA520");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #808080.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Gray = new Color("#808080");
+        public static Color Gray = new("#808080");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #008000.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Green = new Color("#008000");
+        public static Color Green = new("#008000");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #ADFF2F.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color GreenYellow = new Color("#ADFF2F");
+        public static Color GreenYellow = new("#ADFF2F");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #F0FFF0.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Honeydew = new Color("#F0FFF0");
+        public static Color Honeydew = new("#F0FFF0");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FF69B4.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color HotPink = new Color("#FF69B4");
+        public static Color HotPink = new("#FF69B4");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #CD5C5C.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color IndianRed = new Color("#CD5C5C");
+        public static Color IndianRed = new("#CD5C5C");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #4B0082.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Indigo = new Color("#4B0082");
+        public static Color Indigo = new("#4B0082");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFFFF0.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Ivory = new Color("#FFFFF0");
+        public static Color Ivory = new("#FFFFF0");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #F0E68C.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Khaki = new Color("#F0E68C");
+        public static Color Khaki = new("#F0E68C");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #E6E6FA.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Lavender = new Color("#E6E6FA");
+        public static Color Lavender = new("#E6E6FA");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFF0F5.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color LavenderBlush = new Color("#FFF0F5");
+        public static Color LavenderBlush = new("#FFF0F5");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #7CFC00.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color LawnGreen = new Color("#7CFC00");
+        public static Color LawnGreen = new("#7CFC00");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFFACD.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color LemonChiffon = new Color("#FFFACD");
+        public static Color LemonChiffon = new("#FFFACD");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #ADD8E6.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color LightBlue = new Color("#ADD8E6");
+        public static Color LightBlue = new("#ADD8E6");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #F08080.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color LightCoral = new Color("#F08080");
+        public static Color LightCoral = new("#F08080");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #E0FFFF.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color LightCyan = new Color("#E0FFFF");
+        public static Color LightCyan = new("#E0FFFF");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FAFAD2.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color LightGoldenrodYellow = new Color("#FAFAD2");
+        public static Color LightGoldenrodYellow = new("#FAFAD2");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #D3D3D3.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color LightGray = new Color("#D3D3D3");
+        public static Color LightGray = new("#D3D3D3");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #90EE90.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color LightGreen = new Color("#90EE90");
+        public static Color LightGreen = new("#90EE90");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFB6C1.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color LightPink = new Color("#FFB6C1");
+        public static Color LightPink = new("#FFB6C1");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFA07A.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color LightSalmon = new Color("#FFA07A");
+        public static Color LightSalmon = new("#FFA07A");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #20B2AA.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color LightSeaGreen = new Color("#20B2AA");
+        public static Color LightSeaGreen = new("#20B2AA");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #87CEFA.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color LightSkyBlue = new Color("#87CEFA");
+        public static Color LightSkyBlue = new("#87CEFA");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #778899.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color LightSlateGray = new Color("#778899");
+        public static Color LightSlateGray = new("#778899");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #B0C4DE.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color LightSteelBlue = new Color("#B0C4DE");
+        public static Color LightSteelBlue = new("#B0C4DE");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFFFE0.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color LightYellow = new Color("#FFFFE0");
+        public static Color LightYellow = new("#FFFFE0");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #00FF00.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Lime = new Color("#00FF00");
+        public static Color Lime = new("#00FF00");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #32CD32.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color LimeGreen = new Color("#32CD32");
+        public static Color LimeGreen = new("#32CD32");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FAF0E6.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Linen = new Color("#FAF0E6");
+        public static Color Linen = new("#FAF0E6");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FF00FF.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Magenta = new Color("#FF00FF");
+        public static Color Magenta = new("#FF00FF");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #800000.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Maroon = new Color("#800000");
+        public static Color Maroon = new("#800000");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #66CDAA.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color MediumAquamarine = new Color("#66CDAA");
+        public static Color MediumAquamarine = new("#66CDAA");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #0000CD.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color MediumBlue = new Color("#0000CD");
+        public static Color MediumBlue = new("#0000CD");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #BA55D3.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color MediumOrchid = new Color("#BA55D3");
+        public static Color MediumOrchid = new("#BA55D3");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #9370DB.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color MediumPurple = new Color("#9370DB");
+        public static Color MediumPurple = new("#9370DB");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #3CB371.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color MediumSeaGreen = new Color("#3CB371");
+        public static Color MediumSeaGreen = new("#3CB371");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #7B68EE.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color MediumSlateBlue = new Color("#7B68EE");
+        public static Color MediumSlateBlue = new("#7B68EE");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #00FA9A.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color MediumSpringGreen = new Color("#00FA9A");
+        public static Color MediumSpringGreen = new("#00FA9A");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #48D1CC.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color MediumTurquoise = new Color("#48D1CC");
+        public static Color MediumTurquoise = new("#48D1CC");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #C71585.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color MediumVioletRed = new Color("#C71585");
+        public static Color MediumVioletRed = new("#C71585");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #191970.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color MidnightBlue = new Color("#191970");
+        public static Color MidnightBlue = new("#191970");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #F5FFFA.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color MintCream = new Color("#F5FFFA");
+        public static Color MintCream = new("#F5FFFA");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFE4E1.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color MistyRose = new Color("#FFE4E1");
+        public static Color MistyRose = new("#FFE4E1");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFE4B5.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Moccasin = new Color("#FFE4B5");
+        public static Color Moccasin = new("#FFE4B5");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFDEAD.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color NavajoWhite = new Color("#FFDEAD");
+        public static Color NavajoWhite = new("#FFDEAD");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #000080.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Navy = new Color("#000080");
+        public static Color Navy = new("#000080");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FDF5E6.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color OldLace = new Color("#FDF5E6");
+        public static Color OldLace = new("#FDF5E6");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #808000.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Olive = new Color("#808000");
+        public static Color Olive = new("#808000");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #6B8E23.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color OliveDrab = new Color("#6B8E23");
+        public static Color OliveDrab = new("#6B8E23");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFA500.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Orange = new Color("#FFA500");
+        public static Color Orange = new("#FFA500");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FF4500.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color OrangeRed = new Color("#FF4500");
+        public static Color OrangeRed = new("#FF4500");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #DA70D6.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Orchid = new Color("#DA70D6");
+        public static Color Orchid = new("#DA70D6");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #EEE8AA.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color PaleGoldenrod = new Color("#EEE8AA");
+        public static Color PaleGoldenrod = new("#EEE8AA");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #98FB98.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color PaleGreen = new Color("#98FB98");
+        public static Color PaleGreen = new("#98FB98");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #AFEEEE.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color PaleTurquoise = new Color("#AFEEEE");
+        public static Color PaleTurquoise = new("#AFEEEE");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #DB7093.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color PaleVioletRed = new Color("#DB7093");
+        public static Color PaleVioletRed = new("#DB7093");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFEFD5.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color PapayaWhip = new Color("#FFEFD5");
+        public static Color PapayaWhip = new("#FFEFD5");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFDAB9.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color PeachPuff = new Color("#FFDAB9");
+        public static Color PeachPuff = new("#FFDAB9");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #CD853F.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Peru = new Color("#CD853F");
+        public static Color Peru = new("#CD853F");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFC0CB.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Pink = new Color("#FFC0CB");
+        public static Color Pink = new("#FFC0CB");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #DDA0DD.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Plum = new Color("#DDA0DD");
+        public static Color Plum = new("#DDA0DD");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #B0E0E6.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color PowderBlue = new Color("#B0E0E6");
+        public static Color PowderBlue = new("#B0E0E6");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #800080.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Purple = new Color("#800080");
+        public static Color Purple = new("#800080");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #663399.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color RebeccaPurple = new Color("#663399");
+        public static Color RebeccaPurple = new("#663399");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FF0000.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Red = new Color("#FF0000");
+        public static Color Red = new("#FF0000");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #BC8F8F.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color RosyBrown = new Color("#BC8F8F");
+        public static Color RosyBrown = new("#BC8F8F");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #4169E1.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color RoyalBlue = new Color("#4169E1");
+        public static Color RoyalBlue = new("#4169E1");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #8B4513.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color SaddleBrown = new Color("#8B4513");
+        public static Color SaddleBrown = new("#8B4513");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FA8072.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Salmon = new Color("#FA8072");
+        public static Color Salmon = new("#FA8072");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #F4A460.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color SandyBrown = new Color("#F4A460");
+        public static Color SandyBrown = new("#F4A460");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #2E8B57.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color SeaGreen = new Color("#2E8B57");
+        public static Color SeaGreen = new("#2E8B57");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFF5EE.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color SeaShell = new Color("#FFF5EE");
+        public static Color SeaShell = new("#FFF5EE");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #A0522D.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Sienna = new Color("#A0522D");
+        public static Color Sienna = new("#A0522D");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #C0C0C0.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Silver = new Color("#C0C0C0");
+        public static Color Silver = new("#C0C0C0");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #87CEEB.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color SkyBlue = new Color("#87CEEB");
+        public static Color SkyBlue = new("#87CEEB");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #6A5ACD.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color SlateBlue = new Color("#6A5ACD");
+        public static Color SlateBlue = new("#6A5ACD");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #708090.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color SlateGray = new Color("#708090");
+        public static Color SlateGray = new("#708090");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFFAFA.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Snow = new Color("#FFFAFA");
+        public static Color Snow = new("#FFFAFA");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #00FF7F.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color SpringGreen = new Color("#00FF7F");
+        public static Color SpringGreen = new("#00FF7F");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #4682B4.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color SteelBlue = new Color("#4682B4");
+        public static Color SteelBlue = new("#4682B4");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #D2B48C.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Tan = new Color("#D2B48C");
+        public static Color Tan = new("#D2B48C");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #008080.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Teal = new Color("#008080");
+        public static Color Teal = new("#008080");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #D2B48C.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Thistle = new Color("#D8BFD8");
+        public static Color Thistle = new("#D8BFD8");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FF6347.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Tomato = new Color("#FF6347");
+        public static Color Tomato = new("#FF6347");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #00FFFFFF.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Transparent = new Color("#00FFFFFF");
+        public static Color Transparent = new("#00FFFFFF");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #40E0D0.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Turquoise = new Color("#40E0D0");
+        public static Color Turquoise = new("#40E0D0");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #EE82EE.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Violet = new Color("#EE82EE");
+        public static Color Violet = new("#EE82EE");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #F5DEB3.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Wheat = new Color("#F5DEB3");
+        public static Color Wheat = new("#F5DEB3");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFFFFF.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color White = new Color("#FFFFFF");
+        public static Color White = new("#FFFFFF");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #F5F5F5.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color WhiteSmoke = new Color("#F5F5F5");
+        public static Color WhiteSmoke = new("#F5F5F5");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #FFFF00.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color Yellow = new Color("#FFFF00");
+        public static Color Yellow = new("#FFFF00");
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #9ACD32.
         /// </summary>
         /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static Color YellowGreen = new Color("#9ACD32");
+        public static Color YellowGreen = new("#9ACD32");
 
         /// <summary>
         /// Creates a <see cref="Color"/> structure from the specified 8-bit color values
@@ -1145,7 +1145,7 @@ namespace IronSoftware.Drawing
                 return false;
             }
 
-            if (!(other is Color))
+            if (other is not Color)
             {
                 return false;
             }
