@@ -4,8 +4,8 @@ using System.Linq;
 
 namespace IronSoftware.Drawing
 {
-    // <summary>
-    /// <para>A universally compatible Color for .NET 7, .NET 6, .NET 5, and .NET Core. As well as compatiblity with Windows, NanoServer, IIS, macOS, Mobile, Xamarin, iOS, Android, Google Compute, Azure, AWS, and Linux.</para>
+    /// <summary>
+    /// A universally compatible Color for .NET 7, .NET 6, .NET 5, and .NET Core. As well as compatiblity with Windows, NanoServer, IIS, macOS, Mobile, Xamarin, iOS, Android, Google Compute, Azure, AWS, and Linux.
     /// <para>Works nicely with popular Image Color such as <see cref="System.Drawing.Color"/>, <see cref="SkiaSharp.SKColor"/>, <see cref="SixLabors.ImageSharp.Color"/>, <see cref="Microsoft.Maui.Graphics.Color"/>.</para>
     /// <para>Implicit casting means that using this class to input and output Color from public APIs gives full compatibility to all Color-types fully supported by Microsoft.</para>
     /// </summary>
@@ -35,8 +35,6 @@ namespace IronSoftware.Drawing
         /// </summary>
         /// <return>The red component value of this <see cref="Color"/>.</return>
         public byte R { get; internal set; }
-
-        public static readonly Color Empty;
 
         /// <summary>
         /// Construct a new <see cref="Color"/>.
@@ -102,6 +100,10 @@ namespace IronSoftware.Drawing
             this.B = (byte)blue;
         }
 
+        /// <summary>
+        /// Represents a color that is null.
+        /// </summary>
+        public static readonly Color Empty;
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #F0F8FF.
         /// </summary>
@@ -1091,6 +1093,16 @@ namespace IronSoftware.Drawing
         /// <returns>true if the two <see cref="Color"/> structures are equal; otherwise, false.</returns>
         public static bool operator ==(Color left, Color right)
         {
+            if (left is null && right is null)
+            {
+                return true;
+            }
+            else if ((left is not null && right is null) ||
+                    (left is null && right is not null))
+            {
+                return false;
+            }
+
             return left.R == right.R &&
                 left.G == right.G &&
                 left.B == right.B &&
@@ -1105,6 +1117,16 @@ namespace IronSoftware.Drawing
         /// <returns>true if the two <see cref="Color"/> structures are different; otherwise, false.</returns>
         public static bool operator !=(Color left, Color right)
         {
+            if (left is null && right is null)
+            {
+                return false;
+            }
+            else if ((left is not null && right is null) ||
+                    (left is null && right is not null))
+            {
+                return true;
+            }
+
             return left.R != right.R ||
                 left.G != right.G ||
                 left.B != right.B ||
@@ -1132,6 +1154,12 @@ namespace IronSoftware.Drawing
                    this.G == ((Color)other).G &&
                    this.B == ((Color)other).B &&
                    this.A== ((Color)other).A;
+        }
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            return 0;
         }
 
         #region Private Method
