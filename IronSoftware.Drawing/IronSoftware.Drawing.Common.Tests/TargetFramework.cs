@@ -62,11 +62,6 @@ namespace IronSoftware.Drawing.Common.Tests
             return configValue;
         }
 
-        public void UnloadAppDomain(AppDomain domain)
-        {
-            AppDomain.Unload(domain);
-        }
-
         public bool IsDotNetCore { get; private set; }
 
         public bool IsFramework { get; private set; }

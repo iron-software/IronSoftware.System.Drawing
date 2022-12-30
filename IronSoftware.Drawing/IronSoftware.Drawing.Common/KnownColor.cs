@@ -1,5 +1,6 @@
 ﻿namespace IronSoftware.Drawing
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public enum KnownColor
     {
         ActiveBorder = 1,
@@ -177,4 +178,5 @@
         MenuBar = 173,
         MenuHighlight = 174
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }
