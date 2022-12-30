@@ -1,5 +1,7 @@
 using FluentAssertions;
+using SixLabors.ImageSharp.PixelFormats;
 using System;
+using System.Runtime.CompilerServices;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -564,6 +566,12 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Color.Red.Equals(Color.FromName("red")).Should().BeTrue();
             (Color.Yellow == Color.FromName("yellow")).Should().BeTrue();
             (Color.Gray != Color.FromName("darkgray")).Should().BeTrue();
+            Color nullColor = null;
+            (nullColor != null).Should().BeFalse();
+            (nullColor == null).Should().BeTrue();
+            Color red = Color.FromName("red");
+            (red != null).Should().BeTrue();
+            (red == null).Should().BeFalse();
         }
 
 #if !NETFRAMEWORK
