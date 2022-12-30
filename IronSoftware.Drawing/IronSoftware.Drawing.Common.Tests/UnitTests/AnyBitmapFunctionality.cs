@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Microsoft.Maui.Graphics;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
@@ -559,26 +560,41 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(data.Stride, anyBitmap.Stride);
         }
 
-        [FactWithAutomaticDisplayName]
-        public void Should_Return_Pixel()
+        [TheoryWithAutomaticDisplayName]
+        [InlineData("van-gogh-starry-night-vincent-van-gogh.jpg", 0, 0)]
+        [InlineData("van-gogh-starry-night-vincent-van-gogh.jpg", 500, 0)]
+        [InlineData("van-gogh-starry-night-vincent-van-gogh.jpg", 0, 300)]
+        [InlineData("van-gogh-starry-night-vincent-van-gogh.jpg", 500, 100)]
+        [InlineData("van-gogh-starry-night-vincent-van-gogh.jpg", 599, 150)]
+        [InlineData("van-gogh-starry-night-vincent-van-gogh.jpg", 350, 450)]
+        public void Should_Return_Pixel(string filename, int x, int y)
         {
-            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
+            string imagePath = GetRelativeFilePath(filename);
             AnyBitmap anyBitmap = AnyBitmap.FromFile(imagePath);
-            System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(imagePath);
-            Color anyBitmapPixel = anyBitmap.GetPixel(18, 18);
-            Color bitmapPixel = (Color)bitmap.GetPixel(18, 18);
-            Assert.Equal(bitmapPixel, anyBitmapPixel);
+            SixLabors.ImageSharp.Image<Rgb24> bitmap = SixLabors.ImageSharp.Image.Load<Rgb24>(imagePath);
+
+            anyBitmap.Width.Should().Be(bitmap.Width);
+            anyBitmap.Height.Should().Be(bitmap.Height);
+
+            Color anyBitmapPixel = anyBitmap.GetPixel(x, y);
+            SixLabors.ImageSharp.PixelFormats.Rgb24 bitmapPixel = bitmap[x, y];
+            anyBitmapPixel.R.Should().Be(bitmapPixel.R);
+            anyBitmapPixel.G.Should().Be(bitmapPixel.G);
+            anyBitmapPixel.B.Should().Be(bitmapPixel.B);
         }
 
-        [FactWithAutomaticDisplayName]
-        public void Should_Resize_Image()
+        [TheoryWithAutomaticDisplayName]
+        [InlineData("van-gogh-starry-night-vincent-van-gogh.jpg", 100, 100)]
+        [InlineData("van-gogh-starry-night-vincent-van-gogh.jpg", 1200, 800)]
+        [InlineData("mountainclimbers.jpg", 700, 600)]
+        [InlineData("mountainclimbers.jpg", 50, 30)]
+        public void Should_Resize_Image(string fileName, int width, int height)
         {
-            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
+            string imagePath = GetRelativeFilePath(fileName);
             AnyBitmap anyBitmap = AnyBitmap.FromFile(imagePath);
-            AnyBitmap resizeAnyBitmap = new AnyBitmap(anyBitmap, 100, 100);
-            resizeAnyBitmap.Width.Should().Be(100);
-            resizeAnyBitmap.Height.Should().Be(100);
-            resizeAnyBitmap.SaveAs("resize.bmp");
+            AnyBitmap resizeAnyBitmap = new AnyBitmap(anyBitmap, width, height);
+            resizeAnyBitmap.Width.Should().Be(width);
+            resizeAnyBitmap.Height.Should().Be(height);
         }
 
 #if !NETFRAMEWORK

@@ -679,11 +679,11 @@ namespace IronSoftware.Drawing
         /// <returns>A <see cref="IronSoftware.Drawing.Color"/> structure that represents the color of the specified pixel.</returns>
         public Color GetPixel(int x, int y)
         {
-            if (x == 0 || x >= this.Width)
+            if (x < 0 || x >= this.Width)
             {
                 throw new ArgumentOutOfRangeException("x is less than 0, or greater than or equal to Width.");
             }
-            if (y == 0 || y >= this.Height)
+            if (y < 0 || y >= this.Height)
             {
                 throw new ArgumentOutOfRangeException("y is less than 0, or greater than or equal to Height.");
             }
