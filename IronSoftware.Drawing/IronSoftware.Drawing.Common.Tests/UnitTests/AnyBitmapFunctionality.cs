@@ -5,11 +5,14 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
+using Image = SixLabors.ImageSharp.Image;
+using Rectangle = SixLabors.ImageSharp.Rectangle;
 
 namespace IronSoftware.Drawing.Common.Tests.UnitTests
 {
@@ -164,7 +167,6 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
-
         [FactWithAutomaticDisplayName]
         public void CastBitmap_from_AnyBitmap()
         {
@@ -362,6 +364,23 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             imgSharp.Save("expected.bmp");
             anyBitmap.SaveAs("result.bmp");
+
+            AssertImageAreEqual("expected.bmp", "result.bmp", true);
+        }
+        [FactWithAutomaticDisplayName]
+        public void CastSixLaborsList_to_AnyBitmapList()
+        {
+            string imagePath = GetRelativeFilePath("mountainclimbers.jpg");
+            SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> imgSharp = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(imagePath);
+            List<SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>> imgSharpList = new List<Image<Rgba32>>()
+                {imgSharp};
+            // TODO 1/9/23: support this casting
+            List<AnyBitmap> anyBitmapList = imgSharpList.Cast<AnyBitmap>().ToList();
+            // should we also support this?
+            //List<AnyBitmap> anyBitmapList = imgSharpList;
+
+            imgSharp.Save("expected.bmp");
+            anyBitmapList.First().SaveAs("result.bmp");
 
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
