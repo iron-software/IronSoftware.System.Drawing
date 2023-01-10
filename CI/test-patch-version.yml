@@ -1,8 +1,17 @@
+##### DECLARATIONS #####
+# Variables
+variables:
+  - group: IronPdfVersions
+  - name: NuGetVersion
+    value: $(IronPdfMajorVersion).$(IronPdfMinorVersion).$(IronDrawingPatchVersion)
+
 trigger: none
 
 pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: echo $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingPatchVersion)
+- script: |
+    echo Version: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingPatchVersion)
+    echo NuGetVersion: $(NuGetVersion)
   displayName: 'Read IronDrawing Version'
