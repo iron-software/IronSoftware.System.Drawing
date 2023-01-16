@@ -19,7 +19,7 @@
 - **AnyBitmap**: A universally compatible Bitmap class. Implicit casting between `IronSoftware.Drawing.AnyBitmap` and following popular Bitmap/Image formats supported:
 
 | **Implicit Casting Support** | To `AnyBitmap` Supported | From `AnyBitmap` Supported |
-|:------------------------------------------------------------------------:|:--------------------------:|:----------------------------:|
+|------------------------------------------------------------------------|:--------------------------:|:----------------------------:|
 |                           `System.Drawing.Bitmap`                          |              ✅             |               ✅              |
 |                           `System.Drawing.Image`                           |              ✅             |               ✅              |
 |                            `SkiaSharp.SKBitmap`                            |              ✅             |               ✅              |
@@ -30,7 +30,7 @@
 - **Color**: A universally compatible Color class. Implicit casting between `IronSoftware.Drawing.Color` and following popular Color formats supported:
 
 |     **Implicit Casting Support**    | To `Color` Supported | From `Color` Supported |
-|:-----------------------------------:|:--------------------:|:----------------------:|
+|-----------------------------------|:--------------------:|:----------------------:|
 |         `SkiaSharp.SKColor`         |           ✅          |            ✅           |
 |     `SixLabors.ImageSharp.Color`    |           ✅          |            ✅           |
 | `SixLabors.ImageSharp.PixelFormats` |           ✅          |            ✅           |
@@ -38,7 +38,7 @@
 - **CropRectangle**: A universally compatible Rectangle class. Implicit casting between `IronSoftware.Drawing.CropRectangle` and following popular Rectangle formats supported:
 
 |   **Implicit Casting Support**   | To `CropRectangle` Supported | From `CropRectangle` Supported |
-|:--------------------------------:|:----------------------------:|:------------------------------:|
+|--------------------------------|:----------------------------:|:------------------------------:|
 |    `System.Drawing.Rectangle`    |               ✅              |                ✅               |
 |        `SkiaSharp.SKRect`        |               ✅              |                ✅               |
 |        `SkiaSharp.SKRectI`       |               ✅              |                ✅               |
@@ -47,7 +47,7 @@
 - **Font**: A universally compatible Font class. Implicit casting between `IronSoftware.Drawing.Font` and following popular Font formats supported:
 
 | **Implicit Casting Support** | To `Font` Supported | From `Font` Supported |
-|:----------------------------:|:-------------------:|:---------------------:|
+|----------------------------|:-------------------:|:---------------------:|
 |     `System.Drawing.Font`    |          ✅          |           ✅           |
 |      `SkiaSharp.SKFont`      |          ✅          |           ✅           |
 |    `SixLabors.Fonts.Font`    |          ✅          |           ✅           |
