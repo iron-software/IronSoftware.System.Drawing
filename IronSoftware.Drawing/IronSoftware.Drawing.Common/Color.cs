@@ -38,6 +38,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Construct a new <see cref="Color"/>.
+        /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/create-color/">Code Example</a></para>
         /// </summary>
         /// <param name="colorcode">The hexadecimal representation of the combined color components arranged in rgb, argb, rrggbb, or aarrggbb format to match web syntax.</param>
         public Color(string colorcode)
@@ -73,6 +74,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Construct a new <see cref="Color"/>.
+        /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/create-color/">Code Example</a></para>
         /// </summary>
         /// <param name="alpha">The alpha component. Valid values are 0 through 255.</param>
         /// <param name="red">The red component. Valid values are 0 through 255.</param>
@@ -88,6 +90,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Construct a new <see cref="Color"/>.
+        /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/create-color/">Code Example</a></para>
         /// </summary>
         /// <param name="red">The red component. Valid values are 0 through 255.</param>
         /// <param name="green">The green component. Valid values are 0 through 255.</param>
@@ -915,6 +918,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Gets the 32-bit ARGB value of this <see cref="Color"/> structure.
+        /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/convert-color-to-32-bit-argb-value/">Code Example</a></para>
         /// </summary>
         /// <returns>The 32-bit ARGB value of this <see cref="Color"/>.</returns>
         public int ToArgb()

@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 namespace IronSoftware.Drawing
 {
     /// <summary>
-    /// <para>A universally compatible Bitmap format for .NET 7, .NET 6, .NET 5, and .NET Core. As well as compatiblity with Windows, NanoServer, IIS, macOS, Mobile, Xamarin, iOS, Android, Google Compute, Azure, AWS, and Linux.</para>
+    /// <para>A universally compatible Bitmap format for .NET 7, .NET 6, .NET 5, and .NET Core. As well as compatibility with Windows, NanoServer, IIS, macOS, Mobile, Xamarin, iOS, Android, Google Cloud, Azure, AWS, and Linux.</para>
     /// <para>Works nicely with popular Image and Bitmap formats such as System.Drawing.Bitmap, SkiaSharp, SixLabors.ImageSharp, Microsoft.Maui.Graphics.</para>
     /// <para>Implicit casting means that using this class to input and output Bitmap and image types from public API's gives full compatibility to all image type fully supported by Microsoft.</para>
     /// <para>Unlike System.Drawing.Bitmap this bitmap object is self-memory-managing and does not need to be explicitly 'used' or 'disposed'.</para>
@@ -69,6 +69,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// A Base64 encoded string representation of the raw image binary data.
+        /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/bitmap-to-string/">Code Example</a></para>
         /// </summary>
         /// <returns>The bitmap data as a Base64 string.</returns>
         /// <seealso cref="System.Convert.ToBase64String(byte[])"/>
@@ -88,6 +89,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// The raw image data as a <see cref="System.IO.MemoryStream"/>
+        /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/bitmap-to-stream/">Code Example</a></para>
         /// </summary>
         /// <returns><see cref="System.IO.MemoryStream"/></returns>
         public System.IO.MemoryStream GetStream()
@@ -97,6 +99,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Creates an exact duplicate <see cref="AnyBitmap"/>
+        /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/clone-anybitmap/">Code Example</a></para>
         /// </summary>
         /// <returns></returns>
         public AnyBitmap Clone()
@@ -106,6 +109,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Creates an exact duplicate <see cref="AnyBitmap"/> of the cropped area.
+        /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/clone-anybitmap/">Code Example</a></para>
         /// </summary>
         /// <param name="Rectangle">Defines the portion of this <see cref="AnyBitmap"/> to copy.</param>
         /// <returns></returns>
@@ -138,6 +142,7 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Exports the Bitmap as a file encoded in the <see cref="ImageFormat"/> of your choice.
         /// <para>Add SkiaSharp, System.Drawing.Common, or SixLabors.ImageSharp to your project to enable the encoding feature.</para>
+        /// <para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/export-anybitmap/">Code Example</a></para>
         /// </summary>
         /// <param name="File">A fully qualified file path.</param>
         /// <param name="Format">An image encoding format.</param>
@@ -155,6 +160,7 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Exports the Bitmap as a <see cref="MemoryStream"/> encoded in the <see cref="ImageFormat"/> of your choice.
         /// <para>Add SkiaSharp, System.Drawing.Common, or SixLabors.ImageSharp to your project to enable the encoding feature.</para>
+        /// <para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/bitmap-to-stream/">Code Example</a></para>
         /// </summary>
         /// <param name="Format">An image encoding format.</param>
         /// <param name="Lossy">JPEG and WebP encoding quality (ignored for all other values of <see cref="ImageFormat"/>). Higher values return larger file sizes. 0 is lowest quality, 100 is highest.</param>
@@ -486,6 +492,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Gets colors depth, in number of bits per pixel.
+        /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/get-color-depth/">Code Example</a></para>
         /// </summary>
         public int BitsPerPixel
         {
@@ -496,7 +503,8 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Returns the number of frames in our loaded Image.  Each “frame” is a page of an image such as  Tiff or Gif.  All other image formats return 1. 
+        /// Returns the number of frames in our loaded Image.  Each “frame” is a page of an image such as  Tiff or Gif.  All other image formats return 1.
+        /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/get-number-of-frames-in-anybitmap/">Code Example</a></para>
         /// </summary>
         /// <seealso cref="GetAllFrames" />
         public int FrameCount
@@ -509,6 +517,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Returns all of the cloned frames in our loaded Image. Each "frame" is a page of an image such as Tiff or Gif. All other image formats return an IEnumerable of length 1.
+        /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/get-frame-from-anybitmap/">Code Example</a></para>
         /// </summary>
         /// <seealso cref="FrameCount" />
         /// <seealso cref="System.Linq" />

@@ -69,6 +69,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Initializes a new Font that uses the specified existing FamilyName.
+        /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/create-and-cast-font/">Code Example</a></para>
         /// </summary>
         /// <param name="FamilyName">The FontFamily of the new Font.</param>
         public Font(string FamilyName)
@@ -78,6 +79,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Initializes a new Font that uses the specified existing FamilyName and FontStyle enumeration.
+        /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/create-and-cast-font/">Code Example</a></para>
         /// </summary>
         /// <param name="FamilyName">The FontFamily of the new Font.</param>
         /// <param name="Style">The FontStyle to apply to the new Font. Multiple values of the FontStyle enumeration can be combined with the OR operator.</param>
@@ -89,6 +91,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Initializes a new Font that uses the specified existing FamilyName, FontStyle enumeration, FontWeight, Bold, Italic and Size.
+        /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/create-and-cast-font/">Code Example</a></para>
         /// </summary>
         /// <param name="FamilyName">The FontFamily of the new Font.</param>
         /// <param name="Style">The FontStyle to apply to the new Font. Multiple values of the FontStyle enumeration can be combined with the OR operator.</param>
@@ -102,6 +105,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Initializes a new Font that uses the specified existing FamilyName, FontWeight, Bold, Italic and Size.
+        /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/create-and-cast-font/">Code Example</a></para>
         /// </summary>
         /// <param name="FamilyName">The FontFamily of the new Font.</param>
         /// <param name="Size">The em-size of the new font in the units specified by the unit parameter.</param>
