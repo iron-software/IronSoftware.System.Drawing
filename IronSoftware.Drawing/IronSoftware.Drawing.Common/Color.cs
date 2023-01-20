@@ -903,7 +903,7 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         public override string ToString()
         {
-            return $"#{this.A:X}{this.R:X}{this.G:X}{this.B:X}";
+            return $"#{this.A:X2}{this.R:X2}{this.G:X2}{this.B:X2}";
         }
 
         /// <summary>
