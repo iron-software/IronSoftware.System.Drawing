@@ -879,7 +879,12 @@ namespace IronSoftware.Drawing
         /// <seealso cref="FromArgb(int, int, int, int)"/>
         public static Color FromArgb(int argb)
         {
-            return new Color(argb.ToString("X"));
+            string colorCode = argb.ToString("X");
+            if (colorCode.Length == 6) 
+            {
+                colorCode = "00" + colorCode;
+            }
+            return new Color(colorCode);
         }
 
         /// <summary>
@@ -903,7 +908,7 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         public override string ToString()
         {
-            return $"#{this.A:X}{this.R:X}{this.G:X}{this.B:X}";
+            return $"#{this.A:X2}{this.R:X2}{this.G:X2}{this.B:X2}";
         }
 
         /// <summary>
