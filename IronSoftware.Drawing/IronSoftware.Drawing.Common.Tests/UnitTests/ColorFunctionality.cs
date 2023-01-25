@@ -183,9 +183,10 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(0, blue.G);
             Assert.Equal(255, blue.B);
 
-            color = Color.FromArgb(Convert.ToInt32("1e81b0", 16));
+            Int32 iColorCode = Convert.ToInt32("1e81b0", 16);
+            color = Color.FromArgb(iColorCode);
             System.Drawing.Color drawingColor = color;
-            Assert.Equal(255, drawingColor.A);
+            Assert.Equal(0, drawingColor.A);
             Assert.Equal(30, drawingColor.R);
             Assert.Equal(129, drawingColor.G);
             Assert.Equal(176, drawingColor.B);
@@ -250,7 +251,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             color = Color.FromArgb(Convert.ToInt32("1e81b0", 16));
             SkiaSharp.SKColor skColor = color;
-            Assert.Equal(255, skColor.Alpha);
+            Assert.Equal(0, skColor.Alpha);
             Assert.Equal(30, skColor.Red);
             Assert.Equal(129, skColor.Green);
             Assert.Equal(176, skColor.Blue);
@@ -298,7 +299,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             color = Color.FromArgb(Convert.ToInt32("1e81b0", 16));
             SixLabors.ImageSharp.Color imgColor = color;
-            Assert.Equal("1E81B0FF", imgColor.ToHex());
+            Assert.Equal("1E81B000", imgColor.ToHex());
         }
 
         [FactWithAutomaticDisplayName]
@@ -343,7 +344,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             color = Color.FromArgb(Convert.ToInt32("1e81b0", 16));
             SixLabors.ImageSharp.PixelFormats.Rgba32 imgColor = color;
-            Assert.Equal("1E81B0FF", imgColor.ToHex());
+            Assert.Equal("1E81B000", imgColor.ToHex());
         }
 
         [FactWithAutomaticDisplayName]
@@ -498,7 +499,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             color = Color.FromArgb(Convert.ToInt32("1e81b0", 16));
             SixLabors.ImageSharp.PixelFormats.Rgba64 imgColor = color;
-            Assert.Equal(65535, imgColor.A);
+            Assert.Equal(0, imgColor.A);
             Assert.Equal(7710, imgColor.R);
             Assert.Equal(33153, imgColor.G);
             Assert.Equal(45232, imgColor.B);
@@ -526,17 +527,17 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             color.R.Should().Be(255);
             color.G.Should().Be(0);
             color.B.Should().Be(0);
-            
+
             color = Color.FromName("green");
             color.R.Should().Be(0);
             color.G.Should().Be(128);
             color.B.Should().Be(0);
-            
+
             color = Color.FromName("blue");
             color.R.Should().Be(0);
             color.G.Should().Be(0);
             color.B.Should().Be(255);
-            
+
             color = Color.FromName("yellow");
             color.R.Should().Be(255);
             color.G.Should().Be(255);
@@ -561,7 +562,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             color.R.Should().Be(0);
             color.G.Should().Be(0);
             color.B.Should().Be(0);
-            
+
             color = Color.FromName("orange");
             color.R.Should().Be(255);
             color.G.Should().Be(165);
@@ -580,6 +581,21 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Color red = Color.FromName("red");
             (red != null).Should().BeTrue();
             (red == null).Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData("1e81b0")]
+        [InlineData("001e81b0")]
+        [InlineData("FF1e81b0")]
+        public void From32BitArgb_Should_Equal_Drawing(string colorCode)
+        {
+            Int32 iColorCode = Convert.ToInt32(colorCode, 16);
+            System.Drawing.Color drawingColor = System.Drawing.Color.FromArgb(iColorCode);
+            Color ironColor = Color.FromArgb(iColorCode);
+            Assert.Equal(drawingColor.A, ironColor.A);
+            Assert.Equal(drawingColor.R, ironColor.R);
+            Assert.Equal(drawingColor.G, ironColor.G);
+            Assert.Equal(drawingColor.B, ironColor.B);
         }
 
 #if !NETFRAMEWORK
@@ -641,7 +657,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             color = Color.FromArgb(Convert.ToInt32("1e81b0", 16));
             Microsoft.Maui.Graphics.Color skColor = color;
-            Assert.Equal(1, skColor.Alpha);
+            Assert.Equal(0, skColor.Alpha);
             Assert.Equal("0.118", skColor.Red.ToString("0.000"));
             Assert.Equal("0.506", skColor.Green.ToString("0.000"));
             Assert.Equal("0.690", skColor.Blue.ToString("0.000"));

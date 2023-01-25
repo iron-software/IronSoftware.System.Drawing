@@ -879,7 +879,12 @@ namespace IronSoftware.Drawing
         /// <seealso cref="FromArgb(int, int, int, int)"/>
         public static Color FromArgb(int argb)
         {
-            return new Color(argb.ToString("X"));
+            string colorCode = argb.ToString("X");
+            if (colorCode.Length == 6) 
+            {
+                colorCode = "00" + colorCode;
+            }
+            return new Color(colorCode);
         }
 
         /// <summary>
