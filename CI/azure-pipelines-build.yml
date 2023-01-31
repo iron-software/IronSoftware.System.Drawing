@@ -9,14 +9,10 @@ variables:
   - group: IronDrawingVersions
   - name: Configuration
     value: 'Release'
-  - name: Year
-    value: $[format('{0:yyyy}', pipeline.startTime)]
-  - name: Month
-    value: $[format('{0:M}', pipeline.startTime)]
   - name: AssemblyVersion
-    value: $(Year).$(Month).$(Build.BuildID)
+    value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingRevisionVersion).$(IronDrawingPatch)
   - name: NuGetVersion
-    value: $(Year).$(Month).$(Build.BuildID)
+    value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingPatch)
     
 # Virtual Machine
 pool:
