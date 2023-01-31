@@ -437,6 +437,27 @@ stages:
         publishSymbols: true
         symbolServerType: TeamServices
         detailedLog: true
+    # Store Version Information
+    - task: file-creator@6
+      displayName: Store Version Information
+      inputs:
+        filepath: 'VersionInformation/versions.xml'
+        filecontent: |
+          <?xml version="1.0" encoding="utf-8"?>
+          <Versions>
+          <Configuration>$(Configuration)</Configuration>
+          <IronDrawingNuGetVersion>$(NuGetVersion)</IronDrawingNuGetVersion>
+          <IronDrawingAssemblyVersion>$(AssemblyVersion)</IronDrawingAssemblyVersion>
+          <GitCommitHash>$(Build.SourceVersion)</GitCommitHash>
+          </Versions>
+        fileoverwrite: true
+        verbose: true
+    - task: PublishBuildArtifacts@1
+      displayName: Publish IronDrawing Version Information
+      inputs:
+        PathtoPublish: 'VersionInformation'
+        ArtifactName: 'IronDrawingVersions'
+        publishLocation: 'Container'
     - task: GitHubRelease@1
       condition: and(succeeded(), eq('${{ parameters.githubRelease }}', true))
       inputs:
