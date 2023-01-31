@@ -443,8 +443,8 @@ stages:
           <?xml version="1.0" encoding="utf-8"?>
           <Versions>
           <Configuration>$(Configuration)</Configuration>
-          <IronDrawingNuGetVersion>$(NuGetVersion)</IronPdfNuGetVersion>
-          <IronDrawingAssemblyVersion>$(AssemblyVersion)</IronPdfAssemblyVersion>
+          <IronDrawingNuGetVersion>$(NuGetVersion)</IronDrawingNuGetVersion>
+          <IronDrawingAssemblyVersion>$(AssemblyVersion)</IronDrawingAssemblyVersion>
           <GitCommitHash>$(Build.SourceVersion)</GitCommitHash>
           </Versions>
         fileoverwrite: true
