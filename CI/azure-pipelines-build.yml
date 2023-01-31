@@ -110,12 +110,17 @@ stages:
         buildType: 'current'
         artifactName: 'IronDrawingDataTests'
         targetPath: '$(Agent.BuildDirectory)/Data'
+    - task: UseDotNet@2
+      displayName: 'Install .Netcoreapp3.1 Core sdk'
+      inputs:
+        packageType: 'sdk'
+        version: '3.x'
     - task: DotNetCoreCLI@2
       displayName: Execute Windows (.NET Core x64) Tests
       inputs:
         command: 'test'
         projects: 'IronDrawingTests/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
-        arguments: '-s IronDrawingTests/tests.runsettings --framework "netcoreapp3.1" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\netcoreapp3.1\testhost.log"'
+        arguments: '-s IronDrawingTests/tests.runsettings --framework "netcoreapp3.1" -v d --blame --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\netcoreapp3.1\testhost.log"'
         testRunTitle: 'Windows (.NET Core) Tests'
         publishTestResults: true
     # Upload Log files
@@ -139,12 +144,17 @@ stages:
         buildType: 'current'
         artifactName: 'IronDrawingDataTests'
         targetPath: '$(Agent.BuildDirectory)/Data'
+    - task: UseDotNet@2
+      displayName: 'Install .Netcoreapp3.1 Core sdk'
+      inputs:
+        packageType: 'sdk'
+        version: '3.x'
     - task: DotNetCoreCLI@2
       displayName: Execute Windows (.NET Core x86) Tests
       inputs:
         command: 'test'
         projects: 'IronDrawingTests/netcoreapp3.1/IronSoftware.Drawing.Common.Tests.dll'
-        arguments: '-s IronDrawingTests/tests.x86.runsettings --framework "netcoreapp3.1" -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\netcoreapp3.1\testhost.log"'
+        arguments: '-s IronDrawingTests/tests.x86.runsettings --framework "netcoreapp3.1" -v d --blame --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\$(Configuration)\netcoreapp3.1\testhost.log"'
         testRunTitle: 'Windows (.NET Core) Tests'
         publishTestResults: true
     # Upload Log files

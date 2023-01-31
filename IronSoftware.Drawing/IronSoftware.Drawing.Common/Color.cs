@@ -38,6 +38,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Construct a new <see cref="Color"/>.
+        /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/create-color/">Code Example</a></para>
         /// </summary>
         /// <param name="colorcode">The hexadecimal representation of the combined color components arranged in rgb, argb, rrggbb, or aarrggbb format to match web syntax.</param>
         public Color(string colorcode)
@@ -73,6 +74,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Construct a new <see cref="Color"/>.
+        /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/create-color/">Code Example</a></para>
         /// </summary>
         /// <param name="alpha">The alpha component. Valid values are 0 through 255.</param>
         /// <param name="red">The red component. Valid values are 0 through 255.</param>
@@ -88,6 +90,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Construct a new <see cref="Color"/>.
+        /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/create-color/">Code Example</a></para>
         /// </summary>
         /// <param name="red">The red component. Valid values are 0 through 255.</param>
         /// <param name="green">The green component. Valid values are 0 through 255.</param>
@@ -876,7 +879,12 @@ namespace IronSoftware.Drawing
         /// <seealso cref="FromArgb(int, int, int, int)"/>
         public static Color FromArgb(int argb)
         {
-            return new Color(argb.ToString("X"));
+            string colorCode = argb.ToString("X");
+            if (colorCode.Length == 6) 
+            {
+                colorCode = "00" + colorCode;
+            }
+            return new Color(colorCode);
         }
 
         /// <summary>
@@ -900,7 +908,7 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         public override string ToString()
         {
-            return $"#{this.A:X}{this.R:X}{this.G:X}{this.B:X}";
+            return $"#{this.A:X2}{this.R:X2}{this.G:X2}{this.B:X2}";
         }
 
         /// <summary>
@@ -915,6 +923,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Gets the 32-bit ARGB value of this <see cref="Color"/> structure.
+        /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/convert-color-to-32-bit-argb-value/">Code Example</a></para>
         /// </summary>
         /// <returns>The 32-bit ARGB value of this <see cref="Color"/>.</returns>
         public int ToArgb()

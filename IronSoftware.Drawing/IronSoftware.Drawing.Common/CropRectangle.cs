@@ -60,6 +60,7 @@ namespace IronSoftware.Drawing
 
         /// <summary>
         /// Convert this crop rectangle to the specified units of measurement using the specified DPI
+        /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/convert-measurement-unit-of-croprectangle/">Code Example</a></para>
         /// </summary>
         /// <param name="units">Unit of measurement</param>
         /// <param name="dpi">DPI (Dots per inch) for conversion</param>
