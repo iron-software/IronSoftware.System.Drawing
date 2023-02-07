@@ -21,6 +21,7 @@ namespace IronSoftware.Drawing
     /// </summary>
     public partial class AnyBitmap : IDisposable
     {
+        private bool disposed = false;
         private SixLabors.ImageSharp.Image Image { get; set; }
         private byte[] Binary { get; set; }
         private IImageFormat Format { get; set; }
@@ -1190,11 +1191,23 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
+        /// AnyBitmap destructor
+        /// </summary>
+        ~AnyBitmap()
+        {
+            this.Dispose();
+        }
+
+        /// <summary>
         /// Releases all resources used by this <see cref="IronSoftware.Drawing.AnyBitmap"/>.
         /// </summary>
         public void Dispose()
         {
-            Image.Dispose();
+            if (this.disposed)
+                return;
+            this.Image.Dispose();
+            this.Image = null;
+            this.disposed = true;
         }
 
         #region Private Method
