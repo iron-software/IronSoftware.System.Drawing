@@ -1207,6 +1207,7 @@ namespace IronSoftware.Drawing
                 return;
             this.Image.Dispose();
             this.Image = null;
+            this.Binary = null;
             this.disposed = true;
         }
 
