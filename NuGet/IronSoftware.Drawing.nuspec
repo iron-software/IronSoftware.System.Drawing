@@ -36,12 +36,8 @@ Supports:
 
 For general support and technical inquiries, please email us at: developers@ironsoftware.com</description>
 		<summary>IronSoftware.System.Drawing is an open-source solution for .NET developers to replace System.Drawing.Common with a universal and flexible library.</summary>
-		<releaseNotes>* AnyBitmap
-  - GetPixel(x, y) which is a new accessor method to get the Color of a pixel in an AnyBitmap
-  - Adds new constructor to AnyBitmap which creates a new AnyBitmap from an existing AnyBitmap, scaled to the a custom width and height
-  - Fixes a bug when saving an image without specifying ImageFormat
-* Color
-  - [Hotfix] Fixes a bug when comparing Color with null</releaseNotes>
+		<releaseNotes>- Added a deconstructor for the AnyBitmap class to automatically dispose of objects, simplifying memory management.
+- Added a new function call to the Color class: ToHtmlCssColorCode(). This translates the specified Color structure to an HTML string color representation.</releaseNotes>
 		<copyright>Copyright © Iron Software 2022-2023</copyright>
 		<tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, TIFF, TIF, GIF, JPEG, PNG, Color, Rectangle, Drawing, C#, VB.NET, ASPX, create, render, generate, standard, netstandard2.0, core, netcore</tags>
 		<repository type="git" url="https://github.com/iron-software/IronSoftware.Drawing.Common" commit="$commit$" />

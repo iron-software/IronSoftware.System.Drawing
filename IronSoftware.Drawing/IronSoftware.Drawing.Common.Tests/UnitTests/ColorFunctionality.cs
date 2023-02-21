@@ -598,6 +598,25 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(drawingColor.B, ironColor.B);
         }
 
+        [Theory]
+        [InlineData(255, 177, 177, 177, "#B1B1B1")]
+        [InlineData(255, 0, 0, 0, "#000000")]
+        [InlineData(255, 255, 0, 0, "#FF0000")]
+        [InlineData(255, 0, 255, 0, "#00FF00")]
+        [InlineData(255, 0, 0, 255, "#0000FF")]
+        [InlineData(255, 30, 129, 176, "#1E81B0")]
+        public void ToHtml_ShouldReturnCorrectHtmlString(int a, int r, int g, int b, string expectedHtml)
+        {
+            // Arrange
+            var color = new Color(a, r, g, b);
+
+            // Act
+            var actualHtml = color.ToHtmlCssColorCode();
+
+            // Assert
+            Assert.Equal(expectedHtml, actualHtml);
+        }
+
 #if !NETFRAMEWORK
         [FactWithAutomaticDisplayName]
         public void Cast_Maui_from_Color()
