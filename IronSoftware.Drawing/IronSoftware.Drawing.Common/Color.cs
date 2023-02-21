@@ -1251,6 +1251,15 @@ namespace IronSoftware.Drawing
             return 0;
         }
 
+        /// <summary>
+        /// Translates the specified Color structure to an HTML string color representation.
+        /// </summary>
+        /// <returns>A string containing the hex representation of the color in the format #RRGGBB.</returns>
+        public string ToHtmlCssColorCode()
+        {
+            return $"#{this.R:X2}{this.G:X2}{this.B:X2}";
+        }
+
         #region Private Method
 
         private static InvalidOperationException NoConverterException(string color, Exception innerException)
