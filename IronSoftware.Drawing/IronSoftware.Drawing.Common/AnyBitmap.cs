@@ -637,12 +637,18 @@ namespace IronSoftware.Drawing
                 FlipMode.Horizontal => SixLabors.ImageSharp.Processing.FlipMode.Horizontal,
                 FlipMode.Vertical => SixLabors.ImageSharp.Processing.FlipMode.Vertical
             };
-            
-            SixLabors.ImageSharp.Image image = (SixLabors.ImageSharp.Image)bitmap;
-            image.Mutate(x => x.RotateFlip(rotateModeImgSharp, flipModeImgSharp));
 
-            bitmap = image;
-            return bitmap;
+            using var memoryStream = new System.IO.MemoryStream();
+            using SixLabors.ImageSharp.Image image = SixLabors.ImageSharp.Image.Load(bitmap.ExportBytes());
+            
+            image.Mutate(x => x.RotateFlip(rotateModeImgSharp, flipModeImgSharp));
+            image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
+            {
+                BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
+                SupportTransparency = true
+            });
+            
+            return new AnyBitmap(memoryStream.ToArray());
         }
 
         /// <summary>
