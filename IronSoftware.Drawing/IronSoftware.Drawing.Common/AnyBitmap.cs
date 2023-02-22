@@ -650,7 +650,7 @@ namespace IronSoftware.Drawing
                 FlipMode.Vertical => SixLabors.ImageSharp.Processing.FlipMode.Vertical
             };
 
-            using var memoryStream = new System.IO.MemoryStream();
+            using MemoryStream memoryStream = new System.IO.MemoryStream();
             using SixLabors.ImageSharp.Image image = SixLabors.ImageSharp.Image.Load(bitmap.ExportBytes());
             
             image.Mutate(x => x.RotateFlip(rotateModeImgSharp, flipModeImgSharp));
