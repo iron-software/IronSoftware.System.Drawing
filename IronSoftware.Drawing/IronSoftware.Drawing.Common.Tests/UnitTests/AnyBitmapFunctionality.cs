@@ -596,6 +596,28 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             resizeAnyBitmap.Width.Should().Be(width);
             resizeAnyBitmap.Height.Should().Be(height);
         }
+        
+        [FactWithAutomaticDisplayName]
+        public void Should_RotateFlip()
+        {
+            string imagePath = GetRelativeFilePath("checkmark.jpg");
+            
+            // Check rotate
+            AnyBitmap bitmap = AnyBitmap.FromFile(imagePath);
+            bitmap = AnyBitmap.RotateFlip(bitmap, AnyBitmap.RotateMode.Rotate180, AnyBitmap.FlipMode.Horizontal);
+            bitmap.SaveAs("result_rotate.bmp");
+            Assert.Equal(52, bitmap.Width);
+            Assert.Equal(52, bitmap.Height);
+            AssertImageAreEqual(GetRelativeFilePath("checkmark90.jpg"), "result_rotate.bmp");
+            
+            // Check flip
+            bitmap = AnyBitmap.FromFile(imagePath);
+            bitmap = AnyBitmap.RotateFlip(bitmap, AnyBitmap.RotateMode.None, AnyBitmap.FlipMode.Horizontal);
+            bitmap.SaveAs("result_flip.bmp");
+            Assert.Equal(52, bitmap.Width);
+            Assert.Equal(52, bitmap.Height);
+            AssertImageAreEqual(GetRelativeFilePath("checkmarkFlip.jpg"), "result_flip.bmp");
+        }
 
 #if !NETFRAMEWORK
         [FactWithAutomaticDisplayName]

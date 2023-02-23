@@ -602,6 +602,66 @@ namespace IronSoftware.Drawing
             stream.Seek(0, SeekOrigin.Begin);
             return AnyBitmap.FromStream(stream);
         }
+        
+        /// <summary>
+        /// Specifies how much an <see cref="AnyBitmap"/> is rotated and the axis used to flip the image.
+        /// </summary>
+        /// <param name="rotateMode">Provides enumeration over how the image should be rotated.</param>
+        /// <param name="flipMode">Provides enumeration over how a image should be flipped.</param>
+        /// <returns>Transformed image</returns>
+        public AnyBitmap RotateFlip(RotateMode rotateMode, FlipMode flipMode)
+        {
+            return AnyBitmap.RotateFlip(this, rotateMode, flipMode);
+        }
+        
+        /// <summary>
+        /// Specifies how much an <see cref="AnyBitmap"/> is rotated and the axis used to flip the image.
+        /// </summary>
+        /// <param name="rotateFlipType">Provides enumeration over how the image should be rotated.</param>
+        /// <returns>Transformed image</returns>
+        [Obsolete("The parameter type RotateFlipType is legacy support from System.Drawing. Please use RotateMode and FlipMode instead.")]
+        public AnyBitmap RotateFlip(RotateFlipType rotateFlipType)
+        {
+            var (rotateMode, flipMode) = ParseRotateFlipType(rotateFlipType);
+            return AnyBitmap.RotateFlip(this, rotateMode, flipMode);
+        }
+
+        /// <summary>
+        /// Specifies how much an image is rotated and the axis used to flip the image.
+        /// </summary>
+        /// <param name="bitmap">The <see cref="AnyBitmap"/> to perform the transformation on.</param>
+        /// <param name="rotateMode">Provides enumeration over how the image should be rotated.</param>
+        /// <param name="flipMode">Provides enumeration over how a image should be flipped.</param>
+        /// <returns>Transformed image</returns>
+        public static AnyBitmap RotateFlip(AnyBitmap bitmap, RotateMode rotateMode, FlipMode flipMode)
+        {
+            SixLabors.ImageSharp.Processing.RotateMode rotateModeImgSharp = rotateMode switch
+            {
+                RotateMode.None => SixLabors.ImageSharp.Processing.RotateMode.None,
+                RotateMode.Rotate90 => SixLabors.ImageSharp.Processing.RotateMode.Rotate90,
+                RotateMode.Rotate180 => SixLabors.ImageSharp.Processing.RotateMode.Rotate180,
+                RotateMode.Rotate270 => SixLabors.ImageSharp.Processing.RotateMode.Rotate270
+            };
+            
+            SixLabors.ImageSharp.Processing.FlipMode flipModeImgSharp = flipMode switch
+            {
+                FlipMode.None => SixLabors.ImageSharp.Processing.FlipMode.None,
+                FlipMode.Horizontal => SixLabors.ImageSharp.Processing.FlipMode.Horizontal,
+                FlipMode.Vertical => SixLabors.ImageSharp.Processing.FlipMode.Vertical
+            };
+
+            using MemoryStream memoryStream = new System.IO.MemoryStream();
+            using SixLabors.ImageSharp.Image image = SixLabors.ImageSharp.Image.Load(bitmap.ExportBytes());
+            
+            image.Mutate(x => x.RotateFlip(rotateModeImgSharp, flipModeImgSharp));
+            image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
+            {
+                BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
+                SupportTransparency = true
+            });
+            
+            return new AnyBitmap(memoryStream.ToArray());
+        }
 
         /// <summary>
         /// Gets the stride width (also called scan width) of the <see cref="AnyBitmap"/> object.
@@ -1190,6 +1250,177 @@ namespace IronSoftware.Drawing
             /// <summary> The existing raw image format.</summary>
             Default = -1
 
+        }
+        
+        /// <summary>
+        /// Converts the legacy <see cref="RotateFlipType"/> to <see cref="RotateMode"/> and <see cref="FlipMode"/>
+        /// </summary>
+        internal static (RotateMode, FlipMode) ParseRotateFlipType(RotateFlipType rotateFlipType)
+        {
+            switch (rotateFlipType)
+            {
+                case RotateFlipType.RotateNoneFlipNone: // case 0
+                case RotateFlipType.Rotate180FlipXY: // case 0
+                    return (RotateMode.None, FlipMode.None);
+                
+                case RotateFlipType.Rotate90FlipNone: // case 1
+                case RotateFlipType.Rotate270FlipXY: // case 1
+                    return (RotateMode.Rotate90, FlipMode.None);
+                
+                case RotateFlipType.RotateNoneFlipXY: // case 2
+                case RotateFlipType.Rotate180FlipNone: // case 2
+                    return (RotateMode.Rotate180, FlipMode.None);
+                
+                case RotateFlipType.Rotate90FlipXY: // case 3
+                case RotateFlipType.Rotate270FlipNone: // case 3
+                    return (RotateMode.Rotate270, FlipMode.None);
+                
+                case RotateFlipType.RotateNoneFlipX: // case 4
+                case RotateFlipType.Rotate180FlipY: // case 4
+                    return (RotateMode.None, FlipMode.Horizontal);
+                
+                case RotateFlipType.Rotate90FlipX: // case 5
+                case RotateFlipType.Rotate270FlipY: // case 5
+                    return (RotateMode.Rotate90, FlipMode.Horizontal);
+                
+                case RotateFlipType.RotateNoneFlipY: // case 6
+                case RotateFlipType.Rotate180FlipX: // case 6
+                    return (RotateMode.None, FlipMode.Vertical);
+                
+                case RotateFlipType.Rotate90FlipY: // case 7
+                case RotateFlipType.Rotate270FlipX: // case 7
+                    return (RotateMode.Rotate90, FlipMode.Vertical);
+                
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(rotateFlipType), rotateFlipType, null);
+            }
+        }
+        
+        /// <summary>
+        /// Provides enumeration over how the image should be rotated.
+        /// </summary>
+        public enum RotateMode
+        {
+            /// <summary>
+            /// Do not rotate the image.
+            /// </summary>
+            None,
+
+            /// <summary>
+            /// Rotate the image by 90 degrees clockwise.
+            /// </summary>
+            Rotate90 = 90,
+
+            /// <summary>
+            /// Rotate the image by 180 degrees clockwise.
+            /// </summary>
+            Rotate180 = 180,
+
+            /// <summary>
+            /// Rotate the image by 270 degrees clockwise.
+            /// </summary>
+            Rotate270 = 270
+        }
+
+        /// <summary>
+        /// Provides enumeration over how a image should be flipped.
+        /// </summary>
+        public enum FlipMode
+        {
+            /// <summary>
+            /// Don't flip the image.
+            /// </summary>
+            None,
+
+            /// <summary>
+            /// Flip the image horizontally.
+            /// </summary>
+            Horizontal,
+
+            /// <summary>
+            /// Flip the image vertically.
+            /// </summary>
+            Vertical
+        }
+        
+        /// <summary>
+        /// Specifies how much an image is rotated and the axis used to flip the image.
+        /// This follows the legacy System.Drawing.RotateFlipType notation.
+        /// </summary>
+        [Obsolete("RotateFlipType is legacy support from System.Drawing. Please use RotateMode and FlipMode instead.")]
+        public enum RotateFlipType
+        {
+            /// <summary>
+            /// Specifies no clockwise rotation and no flipping.
+            /// </summary>
+            RotateNoneFlipNone,
+            /// <summary>
+            /// Specifies a 180-degree clockwise rotation followed by a horizontal and vertical flip.
+            /// </summary>
+            Rotate180FlipXY,
+
+            /// <summary>
+            /// Specifies a 90-degree clockwise rotation without flipping.
+            /// </summary>
+            Rotate90FlipNone,
+            /// <summary>
+            /// Specifies a 270-degree clockwise rotation followed by a horizontal and vertical flip.
+            /// </summary>
+            Rotate270FlipXY,
+
+            /// <summary>
+            /// Specifies no clockwise rotation followed by a horizontal and vertical flip.
+            /// </summary>
+            RotateNoneFlipXY,
+            /// <summary>
+            /// Specifies a 180-degree clockwise rotation without flipping.
+            /// </summary>
+            Rotate180FlipNone,
+
+            /// <summary>
+            /// Specifies a 90-degree clockwise rotation followed by a horizontal and vertical flip.
+            /// </summary>
+            Rotate90FlipXY,
+            /// <summary>
+            /// Specifies a 270-degree clockwise rotation without flipping.
+            /// </summary>
+            Rotate270FlipNone,
+
+            /// <summary>
+            /// Specifies no clockwise rotation followed by a horizontal flip.
+            /// </summary>
+            RotateNoneFlipX,
+            /// <summary>
+            /// Specifies a 180-degree clockwise rotation followed by a vertical flip.
+            /// </summary>
+            Rotate180FlipY,
+
+            /// <summary>
+            /// Specifies a 90-degree clockwise rotation followed by a horizontal flip.
+            /// </summary>
+            Rotate90FlipX,
+            /// <summary>
+            /// Specifies a 270-degree clockwise rotation followed by a vertical flip.
+            /// </summary>
+            Rotate270FlipY,
+
+            /// <summary>
+            /// Specifies no clockwise rotation followed by a vertical flip.
+            /// </summary>
+            RotateNoneFlipY,
+            /// <summary>
+            /// Specifies a 180-degree clockwise rotation followed by a horizontal flip.
+            /// </summary>
+            Rotate180FlipX,
+
+            /// <summary>
+            /// Specifies a 90-degree clockwise rotation followed by a vertical flip.
+            /// </summary>
+            Rotate90FlipY,
+            /// <summary>
+            /// Specifies a 270-degree clockwise rotation followed by a horizontal flip.
+            /// </summary>
+            Rotate270FlipX
         }
 
         /// <summary>
