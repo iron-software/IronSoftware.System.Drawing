@@ -151,7 +151,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             CleanResultFile("result-png-loss.png");
         }
 
-        [FactWithAutomaticDisplayName]
+        [IgnoreOnMacFact]
         public void CastBitmap_to_AnyBitmap()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
@@ -164,7 +164,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
 
-        [FactWithAutomaticDisplayName]
+        [IgnoreOnMacFact]
         public void CastBitmap_from_AnyBitmap()
         {
             AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
@@ -176,7 +176,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
 
-        [FactWithAutomaticDisplayName]
+        [IgnoreOnMacFact]
         public void CastImage_to_AnyBitmap()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
@@ -189,7 +189,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
 
-        [FactWithAutomaticDisplayName]
+        [IgnoreOnMacFact]
         public void CastImage_from_AnyBitmap()
         {
             AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
@@ -546,7 +546,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.NotEqual(IntPtr.Zero, bitmap.Scan0);
         }
 
-        [FactWithAutomaticDisplayName]
+        [IgnoreOnMacFact]
         public void Should_Return_Stride()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");

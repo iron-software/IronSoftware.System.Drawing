@@ -134,7 +134,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             }            
         }
 
-        [FactWithAutomaticDisplayName]
+        [IgnoreOnMacFact]
         public void CastSystemDrawingFont_to_Font()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
@@ -175,7 +175,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             }
         }
 
-        [FactWithAutomaticDisplayName]
+        [IgnoreOnMacFact]
         public void CastSystemDrawingFont_from_Font()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
