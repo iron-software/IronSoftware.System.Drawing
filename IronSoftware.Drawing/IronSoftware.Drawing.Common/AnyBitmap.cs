@@ -1,5 +1,6 @@
 ﻿using BitMiracle.LibTiff.Classic;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -660,6 +661,40 @@ namespace IronSoftware.Drawing
                 SupportTransparency = true
             });
             
+            return new AnyBitmap(memoryStream.ToArray());
+        }
+
+        /// <summary>
+        /// Creates a new bitmap with the region defined by the specified crop rectangle redacted with the specified color.
+        /// </summary>
+        /// <param name="cropRectangle">The crop rectangle defining the region to redact.</param>
+        /// <param name="color">The color to use for redaction.</param>
+        /// <returns>A new bitmap with the specified region redacted.</returns>
+        public AnyBitmap Redact(CropRectangle cropRectangle, Color color)
+        {
+            return AnyBitmap.Redact(this, cropRectangle, color);
+        }
+
+        /// <summary>
+        /// Creates a new bitmap with the region defined by the specified crop rectangle in the specified bitmap redacted with the specified color.
+        /// </summary>
+        /// <param name="bitmap">The bitmap to redact.</param>
+        /// <param name="cropRectangle">The crop rectangle defining the region to redact.</param>
+        /// <param name="color">The color to use for redaction.</param>
+        /// <returns>A new bitmap with the specified region redacted.</returns>
+        public static AnyBitmap Redact(AnyBitmap bitmap, CropRectangle cropRectangle, Color color)
+        {
+            using MemoryStream memoryStream = new System.IO.MemoryStream();
+            using SixLabors.ImageSharp.Image image = SixLabors.ImageSharp.Image.Load(bitmap.ExportBytes());
+            SixLabors.ImageSharp.Rectangle rectangle = cropRectangle;
+            SixLabors.ImageSharp.Drawing.Processing.SolidBrush brush = new SixLabors.ImageSharp.Drawing.Processing.SolidBrush(color);
+            image.Mutate(ctx => ctx.Fill(brush, rectangle));
+            image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
+            {
+                BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
+                SupportTransparency = true
+            });
+
             return new AnyBitmap(memoryStream.ToArray());
         }
 

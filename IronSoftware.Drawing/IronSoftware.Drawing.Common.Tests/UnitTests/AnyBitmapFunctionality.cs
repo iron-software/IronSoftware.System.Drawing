@@ -1,5 +1,4 @@
 using FluentAssertions;
-using Microsoft.Maui.Graphics;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -617,6 +616,43 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(52, bitmap.Width);
             Assert.Equal(52, bitmap.Height);
             AssertImageAreEqual(GetRelativeFilePath("checkmarkFlip.jpg"), "result_flip.bmp");
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Redact_ShouldRedactRegionWithColor()
+        {
+            // Arrange
+            using MemoryStream memoryStream = new System.IO.MemoryStream();
+            using Image<Rgba32> image = new Image<Rgba32>(Configuration.Default, 100, 100, Color.White);
+            image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
+            {
+                BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
+                SupportTransparency = true
+            });
+
+            AnyBitmap anyBitmap = new AnyBitmap(memoryStream.ToArray());
+            CropRectangle rectangle = new CropRectangle(10, 10, 50, 50);
+            Color color = Color.Black;
+
+            // Act
+            AnyBitmap result = AnyBitmap.Redact(anyBitmap, rectangle, color);
+
+            // Assert
+            for (int x = 0; x < image.Width; x++)
+            {
+                for (int y = 0; y < image.Height; y++)
+                {
+                    var pixel = result.GetPixel(x, y);
+                    if (rectangle.Contains(x, y))
+                    {
+                        Assert.Equal(color, pixel);
+                    }
+                    else
+                    {
+                        Assert.Equal(Color.White, pixel);
+                    }
+                }
+            }
         }
 
 #if !NETFRAMEWORK
