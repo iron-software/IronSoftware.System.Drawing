@@ -4,7 +4,7 @@ using Xunit;
 
 namespace IronSoftware.Drawing.Common.Tests.UnitTests
 {
-    public sealed class IgnoreOnUnixFactAttribute : FactAttribute
+    public sealed class IgnoreOnUnixFactAttribute : FactWithAutomaticDisplayNameAttribute
     {
         public IgnoreOnUnixFactAttribute(string charsToReplace = "_", string replacementChars = " ", [CallerMemberName] string testMethodName = "")
         {

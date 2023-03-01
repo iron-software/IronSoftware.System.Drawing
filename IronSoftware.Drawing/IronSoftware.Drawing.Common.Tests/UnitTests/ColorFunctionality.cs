@@ -1,7 +1,5 @@
 using FluentAssertions;
-using SixLabors.ImageSharp.PixelFormats;
 using System;
-using System.Runtime.CompilerServices;
 using Xunit;
 using Xunit.Abstractions;
 

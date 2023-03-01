@@ -94,6 +94,43 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
+        /// Gets the y-coordinate of the top edge of this <see cref="CropRectangle"/>.
+        /// </summary>
+        public int Top => this.Y;
+
+        /// <summary>
+        /// Gets the x-coordinate of the right edge of this <see cref="CropRectangle"/>.
+        /// </summary>
+        public int Right
+        {
+            get => this.X + this.Width;
+        }
+
+        /// <summary>
+        /// Gets the y-coordinate of the bottom edge of this <see cref="CropRectangle"/>.
+        /// </summary>
+        public int Bottom
+        {
+            get => this.Y + this.Height;
+        }
+
+        /// <summary>
+        /// Gets the x-coordinate of the left edge of this <see cref="CropRectangle"/>.
+        /// </summary>
+        public int Left => this.X;
+
+        /// <summary>
+        /// Determines if the specified point is contained within the rectangular region defined by
+        /// this <see cref="CropRectangle"/>.
+        /// </summary>
+        /// <param name="x">The x-coordinate of the given point.</param>
+        /// <param name="y">The y-coordinate of the given point.</param>
+        public bool Contains(int x, int y)
+        {
+            return this.X <= x && x < this.Right && this.Y <= y && y < this.Bottom;
+        }
+
+        /// <summary>
         /// Implicitly casts System.Drawing.Rectangle objects to <see cref="CropRectangle"/>.
         /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support Rectangle as well.</para>
         /// </summary>
