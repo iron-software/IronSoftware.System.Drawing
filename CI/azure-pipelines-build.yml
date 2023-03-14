@@ -76,6 +76,12 @@ stages:
           targetPath: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common/bin/$(Configuration)'
           artifact: 'IronDrawingAssemblies'
           publishLocation: 'pipeline'
+      - task: CopyFiles@2
+        displayName: 'Copy LICENSE.txt file'
+        inputs:
+          SourceFolder: '$(Build.SourcesDirectory)'
+          Contents: 'LICENSE.txt'
+          TargetFolder: '$(Build.SourcesDirectory)/NuGet'
       - task: PublishPipelineArtifact@1
         displayName: Publish IronDrawing NuGet Files
         inputs:
