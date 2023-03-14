@@ -215,7 +215,7 @@ namespace IronSoftware.Drawing
                     ImageFormat.Jpeg => new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder()
                     {
                         Quality = Lossy,
-                        ColorType = SixLabors.ImageSharp.Formats.Jpeg.JpegColorType.Rgb
+                        ColorType = SixLabors.ImageSharp.Formats.Jpeg.JpegEncodingColor.Rgb
                     },
                     ImageFormat.Gif => new SixLabors.ImageSharp.Formats.Gif.GifEncoder(),
                     ImageFormat.Png => new SixLabors.ImageSharp.Formats.Png.PngEncoder(),
@@ -1485,9 +1485,9 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                Image = SixLabors.ImageSharp.Image.Load(Bytes, out IImageFormat format);
+                Image = SixLabors.ImageSharp.Image.Load(Bytes);
                 Binary = Bytes;
-                Format = format;
+                Format = Image.Metadata.DecodedImageFormat;
             }
             catch (DllNotFoundException e)
             {
@@ -1515,9 +1515,9 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                Image = SixLabors.ImageSharp.Image.Load(File, out IImageFormat format);
+                Image = SixLabors.ImageSharp.Image.Load(File);
                 Binary = System.IO.File.ReadAllBytes(File);
-                Format = format;
+                Format = Image.Metadata.DecodedImageFormat;
             }
             catch (DllNotFoundException e)
             {
@@ -1966,14 +1966,14 @@ namespace IronSoftware.Drawing
 
         private void LoadAndResizeImage(AnyBitmap original, int width, int height)
         {
-            using var image = SixLabors.ImageSharp.Image.Load<Rgba32>(original.Binary, out IImageFormat format);
+            using var image = SixLabors.ImageSharp.Image.Load<Rgba32>(original.Binary);
             image.Mutate(img => img.Resize(width, height));
             byte[] pixelBytes = new byte[image.Width * image.Height * Unsafe.SizeOf<Rgba32>()];
             image.CopyPixelDataTo(pixelBytes);
 
             Image = image.Clone();
             Binary = pixelBytes;
-            Format = format;
+            Format = Image.Metadata.DecodedImageFormat; ;
         }
 
         private ImageFormat GetImageFormat(string filename)
