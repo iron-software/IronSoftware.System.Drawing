@@ -1,0 +1,92 @@
+parameters:
+  publishAssemblies: false
+  buildConfiguration: ''
+
+jobs:
+  - job: BuildDrawingLibraries
+    steps:
+    # Checkout Repo
+    - checkout: self
+      displayName: Checkout IronSoftware.Drawing repository
+      lfs: true
+    - task: UseDotNet@2
+      displayName: 'Install .Netcoreapp3.1 Core sdk'
+      inputs:
+        packageType: 'sdk'
+        version: '3.x'
+    - task: UseDotNet@2
+      displayName: 'Install .NET5 sdk'
+      inputs:
+        packageType: 'sdk'
+        version: '5.x'
+    - task: UseDotNet@2
+      displayName: 'Install .NET5 sdk'
+      inputs:
+        packageType: 'sdk'
+        version: '6.x'
+    - task: UseDotNet@2
+      displayName: 'Install .NET5 sdk'
+      inputs:
+        packageType: 'sdk'
+        version: '7.x'
+    # Build
+    - task: DotNetCoreCLI@2
+      displayName: Restore Solution NuGet Packages
+      enabled: true
+      continueOnError: true
+      inputs:
+        command: 'restore'
+        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
+        verbosityRestore: Minimal
+        feedsToUse: 'config'
+        nugetConfigPath: '$(Build.SourcesDirectory)/IronSoftware.Drawing/nuget.config'
+    - task: DotNetCoreCLI@2
+      displayName: Build Drawing Libraries Solution
+      inputs:
+        command: 'build'
+        projects: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.sln'
+        arguments: >-
+          --configuration
+          ${{ parameters.buildConfiguration }}
+          --no-restore
+          --verbosity normal
+        versioningScheme: byEnvVar
+        versionEnvVar: AssemblyVersion
+    # Publish Pipeline Artifacts
+    - task: CopyFiles@2
+      displayName: 'Copy tests.runsettings file'
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests'
+        Contents: 'tests*.runsettings'
+        TargetFolder: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/bin/${{ parameters.buildConfiguration }}'
+    - task: PublishPipelineArtifact@1
+      displayName: Publish IronDrawing Test Data
+      inputs:
+        targetPath: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/Data'
+        artifact: 'IronDrawingDataTests'
+        publishLocation: 'pipeline'
+    - task: PublishPipelineArtifact@1
+      displayName: Publish IronDrawing Test Assemblies
+      inputs:
+        targetPath: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common.Tests/bin/${{ parameters.buildConfiguration }}'
+        artifact: 'IronDrawingTests'
+        publishLocation: 'pipeline'
+    - ${{ if eq(parameters.publishAssemblies, true) }}:
+      - task: CopyFiles@2
+        displayName: 'Copy LICENSE.txt file'
+        inputs:
+          SourceFolder: '$(Build.SourcesDirectory)'
+          Contents: 'LICENSE.txt'
+          TargetFolder: '$(Build.SourcesDirectory)/NuGet'
+      - task: PublishPipelineArtifact@1
+        displayName: Publish IronDrawing Assemblies
+        inputs:
+          targetPath: '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common/bin/${{ parameters.buildConfiguration }}'
+          artifact: 'IronDrawingAssemblies'
+          publishLocation: 'pipeline'
+      - task: PublishPipelineArtifact@1
+        displayName: Publish IronDrawing NuGet Files
+        inputs:
+          targetPath: 'NuGet'
+          artifact: 'IronDrawingNuGet'
+          publishLocation: 'pipeline'
