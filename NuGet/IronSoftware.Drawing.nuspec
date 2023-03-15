@@ -42,11 +42,24 @@ For general support and technical inquiries, please email us at: developers@iron
 		<tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, TIFF, TIF, GIF, JPEG, PNG, Color, Rectangle, Drawing, C#, VB.NET, ASPX, create, render, generate, standard, netstandard2.0, core, netcore</tags>
 		<repository type="git" url="https://github.com/iron-software/IronSoftware.Drawing.Common" commit="$commit$" />
 		<dependencies>
-			<group>
-				<dependency id="SixLabors.ImageSharp" version="[,2.1.3)" />
-				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
-			</group>
-		</dependencies>
+      <group targetFramework=".NETFramework4.6.2">
+        <dependency id="SixLabors.ImageSharp" version="2.1.3" />
+        <dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
+      </group>
+      <group targetFramework="netcoreapp3.1">
+        <dependency id="SixLabors.ImageSharp" version="2.1.3" />
+        <dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
+      </group>
+      <group targetFramework="net5.0">
+        <dependency id="SixLabors.ImageSharp" version="2.1.3" />
+        <dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
+      </group>
+      <group targetFramework="net6.0">
+        <dependency id="SixLabors.ImageSharp" version="3.0.0" />
+        <dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
+      </group>
+    </dependencies>
+
 	</metadata>
 	<files>
 		<file src=".\ironsoftware-logo.png" target=".\images\" />

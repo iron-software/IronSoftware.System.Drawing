@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net472;netcoreapp3.1;net60;net70</TargetFrameworks>
-	<LangVersion>8</LangVersion>
+	<LangVersion>latest</LangVersion>
 
     <IsPackable>false</IsPackable>
 	<RunSettingsFilePath>$(MSBuildProjectDirectory)\tests.runsettings</RunSettingsFilePath>
