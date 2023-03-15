@@ -138,9 +138,12 @@ namespace IronSoftware.Drawing
         /// <returns>Transcoded image bytes.</returns>
         public byte[] ExportBytes(ImageFormat Format = ImageFormat.Default, int Lossy = 100)
         {
-            using System.IO.MemoryStream mem = new();
+            System.IO.MemoryStream mem = new();
             ExportStream(mem, Format, Lossy);
-            return mem.ToArray();
+            byte[] byteArray = mem.ToArray();
+            mem.Dispose();
+
+            return byteArray;
         }
 
         /// <summary>
@@ -155,10 +158,12 @@ namespace IronSoftware.Drawing
 
         public void ExportFile(string File, ImageFormat Format = ImageFormat.Default, int Lossy = 100)
         {
-            using System.IO.MemoryStream mem = new();
+            System.IO.MemoryStream mem = new();
             ExportStream(mem, Format, Lossy);
+            byte[] byteArray = mem.ToArray();
+            mem.Dispose();
 
-            System.IO.File.WriteAllBytes(File, mem.ToArray());
+            System.IO.File.WriteAllBytes(File, byteArray);
         }
 
         /// <summary>

@@ -1,0 +1,33 @@
+steps:
+- task: CmdLine@2
+  displayName: 'Sign IronSoftware.Drawing.Common.dll .NET Framework'
+  inputs:
+      workingDirectory: 'bin\$(Configuration)\net462'
+      script: >-
+        $(Build.SourcesDirectory)\NuGet\signtool.exe sign
+        /v /d IronDrawing /f $(Agent.TempDirectory)/ironcert.pfx /p $(CertificatePassword)
+        /t http://timestamp.digicert.com /fd SHA256 "IronSoftware.Drawing.Common.dll"
+- task: CmdLine@2
+  displayName: 'Sign IronSoftware.Drawing.Common.dll .NET Core 3.1'
+  inputs:
+      workingDirectory: 'bin\$(Configuration)\netcoreapp3.1'
+      script: >-
+        $(Build.SourcesDirectory)\NuGet\signtool.exe sign
+        /v /d IronDrawing /f $(Agent.TempDirectory)/ironcert.pfx /p $(CertificatePassword)
+        /t http://timestamp.digicert.com /fd SHA256 "IronSoftware.Drawing.Common.dll"
+- task: CmdLine@2
+  displayName: 'Sign IronSoftware.Drawing.Common.dll .NET5'
+  inputs:
+      workingDirectory: 'bin\$(Configuration)\net50'
+      script: >-
+        $(Build.SourcesDirectory)\NuGet\signtool.exe sign
+        /v /d IronDrawing /f $(Agent.TempDirectory)/ironcert.pfx /p $(CertificatePassword)
+        /t http://timestamp.digicert.com /fd SHA256 "IronSoftware.Drawing.Common.dll"
+- task: CmdLine@2
+  displayName: 'Sign IronSoftware.Drawing.Common.dll .NET6'
+  inputs:
+      workingDirectory: 'bin\$(Configuration)\net60'
+      script: >-
+        $(Build.SourcesDirectory)\NuGet\signtool.exe sign
+        /v /d IronDrawing /f $(Agent.TempDirectory)/ironcert.pfx /p $(CertificatePassword)
+        /t http://timestamp.digicert.com /fd SHA256 "IronSoftware.Drawing.Common.dll"

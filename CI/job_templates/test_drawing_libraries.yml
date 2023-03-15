@@ -1,0 +1,75 @@
+parameters:
+  name: ''
+  OSPlatform: ''
+  framework: ''
+  architecture: ''
+  buildConfiguration: ''
+
+jobs:
+  - job: ${{ parameters.name }}
+    displayName: Execute ${{ parameters.framework }} ${{ parameters.architecture }} Unit Tests
+    steps:
+    - checkout: none
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'IronDrawingTests'
+        targetPath: 'IronDrawingTests'
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'IronDrawingDataTests'
+        targetPath: '$(Agent.BuildDirectory)/Data'
+    - ${{ if eq(parameters.framework, 'netcoreapp3.1') }}:
+      - task: UseDotNet@2
+        displayName: 'Install .Netcoreapp3.1 Core sdk'
+        inputs:
+          packageType: 'sdk'
+          version: '3.x'
+    - ${{ if eq(parameters.framework, 'net50') }}:
+      - task: UseDotNet@2
+        displayName: 'Install .NET5 sdk'
+        inputs:
+          packageType: 'sdk'
+          version: '5.x'
+    - ${{ if ne(parameters.framework, 'net60') }}:
+      - task: DotNetCoreCLI@2
+        displayName: Execute ${{ parameters.OSPlatform }} ${{ parameters.framework}} ${{ parameters.architecture }} Tests
+        inputs:
+          command: 'test'
+          projects: 'IronDrawingTests/${{ parameters.framework }}/IronSoftware.Drawing.Common.Tests.dll'
+          testRunTitle: '${{ parameters.OSPlatform }} ${{ parameters.framework}} ${{ parameters.architecture }} Tests'
+          publishTestResults: true
+          arguments: >-
+            -s IronDrawingTests/tests${{ parameters.architecture }}.runsettings
+            --framework "${{ parameters.framework }}"
+            -v d --blame
+            --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\${{ parameters.buildConfiguration }}\${{ parameters.framework }}\testhost.log"
+    - ${{ if eq(parameters.framework, 'net60') }}:
+      - task: DotNetCoreCLI@2
+        displayName: Execute ${{ parameters.OSPlatform }} ${{ parameters.framework}} ${{ parameters.architecture }} Tests
+        inputs:
+          command: 'test'
+          projects: 'IronDrawingTests/${{ parameters.framework }}/IronSoftware.Drawing.Common.Tests.dll'
+          testRunTitle: '${{ parameters.OSPlatform }} ${{ parameters.framework}} ${{ parameters.architecture }} Tests'
+          publishTestResults: true
+          arguments: >-
+            -s IronDrawingTests/tests${{ parameters.architecture }}.runsettings
+            --framework "${{ parameters.framework }}"
+            -v d --blame --blame-hang --blame-crash --blame-hang-timeout 7m
+            --diag:"$(Agent.BuildDirectory)\IronDrawingTests\bin\${{ parameters.buildConfiguration }}\${{ parameters.framework }}\testhost.log"
+            --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+      - task: PublishCodeCoverageResults@1
+        displayName: 'Publish code coverage report'
+        inputs:
+          codeCoverageTool: 'Cobertura'
+          summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+        condition: succeededOrFailed()
+    # Upload Log files
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Agent.BuildDirectory)\IronDrawingTests\bin\${{ parameters.buildConfiguration }}\${{ parameters.framework }}\testhost.log'
+        artifact: 'IronDrawing_testhost_${{ parameters.OSPlatform }}_${{ parameters.framework }}_${{ parameters.architecture }}_log_$(System.JobId)'
+        publishLocation: 'pipeline'
+      condition: always()
+        

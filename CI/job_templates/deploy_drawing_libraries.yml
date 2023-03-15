@@ -1,0 +1,75 @@
+jobs:
+  - job: DeployDrawingLibraries
+    steps:
+    - checkout: none
+    - task: DownloadSecureFile@1
+      displayName: Download IronBarCode Code-Signing Cert
+      name: DownloadSigningCert
+      inputs:
+        secureFile: 'ironcert.pfx'
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'IronDrawingAssemblies'
+        targetPath: 'bin/$(Configuration)'
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'IronDrawingNuGet'
+        targetPath: 'NuGet'
+    - template: ../step_templates/sign_drawing_libraries_dll.yml
+    - task: NuGetToolInstaller@1
+      inputs:
+        versionSpec: 6.2.1
+    - task: NuGetCommand@2
+      displayName: 'Build DrawingLibraries NuGet Package'
+      inputs:
+        command: 'pack'
+        packagesToPack: 'NuGet\IronSoftware.Drawing.nuspec'
+        configuration: $(Configuration)
+        buildProperties: 'version=1.0.$(Build.BuildID)-ci;IncludeSymbols=true;SymbolPackageFormat=snupkg'
+        includeSymbols: true
+    # Sign NuGet Packages
+    - task: NuGetCommand@2
+      displayName: Sign IronDrawing NuGet Package
+      inputs:
+        command: 'custom'
+        arguments: >-
+          sign $(Build.ArtifactStagingDirectory)\IronSoftware.System.Drawing.1.0.$(Build.BuildID)-ci.symbols.nupkg
+          -CertificatePath $(Agent.TempDirectory)\ironcert.pfx
+          -Timestamper http://timestamp.digicert.com -NonInteractive -CertificatePassword $(CertificatePassword)
+    - task: NuGetCommand@2
+      inputs:
+        command: 'push'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+        nuGetFeedType: 'internal'
+        publishVstsFeed: 'ac7dfa01-e357-472b-9830-d5cd55e71bdd/5aac0020-09d2-4b2e-a77e-47f173a1ffd6'
+        includeSymbols: true
+    - task: PublishSymbols@2
+      inputs:
+        SearchPattern: '**/*.pdb'
+        indexSources: true
+        publishSymbols: true
+        symbolServerType: TeamServices
+        detailedLog: true
+    # Store Version Information
+    - task: file-creator@6
+      displayName: Store Version Information
+      inputs:
+        filepath: 'VersionInformation/versions.xml'
+        filecontent: |
+          <?xml version="1.0" encoding="utf-8"?>
+          <Versions>
+          <Configuration>$(Configuration)</Configuration>
+          <IronDrawingNuGetVersion>$(NuGetVersion)</IronDrawingNuGetVersion>
+          <IronDrawingAssemblyVersion>$(AssemblyVersion)</IronDrawingAssemblyVersion>
+          <GitCommitHash>$(Build.SourceVersion)</GitCommitHash>
+          </Versions>
+        fileoverwrite: true
+        verbose: true
+    - task: PublishBuildArtifacts@1
+      displayName: Publish IronDrawing Version Information
+      inputs:
+        PathtoPublish: 'VersionInformation'
+        ArtifactName: 'IronDrawingVersions'
+        publishLocation: 'Container'
