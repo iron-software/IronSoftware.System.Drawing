@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net462;netcoreapp3.1;net50;net60</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net60</TargetFrameworks>
 		<LangVersion>latest</LangVersion>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<SignAssembly>true</SignAssembly>
@@ -31,7 +31,7 @@
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)' == 'net462' OR '$(TargetFramework)' == 'netcoreapp3.1' OR '$(TargetFramework)' == 'net50'">
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
 		<PackageReference Include="SixLabors.ImageSharp" Version="2.1.3" />
 	</ItemGroup>
 
