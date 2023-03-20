@@ -4,8 +4,10 @@ variables:
   - group: IronDrawingVersions
   - name: Configuration
     value: 'Release'
-  - name: AssemblyVersion
-    value: 1.0.0.$(Build.BuildID)
+  - name: IronDrawingPatch
+    value: $[counter(format('{0}.{1}', variables['IronDrawingMajorVersion'], variables['IronDrawingMinorVersion']), 1)]
+  - name: NuGetVersion
+    value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingPatch)-ci
 # Build Trigger
 trigger:
     branches:
@@ -54,3 +56,5 @@ stages:
     - MacOsTests
   jobs:
   - template: job_templates/deploy_drawing_libraries.yml
+    parameters:
+      NuGetVersion: $(NuGetVersion)

@@ -1,3 +1,6 @@
+parameters:
+  NuGetVersion: ''
+
 jobs:
   - job: DeployDrawingLibraries
     steps:
@@ -27,7 +30,7 @@ jobs:
         command: 'pack'
         packagesToPack: 'NuGet\IronSoftware.Drawing.nuspec'
         configuration: $(Configuration)
-        buildProperties: 'version=1.0.$(Build.BuildID)-ci;IncludeSymbols=true;SymbolPackageFormat=snupkg'
+        buildProperties: 'version=${{ parameters.NuGetVersion }};IncludeSymbols=true;SymbolPackageFormat=snupkg'
         includeSymbols: true
     # Sign NuGet Packages
     - task: NuGetCommand@2
@@ -35,7 +38,7 @@ jobs:
       inputs:
         command: 'custom'
         arguments: >-
-          sign $(Build.ArtifactStagingDirectory)\IronSoftware.System.Drawing.1.0.$(Build.BuildID)-ci.symbols.nupkg
+          sign $(Build.ArtifactStagingDirectory)\IronSoftware.System.Drawing.${{ parameters.NuGetVersion }}.symbols.nupkg
           -CertificatePath $(Agent.TempDirectory)\ironcert.pfx
           -Timestamper http://timestamp.digicert.com -NonInteractive -CertificatePassword $(CertificatePassword)
     - task: NuGetCommand@2
