@@ -141,7 +141,6 @@ namespace IronSoftware.Drawing
             System.IO.MemoryStream mem = new();
             ExportStream(mem, Format, Lossy);
             byte[] byteArray = mem.ToArray();
-            mem.Dispose();
 
             return byteArray;
         }
@@ -161,7 +160,6 @@ namespace IronSoftware.Drawing
             System.IO.MemoryStream mem = new();
             ExportStream(mem, Format, Lossy);
             byte[] byteArray = mem.ToArray();
-            mem.Dispose();
 
             System.IO.File.WriteAllBytes(File, byteArray);
         }
