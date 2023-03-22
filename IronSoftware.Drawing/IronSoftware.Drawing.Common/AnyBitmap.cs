@@ -489,6 +489,7 @@ namespace IronSoftware.Drawing
         /// <param name="Uri">The uri of the image.</param>
         /// <returns></returns>
         /// <seealso cref="AnyBitmap"/>
+        /// <seealso cref="FromUri"/>
         /// <seealso cref="FromUriAsync"/>
         public static async Task<AnyBitmap> FromUriAsync(Uri Uri)
         {
@@ -496,6 +497,29 @@ namespace IronSoftware.Drawing
             {
                 using Stream stream = await LoadUriAsync(Uri);
                 return new AnyBitmap(stream);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while loading AnyBitmap from Uri", e);
+            }
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from a Uri
+        /// </summary>
+        /// <param name="Uri">The uri of the image.</param>
+        /// <returns></returns>
+        /// <seealso cref="AnyBitmap"/>
+        /// <seealso cref="FromUriAsync"/>
+#if NET6_0_OR_GREATER
+        [Obsolete("FromUri(Uri) is obsolete for net60 or greater because it uses WebClient which is obsolete. Consider using FromUriAsync(Uri) method.")]
+#endif
+        public static AnyBitmap FromUri(Uri Uri)
+        {
+            try
+            {
+                using WebClient client = new();
+                return new AnyBitmap(client.OpenRead(Uri));
             }
             catch (Exception e)
             {
