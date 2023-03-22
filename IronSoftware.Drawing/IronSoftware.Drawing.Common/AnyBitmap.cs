@@ -9,8 +9,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace IronSoftware.Drawing
 {
@@ -136,9 +138,12 @@ namespace IronSoftware.Drawing
         /// <returns>Transcoded image bytes.</returns>
         public byte[] ExportBytes(ImageFormat Format = ImageFormat.Default, int Lossy = 100)
         {
-            using System.IO.MemoryStream mem = new System.IO.MemoryStream();
+            System.IO.MemoryStream mem = new();
             ExportStream(mem, Format, Lossy);
-            return mem.ToArray();
+            byte[] byteArray = mem.ToArray();
+            mem.Dispose();
+
+            return byteArray;
         }
 
         /// <summary>
@@ -153,10 +158,12 @@ namespace IronSoftware.Drawing
 
         public void ExportFile(string File, ImageFormat Format = ImageFormat.Default, int Lossy = 100)
         {
-            using System.IO.MemoryStream mem = new System.IO.MemoryStream();
+            System.IO.MemoryStream mem = new();
             ExportStream(mem, Format, Lossy);
+            byte[] byteArray = mem.ToArray();
+            mem.Dispose();
 
-            System.IO.File.WriteAllBytes(File, mem.ToArray());
+            System.IO.File.WriteAllBytes(File, byteArray);
         }
 
         /// <summary>
@@ -169,7 +176,7 @@ namespace IronSoftware.Drawing
         /// <returns>Transcoded image bytes in a <see cref="MemoryStream"/>.</returns>
         public System.IO.MemoryStream ToStream(ImageFormat Format = ImageFormat.Default, int Lossy = 100)
         {
-            System.IO.MemoryStream stream = new System.IO.MemoryStream();
+            System.IO.MemoryStream stream = new();
             ExportStream(stream, Format, Lossy);
             return stream;
         }
@@ -183,7 +190,7 @@ namespace IronSoftware.Drawing
         /// <returns>Transcoded image bytes in a Func<see cref="MemoryStream"/>>.</returns>
         public Func<Stream> ToStreamFn(ImageFormat Format = ImageFormat.Default, int Lossy = 100)
         {
-            System.IO.MemoryStream stream = new System.IO.MemoryStream();
+            System.IO.MemoryStream stream = new();
             ExportStream(stream, Format, Lossy);
             stream.Position = 0;
             return () => stream;
@@ -215,7 +222,11 @@ namespace IronSoftware.Drawing
                     ImageFormat.Jpeg => new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder()
                     {
                         Quality = Lossy,
+#if NET6_0_OR_GREATER
+                        ColorType = SixLabors.ImageSharp.Formats.Jpeg.JpegEncodingColor.Rgb
+#else
                         ColorType = SixLabors.ImageSharp.Formats.Jpeg.JpegColorType.Rgb
+#endif
                     },
                     ImageFormat.Gif => new SixLabors.ImageSharp.Formats.Gif.GifEncoder(),
                     ImageFormat.Png => new SixLabors.ImageSharp.Formats.Png.PngEncoder(),
@@ -457,14 +468,14 @@ namespace IronSoftware.Drawing
         /// Construct a new Bitmap from a Uri
         /// </summary>
         /// <param name="Uri">The uri of the image.</param>
-        /// <seealso cref="FromUri"/>
+        /// <seealso cref="FromUriAsync"/>
         /// <seealso cref="AnyBitmap"/>
         public AnyBitmap(Uri Uri)
         {
             try
             {
-                using WebClient client = new();
-                LoadImage(client.OpenRead(Uri));
+                using Stream stream = LoadUriAsync(Uri).GetAwaiter().GetResult();
+                LoadImage(stream);
             }
             catch (Exception e)
             {
@@ -479,6 +490,30 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         /// <seealso cref="AnyBitmap"/>
         /// <seealso cref="FromUri"/>
+        /// <seealso cref="FromUriAsync"/>
+        public static async Task<AnyBitmap> FromUriAsync(Uri Uri)
+        {
+            try
+            {
+                using Stream stream = await LoadUriAsync(Uri);
+                return new AnyBitmap(stream);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while loading AnyBitmap from Uri", e);
+            }
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from a Uri
+        /// </summary>
+        /// <param name="Uri">The uri of the image.</param>
+        /// <returns></returns>
+        /// <seealso cref="AnyBitmap"/>
+        /// <seealso cref="FromUriAsync"/>
+#if NET6_0_OR_GREATER
+        [Obsolete("FromUri(Uri) is obsolete for net60 or greater because it uses WebClient which is obsolete. Consider using FromUriAsync(Uri) method.")]
+#endif
         public static AnyBitmap FromUri(Uri Uri)
         {
             try
@@ -641,14 +676,16 @@ namespace IronSoftware.Drawing
                 RotateMode.None => SixLabors.ImageSharp.Processing.RotateMode.None,
                 RotateMode.Rotate90 => SixLabors.ImageSharp.Processing.RotateMode.Rotate90,
                 RotateMode.Rotate180 => SixLabors.ImageSharp.Processing.RotateMode.Rotate180,
-                RotateMode.Rotate270 => SixLabors.ImageSharp.Processing.RotateMode.Rotate270
+                RotateMode.Rotate270 => SixLabors.ImageSharp.Processing.RotateMode.Rotate270,
+                _ => throw new NotImplementedException()
             };
             
             SixLabors.ImageSharp.Processing.FlipMode flipModeImgSharp = flipMode switch
             {
                 FlipMode.None => SixLabors.ImageSharp.Processing.FlipMode.None,
                 FlipMode.Horizontal => SixLabors.ImageSharp.Processing.FlipMode.Horizontal,
-                FlipMode.Vertical => SixLabors.ImageSharp.Processing.FlipMode.Vertical
+                FlipMode.Vertical => SixLabors.ImageSharp.Processing.FlipMode.Vertical,
+                _ => throw new NotImplementedException()
             };
 
             using MemoryStream memoryStream = new System.IO.MemoryStream();
@@ -1134,7 +1171,7 @@ namespace IronSoftware.Drawing
                     }
 #endif
                 }
-                throw e;
+                throw;
             }
         }
 
@@ -1485,9 +1522,14 @@ namespace IronSoftware.Drawing
         {
             try
             {
+#if NET6_0_OR_GREATER
+                Image = SixLabors.ImageSharp.Image.Load(Bytes);
+                Format = Image.Metadata.DecodedImageFormat;
+#else
                 Image = SixLabors.ImageSharp.Image.Load(Bytes, out IImageFormat format);
-                Binary = Bytes;
                 Format = format;
+#endif
+                Binary = Bytes;
             }
             catch (DllNotFoundException e)
             {
@@ -1515,9 +1557,14 @@ namespace IronSoftware.Drawing
         {
             try
             {
+#if NET6_0_OR_GREATER
+                Image = SixLabors.ImageSharp.Image.Load(File);
+                Format = Image.Metadata.DecodedImageFormat;
+#else
                 Image = SixLabors.ImageSharp.Image.Load(File, out IImageFormat format);
-                Binary = System.IO.File.ReadAllBytes(File);
                 Format = format;
+#endif
+                Binary = System.IO.File.ReadAllBytes(File);
             }
             catch (DllNotFoundException e)
             {
@@ -1966,7 +2013,12 @@ namespace IronSoftware.Drawing
 
         private void LoadAndResizeImage(AnyBitmap original, int width, int height)
         {
+#if NET6_0_OR_GREATER
+            using var image = SixLabors.ImageSharp.Image.Load<Rgba32>(original.Binary);
+            IImageFormat format = image.Metadata.DecodedImageFormat;
+#else
             using var image = SixLabors.ImageSharp.Image.Load<Rgba32>(original.Binary, out IImageFormat format);
+#endif
             image.Mutate(img => img.Resize(width, height));
             byte[] pixelBytes = new byte[image.Width * image.Height * Unsafe.SizeOf<Rgba32>()];
             image.CopyPixelDataTo(pixelBytes);
@@ -2009,7 +2061,17 @@ namespace IronSoftware.Drawing
             }
         }
 
-        #endregion
+        private static async Task<Stream> LoadUriAsync(Uri Uri)
+        {
+            using HttpClient httpClient = new();
+            MemoryStream memoryStream = new();
+            using Stream stream = await httpClient.GetStreamAsync(Uri);
+            await stream.CopyToAsync(memoryStream);
+            memoryStream.Position = 0;
+            return memoryStream;
+        }
+
+#endregion
     }
 }
 

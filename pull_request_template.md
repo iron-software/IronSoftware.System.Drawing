@@ -13,7 +13,10 @@ Please select the relevant option by placing an 'x' inside the brackets, like th
 - [ ] 🐛 Bug fix (non-breaking change which fixes an issue)
 - [ ] ✨ New feature (non-breaking change which adds functionality)
 - [ ] 💥 Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] 🏗️ Internal/structural update (non-breaking change that improves code quality, organization, or performance)
 - [ ] 📚 This change requires a documentation update
+- [ ] 🚀 DevOps build chain modification for release
+- [ ] 🤖 DevOps build chain modification for CI
 
 ### How Has This Been Tested?
 Describe the tests you ran to verify your changes. Provide instructions so others can reproduce the tests. Also, list any relevant details for your test configuration.
