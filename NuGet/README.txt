@@ -3,7 +3,7 @@ IronSoftware.Drawing is an free and open-source library originally developed by 
 Cross Platform Compatibility
 ========================
 * C#, F#, and VB.NET
-* .NET 7, .NET 6, .NET 5, .NET Core, Standard, and Framework
+* .NET 8, .NET 7, .NET 6, .NET 5, .NET Core, Standard, and Framework
 * Console, Web, and Desktop Apps
 * Windows, macOs, Linux, Docker, Azure, and AWS
 * Microsoft Visual Studio or Jetbrains ReSharper & Rider
