@@ -36,7 +36,7 @@ stages:
     - template: job_templates/build_drawing_libraries.yml
       parameters:
         publishAssemblies: false
-        buildConfiguration: $(Configuration)
+        buildConfiguration: $(buildConfiguration)
 ## Execute Unit Tests
 - template: stage_templates/run_tests_on_pool.yml
   parameters:
