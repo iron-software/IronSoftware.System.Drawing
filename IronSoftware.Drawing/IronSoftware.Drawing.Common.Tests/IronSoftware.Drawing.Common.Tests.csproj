@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net472;netcoreapp3.1;net60;net70</TargetFrameworks>
-	<LangVersion>8</LangVersion>
+    <TargetFrameworks>net472;netcoreapp3.1;net50;net60;net70</TargetFrameworks>
+	<LangVersion>latest</LangVersion>
 
     <IsPackable>false</IsPackable>
 	<RunSettingsFilePath>$(MSBuildProjectDirectory)\tests.runsettings</RunSettingsFilePath>
