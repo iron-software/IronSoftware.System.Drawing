@@ -51,7 +51,10 @@ For general support and technical inquiries, please email us at: developers@iron
         <dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
       </group>
     </dependencies>
-
+      <group targetFramework="netstandard2.1">
+        <dependency id="SixLabors.ImageSharp" version="2.1.3" />
+        <dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
+      </group>
 	</metadata>
 	<files>
 		<file src=".\ironsoftware-logo.png" target=".\images\" />
