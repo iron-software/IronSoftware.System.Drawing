@@ -36,7 +36,14 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                return Image.Width;
+                try
+                {
+                    return Image.Width;
+                }
+                catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+                {
+                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                }
             }
         }
 
@@ -47,7 +54,14 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                return Image.Height;
+                try
+                {
+                    return Image.Height;
+                }
+                catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+                {
+                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                }
             }
         }
 
@@ -108,7 +122,14 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         public AnyBitmap Clone()
         {
-            return new AnyBitmap(this.Binary);
+            try
+            {
+                return new AnyBitmap(this.Binary);
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
 
         /// <summary>
@@ -119,14 +140,21 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         public AnyBitmap Clone(CropRectangle Rectangle)
         {
-            using SixLabors.ImageSharp.Image image = Image.Clone(img => img.Crop(Rectangle));
-            using System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
-            image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
+            try
             {
-                BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
-                SupportTransparency = true
-            });
-            return new AnyBitmap(memoryStream.ToArray());
+                using SixLabors.ImageSharp.Image image = Image.Clone(img => img.Crop(Rectangle));
+                using System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
+                image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
+                {
+                    BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
+                    SupportTransparency = true
+                });
+                return new AnyBitmap(memoryStream.ToArray());
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
 
         /// <summary>
@@ -138,11 +166,18 @@ namespace IronSoftware.Drawing
         /// <returns>Transcoded image bytes.</returns>
         public byte[] ExportBytes(ImageFormat Format = ImageFormat.Default, int Lossy = 100)
         {
-            System.IO.MemoryStream mem = new();
-            ExportStream(mem, Format, Lossy);
-            byte[] byteArray = mem.ToArray();
+            try
+            {
+                System.IO.MemoryStream mem = new();
+                ExportStream(mem, Format, Lossy);
+                byte[] byteArray = mem.ToArray();
 
-            return byteArray;
+                return byteArray;
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
 
         /// <summary>
@@ -157,11 +192,18 @@ namespace IronSoftware.Drawing
 
         public void ExportFile(string File, ImageFormat Format = ImageFormat.Default, int Lossy = 100)
         {
-            System.IO.MemoryStream mem = new();
-            ExportStream(mem, Format, Lossy);
-            byte[] byteArray = mem.ToArray();
+            try
+            {
+                System.IO.MemoryStream mem = new();
+                ExportStream(mem, Format, Lossy);
+                byte[] byteArray = mem.ToArray();
 
-            System.IO.File.WriteAllBytes(File, byteArray);
+                System.IO.File.WriteAllBytes(File, byteArray);
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
 
         /// <summary>
@@ -174,9 +216,16 @@ namespace IronSoftware.Drawing
         /// <returns>Transcoded image bytes in a <see cref="MemoryStream"/>.</returns>
         public System.IO.MemoryStream ToStream(ImageFormat Format = ImageFormat.Default, int Lossy = 100)
         {
-            System.IO.MemoryStream stream = new();
-            ExportStream(stream, Format, Lossy);
-            return stream;
+            try
+            {
+                System.IO.MemoryStream stream = new();
+                ExportStream(stream, Format, Lossy);
+                return stream;
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
 
         /// <summary>
@@ -188,10 +237,17 @@ namespace IronSoftware.Drawing
         /// <returns>Transcoded image bytes in a Func<see cref="MemoryStream"/>>.</returns>
         public Func<Stream> ToStreamFn(ImageFormat Format = ImageFormat.Default, int Lossy = 100)
         {
-            System.IO.MemoryStream stream = new();
-            ExportStream(stream, Format, Lossy);
-            stream.Position = 0;
-            return () => stream;
+            try
+            {
+                System.IO.MemoryStream stream = new();
+                ExportStream(stream, Format, Lossy);
+                stream.Position = 0;
+                return () => stream;
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
 
         /// <summary>
@@ -204,47 +260,50 @@ namespace IronSoftware.Drawing
         /// <returns>Void. Saves Transcoded image bytes to you <see cref="Stream"/>.</returns>
         public void ExportStream(System.IO.Stream Stream, ImageFormat Format = ImageFormat.Default, int Lossy = 100)
         {
-            if (Format == ImageFormat.Default || Format == ImageFormat.RawFormat)
-            {
-                var writer = new BinaryWriter(Stream);
-                writer.Write(Binary);
-                return;
-            }
-
-            if (Lossy < 0 || Lossy > 100) { Lossy = 100; }
-
             try
             {
-                IImageEncoder enc = Format switch
+                if (Format == ImageFormat.Default || Format == ImageFormat.RawFormat)
                 {
-                    ImageFormat.Jpeg => new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder()
+                    var writer = new BinaryWriter(Stream);
+                    writer.Write(Binary);
+                    return;
+                }
+
+                if (Lossy < 0 || Lossy > 100) { Lossy = 100; }
+
+                try
+                {
+                    IImageEncoder enc = Format switch
                     {
-                        Quality = Lossy,
-                        ColorType = SixLabors.ImageSharp.Formats.Jpeg.JpegColorType.Rgb
-                    },
-                    ImageFormat.Gif => new SixLabors.ImageSharp.Formats.Gif.GifEncoder(),
-                    ImageFormat.Png => new SixLabors.ImageSharp.Formats.Png.PngEncoder(),
-                    ImageFormat.Webp => new SixLabors.ImageSharp.Formats.Webp.WebpEncoder() { Quality = Lossy },
-                    ImageFormat.Tiff => new SixLabors.ImageSharp.Formats.Tiff.TiffEncoder(),
-                    _ => new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
-                    {
-                        BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
-                        SupportTransparency = true
-                    },
-                };
-                Image.Save(Stream, enc);
+                        ImageFormat.Jpeg => new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder()
+                        {
+                            Quality = Lossy,
+                            ColorType = SixLabors.ImageSharp.Formats.Jpeg.JpegColorType.Rgb
+                        },
+                        ImageFormat.Gif => new SixLabors.ImageSharp.Formats.Gif.GifEncoder(),
+                        ImageFormat.Png => new SixLabors.ImageSharp.Formats.Png.PngEncoder(),
+                        ImageFormat.Webp => new SixLabors.ImageSharp.Formats.Webp.WebpEncoder() { Quality = Lossy },
+                        ImageFormat.Tiff => new SixLabors.ImageSharp.Formats.Tiff.TiffEncoder(),
+                        _ => new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
+                        {
+                            BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
+                            SupportTransparency = true
+                        },
+                    };
+                    Image.Save(Stream, enc);
+                }
+                catch (DllNotFoundException e)
+                {
+                    throw new DllNotFoundException($"Please install SixLabors.ImageSharp from NuGet.", e);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Cannot export stream with SixLabors.ImageSharp, {ex.Message}");
+                }
             }
-            catch (DllNotFoundException e)
-            {
-                throw new DllNotFoundException($"Please install SixLabors.ImageSharp from NuGet.", e);
-            }
-            catch (MissingMethodException e)
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
                 throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Cannot export stream with SixLabors.ImageSharp, {ex.Message}");
             }
         }
 
@@ -290,6 +349,10 @@ namespace IronSoftware.Drawing
 
                 return true;
             }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
             catch
             {
                 return false;
@@ -309,6 +372,10 @@ namespace IronSoftware.Drawing
                 SaveAs(File);
 
                 return true;
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
             }
             catch
             {
@@ -364,7 +431,14 @@ namespace IronSoftware.Drawing
         /// <seealso cref="AnyBitmap(byte[])"/>
         public static AnyBitmap FromBytes(byte[] Bytes)
         {
-            return new AnyBitmap(Bytes);
+            try
+            {
+                return new AnyBitmap(Bytes);
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
         /// <summary>
         /// Construct a new Bitmap from binary data (bytes).
@@ -375,7 +449,14 @@ namespace IronSoftware.Drawing
 
         public AnyBitmap(byte[] Bytes)
         {
-            LoadImage(Bytes);
+            try
+            {
+                LoadImage(Bytes);
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
 
         /// <summary>
@@ -408,7 +489,14 @@ namespace IronSoftware.Drawing
         /// <seealso cref="AnyBitmap"/>
         public AnyBitmap(System.IO.MemoryStream Stream)
         {
-            LoadImage(Stream.ToArray());
+            try
+            {
+                LoadImage(Stream.ToArray());
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
 
         /// <summary>
@@ -419,7 +507,14 @@ namespace IronSoftware.Drawing
         /// <seealso cref="AnyBitmap"/>
         public AnyBitmap(System.IO.Stream Stream)
         {
-            LoadImage(Stream);
+            try
+            {
+                LoadImage(Stream);
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
 
         /// <summary>
@@ -430,7 +525,14 @@ namespace IronSoftware.Drawing
         /// <param name="height">The height of the new AnyBitmap.</param>
         public AnyBitmap(AnyBitmap original, int width, int height)
         {
-            LoadAndResizeImage(original, width, height);
+            try
+            {
+                LoadAndResizeImage(original, width, height);
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
 
         /// <summary>
@@ -459,7 +561,14 @@ namespace IronSoftware.Drawing
         /// <seealso cref="AnyBitmap"/>
         public AnyBitmap(string File)
         {
-            LoadImage(File);
+            try
+            {
+                LoadImage(File);
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
 
         /// <summary>
@@ -533,7 +642,14 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                return Image.PixelType.BitsPerPixel;
+                try
+                {
+                    return Image.PixelType.BitsPerPixel;
+                }
+                catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+                {
+                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                }
             }
         }
 
@@ -546,7 +662,14 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                return Image.Frames.Count;
+                try
+                {
+                    return Image.Frames.Count;
+                }
+                catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+                {
+                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                }
             }
         }
 
@@ -564,10 +687,18 @@ namespace IronSoftware.Drawing
                 {
                     List<AnyBitmap> images = new();
 
-                    for (int currFrameIndex = 0; currFrameIndex < FrameCount; currFrameIndex++)
+                    try
                     {
-                        images.Add(Image.Frames.CloneFrame(currFrameIndex));
+                        for (int currFrameIndex = 0; currFrameIndex < FrameCount; currFrameIndex++)
+                        {
+                            images.Add(Image.Frames.CloneFrame(currFrameIndex));
+                        }
                     }
+                    catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+                    {
+                        throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                    }
+
                     return images;
                 }
                 else
@@ -587,9 +718,16 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         public static AnyBitmap CreateMultiFrameTiff(IEnumerable<string> imagePaths)
         {
-            using MemoryStream stream = CreateMultiFrameImage(CreateAnyBitmaps(imagePaths)) ?? throw new NotSupportedException("Image could not be loaded. File format is not supported.");
-            stream.Seek(0, SeekOrigin.Begin);
-            return AnyBitmap.FromStream(stream);
+            try
+            {
+                using MemoryStream stream = CreateMultiFrameImage(CreateAnyBitmaps(imagePaths)) ?? throw new NotSupportedException("Image could not be loaded. File format is not supported.");
+                stream.Seek(0, SeekOrigin.Begin);
+                return AnyBitmap.FromStream(stream);
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
 
         /// <summary>
@@ -602,9 +740,16 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         public static AnyBitmap CreateMultiFrameTiff(IEnumerable<AnyBitmap> images)
         {
-            using MemoryStream stream = CreateMultiFrameImage(images) ?? throw new NotSupportedException("Image could not be loaded. File format is not supported.");
-            stream.Seek(0, SeekOrigin.Begin);
-            return AnyBitmap.FromStream(stream);
+            try
+            {
+                using MemoryStream stream = CreateMultiFrameImage(images) ?? throw new NotSupportedException("Image could not be loaded. File format is not supported.");
+                stream.Seek(0, SeekOrigin.Begin);
+                return AnyBitmap.FromStream(stream);
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
 
         /// <summary>
@@ -617,9 +762,16 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         public static AnyBitmap CreateMultiFrameGif(IEnumerable<string> imagePaths)
         {
-            using MemoryStream stream = CreateMultiFrameImage(CreateAnyBitmaps(imagePaths), ImageFormat.Gif) ?? throw new NotSupportedException("Image could not be loaded. File format is not supported.");
-            stream.Seek(0, SeekOrigin.Begin);
-            return AnyBitmap.FromStream(stream);
+            try
+            {
+                using MemoryStream stream = CreateMultiFrameImage(CreateAnyBitmaps(imagePaths), ImageFormat.Gif) ?? throw new NotSupportedException("Image could not be loaded. File format is not supported.");
+                stream.Seek(0, SeekOrigin.Begin);
+                return AnyBitmap.FromStream(stream);
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
 
         /// <summary>
@@ -632,9 +784,16 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         public static AnyBitmap CreateMultiFrameGif(IEnumerable<AnyBitmap> images)
         {
-            using MemoryStream stream = CreateMultiFrameImage(images, ImageFormat.Gif) ?? throw new NotSupportedException("Image could not be loaded. File format is not supported.");
-            stream.Seek(0, SeekOrigin.Begin);
-            return AnyBitmap.FromStream(stream);
+            try
+            {
+                using MemoryStream stream = CreateMultiFrameImage(images, ImageFormat.Gif) ?? throw new NotSupportedException("Image could not be loaded. File format is not supported.");
+                stream.Seek(0, SeekOrigin.Begin);
+                return AnyBitmap.FromStream(stream);
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
         
         /// <summary>
@@ -645,7 +804,14 @@ namespace IronSoftware.Drawing
         /// <returns>Transformed image</returns>
         public AnyBitmap RotateFlip(RotateMode rotateMode, FlipMode flipMode)
         {
-            return AnyBitmap.RotateFlip(this, rotateMode, flipMode);
+            try
+            {
+                return AnyBitmap.RotateFlip(this, rotateMode, flipMode);
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
         
         /// <summary>
@@ -656,8 +822,15 @@ namespace IronSoftware.Drawing
         [Obsolete("The parameter type RotateFlipType is legacy support from System.Drawing. Please use RotateMode and FlipMode instead.")]
         public AnyBitmap RotateFlip(RotateFlipType rotateFlipType)
         {
-            var (rotateMode, flipMode) = ParseRotateFlipType(rotateFlipType);
-            return AnyBitmap.RotateFlip(this, rotateMode, flipMode);
+            try
+            {
+                var (rotateMode, flipMode) = ParseRotateFlipType(rotateFlipType);
+                return AnyBitmap.RotateFlip(this, rotateMode, flipMode);
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
 
         /// <summary>
@@ -669,34 +842,41 @@ namespace IronSoftware.Drawing
         /// <returns>Transformed image</returns>
         public static AnyBitmap RotateFlip(AnyBitmap bitmap, RotateMode rotateMode, FlipMode flipMode)
         {
-            SixLabors.ImageSharp.Processing.RotateMode rotateModeImgSharp = rotateMode switch
+            try
             {
-                RotateMode.None => SixLabors.ImageSharp.Processing.RotateMode.None,
-                RotateMode.Rotate90 => SixLabors.ImageSharp.Processing.RotateMode.Rotate90,
-                RotateMode.Rotate180 => SixLabors.ImageSharp.Processing.RotateMode.Rotate180,
-                RotateMode.Rotate270 => SixLabors.ImageSharp.Processing.RotateMode.Rotate270,
-                _ => throw new NotImplementedException()
-            };
+                SixLabors.ImageSharp.Processing.RotateMode rotateModeImgSharp = rotateMode switch
+                {
+                    RotateMode.None => SixLabors.ImageSharp.Processing.RotateMode.None,
+                    RotateMode.Rotate90 => SixLabors.ImageSharp.Processing.RotateMode.Rotate90,
+                    RotateMode.Rotate180 => SixLabors.ImageSharp.Processing.RotateMode.Rotate180,
+                    RotateMode.Rotate270 => SixLabors.ImageSharp.Processing.RotateMode.Rotate270,
+                    _ => throw new NotImplementedException()
+                };
             
-            SixLabors.ImageSharp.Processing.FlipMode flipModeImgSharp = flipMode switch
-            {
-                FlipMode.None => SixLabors.ImageSharp.Processing.FlipMode.None,
-                FlipMode.Horizontal => SixLabors.ImageSharp.Processing.FlipMode.Horizontal,
-                FlipMode.Vertical => SixLabors.ImageSharp.Processing.FlipMode.Vertical,
-                _ => throw new NotImplementedException()
-            };
+                SixLabors.ImageSharp.Processing.FlipMode flipModeImgSharp = flipMode switch
+                {
+                    FlipMode.None => SixLabors.ImageSharp.Processing.FlipMode.None,
+                    FlipMode.Horizontal => SixLabors.ImageSharp.Processing.FlipMode.Horizontal,
+                    FlipMode.Vertical => SixLabors.ImageSharp.Processing.FlipMode.Vertical,
+                    _ => throw new NotImplementedException()
+                };
 
-            using MemoryStream memoryStream = new System.IO.MemoryStream();
-            using SixLabors.ImageSharp.Image image = SixLabors.ImageSharp.Image.Load(bitmap.ExportBytes());
+                using MemoryStream memoryStream = new System.IO.MemoryStream();
+                using SixLabors.ImageSharp.Image image = SixLabors.ImageSharp.Image.Load(bitmap.ExportBytes());
             
-            image.Mutate(x => x.RotateFlip(rotateModeImgSharp, flipModeImgSharp));
-            image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
+                image.Mutate(x => x.RotateFlip(rotateModeImgSharp, flipModeImgSharp));
+                image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
+                {
+                    BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
+                    SupportTransparency = true
+                });
+            
+                return new AnyBitmap(memoryStream.ToArray());
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
-                SupportTransparency = true
-            });
-            
-            return new AnyBitmap(memoryStream.ToArray());
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
 
         /// <summary>
@@ -707,7 +887,14 @@ namespace IronSoftware.Drawing
         /// <returns>A new bitmap with the specified region redacted.</returns>
         public AnyBitmap Redact(CropRectangle cropRectangle, Color color)
         {
-            return AnyBitmap.Redact(this, cropRectangle, color);
+            try
+            {
+                return AnyBitmap.Redact(this, cropRectangle, color);
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
 
         /// <summary>
@@ -719,18 +906,25 @@ namespace IronSoftware.Drawing
         /// <returns>A new bitmap with the specified region redacted.</returns>
         public static AnyBitmap Redact(AnyBitmap bitmap, CropRectangle cropRectangle, Color color)
         {
-            using MemoryStream memoryStream = new System.IO.MemoryStream();
-            using SixLabors.ImageSharp.Image image = SixLabors.ImageSharp.Image.Load(bitmap.ExportBytes());
-            SixLabors.ImageSharp.Rectangle rectangle = cropRectangle;
-            SixLabors.ImageSharp.Drawing.Processing.SolidBrush brush = new SixLabors.ImageSharp.Drawing.Processing.SolidBrush(color);
-            image.Mutate(ctx => ctx.Fill(brush, rectangle));
-            image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
+            try
             {
-                BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
-                SupportTransparency = true
-            });
+                using MemoryStream memoryStream = new System.IO.MemoryStream();
+                using SixLabors.ImageSharp.Image image = SixLabors.ImageSharp.Image.Load(bitmap.ExportBytes());
+                SixLabors.ImageSharp.Rectangle rectangle = cropRectangle;
+                SixLabors.ImageSharp.Drawing.Processing.SolidBrush brush = new SixLabors.ImageSharp.Drawing.Processing.SolidBrush(color);
+                image.Mutate(ctx => ctx.Fill(brush, rectangle));
+                image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
+                {
+                    BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
+                    SupportTransparency = true
+                });
 
-            return new AnyBitmap(memoryStream.ToArray());
+                return new AnyBitmap(memoryStream.ToArray());
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
 
         /// <summary>
@@ -740,7 +934,14 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                return GetStride();
+                try
+                {
+                    return GetStride();
+                }
+                catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+                {
+                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                }
             }
         }
 
@@ -752,7 +953,14 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                return GetFirstPixelData();
+                try
+                {
+                    return GetFirstPixelData();
+                }
+                catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+                {
+                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                }
             }
         }
 
@@ -764,7 +972,14 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                return Format?.DefaultMimeType ?? "image/unknown";
+                try
+                {
+                    return Format?.DefaultMimeType ?? "image/unknown";
+                }
+                catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+                {
+                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                }
             }
         }
 
@@ -774,16 +989,23 @@ namespace IronSoftware.Drawing
         /// <returns><see cref="AnyBitmap.ImageFormat"/></returns>
         public ImageFormat GetImageFormat()
         {
-            return (Format?.DefaultMimeType) switch
+            try
             {
-                "image/gif" => ImageFormat.Gif,
-                "image/tiff" => ImageFormat.Tiff,
-                "image/jpeg" => ImageFormat.Jpeg,
-                "image/png" => ImageFormat.Png,
-                "image/webp" => ImageFormat.Webp,
-                "image/vnd.microsoft.icon" => ImageFormat.Icon,
-                _ => ImageFormat.Bmp,
-            };
+                return (Format?.DefaultMimeType) switch
+                {
+                    "image/gif" => ImageFormat.Gif,
+                    "image/tiff" => ImageFormat.Tiff,
+                    "image/jpeg" => ImageFormat.Jpeg,
+                    "image/png" => ImageFormat.Png,
+                    "image/webp" => ImageFormat.Webp,
+                    "image/vnd.microsoft.icon" => ImageFormat.Icon,
+                    _ => ImageFormat.Bmp,
+                };
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
 
         /// <summary>
@@ -794,7 +1016,14 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                return Image?.Metadata.HorizontalResolution ?? null;
+                try
+                {
+                    return Image?.Metadata.HorizontalResolution ?? null;
+                }
+                catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+                {
+                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                }
             }
         }
 
@@ -806,7 +1035,14 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                return Image?.Metadata.VerticalResolution ?? null;
+                try
+                {
+                    return Image?.Metadata.VerticalResolution ?? null;
+                }
+                catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+                {
+                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                }
             }
         }
 
@@ -828,7 +1064,14 @@ namespace IronSoftware.Drawing
                 throw new ArgumentOutOfRangeException("y is less than 0, or greater than or equal to Height.");
             }
 
-            return GetPixelColor(x, y);
+            try
+            {
+                return GetPixelColor(x, y);
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
         }
 
         /// <summary>
@@ -852,6 +1095,10 @@ namespace IronSoftware.Drawing
             {
                 throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.", e);
             }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
             catch (Exception e)
             {
                 throw new Exception("Error while casting AnyBitmap from SixLabors.ImageSharp.Image", e);
@@ -872,6 +1119,10 @@ namespace IronSoftware.Drawing
             catch (DllNotFoundException e)
             {
                 throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.", e);
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
             }
             catch (Exception e)
             {
@@ -900,6 +1151,10 @@ namespace IronSoftware.Drawing
             {
                 throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.", e);
             }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
             catch (Exception e)
             {
                 throw new Exception("Error while casting AnyBitmap from SixLabors.ImageSharp.Image", e);
@@ -920,6 +1175,10 @@ namespace IronSoftware.Drawing
             catch (DllNotFoundException e)
             {
                 throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.", e);
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
             }
             catch (Exception e)
             {
@@ -948,6 +1207,10 @@ namespace IronSoftware.Drawing
             {
                 throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.", e);
             }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+            }
             catch (Exception e)
             {
                 throw new Exception("Error while casting AnyBitmap from SixLabors.ImageSharp.Image", e);
@@ -968,6 +1231,10 @@ namespace IronSoftware.Drawing
             catch (DllNotFoundException e)
             {
                 throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.", e);
+            }
+            catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
+            {
+                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
             }
             catch (Exception e)
             {
