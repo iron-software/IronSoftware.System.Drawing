@@ -1,6 +1,10 @@
 ##### DECLARATIONS #####
 # Variables
 parameters:
+  - name: UnitTests
+    displayName: Unit Tests
+    type: boolean
+    default: True
   - name: githubRelease
     displayName: GitHub Release
     type: boolean
@@ -41,18 +45,21 @@ stages:
     OSPlatform: 'Windows'
     pool:
       vmImage: 'windows-latest'
+    runUnitTests: ${{ parameters.UnitTests }}
 ## Test Linux
 - template: stage_templates/run_tests_on_pool.yml
   parameters:
     OSPlatform: 'Linux'
     pool:
       vmImage: 'ubuntu-latest'
+    runUnitTests: ${{ parameters.UnitTests }}
 ## Test MacOs
 - template: stage_templates/run_tests_on_pool.yml
   parameters:
     OSPlatform: 'MacOs'
     pool:
       vmImage: 'macOS-latest'
+    runUnitTests: ${{ parameters.UnitTests }}
 ## Push NuGet Package
 - stage: DeployDrawingLibraries
   pool:

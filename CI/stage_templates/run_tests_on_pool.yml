@@ -1,6 +1,7 @@
 parameters:
   OSPlatform: ''
   pool: ''
+  runUnitTests: true
 
 stages:
 - stage: ${{ parameters.OSPlatform }}Tests
@@ -8,52 +9,58 @@ stages:
   dependsOn: BuildDrawingLibraries
   pool: ${{ parameters.pool }}
   jobs:
-  - ${{ if eq(parameters.OSPlatform, 'Windows') }}:
-    # Windows .NET 472 x64 Tests
+  - ${{ if eq(parameters.runUnitTests, false) }}:
+    - job: SkipUnitTest
+      steps:
+      - checkout: none
+      - script: echo "Skip Unit tests"
+  - ${{ if eq(parameters.runUnitTests, true) }}:
+    - ${{ if eq(parameters.OSPlatform, 'Windows') }}:
+      # Windows .NET 472 x64 Tests
+      - template: ../job_templates/test_drawing_libraries.yml
+        parameters:
+          name: UnitTest${{ parameters.OSPlatform }}net472
+          OSPlatform: ${{ parameters.OSPlatform }}
+          framework: 'net472'
+          architecture: ''
+          buildConfiguration: $(Configuration)
+    # Windows .NET Core x64 Tests
     - template: ../job_templates/test_drawing_libraries.yml
       parameters:
-        name: UnitTest${{ parameters.OSPlatform }}net472
+        name: UnitTest${{ parameters.OSPlatform }}netcore
         OSPlatform: ${{ parameters.OSPlatform }}
-        framework: 'net472'
+        framework: 'netcoreapp3.1'
         architecture: ''
         buildConfiguration: $(Configuration)
-  # Windows .NET Core x64 Tests
-  - template: ../job_templates/test_drawing_libraries.yml
-    parameters:
-      name: UnitTest${{ parameters.OSPlatform }}netcore
-      OSPlatform: ${{ parameters.OSPlatform }}
-      framework: 'netcoreapp3.1'
-      architecture: ''
-      buildConfiguration: $(Configuration)
-  # Windows .NET Core x86 Tests
-  - template: ../job_templates/test_drawing_libraries.yml
-    parameters:
-      name: UnitTest${{ parameters.OSPlatform }}netcorex86
-      OSPlatform: ${{ parameters.OSPlatform }}
-      framework: 'netcoreapp3.1'
-      architecture: '.x86'
-      buildConfiguration: $(Configuration)
-  # Windows .NET 5.0 Tests
-  - template: ../job_templates/test_drawing_libraries.yml
-    parameters:
-      name: UnitTest${{ parameters.OSPlatform }}net50
-      OSPlatform: ${{ parameters.OSPlatform }}
-      framework: 'net50'
-      architecture: ''
-      buildConfiguration: $(Configuration)
-  # Windows .NET 6.0 Tests
-  - template: ../job_templates/test_drawing_libraries.yml
-    parameters:
-      name: UnitTest${{ parameters.OSPlatform }}net60
-      OSPlatform: ${{ parameters.OSPlatform }}
-      framework: 'net60'
-      architecture: ''
-      buildConfiguration: $(Configuration)
-  # Windows .NET 7.0 Tests
-  - template: ../job_templates/test_drawing_libraries.yml
-    parameters:
-      name: UnitTest${{ parameters.OSPlatform }}net70
-      OSPlatform: ${{ parameters.OSPlatform }}
-      framework: 'net70'
-      architecture: ''
-      buildConfiguration: $(Configuration)
+    # Windows .NET Core x86 Tests
+    - template: ../job_templates/test_drawing_libraries.yml
+      parameters:
+        name: UnitTest${{ parameters.OSPlatform }}netcorex86
+        OSPlatform: ${{ parameters.OSPlatform }}
+        framework: 'netcoreapp3.1'
+        architecture: '.x86'
+        buildConfiguration: $(Configuration)
+    # Windows .NET 5.0 Tests
+    - template: ../job_templates/test_drawing_libraries.yml
+      parameters:
+        name: UnitTest${{ parameters.OSPlatform }}net50
+        OSPlatform: ${{ parameters.OSPlatform }}
+        framework: 'net50'
+        architecture: ''
+        buildConfiguration: $(Configuration)
+    # Windows .NET 6.0 Tests
+    - template: ../job_templates/test_drawing_libraries.yml
+      parameters:
+        name: UnitTest${{ parameters.OSPlatform }}net60
+        OSPlatform: ${{ parameters.OSPlatform }}
+        framework: 'net60'
+        architecture: ''
+        buildConfiguration: $(Configuration)
+    # Windows .NET 7.0 Tests
+    - template: ../job_templates/test_drawing_libraries.yml
+      parameters:
+        name: UnitTest${{ parameters.OSPlatform }}net70
+        OSPlatform: ${{ parameters.OSPlatform }}
+        framework: 'net70'
+        architecture: ''
+        buildConfiguration: $(Configuration)
