@@ -7,11 +7,3 @@ steps:
         $(Build.SourcesDirectory)\NuGet\signtool.exe sign
         /v /d IronDrawing /f $(Agent.TempDirectory)/ironcert.pfx /p $(CertificatePassword)
         /t http://timestamp.digicert.com /fd SHA256 "IronSoftware.Drawing.Common.dll"
-- task: CmdLine@2
-  displayName: 'Sign IronSoftware.Drawing.Common.dll .NET6'
-  inputs:
-      workingDirectory: 'bin\$(Configuration)\net60'
-      script: >-
-        $(Build.SourcesDirectory)\NuGet\signtool.exe sign
-        /v /d IronDrawing /f $(Agent.TempDirectory)/ironcert.pfx /p $(CertificatePassword)
-        /t http://timestamp.digicert.com /fd SHA256 "IronSoftware.Drawing.Common.dll"
