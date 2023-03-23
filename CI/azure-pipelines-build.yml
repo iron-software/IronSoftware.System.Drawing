@@ -5,14 +5,21 @@ parameters:
     displayName: Unit Tests
     type: boolean
     default: True
+  - name: preRelease
+    displayName: Pre-Release
+    type: boolean
+    default: true
 variables:
   - group: IronDrawingVersions
   - name: Configuration
     value: 'Release'
   - name: IronDrawingPatch
     value: $[counter(format('{0}.{1}', variables['IronDrawingMajorVersion'], variables['IronDrawingMinorVersion']), 1)]
-  - name: NuGetVersion
-    value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingPatch)-ci
+  - name: NugetVersion
+    ${{ if eq(parameters.preRelease, true) }}:
+      value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingPatch)-prerelease
+    ${{ if ne(parameters.preRelease, true) }}:
+      value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingPatch)
 # Build Trigger
 trigger:
     branches:
@@ -40,20 +47,12 @@ stages:
       vmImage: 'windows-latest'
     runUnitTests: ${{ parameters.UnitTests }}
 ## Test Linux
-- ${{ if eq(parameters.UnitTests, false) }}:
-  - template: stage_templates/run_tests_on_pool.yml
-    parameters:
-      OSPlatform: 'Linux'
-      pool:
-        vmImage: 'windows-latest'
-      runUnitTests: ${{ parameters.UnitTests }}
-- ${{ if eq(parameters.UnitTests, true) }}:
-  - template: stage_templates/run_tests_on_pool.yml
-    parameters:
-      OSPlatform: 'Linux'
-      pool:
-        vmImage: 'ubuntu-latest'
-      runUnitTests: ${{ parameters.UnitTests }}
+- template: stage_templates/run_tests_on_pool.yml
+  parameters:
+    OSPlatform: 'Linux'
+    pool:
+      vmImage: 'ubuntu-latest'
+    runUnitTests: ${{ parameters.UnitTests }}
 ## Test MacOs
 - template: stage_templates/run_tests_on_pool.yml
   parameters:
