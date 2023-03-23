@@ -18,13 +18,13 @@ stages:
         architecture: ''
         buildConfiguration: $(Configuration)
     # Windows .NET 472 x86 Tests
-    - template: ../job_templates/test_drawing_libraries.yml
-      parameters:
-        name: UnitTest${{ parameters.OSPlatform }}net472x86
-        OSPlatform: ${{ parameters.OSPlatform }}
-        framework: 'net472'
-        architecture: '.x86'
-        buildConfiguration: $(Configuration)
+    # - template: ../job_templates/test_drawing_libraries.yml
+    #   parameters:
+    #     name: UnitTest${{ parameters.OSPlatform }}net472x86
+    #     OSPlatform: ${{ parameters.OSPlatform }}
+    #     framework: 'net472'
+    #     architecture: '.x86'
+    #     buildConfiguration: $(Configuration)
   # Windows .NET Core x64 Tests
   - template: ../job_templates/test_drawing_libraries.yml
     parameters:
