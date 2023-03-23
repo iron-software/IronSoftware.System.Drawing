@@ -220,11 +220,7 @@ namespace IronSoftware.Drawing
                     ImageFormat.Jpeg => new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder()
                     {
                         Quality = Lossy,
-#if NET6_0_OR_GREATER
-                        ColorType = SixLabors.ImageSharp.Formats.Jpeg.JpegEncodingColor.Rgb
-#else
                         ColorType = SixLabors.ImageSharp.Formats.Jpeg.JpegColorType.Rgb
-#endif
                     },
                     ImageFormat.Gif => new SixLabors.ImageSharp.Formats.Gif.GifEncoder(),
                     ImageFormat.Png => new SixLabors.ImageSharp.Formats.Png.PngEncoder(),
@@ -241,6 +237,10 @@ namespace IronSoftware.Drawing
             catch (DllNotFoundException e)
             {
                 throw new DllNotFoundException($"Please install SixLabors.ImageSharp from NuGet.", e);
+            }
+            catch (MissingMethodException e)
+            {
+                throw new NotSupportedException("Method is missing due to new SixLabors version. Please upgrade to Drawing version which support SixLabors.ImageSharp v3.0.0", e);
             }
             catch (Exception ex)
             {
@@ -1520,13 +1520,8 @@ namespace IronSoftware.Drawing
         {
             try
             {
-#if NET6_0_OR_GREATER
-                Image = SixLabors.ImageSharp.Image.Load(Bytes);
-                Format = Image.Metadata.DecodedImageFormat;
-#else
                 Image = SixLabors.ImageSharp.Image.Load(Bytes, out IImageFormat format);
                 Format = format;
-#endif
                 Binary = Bytes;
             }
             catch (DllNotFoundException e)
@@ -1544,6 +1539,10 @@ namespace IronSoftware.Drawing
                     throw new NotSupportedException("Image could not be loaded. File format is not supported.", e);
                 }
             }
+            catch (MissingMethodException e)
+            {
+                throw new NotSupportedException("Method is missing due to new SixLabors version. Please upgrade to Drawing version which support SixLabors.ImageSharp v3.0.0", e);
+            }
             catch (Exception e)
             {
                 throw new Exception("Error while loading image bytes.", e);
@@ -1555,13 +1554,8 @@ namespace IronSoftware.Drawing
         {
             try
             {
-#if NET6_0_OR_GREATER
-                Image = SixLabors.ImageSharp.Image.Load(File);
-                Format = Image.Metadata.DecodedImageFormat;
-#else
                 Image = SixLabors.ImageSharp.Image.Load(File, out IImageFormat format);
                 Format = format;
-#endif
                 Binary = System.IO.File.ReadAllBytes(File);
             }
             catch (DllNotFoundException e)
@@ -1578,6 +1572,10 @@ namespace IronSoftware.Drawing
                 {
                     throw new NotSupportedException("Image could not be loaded. File format is not supported.", e);
                 }
+            }
+            catch (MissingMethodException e)
+            {
+                throw new NotSupportedException("Method is missing due to new SixLabors version. Please upgrade to Drawing version which support SixLabors.ImageSharp v3.0.0", e);
             }
             catch (Exception e)
             {
@@ -2011,19 +2009,30 @@ namespace IronSoftware.Drawing
 
         private void LoadAndResizeImage(AnyBitmap original, int width, int height)
         {
-#if NET6_0_OR_GREATER
-            using var image = SixLabors.ImageSharp.Image.Load<Rgba32>(original.Binary);
-            IImageFormat format = image.Metadata.DecodedImageFormat;
-#else
-            using var image = SixLabors.ImageSharp.Image.Load<Rgba32>(original.Binary, out IImageFormat format);
-#endif
-            image.Mutate(img => img.Resize(width, height));
-            byte[] pixelBytes = new byte[image.Width * image.Height * Unsafe.SizeOf<Rgba32>()];
-            image.CopyPixelDataTo(pixelBytes);
+            try
+            {
+                using var image = SixLabors.ImageSharp.Image.Load<Rgba32>(original.Binary, out IImageFormat format);
 
-            Image = image.Clone();
-            Binary = pixelBytes;
-            Format = format;
+                image.Mutate(img => img.Resize(width, height));
+                byte[] pixelBytes = new byte[image.Width * image.Height * Unsafe.SizeOf<Rgba32>()];
+                image.CopyPixelDataTo(pixelBytes);
+
+                Image = image.Clone();
+                Binary = pixelBytes;
+                Format = format;
+            }
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException("Please install SixLabors.ImageSharp from NuGet.", e);
+            }
+            catch (MissingMethodException e)
+            {
+                throw new NotSupportedException("Method is missing due to new SixLabors version. Please upgrade to Drawing version which support SixLabors.ImageSharp v3.0.0", e);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while loading image bytes.", e);
+            }
         }
 
         private ImageFormat GetImageFormat(string filename)
