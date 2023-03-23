@@ -5,14 +5,21 @@ parameters:
     displayName: GitHub Release
     type: boolean
     default: True
+  - name: preRelease
+    displayName: Pre-Release
+    type: boolean
+    default: true
 variables:
   - group: IronDrawingVersions
   - name: Configuration
     value: 'Release'
   - name: AssemblyVersion
     value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingRevisionVersion).$(IronDrawingPatch)
-  - name: NuGetVersion
-    value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingPatch)
+  - name: NugetVersion
+    ${{ if eq(parameters.preRelease, true) }}:
+      value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingPatch)-prerelease
+    ${{ if ne(parameters.preRelease, true) }}:
+      value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingPatch)
     
 # Virtual Machine
 pool:
