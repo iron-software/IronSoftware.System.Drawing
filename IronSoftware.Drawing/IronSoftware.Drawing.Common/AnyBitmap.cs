@@ -24,6 +24,12 @@ namespace IronSoftware.Drawing
     /// </summary>
     public partial class AnyBitmap : IDisposable
     {
+        private const string IMAGE_SHARP_MISSING_METHOD_MESSAGE = 
+            "Due to conflicts between SixLabors.ImageSharp v2 and v3, " + 
+            "to use SixLabors.ImageSharp v3 with Iron Software products " + 
+            "please install IronSoftware.System.Drawing v.2023.4.1-prerelease " + 
+            "NuGet package which supports SixLabors.ImageSharp v3.";
+    
         private bool disposed = false;
         private SixLabors.ImageSharp.Image Image { get; set; }
         private byte[] Binary { get; set; }
@@ -42,7 +48,7 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
                 {
-                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                    throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
                 }
             }
         }
@@ -60,7 +66,7 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
                 {
-                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                    throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
                 }
             }
         }
@@ -128,7 +134,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -153,7 +159,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -176,7 +182,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -202,7 +208,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -224,7 +230,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -246,7 +252,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -303,7 +309,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -351,7 +357,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
             catch
             {
@@ -375,7 +381,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
             catch
             {
@@ -437,7 +443,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
         /// <summary>
@@ -455,7 +461,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -495,7 +501,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -513,7 +519,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -531,7 +537,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -567,7 +573,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -648,7 +654,7 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
                 {
-                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                    throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
                 }
             }
         }
@@ -668,7 +674,7 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
                 {
-                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                    throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
                 }
             }
         }
@@ -696,7 +702,7 @@ namespace IronSoftware.Drawing
                     }
                     catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
                     {
-                        throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                        throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
                     }
 
                     return images;
@@ -726,7 +732,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -748,7 +754,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -770,7 +776,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -792,7 +798,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
         
@@ -810,7 +816,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
         
@@ -829,7 +835,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -875,7 +881,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -893,7 +899,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -923,7 +929,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -940,7 +946,7 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
                 {
-                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                    throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
                 }
             }
         }
@@ -959,7 +965,7 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
                 {
-                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                    throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
                 }
             }
         }
@@ -978,7 +984,7 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
                 {
-                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                    throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
                 }
             }
         }
@@ -1004,7 +1010,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -1022,7 +1028,7 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
                 {
-                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                    throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
                 }
             }
         }
@@ -1041,7 +1047,7 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
                 {
-                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                    throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
                 }
             }
         }
@@ -1070,7 +1076,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
 
@@ -1097,7 +1103,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
             catch (Exception e)
             {
@@ -1122,7 +1128,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
             catch (Exception e)
             {
@@ -1153,7 +1159,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
             catch (Exception e)
             {
@@ -1178,7 +1184,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
             catch (Exception e)
             {
@@ -1209,7 +1215,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
             catch (Exception e)
             {
@@ -1234,7 +1240,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
             catch (Exception e)
             {
@@ -1808,7 +1814,7 @@ namespace IronSoftware.Drawing
             }
             catch (MissingMethodException e)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
             catch (Exception e)
             {
@@ -1842,7 +1848,7 @@ namespace IronSoftware.Drawing
             }
             catch (MissingMethodException e)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
             catch (Exception e)
             {
@@ -2294,7 +2300,7 @@ namespace IronSoftware.Drawing
             }
             catch (MissingMethodException e)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
             catch (Exception e)
             {
