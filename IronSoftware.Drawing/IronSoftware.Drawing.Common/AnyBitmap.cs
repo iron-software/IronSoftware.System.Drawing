@@ -42,7 +42,7 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
                 {
-                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                    throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
                 }
             }
         }
@@ -60,7 +60,7 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
                 {
-                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                    throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
                 }
             }
         }
@@ -128,7 +128,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -153,7 +153,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -176,7 +176,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -202,7 +202,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -224,7 +224,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -246,7 +246,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -303,7 +303,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -351,7 +351,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
             catch
             {
@@ -375,7 +375,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
             catch
             {
@@ -437,7 +437,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
         /// <summary>
@@ -455,7 +455,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -495,7 +495,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -513,7 +513,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -531,7 +531,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -567,7 +567,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -648,7 +648,7 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
                 {
-                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                    throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
                 }
             }
         }
@@ -668,7 +668,7 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
                 {
-                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                    throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
                 }
             }
         }
@@ -696,7 +696,7 @@ namespace IronSoftware.Drawing
                     }
                     catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
                     {
-                        throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                        throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
                     }
 
                     return images;
@@ -726,7 +726,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -748,7 +748,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -770,7 +770,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -792,7 +792,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
         
@@ -810,7 +810,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
         
@@ -829,7 +829,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -875,7 +875,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -893,7 +893,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -923,7 +923,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -940,7 +940,7 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
                 {
-                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                    throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
                 }
             }
         }
@@ -959,7 +959,7 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
                 {
-                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                    throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
                 }
             }
         }
@@ -978,7 +978,7 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
                 {
-                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                    throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
                 }
             }
         }
@@ -1004,7 +1004,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -1022,7 +1022,7 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
                 {
-                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                    throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
                 }
             }
         }
@@ -1041,7 +1041,7 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
                 {
-                    throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                    throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
                 }
             }
         }
@@ -1070,7 +1070,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
         }
 
@@ -1097,7 +1097,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
             catch (Exception e)
             {
@@ -1122,7 +1122,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
             catch (Exception e)
             {
@@ -1153,7 +1153,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
             catch (Exception e)
             {
@@ -1178,7 +1178,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
             catch (Exception e)
             {
@@ -1209,7 +1209,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
             catch (Exception e)
             {
@@ -1234,7 +1234,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
             catch (Exception e)
             {
@@ -1808,7 +1808,7 @@ namespace IronSoftware.Drawing
             }
             catch (MissingMethodException e)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
             catch (Exception e)
             {
@@ -1842,7 +1842,7 @@ namespace IronSoftware.Drawing
             }
             catch (MissingMethodException e)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
             catch (Exception e)
             {
@@ -2294,7 +2294,7 @@ namespace IronSoftware.Drawing
             }
             catch (MissingMethodException e)
             {
-                throw new NotSupportedException("Due to conflicts between SixLabors v2 and v3 you must upgrade to a version of IronSoftware.System.Drawing which supports SixLabors.ImageSharp v3.", e);
+                throw new NotSupportedException("Due to conflicts between SixLabors.ImageSharp v2 and v3, to use SixLabors.ImageSharp v3 with Iron Software products please install IronSoftware.System.Drawing v.2023.4.1-prerelease NuGet package which supports SixLabors.ImageSharp v3.", e);
             }
             catch (Exception e)
             {
