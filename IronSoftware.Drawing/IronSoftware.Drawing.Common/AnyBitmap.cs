@@ -1783,7 +1783,7 @@ namespace IronSoftware.Drawing
                 return;
             }
 
-            Image.Dispose();
+            Image?.Dispose();
             Image = null;
             Binary = null;
             _disposed = true;
