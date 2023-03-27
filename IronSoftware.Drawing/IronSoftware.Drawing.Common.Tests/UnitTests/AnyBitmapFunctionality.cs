@@ -231,7 +231,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Func<Stream> funcStream = anyBitmap.ToStreamFn();
             AssertStreamAreEqual(expected, funcStream);
 
-            using var resultExport = new System.IO.MemoryStream();
+            using var resultExport = new MemoryStream();
             anyBitmap.ExportStream(resultExport);
             AssertStreamAreEqual(expected, resultExport);
         }
@@ -242,7 +242,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             string imagePath = GetRelativeFilePath("Mona-Lisa-oil-wood-panel-Leonardo-da.webp");
             var anyBitmap = AnyBitmap.FromFile(imagePath);
 
-            byte[] bytes = System.IO.File.ReadAllBytes(imagePath);
+            byte[] bytes = File.ReadAllBytes(imagePath);
             Assert.Equal(bytes, anyBitmap.GetBytes());
 
             int expected = anyBitmap.GetBytes().GetHashCode();
@@ -355,7 +355,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void CastSixLabors_to_AnyBitmap()
         {
             string imagePath = GetRelativeFilePath("mountainclimbers.jpg");
-            var imgSharp = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(imagePath);
+            var imgSharp = Image.Load<Rgba32>(imagePath);
             AnyBitmap anyBitmap = imgSharp;
 
             imgSharp.Save("expected.bmp");
@@ -368,7 +368,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void CastSixLabors_from_AnyBitmap()
         {
             var anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("mountainclimbers.jpg"));
-            SixLabors.ImageSharp.Image imgSharp = anyBitmap;
+            Image imgSharp = anyBitmap;
 
             anyBitmap.SaveAs("expected.bmp");
             imgSharp.Save("result.bmp");
@@ -463,8 +463,8 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             var first = Image.Load(GetRelativeFilePath("first-animated-qr.png"));
             first.Mutate(img => img.Resize(new ResizeOptions
             {
-                Size = new SixLabors.ImageSharp.Size(anyBitmap.GetAllFrames.ElementAt(0).Width, anyBitmap.GetAllFrames.ElementAt(0).Height),
-                Mode = SixLabors.ImageSharp.Processing.ResizeMode.BoxPad
+                Size = new Size(anyBitmap.GetAllFrames.ElementAt(0).Width, anyBitmap.GetAllFrames.ElementAt(0).Height),
+                Mode = ResizeMode.BoxPad
             }));
             first.Save("first-expected.jpg");
             AssertImageAreEqual("first-expected.jpg", "first.png", true);
@@ -473,8 +473,8 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             var last = Image.Load(GetRelativeFilePath("mountainclimbers.jpg"));
             last.Mutate(img => img.Resize(new ResizeOptions
             {
-                Size = new SixLabors.ImageSharp.Size(anyBitmap.GetAllFrames.ElementAt(1).Width, anyBitmap.GetAllFrames.ElementAt(1).Height),
-                Mode = SixLabors.ImageSharp.Processing.ResizeMode.BoxPad
+                Size = new Size(anyBitmap.GetAllFrames.ElementAt(1).Width, anyBitmap.GetAllFrames.ElementAt(1).Height),
+                Mode = ResizeMode.BoxPad
             }));
             last.Save("last-expected.jpg");
             AssertImageAreEqual("last-expected.jpg", "last.png", true);
@@ -496,8 +496,8 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             var first = Image.Load(GetRelativeFilePath("first-animated-qr.png"));
             first.Mutate(img => img.Resize(new ResizeOptions
             {
-                Size = new SixLabors.ImageSharp.Size(anyBitmap.GetAllFrames.ElementAt(0).Width, anyBitmap.GetAllFrames.ElementAt(0).Height),
-                Mode = SixLabors.ImageSharp.Processing.ResizeMode.BoxPad
+                Size = new Size(anyBitmap.GetAllFrames.ElementAt(0).Width, anyBitmap.GetAllFrames.ElementAt(0).Height),
+                Mode = ResizeMode.BoxPad
             }));
             first.Save("first-expected.jpg");
             AssertImageAreEqual("first-expected.jpg", "first.png", true);
@@ -506,8 +506,8 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             var last = Image.Load(GetRelativeFilePath("mountainclimbers.jpg"));
             last.Mutate(img => img.Resize(new ResizeOptions
             {
-                Size = new SixLabors.ImageSharp.Size(anyBitmap.GetAllFrames.ElementAt(1).Width, anyBitmap.GetAllFrames.ElementAt(1).Height),
-                Mode = SixLabors.ImageSharp.Processing.ResizeMode.BoxPad
+                Size = new Size(anyBitmap.GetAllFrames.ElementAt(1).Width, anyBitmap.GetAllFrames.ElementAt(1).Height),
+                Mode = ResizeMode.BoxPad
             }));
             last.Save("last-expected.jpg");
             AssertImageAreEqual("last-expected.jpg", "last.png", true);
@@ -519,7 +519,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             var bitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
             Assert.Equal(24, bitmap.BitsPerPixel);
 
-            bitmap = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(GetRelativeFilePath("mountainclimbers.jpg"));
+            bitmap = Image.Load<Rgba32>(GetRelativeFilePath("mountainclimbers.jpg"));
             Assert.Equal(32, bitmap.BitsPerPixel);
         }
 
@@ -569,13 +569,13 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
             string imagePath = GetRelativeFilePath(filename);
             var anyBitmap = AnyBitmap.FromFile(imagePath);
-            var bitmap = SixLabors.ImageSharp.Image.Load<Rgb24>(imagePath);
+            var bitmap = Image.Load<Rgb24>(imagePath);
 
             _ = anyBitmap.Width.Should().Be(bitmap.Width);
             _ = anyBitmap.Height.Should().Be(bitmap.Height);
 
             Color anyBitmapPixel = anyBitmap.GetPixel(x, y);
-            SixLabors.ImageSharp.PixelFormats.Rgb24 bitmapPixel = bitmap[x, y];
+            Rgb24 bitmapPixel = bitmap[x, y];
             _ = anyBitmapPixel.R.Should().Be(bitmapPixel.R);
             _ = anyBitmapPixel.G.Should().Be(bitmapPixel.G);
             _ = anyBitmapPixel.B.Should().Be(bitmapPixel.B);
@@ -622,7 +622,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void Redact_ShouldRedactRegionWithColor()
         {
             // Arrange
-            using var memoryStream = new System.IO.MemoryStream();
+            using var memoryStream = new MemoryStream();
             using var image = new Image<Rgba32>(Configuration.Default, 100, 100, Color.White);
             image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
             {
