@@ -14,7 +14,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void Create_new_Color()
         {
-            Color color = new Color("#19191919");
+            var color = new Color("#19191919");
             Assert.Equal(25, color.A);
             Assert.Equal(25, color.R);
             Assert.Equal(25, color.G);
@@ -32,7 +32,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(0, color.G);
             Assert.Equal(255, color.B);
 
-            var ex = Assert.Throws<InvalidOperationException>(() => color = new Color("#F"));
+            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() => color = new Color("#F"));
             Assert.Equal($"#F is unable to convert to {typeof(Color)} because it requires a suitable length of string.", ex.Message);
 
             color = new Color(255, 255, 0, 255);
@@ -75,7 +75,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void Create_color_from_RGB()
         {
-            Color color = Color.FromArgb(64, 244, 208);
+            var color = Color.FromArgb(64, 244, 208);
 
             Assert.Equal(255, color.A);
             Assert.Equal(64, color.R);
@@ -96,7 +96,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void Create_color_from_ARGB()
         {
-            Color color = Color.FromArgb(100, 64, 244, 208);
+            var color = Color.FromArgb(100, 64, 244, 208);
 
             Assert.Equal(100, color.A);
             Assert.Equal(64, color.R);
@@ -104,7 +104,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(208, color.B);
             Assert.Equal("#6440F4D0", color.ToString());
 
-            Color color1 = Color.FromArgb(50, color);
+            var color1 = Color.FromArgb(50, color);
             Assert.Equal(50, color1.A);
             Assert.Equal(64, color1.R);
             Assert.Equal(244, color1.G);
@@ -148,7 +148,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(0, blue.G);
             Assert.Equal(255, blue.B);
 
-            Int32 iColorCode = Convert.ToInt32("1e81b0", 16);
+            int iColorCode = Convert.ToInt32("1e81b0", 16);
             drawingColor = System.Drawing.Color.FromArgb(iColorCode);
             Color color = drawingColor;
             Assert.Equal(0, color.A);
@@ -181,7 +181,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(0, blue.G);
             Assert.Equal(255, blue.B);
 
-            Int32 iColorCode = Convert.ToInt32("1e81b0", 16);
+            int iColorCode = Convert.ToInt32("1e81b0", 16);
             color = Color.FromArgb(iColorCode);
             System.Drawing.Color drawingColor = color;
             Assert.Equal(0, drawingColor.A);
@@ -214,7 +214,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(0, blue.G);
             Assert.Equal(255, blue.B);
 
-            UInt32 iColorCode = Convert.ToUInt32("1e81b0", 16);
+            uint iColorCode = Convert.ToUInt32("1e81b0", 16);
             skColor = new SkiaSharp.SKColor(iColorCode);
             Color color = skColor;
             Assert.Equal(0, color.A);
@@ -399,7 +399,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void Cast_ImageSharp_Rgb48_from_Color()
         {
-            SixLabors.ImageSharp.PixelFormats.Rgb48 imgColor = new SixLabors.ImageSharp.PixelFormats.Rgb48(255, 0, 0);
+            var imgColor = new SixLabors.ImageSharp.PixelFormats.Rgb48(255, 0, 0);
             Color red = imgColor;
             Assert.Equal(255, red.R);
             Assert.Equal(0, red.G);
@@ -521,64 +521,64 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void Should_Create_FromName()
         {
-            Color color = Color.FromName("red");
-            color.R.Should().Be(255);
-            color.G.Should().Be(0);
-            color.B.Should().Be(0);
+            var color = Color.FromName("red");
+            _ = color.R.Should().Be(255);
+            _ = color.G.Should().Be(0);
+            _ = color.B.Should().Be(0);
 
             color = Color.FromName("green");
-            color.R.Should().Be(0);
-            color.G.Should().Be(128);
-            color.B.Should().Be(0);
+            _ = color.R.Should().Be(0);
+            _ = color.G.Should().Be(128);
+            _ = color.B.Should().Be(0);
 
             color = Color.FromName("blue");
-            color.R.Should().Be(0);
-            color.G.Should().Be(0);
-            color.B.Should().Be(255);
+            _ = color.R.Should().Be(0);
+            _ = color.G.Should().Be(0);
+            _ = color.B.Should().Be(255);
 
             color = Color.FromName("yellow");
-            color.R.Should().Be(255);
-            color.G.Should().Be(255);
-            color.B.Should().Be(0);
+            _ = color.R.Should().Be(255);
+            _ = color.G.Should().Be(255);
+            _ = color.B.Should().Be(0);
 
             color = Color.FromName("pink");
-            color.R.Should().Be(255);
-            color.G.Should().Be(192);
-            color.B.Should().Be(203);
+            _ = color.R.Should().Be(255);
+            _ = color.G.Should().Be(192);
+            _ = color.B.Should().Be(203);
 
             color = Color.FromName("brown");
-            color.R.Should().Be(165);
-            color.G.Should().Be(42);
-            color.B.Should().Be(42);
+            _ = color.R.Should().Be(165);
+            _ = color.G.Should().Be(42);
+            _ = color.B.Should().Be(42);
 
             color = Color.FromName("gray");
-            color.R.Should().Be(128);
-            color.G.Should().Be(128);
-            color.B.Should().Be(128);
+            _ = color.R.Should().Be(128);
+            _ = color.G.Should().Be(128);
+            _ = color.B.Should().Be(128);
 
             color = Color.FromName("black");
-            color.R.Should().Be(0);
-            color.G.Should().Be(0);
-            color.B.Should().Be(0);
+            _ = color.R.Should().Be(0);
+            _ = color.G.Should().Be(0);
+            _ = color.B.Should().Be(0);
 
             color = Color.FromName("orange");
-            color.R.Should().Be(255);
-            color.G.Should().Be(165);
-            color.B.Should().Be(0);
+            _ = color.R.Should().Be(255);
+            _ = color.G.Should().Be(165);
+            _ = color.B.Should().Be(0);
         }
 
         [FactWithAutomaticDisplayName]
         public void Should_Equal()
         {
-            Color.Red.Equals(Color.FromName("red")).Should().BeTrue();
-            (Color.Yellow == Color.FromName("yellow")).Should().BeTrue();
-            (Color.Gray != Color.FromName("darkgray")).Should().BeTrue();
+            _ = Color.Red.Equals(Color.FromName("red")).Should().BeTrue();
+            _ = (Color.Yellow == Color.FromName("yellow")).Should().BeTrue();
+            _ = (Color.Gray != Color.FromName("darkgray")).Should().BeTrue();
             Color nullColor = null;
-            (nullColor != null).Should().BeFalse();
-            (nullColor == null).Should().BeTrue();
-            Color red = Color.FromName("red");
-            (red != null).Should().BeTrue();
-            (red == null).Should().BeFalse();
+            _ = (nullColor != null).Should().BeFalse();
+            _ = (nullColor == null).Should().BeTrue();
+            var red = Color.FromName("red");
+            _ = (red != null).Should().BeTrue();
+            _ = (red == null).Should().BeFalse();
         }
 
         [Theory]
@@ -587,9 +587,9 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [InlineData("FF1e81b0")]
         public void From32BitArgb_Should_Equal_Drawing(string colorCode)
         {
-            Int32 iColorCode = Convert.ToInt32(colorCode, 16);
-            System.Drawing.Color drawingColor = System.Drawing.Color.FromArgb(iColorCode);
-            Color ironColor = Color.FromArgb(iColorCode);
+            int iColorCode = Convert.ToInt32(colorCode, 16);
+            var drawingColor = System.Drawing.Color.FromArgb(iColorCode);
+            var ironColor = Color.FromArgb(iColorCode);
             Assert.Equal(drawingColor.A, ironColor.A);
             Assert.Equal(drawingColor.R, ironColor.R);
             Assert.Equal(drawingColor.G, ironColor.G);
@@ -609,7 +609,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             var color = new Color(a, r, g, b);
 
             // Act
-            var actualHtml = color.ToHtmlCssColorCode();
+            string actualHtml = color.ToHtmlCssColorCode();
 
             // Assert
             Assert.Equal(expectedHtml, actualHtml);
@@ -675,9 +675,9 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             color = Color.FromArgb(Convert.ToInt32("1e81b0", 16));
             Microsoft.Maui.Graphics.Color skColor = color;
             Assert.Equal(0, skColor.Alpha);
-            Assert.Equal("0.118", skColor.Red.ToString("0.000"));
-            Assert.Equal("0.506", skColor.Green.ToString("0.000"));
-            Assert.Equal("0.690", skColor.Blue.ToString("0.000"));
+            Assert.Equal("0.118", skColor.Red.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture));
+            Assert.Equal("0.506", skColor.Green.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture));
+            Assert.Equal("0.690", skColor.Blue.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture));
         }
 #endif
     }

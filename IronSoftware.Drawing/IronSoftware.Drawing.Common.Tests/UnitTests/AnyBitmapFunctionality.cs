@@ -23,7 +23,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
             string imagePath = GetRelativeFilePath("Mona-Lisa-oil-wood-panel-Leonardo-da.webp");
 
-            AnyBitmap bitmap = AnyBitmap.FromFile(imagePath);
+            var bitmap = AnyBitmap.FromFile(imagePath);
             bitmap.SaveAs("result.bmp");
             Assert.Equal(671, bitmap.Width);
             Assert.Equal(1000, bitmap.Height);
@@ -40,16 +40,16 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
         [FactWithAutomaticDisplayName]
         public void Create_AnyBitmap_by_Byte()
-        {            
+        {
             string imagePath = GetRelativeFilePath("Mona-Lisa-oil-wood-panel-Leonardo-da.webp");
             byte[] bytes = File.ReadAllBytes(imagePath);
 
-            AnyBitmap bitmap = AnyBitmap.FromBytes(bytes);
-            bitmap.TrySaveAs("result.bmp");
+            var bitmap = AnyBitmap.FromBytes(bytes);
+            _ = bitmap.TrySaveAs("result.bmp");
             AssertImageAreEqual(imagePath, "result.bmp");
 
             bitmap = new AnyBitmap(bytes);
-            bitmap.TrySaveAs("result.bmp");
+            _ = bitmap.TrySaveAs("result.bmp");
             AssertImageAreEqual(imagePath, "result.bmp");
         }
 
@@ -60,8 +60,8 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             byte[] bytes = File.ReadAllBytes(imagePath);
             Stream ms = new MemoryStream(bytes);
 
-            AnyBitmap bitmap = AnyBitmap.FromStream(ms);
-            bitmap.TrySaveAs("result.bmp");
+            var bitmap = AnyBitmap.FromStream(ms);
+            _ = bitmap.TrySaveAs("result.bmp");
             AssertImageAreEqual(imagePath, "result.bmp");
 
             ms.Position = 0;
@@ -75,10 +75,10 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
             string imagePath = GetRelativeFilePath("Mona-Lisa-oil-wood-panel-Leonardo-da.webp");
             byte[] bytes = File.ReadAllBytes(imagePath);
-            MemoryStream ms = new MemoryStream(bytes);
+            var ms = new MemoryStream(bytes);
 
-            AnyBitmap bitmap = AnyBitmap.FromStream(ms);
-            bitmap.TrySaveAs("result.bmp");
+            var bitmap = AnyBitmap.FromStream(ms);
+            _ = bitmap.TrySaveAs("result.bmp");
             AssertImageAreEqual(imagePath, "result.bmp");
 
             bitmap = new AnyBitmap(ms);
@@ -89,14 +89,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public async void Create_AnyBitmap_by_Uri_Async()
         {
-            Uri uri = new Uri("https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1200px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg");
+            var uri = new Uri("https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1200px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg");
 
             AnyBitmap bitmap = await AnyBitmap.FromUriAsync(uri);
-            bitmap.TrySaveAs("result.bmp");
+            _ = bitmap.TrySaveAs("result.bmp");
             AssertImageExist("result.bmp", true);
 
             bitmap = new AnyBitmap(uri);
-            bitmap.TrySaveAs("result.bmp");
+            _ = bitmap.TrySaveAs("result.bmp");
             AssertImageExist("result.bmp", true);
         }
 
@@ -104,7 +104,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void Create_SVG_AnyBitmap()
         {
             string imagePath = GetRelativeFilePath("Example_barcode.svg");
-            AnyBitmap bitmap = AnyBitmap.FromFile(imagePath);
+            var bitmap = AnyBitmap.FromFile(imagePath);
             bitmap.SaveAs("result.bmp");
             AssertImageAreEqual(imagePath, "result.bmp");
         }
@@ -113,7 +113,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void Try_Save_Bitmap_with_Format()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-            AnyBitmap anyBitmap = new AnyBitmap(imagePath);
+            var anyBitmap = new AnyBitmap(imagePath);
 
             anyBitmap.SaveAs("result-png.png", AnyBitmap.ImageFormat.Png);
             Assert.True(File.Exists("result-png.png"));
@@ -123,11 +123,11 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.True(File.Exists("result-png-loss.png"));
             CleanResultFile("result-png-loss.png");
 
-            anyBitmap.TrySaveAs("result-try-png.png", AnyBitmap.ImageFormat.Png);
+            _ = anyBitmap.TrySaveAs("result-try-png.png", AnyBitmap.ImageFormat.Png);
             Assert.True(File.Exists("result-try-png.png"));
             CleanResultFile("result-try-png.png");
 
-            anyBitmap.TrySaveAs("result-try-png-loss.png", AnyBitmap.ImageFormat.Png, 50);
+            _ = anyBitmap.TrySaveAs("result-try-png-loss.png", AnyBitmap.ImageFormat.Png, 50);
             Assert.True(File.Exists("result-try-png-loss.png"));
             CleanResultFile("result-try-png-loss.png");
         }
@@ -136,7 +136,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void Export_file()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-            AnyBitmap anyBitmap = new AnyBitmap(imagePath);
+            var anyBitmap = new AnyBitmap(imagePath);
 
             anyBitmap.ExportFile("result.png");
             Assert.True(File.Exists("result.png"));
@@ -155,7 +155,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void CastBitmap_to_AnyBitmap()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-            System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(imagePath);
+            var bitmap = new System.Drawing.Bitmap(imagePath);
             AnyBitmap anyBitmap = bitmap;
 
             bitmap.Save("expected.bmp");
@@ -167,7 +167,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [IgnoreOnMacFact]
         public void CastBitmap_from_AnyBitmap()
         {
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
+            var anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
             System.Drawing.Bitmap bitmap = anyBitmap;
 
             anyBitmap.SaveAs("expected.bmp");
@@ -180,7 +180,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void CastImage_to_AnyBitmap()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-            System.Drawing.Image bitmap = System.Drawing.Image.FromFile(imagePath);
+            var bitmap = System.Drawing.Image.FromFile(imagePath);
             AnyBitmap anyBitmap = bitmap;
 
             bitmap.Save("expected.bmp");
@@ -192,7 +192,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [IgnoreOnMacFact]
         public void CastImage_from_AnyBitmap()
         {
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
+            var anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
             System.Drawing.Image bitmap = anyBitmap;
 
             anyBitmap.SaveAs("expected.bmp");
@@ -205,22 +205,22 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void AnyBitmap_should_get_Bytes()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(imagePath);
+            var anyBitmap = AnyBitmap.FromFile(imagePath);
             byte[] expected = File.ReadAllBytes(imagePath);
 
             byte[] result = anyBitmap.GetBytes();
             Assert.Equal(expected, result);
 
             byte[] resultExport = anyBitmap.ExportBytes();
-            Assert.Equal(expected, result);
+            Assert.Equal(expected, resultExport);
         }
 
         [FactWithAutomaticDisplayName]
         public void AnyBitmap_should_get_Stream()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(imagePath);
-            MemoryStream expected = new MemoryStream(File.ReadAllBytes(imagePath));
+            var anyBitmap = AnyBitmap.FromFile(imagePath);
+            var expected = new MemoryStream(File.ReadAllBytes(imagePath));
 
             MemoryStream result = anyBitmap.GetStream();
             AssertStreamAreEqual(expected, result);
@@ -231,18 +231,18 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Func<Stream> funcStream = anyBitmap.ToStreamFn();
             AssertStreamAreEqual(expected, funcStream);
 
-            using var resultExport = new System.IO.MemoryStream();
+            using var resultExport = new MemoryStream();
             anyBitmap.ExportStream(resultExport);
-            AssertStreamAreEqual(expected, (MemoryStream)resultExport);
+            AssertStreamAreEqual(expected, resultExport);
         }
 
         [FactWithAutomaticDisplayName]
         public void AnyBitmap_should_get_Hashcode()
         {
             string imagePath = GetRelativeFilePath("Mona-Lisa-oil-wood-panel-Leonardo-da.webp");
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(imagePath);
+            var anyBitmap = AnyBitmap.FromFile(imagePath);
 
-            byte[] bytes = System.IO.File.ReadAllBytes(imagePath);
+            byte[] bytes = File.ReadAllBytes(imagePath);
             Assert.Equal(bytes, anyBitmap.GetBytes());
 
             int expected = anyBitmap.GetBytes().GetHashCode();
@@ -254,7 +254,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void AnyBitmap_should_ToString()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(imagePath);
+            var anyBitmap = AnyBitmap.FromFile(imagePath);
 
             byte[] bytes = File.ReadAllBytes(imagePath);
             string expected = Convert.ToBase64String(bytes, 0, bytes.Length);
@@ -267,14 +267,13 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void Clone_AnyBitmap()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(imagePath);
+            var anyBitmap = AnyBitmap.FromFile(imagePath);
             AnyBitmap clonedAnyBitmap = anyBitmap.Clone();
 
             anyBitmap.SaveAs("expected.png");
             clonedAnyBitmap.SaveAs("result.png");
 
             AssertImageAreEqual("expected.png", "result.png", true);
-
 
             using Image image = anyBitmap;
             image.Mutate(img => img.Crop(new Rectangle(0, 0, 100, 100)));
@@ -290,7 +289,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void CastSKBitmap_to_AnyBitmap()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-            SkiaSharp.SKBitmap skBitmap = SkiaSharp.SKBitmap.Decode(imagePath);
+            var skBitmap = SkiaSharp.SKBitmap.Decode(imagePath);
             AnyBitmap anyBitmap = skBitmap;
 
             SaveSkiaBitmap(skBitmap, "expected.png");
@@ -302,7 +301,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void CastSKBitmap_from_AnyBitmap()
         {
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
+            var anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
             SkiaSharp.SKBitmap skBitmap = anyBitmap;
 
             anyBitmap.SaveAs("expected.png");
@@ -323,7 +322,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void CastSKImage_to_AnyBitmap()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-            SkiaSharp.SKImage skImage = SkiaSharp.SKImage.FromBitmap(SkiaSharp.SKBitmap.Decode(imagePath));
+            var skImage = SkiaSharp.SKImage.FromBitmap(SkiaSharp.SKBitmap.Decode(imagePath));
             AnyBitmap anyBitmap = skImage;
 
             SaveSkiaImage(skImage, "expected.png");
@@ -335,7 +334,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void CastSKImage_from_AnyBitmap()
         {
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
+            var anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
             SkiaSharp.SKImage skImage = anyBitmap;
 
             anyBitmap.SaveAs("expected.png");
@@ -356,7 +355,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void CastSixLabors_to_AnyBitmap()
         {
             string imagePath = GetRelativeFilePath("mountainclimbers.jpg");
-            SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> imgSharp = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(imagePath);
+            var imgSharp = Image.Load<Rgba32>(imagePath);
             AnyBitmap anyBitmap = imgSharp;
 
             imgSharp.Save("expected.bmp");
@@ -368,8 +367,8 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void CastSixLabors_from_AnyBitmap()
         {
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("mountainclimbers.jpg"));
-            SixLabors.ImageSharp.Image imgSharp = anyBitmap;
+            var anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("mountainclimbers.jpg"));
+            Image imgSharp = anyBitmap;
 
             anyBitmap.SaveAs("expected.bmp");
             imgSharp.Save("result.bmp");
@@ -380,10 +379,10 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void Load_Tiff_Image()
         {
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("IRON-274-39065.tif"));
+            var anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("IRON-274-39065.tif"));
             Assert.Equal(2, anyBitmap.FrameCount);
 
-            AnyBitmap multiPage = AnyBitmap.FromFile(GetRelativeFilePath("animated_qr.gif"));
+            var multiPage = AnyBitmap.FromFile(GetRelativeFilePath("animated_qr.gif"));
             Assert.Equal(4, multiPage.FrameCount);
             Assert.Equal(4, multiPage.GetAllFrames.Count());
             multiPage.GetAllFrames.First().SaveAs("first.png");
@@ -408,20 +407,20 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void Try_UnLoad_Tiff_Image()
         {
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("multiframe.tiff"));
+            var anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("multiframe.tiff"));
             Assert.Equal(2, anyBitmap.FrameCount);
         }
 
         [FactWithAutomaticDisplayName]
         public void Create_Multi_page_Tiff()
         {
-            List<AnyBitmap> bitmaps = new List<AnyBitmap>()
+            var bitmaps = new List<AnyBitmap>()
             {
                 AnyBitmap.FromFile(GetRelativeFilePath("first-animated-qr.png")),
                 AnyBitmap.FromFile(GetRelativeFilePath("last-animated-qr.png"))
             };
 
-            AnyBitmap anyBitmap = AnyBitmap.CreateMultiFrameTiff(bitmaps);
+            var anyBitmap = AnyBitmap.CreateMultiFrameTiff(bitmaps);
             Assert.Equal(2, anyBitmap.FrameCount);
             Assert.Equal(2, anyBitmap.GetAllFrames.Count());
             anyBitmap.GetAllFrames.ElementAt(0).SaveAs("first.png");
@@ -433,13 +432,13 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void Create_Multi_page_Tiff_Paths()
         {
-            List<string> imagePaths = new List<string>()
+            var imagePaths = new List<string>()
             {
                 GetRelativeFilePath("first-animated-qr.png"),
                 GetRelativeFilePath("last-animated-qr.png")
             };
 
-            AnyBitmap anyBitmap = AnyBitmap.CreateMultiFrameTiff(imagePaths);
+            var anyBitmap = AnyBitmap.CreateMultiFrameTiff(imagePaths);
             Assert.Equal(2, anyBitmap.FrameCount);
             Assert.Equal(2, anyBitmap.GetAllFrames.Count());
             anyBitmap.GetAllFrames.ElementAt(0).SaveAs("first.png");
@@ -451,31 +450,31 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void Create_Multi_page_Gif()
         {
-            List<AnyBitmap> bitmaps = new List<AnyBitmap>()
+            var bitmaps = new List<AnyBitmap>()
             {
                 AnyBitmap.FromFile(GetRelativeFilePath("first-animated-qr.png")),
                 AnyBitmap.FromFile(GetRelativeFilePath("mountainclimbers.jpg"))
             };
 
-            AnyBitmap anyBitmap = AnyBitmap.CreateMultiFrameGif(bitmaps);
+            var anyBitmap = AnyBitmap.CreateMultiFrameGif(bitmaps);
             Assert.Equal(2, anyBitmap.FrameCount);
             Assert.Equal(2, anyBitmap.GetAllFrames.Count());
             anyBitmap.GetAllFrames.ElementAt(0).SaveAs("first.png");
-            Image first = Image.Load(GetRelativeFilePath("first-animated-qr.png"));
+            var first = Image.Load(GetRelativeFilePath("first-animated-qr.png"));
             first.Mutate(img => img.Resize(new ResizeOptions
             {
-                Size = new SixLabors.ImageSharp.Size(anyBitmap.GetAllFrames.ElementAt(0).Width, anyBitmap.GetAllFrames.ElementAt(0).Height),
-                Mode = SixLabors.ImageSharp.Processing.ResizeMode.BoxPad
+                Size = new Size(anyBitmap.GetAllFrames.ElementAt(0).Width, anyBitmap.GetAllFrames.ElementAt(0).Height),
+                Mode = ResizeMode.BoxPad
             }));
             first.Save("first-expected.jpg");
             AssertImageAreEqual("first-expected.jpg", "first.png", true);
 
             anyBitmap.GetAllFrames.ElementAt(1).SaveAs("last.png");
-            Image last = Image.Load(GetRelativeFilePath("mountainclimbers.jpg"));
+            var last = Image.Load(GetRelativeFilePath("mountainclimbers.jpg"));
             last.Mutate(img => img.Resize(new ResizeOptions
             {
-                Size = new SixLabors.ImageSharp.Size(anyBitmap.GetAllFrames.ElementAt(1).Width, anyBitmap.GetAllFrames.ElementAt(1).Height),
-                Mode = SixLabors.ImageSharp.Processing.ResizeMode.BoxPad
+                Size = new Size(anyBitmap.GetAllFrames.ElementAt(1).Width, anyBitmap.GetAllFrames.ElementAt(1).Height),
+                Mode = ResizeMode.BoxPad
             }));
             last.Save("last-expected.jpg");
             AssertImageAreEqual("last-expected.jpg", "last.png", true);
@@ -484,31 +483,31 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void Create_Multi_page_Gif_paths()
         {
-            List<string> imagePaths = new List<string>()
+            var imagePaths = new List<string>()
             {
                 GetRelativeFilePath("first-animated-qr.png"),
                 GetRelativeFilePath("mountainclimbers.jpg")
             };
 
-            AnyBitmap anyBitmap = AnyBitmap.CreateMultiFrameGif(imagePaths);
+            var anyBitmap = AnyBitmap.CreateMultiFrameGif(imagePaths);
             Assert.Equal(2, anyBitmap.FrameCount);
             Assert.Equal(2, anyBitmap.GetAllFrames.Count());
             anyBitmap.GetAllFrames.ElementAt(0).SaveAs("first.png");
-            Image first = Image.Load(GetRelativeFilePath("first-animated-qr.png"));
+            var first = Image.Load(GetRelativeFilePath("first-animated-qr.png"));
             first.Mutate(img => img.Resize(new ResizeOptions
             {
-                Size = new SixLabors.ImageSharp.Size(anyBitmap.GetAllFrames.ElementAt(0).Width, anyBitmap.GetAllFrames.ElementAt(0).Height),
-                Mode = SixLabors.ImageSharp.Processing.ResizeMode.BoxPad
+                Size = new Size(anyBitmap.GetAllFrames.ElementAt(0).Width, anyBitmap.GetAllFrames.ElementAt(0).Height),
+                Mode = ResizeMode.BoxPad
             }));
             first.Save("first-expected.jpg");
             AssertImageAreEqual("first-expected.jpg", "first.png", true);
 
             anyBitmap.GetAllFrames.ElementAt(1).SaveAs("last.png");
-            Image last = Image.Load(GetRelativeFilePath("mountainclimbers.jpg"));
+            var last = Image.Load(GetRelativeFilePath("mountainclimbers.jpg"));
             last.Mutate(img => img.Resize(new ResizeOptions
             {
-                Size = new SixLabors.ImageSharp.Size(anyBitmap.GetAllFrames.ElementAt(1).Width, anyBitmap.GetAllFrames.ElementAt(1).Height),
-                Mode = SixLabors.ImageSharp.Processing.ResizeMode.BoxPad
+                Size = new Size(anyBitmap.GetAllFrames.ElementAt(1).Width, anyBitmap.GetAllFrames.ElementAt(1).Height),
+                Mode = ResizeMode.BoxPad
             }));
             last.Save("last-expected.jpg");
             AssertImageAreEqual("last-expected.jpg", "last.png", true);
@@ -517,10 +516,10 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void Should_Return_BitsPerPixel()
         {
-            AnyBitmap bitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
+            var bitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
             Assert.Equal(24, bitmap.BitsPerPixel);
 
-            bitmap = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(GetRelativeFilePath("mountainclimbers.jpg"));
+            bitmap = Image.Load<Rgba32>(GetRelativeFilePath("mountainclimbers.jpg"));
             Assert.Equal(32, bitmap.BitsPerPixel);
         }
 
@@ -533,7 +532,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void Should_Return_MimeType(string fileName, string expectedMimeType, AnyBitmap.ImageFormat expectedImageFormat)
         {
             string imagePath = GetRelativeFilePath(fileName);
-            AnyBitmap bitmap = AnyBitmap.FromFile(imagePath);
+            var bitmap = AnyBitmap.FromFile(imagePath);
             Assert.Equal(expectedMimeType, bitmap.MimeType);
             Assert.Equal(expectedImageFormat, bitmap.GetImageFormat());
         }
@@ -542,7 +541,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void Should_Return_Scan0()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-            AnyBitmap bitmap = AnyBitmap.FromFile(imagePath);
+            var bitmap = AnyBitmap.FromFile(imagePath);
             Assert.NotEqual(IntPtr.Zero, bitmap.Scan0);
         }
 
@@ -550,11 +549,11 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void Should_Return_Stride()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(imagePath);
-            System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(imagePath);
+            var anyBitmap = AnyBitmap.FromFile(imagePath);
+            var bitmap = new System.Drawing.Bitmap(imagePath);
             BitmapData data = bitmap.LockBits(
-                new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), 
-                ImageLockMode.ReadOnly, 
+                new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                ImageLockMode.ReadOnly,
                 PixelFormat.Format24bppRgb);
             Assert.Equal(data.Stride, anyBitmap.Stride);
         }
@@ -569,17 +568,17 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void Should_Return_Pixel(string filename, int x, int y)
         {
             string imagePath = GetRelativeFilePath(filename);
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(imagePath);
-            SixLabors.ImageSharp.Image<Rgb24> bitmap = SixLabors.ImageSharp.Image.Load<Rgb24>(imagePath);
+            var anyBitmap = AnyBitmap.FromFile(imagePath);
+            var bitmap = Image.Load<Rgb24>(imagePath);
 
-            anyBitmap.Width.Should().Be(bitmap.Width);
-            anyBitmap.Height.Should().Be(bitmap.Height);
+            _ = anyBitmap.Width.Should().Be(bitmap.Width);
+            _ = anyBitmap.Height.Should().Be(bitmap.Height);
 
             Color anyBitmapPixel = anyBitmap.GetPixel(x, y);
-            SixLabors.ImageSharp.PixelFormats.Rgb24 bitmapPixel = bitmap[x, y];
-            anyBitmapPixel.R.Should().Be(bitmapPixel.R);
-            anyBitmapPixel.G.Should().Be(bitmapPixel.G);
-            anyBitmapPixel.B.Should().Be(bitmapPixel.B);
+            Rgb24 bitmapPixel = bitmap[x, y];
+            _ = anyBitmapPixel.R.Should().Be(bitmapPixel.R);
+            _ = anyBitmapPixel.G.Should().Be(bitmapPixel.G);
+            _ = anyBitmapPixel.B.Should().Be(bitmapPixel.B);
         }
 
         [TheoryWithAutomaticDisplayName]
@@ -587,28 +586,29 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [InlineData("van-gogh-starry-night-vincent-van-gogh.jpg", 1200, 800)]
         [InlineData("mountainclimbers.jpg", 700, 600)]
         [InlineData("mountainclimbers.jpg", 50, 30)]
+        [InlineData("support-team-member-1.webp", 10, 10)]
         public void Should_Resize_Image(string fileName, int width, int height)
         {
             string imagePath = GetRelativeFilePath(fileName);
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(imagePath);
-            AnyBitmap resizeAnyBitmap = new AnyBitmap(anyBitmap, width, height);
-            resizeAnyBitmap.Width.Should().Be(width);
-            resizeAnyBitmap.Height.Should().Be(height);
+            var anyBitmap = AnyBitmap.FromFile(imagePath);
+            var resizeAnyBitmap = new AnyBitmap(anyBitmap, width, height);
+            _ = resizeAnyBitmap.Width.Should().Be(width);
+            _ = resizeAnyBitmap.Height.Should().Be(height);
         }
-        
+
         [FactWithAutomaticDisplayName]
         public void Should_RotateFlip()
         {
             string imagePath = GetRelativeFilePath("checkmark.jpg");
-            
+
             // Check rotate
-            AnyBitmap bitmap = AnyBitmap.FromFile(imagePath);
+            var bitmap = AnyBitmap.FromFile(imagePath);
             bitmap = AnyBitmap.RotateFlip(bitmap, AnyBitmap.RotateMode.Rotate180, AnyBitmap.FlipMode.Horizontal);
             bitmap.SaveAs("result_rotate.bmp");
             Assert.Equal(52, bitmap.Width);
             Assert.Equal(52, bitmap.Height);
             AssertImageAreEqual(GetRelativeFilePath("checkmark90.jpg"), "result_rotate.bmp");
-            
+
             // Check flip
             bitmap = AnyBitmap.FromFile(imagePath);
             bitmap = AnyBitmap.RotateFlip(bitmap, AnyBitmap.RotateMode.None, AnyBitmap.FlipMode.Horizontal);
@@ -622,27 +622,27 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void Redact_ShouldRedactRegionWithColor()
         {
             // Arrange
-            using MemoryStream memoryStream = new System.IO.MemoryStream();
-            using Image<Rgba32> image = new Image<Rgba32>(Configuration.Default, 100, 100, Color.White);
+            using var memoryStream = new MemoryStream();
+            using var image = new Image<Rgba32>(Configuration.Default, 100, 100, Color.White);
             image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
             {
                 BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
                 SupportTransparency = true
             });
 
-            AnyBitmap anyBitmap = new AnyBitmap(memoryStream.ToArray());
-            CropRectangle rectangle = new CropRectangle(10, 10, 50, 50);
+            var anyBitmap = new AnyBitmap(memoryStream.ToArray());
+            var rectangle = new CropRectangle(10, 10, 50, 50);
             Color color = Color.Black;
 
             // Act
-            AnyBitmap result = AnyBitmap.Redact(anyBitmap, rectangle, color);
+            var result = AnyBitmap.Redact(anyBitmap, rectangle, color);
 
             // Assert
             for (int x = 0; x < image.Width; x++)
             {
                 for (int y = 0; y < image.Height; y++)
                 {
-                    var pixel = result.GetPixel(x, y);
+                    Color pixel = result.GetPixel(x, y);
                     if (rectangle.Contains(x, y))
                     {
                         Assert.Equal(color, pixel);
@@ -661,7 +661,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
             byte[] bytes = File.ReadAllBytes(imagePath);
-            Microsoft.Maui.Graphics.Platform.PlatformImage image = (Microsoft.Maui.Graphics.Platform.PlatformImage)Microsoft.Maui.Graphics.Platform.PlatformImage.FromStream(new MemoryStream(bytes));
+            var image = (Microsoft.Maui.Graphics.Platform.PlatformImage)Microsoft.Maui.Graphics.Platform.PlatformImage.FromStream(new MemoryStream(bytes));
             AnyBitmap anyBitmap = image;
 
             SaveMauiImages(image, "expected.bmp");
@@ -673,7 +673,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void CastMaui_from_AnyBitmap()
         {
-            AnyBitmap anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
+            var anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg"));
             Microsoft.Maui.Graphics.Platform.PlatformImage image = anyBitmap;
 
             anyBitmap.SaveAs("expected.bmp");
