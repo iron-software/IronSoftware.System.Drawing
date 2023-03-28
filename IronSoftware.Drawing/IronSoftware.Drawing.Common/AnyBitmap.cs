@@ -24,12 +24,12 @@ namespace IronSoftware.Drawing
     /// </summary>
     public partial class AnyBitmap : IDisposable
     {
-        private const string IMAGE_SHARP_MISSING_METHOD_MESSAGE = 
-            "Due to conflicts between SixLabors.ImageSharp v2 and v3, " + 
-            "to use SixLabors.ImageSharp v3 with Iron Software products " + 
-            "please install IronSoftware.System.Drawing v.2023.4.1-prerelease " + 
+        private const string IMAGE_SHARP_MISSING_METHOD_MESSAGE =
+            "Due to conflicts between SixLabors.ImageSharp v2 and v3, " +
+            "to use SixLabors.ImageSharp v3 with Iron Software products " +
+            "please install IronSoftware.System.Drawing v.2023.4.1-prerelease " +
             "NuGet package which supports SixLabors.ImageSharp v3.";
-    
+
         private bool disposed = false;
         private SixLabors.ImageSharp.Image Image { get; set; }
         private byte[] Binary { get; set; }
@@ -149,7 +149,7 @@ namespace IronSoftware.Drawing
             try
             {
                 using SixLabors.ImageSharp.Image image = Image.Clone(img => img.Crop(Rectangle));
-                using System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
+                using var memoryStream = new System.IO.MemoryStream();
                 image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
                 {
                     BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
@@ -275,7 +275,10 @@ namespace IronSoftware.Drawing
                     return;
                 }
 
-                if (Lossy < 0 || Lossy > 100) { Lossy = 100; }
+                if (Lossy < 0 || Lossy > 100)
+                {
+                    Lossy = 100;
+                }
 
                 try
                 {
@@ -401,7 +404,7 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                AnyBitmap result = (AnyBitmap)Convert.ChangeType(OtherBitmapFormat, typeof(AnyBitmap));
+                var result = (AnyBitmap)Convert.ChangeType(OtherBitmapFormat, typeof(AnyBitmap));
                 return result;
             }
             catch (Exception e)
@@ -420,7 +423,7 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                T result = (T)Convert.ChangeType(this, typeof(T));
+                var result = (T)Convert.ChangeType(this, typeof(T));
                 return result;
             }
             catch (Exception e)
@@ -801,7 +804,7 @@ namespace IronSoftware.Drawing
                 throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
-        
+
         /// <summary>
         /// Specifies how much an <see cref="AnyBitmap"/> is rotated and the axis used to flip the image.
         /// </summary>
@@ -819,7 +822,7 @@ namespace IronSoftware.Drawing
                 throw new NotSupportedException(IMAGE_SHARP_MISSING_METHOD_MESSAGE, e);
             }
         }
-        
+
         /// <summary>
         /// Specifies how much an <see cref="AnyBitmap"/> is rotated and the axis used to flip the image.
         /// </summary>
@@ -830,7 +833,7 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                var (rotateMode, flipMode) = ParseRotateFlipType(rotateFlipType);
+                (RotateMode rotateMode, FlipMode flipMode) = ParseRotateFlipType(rotateFlipType);
                 return AnyBitmap.RotateFlip(this, rotateMode, flipMode);
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
@@ -858,7 +861,7 @@ namespace IronSoftware.Drawing
                     RotateMode.Rotate270 => SixLabors.ImageSharp.Processing.RotateMode.Rotate270,
                     _ => throw new NotImplementedException()
                 };
-            
+
                 SixLabors.ImageSharp.Processing.FlipMode flipModeImgSharp = flipMode switch
                 {
                     FlipMode.None => SixLabors.ImageSharp.Processing.FlipMode.None,
@@ -867,16 +870,16 @@ namespace IronSoftware.Drawing
                     _ => throw new NotImplementedException()
                 };
 
-                using MemoryStream memoryStream = new System.IO.MemoryStream();
-                using SixLabors.ImageSharp.Image image = SixLabors.ImageSharp.Image.Load(bitmap.ExportBytes());
-            
+                using var memoryStream = new System.IO.MemoryStream();
+                using var image = SixLabors.ImageSharp.Image.Load(bitmap.ExportBytes());
+
                 image.Mutate(x => x.RotateFlip(rotateModeImgSharp, flipModeImgSharp));
                 image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
                 {
                     BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
                     SupportTransparency = true
                 });
-            
+
                 return new AnyBitmap(memoryStream.ToArray());
             }
             catch (Exception e) when (e is MissingMethodException || e is TypeInitializationException)
@@ -914,10 +917,10 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                using MemoryStream memoryStream = new System.IO.MemoryStream();
-                using SixLabors.ImageSharp.Image image = SixLabors.ImageSharp.Image.Load(bitmap.ExportBytes());
+                using var memoryStream = new System.IO.MemoryStream();
+                using var image = SixLabors.ImageSharp.Image.Load(bitmap.ExportBytes());
                 SixLabors.ImageSharp.Rectangle rectangle = cropRectangle;
-                SixLabors.ImageSharp.Drawing.Processing.SolidBrush brush = new SixLabors.ImageSharp.Drawing.Processing.SolidBrush(color);
+                var brush = new SixLabors.ImageSharp.Drawing.Processing.SolidBrush(color);
                 image.Mutate(ctx => ctx.Fill(brush, rectangle));
                 image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
                 {
@@ -1065,6 +1068,7 @@ namespace IronSoftware.Drawing
             {
                 throw new ArgumentOutOfRangeException("x is less than 0, or greater than or equal to Width.");
             }
+
             if (y < 0 || y >= this.Height)
             {
                 throw new ArgumentOutOfRangeException("y is less than 0, or greater than or equal to Height.");
@@ -1089,7 +1093,7 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                using System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
+                using var memoryStream = new System.IO.MemoryStream();
                 Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
                 {
                     BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel24
@@ -1116,7 +1120,7 @@ namespace IronSoftware.Drawing
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support ImageSharp as well.</para>
         /// </summary>
         /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to a SixLabors.ImageSharp.Image.</param>
-        static public implicit operator SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgb24>(AnyBitmap bitmap)
+        public static implicit operator SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgb24>(AnyBitmap bitmap)
         {
             try
             {
@@ -1145,7 +1149,7 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                using System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
+                using var memoryStream = new System.IO.MemoryStream();
                 Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
                 {
                     BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
@@ -1172,7 +1176,7 @@ namespace IronSoftware.Drawing
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support ImageSharp as well.</para>
         /// </summary>
         /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to a SixLabors.ImageSharp.Image.</param>
-        static public implicit operator SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(AnyBitmap bitmap)
+        public static implicit operator SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(AnyBitmap bitmap)
         {
             try
             {
@@ -1201,7 +1205,7 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                using System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
+                using var memoryStream = new System.IO.MemoryStream();
                 Image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
                 {
                     BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
@@ -1228,7 +1232,7 @@ namespace IronSoftware.Drawing
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support ImageSharp as well.</para>
         /// </summary>
         /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to a SixLabors.ImageSharp.Image.</param>
-        static public implicit operator SixLabors.ImageSharp.Image(AnyBitmap bitmap)
+        public static implicit operator SixLabors.ImageSharp.Image(AnyBitmap bitmap)
         {
             try
             {
@@ -1274,7 +1278,7 @@ namespace IronSoftware.Drawing
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support SkiaSharp.SKImage as well.</para>
         /// </summary>
         /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to a SkiaSharp.SKImage.</param>
-        static public implicit operator SkiaSharp.SKImage(AnyBitmap bitmap)
+        public static implicit operator SkiaSharp.SKImage(AnyBitmap bitmap)
         {
             try
             {
@@ -1327,7 +1331,7 @@ namespace IronSoftware.Drawing
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support SkiaSharp.SKBitmap as well.</para>
         /// </summary>
         /// <param name="bitmap"><see cref="AnyBitmap"/> is explicitly cast to a SkiaSharp.SKBitmap.</param>
-        static public implicit operator SkiaSharp.SKBitmap(AnyBitmap bitmap)
+        public static implicit operator SkiaSharp.SKBitmap(AnyBitmap bitmap)
         {
             try
             {
@@ -1365,7 +1369,7 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                using System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
+                using var memoryStream = new System.IO.MemoryStream();
                 Image.Save(memoryStream);
                 return new AnyBitmap(memoryStream.ToArray());
             }
@@ -1384,7 +1388,7 @@ namespace IronSoftware.Drawing
         /// </summary>
         /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to a Microsoft.Maui.Graphics.Platform.PlatformImage.</param>
 
-        static public implicit operator Microsoft.Maui.Graphics.Platform.PlatformImage(AnyBitmap bitmap)
+        public static implicit operator Microsoft.Maui.Graphics.Platform.PlatformImage(AnyBitmap bitmap)
         {
             try
             {
@@ -1411,7 +1415,7 @@ namespace IronSoftware.Drawing
             try
             {
                 System.Drawing.Bitmap blank = new(Image.Width, Image.Height);
-                System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(blank);
+                var g = System.Drawing.Graphics.FromImage(blank);
                 g.Clear(Color.Transparent);
                 g.DrawImage(Image, 0, 0, Image.Width, Image.Height);
                 g.Dispose();
@@ -1442,6 +1446,7 @@ namespace IronSoftware.Drawing
                     }
 #endif
                 }
+
                 throw;
             }
         }
@@ -1451,7 +1456,7 @@ namespace IronSoftware.Drawing
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support System.Drawing.Common as well.</para>
         /// </summary>
         /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to a System.Drawing.Bitmap.</param>
-        static public implicit operator System.Drawing.Bitmap(AnyBitmap bitmap)
+        public static implicit operator System.Drawing.Bitmap(AnyBitmap bitmap)
         {
             try
             {
@@ -1472,6 +1477,7 @@ namespace IronSoftware.Drawing
                     }
 #endif
                 }
+
                 throw e;
             }
         }
@@ -1487,7 +1493,7 @@ namespace IronSoftware.Drawing
             try
             {
                 System.Drawing.Bitmap blank = new(Image.Width, Image.Height);
-                System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(blank);
+                var g = System.Drawing.Graphics.FromImage(blank);
                 g.Clear(Color.Transparent);
                 g.DrawImage(Image, 0, 0, Image.Width, Image.Height);
                 g.Dispose();
@@ -1518,6 +1524,7 @@ namespace IronSoftware.Drawing
                     }
 #endif
                 }
+
                 throw e;
             }
         }
@@ -1527,7 +1534,7 @@ namespace IronSoftware.Drawing
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> as parameters or return types, you now automatically support System.Drawing.Common as well.</para>
         /// </summary>
         /// <param name="bitmap"><see cref="AnyBitmap"/> is implicitly cast to a System.Drawing.Image.</param>
-        static public implicit operator System.Drawing.Image(AnyBitmap bitmap)
+        public static implicit operator System.Drawing.Image(AnyBitmap bitmap)
         {
             try
             {
@@ -1548,6 +1555,7 @@ namespace IronSoftware.Drawing
                     }
 #endif
                 }
+
                 throw e;
             }
         }
@@ -1594,7 +1602,7 @@ namespace IronSoftware.Drawing
             Default = -1
 
         }
-        
+
         /// <summary>
         /// Converts the legacy <see cref="RotateFlipType"/> to <see cref="RotateMode"/> and <see cref="FlipMode"/>
         /// </summary>
@@ -1605,40 +1613,40 @@ namespace IronSoftware.Drawing
                 case RotateFlipType.RotateNoneFlipNone: // case 0
                 case RotateFlipType.Rotate180FlipXY: // case 0
                     return (RotateMode.None, FlipMode.None);
-                
+
                 case RotateFlipType.Rotate90FlipNone: // case 1
                 case RotateFlipType.Rotate270FlipXY: // case 1
                     return (RotateMode.Rotate90, FlipMode.None);
-                
+
                 case RotateFlipType.RotateNoneFlipXY: // case 2
                 case RotateFlipType.Rotate180FlipNone: // case 2
                     return (RotateMode.Rotate180, FlipMode.None);
-                
+
                 case RotateFlipType.Rotate90FlipXY: // case 3
                 case RotateFlipType.Rotate270FlipNone: // case 3
                     return (RotateMode.Rotate270, FlipMode.None);
-                
+
                 case RotateFlipType.RotateNoneFlipX: // case 4
                 case RotateFlipType.Rotate180FlipY: // case 4
                     return (RotateMode.None, FlipMode.Horizontal);
-                
+
                 case RotateFlipType.Rotate90FlipX: // case 5
                 case RotateFlipType.Rotate270FlipY: // case 5
                     return (RotateMode.Rotate90, FlipMode.Horizontal);
-                
+
                 case RotateFlipType.RotateNoneFlipY: // case 6
                 case RotateFlipType.Rotate180FlipX: // case 6
                     return (RotateMode.None, FlipMode.Vertical);
-                
+
                 case RotateFlipType.Rotate90FlipY: // case 7
                 case RotateFlipType.Rotate270FlipX: // case 7
                     return (RotateMode.Rotate90, FlipMode.Vertical);
-                
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(rotateFlipType), rotateFlipType, null);
             }
         }
-        
+
         /// <summary>
         /// Provides enumeration over how the image should be rotated.
         /// </summary>
@@ -1685,7 +1693,7 @@ namespace IronSoftware.Drawing
             /// </summary>
             Vertical
         }
-        
+
         /// <summary>
         /// Specifies how much an image is rotated and the axis used to flip the image.
         /// This follows the legacy System.Drawing.RotateFlipType notation.
@@ -1781,7 +1789,7 @@ namespace IronSoftware.Drawing
         {
             if (this.disposed)
                 return;
-            this.Image.Dispose();
+            this.Image?.Dispose();
             this.Image = null;
             this.Binary = null;
             this.disposed = true;
@@ -1858,7 +1866,7 @@ namespace IronSoftware.Drawing
 
         private void SetBinaryFromImageSharp(SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> tiffImage)
         {
-            using MemoryStream memoryStream = new MemoryStream();
+            using var memoryStream = new MemoryStream();
             tiffImage.Save(memoryStream, new SixLabors.ImageSharp.Formats.Tiff.TiffEncoder());
             memoryStream.Seek(0, SeekOrigin.Begin);
             LoadImage(memoryStream);
@@ -1873,6 +1881,7 @@ namespace IronSoftware.Drawing
             {
                 ms.Write(buffer, 0, read);
             }
+
             LoadImage(ms.ToArray());
         }
 
@@ -1933,6 +1942,7 @@ namespace IronSoftware.Drawing
                 if (codec.FormatID == imgguid)
                     return codec.MimeType;
             }
+
             return "image/unknown";
         }
 
@@ -1944,6 +1954,7 @@ namespace IronSoftware.Drawing
                 if (codec.FormatID == imgguid)
                     return codec.MimeType;
             }
+
             return "image/unknown";
         }
 
@@ -1969,15 +1980,15 @@ namespace IronSoftware.Drawing
                 using var tifImg = BitMiracle.LibTiff.Classic.Tiff.ClientOpen("in-memory", "r", tiffStream, new BitMiracle.LibTiff.Classic.TiffStream());
 
                 // read the dimensions
-                var width = tifImg.GetField(BitMiracle.LibTiff.Classic.TiffTag.IMAGEWIDTH)[0].ToInt();
-                var height = tifImg.GetField(BitMiracle.LibTiff.Classic.TiffTag.IMAGELENGTH)[0].ToInt();
+                int width = tifImg.GetField(BitMiracle.LibTiff.Classic.TiffTag.IMAGEWIDTH)[0].ToInt();
+                int height = tifImg.GetField(BitMiracle.LibTiff.Classic.TiffTag.IMAGELENGTH)[0].ToInt();
 
                 // create the bitmap
                 var bitmap = new SkiaSharp.SKBitmap();
                 var info = new SkiaSharp.SKImageInfo(width, height);
 
                 // create the buffer that will hold the pixels
-                var raster = new int[width * height];
+                int[] raster = new int[width * height];
 
                 // get a pointer to the buffer, and give it to the bitmap
                 var ptr = System.Runtime.InteropServices.GCHandle.Alloc(raster, System.Runtime.InteropServices.GCHandleType.Pinned);
@@ -2021,7 +2032,7 @@ namespace IronSoftware.Drawing
                 // open a TIFF stored in the stream
                 using (var tif = BitMiracle.LibTiff.Classic.Tiff.ClientOpen("in-memory", "r", tiffStream, new BitMiracle.LibTiff.Classic.TiffStream()))
                 {
-                    var num = tif.NumberOfDirectories();
+                    short num = tif.NumberOfDirectories();
                     for (short i = 0; i < num; i++)
                     {
                         tif.SetDirectory(i);
@@ -2075,6 +2086,7 @@ namespace IronSoftware.Drawing
                     SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image = CloneAndResizeImageSharp(images[i], maxWidth, maxHeight);
                     tiffImage.Frames.AddFrame(image.Frames.RootFrame);
                 }
+
                 SetBinaryFromImageSharp(tiffImage);
 
                 foreach (SixLabors.ImageSharp.Image image in images)
@@ -2099,6 +2111,7 @@ namespace IronSoftware.Drawing
             {
                 bitmaps.Add(AnyBitmap.FromFile(imagePath));
             }
+
             return bitmaps;
         }
 
@@ -2121,7 +2134,7 @@ namespace IronSoftware.Drawing
                     }
                     else
                     {
-                        SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image = 
+                        SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image =
                             LoadAndResizeImageSharp(images.ElementAt(i).GetBytes(), maxWidth, maxHeight, i);
                         result.Frames.AddFrame(image.Frames.RootFrame);
                     }
@@ -2165,18 +2178,18 @@ namespace IronSoftware.Drawing
         private SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> CloneAndResizeImageSharp(
             SixLabors.ImageSharp.Image source, int maxWidth, int maxHeight)
         {
-            using SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image = 
+            using SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image =
                 source.CloneAs<SixLabors.ImageSharp.PixelFormats.Rgba32>();
             // Keep Image dimension the same
             return ResizeWithPadToPng(image, maxWidth, maxHeight);
         }
 
-        private static SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> LoadAndResizeImageSharp(byte[] bytes, 
+        private static SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> LoadAndResizeImageSharp(byte[] bytes,
             int maxWidth, int maxHeight, int index)
         {
             try
             {
-                using SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> result = 
+                using var result =
                     SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(bytes);
                 // Keep Image dimension the same
                 return ResizeWithPadToPng(result, maxWidth, maxHeight);
@@ -2210,15 +2223,15 @@ namespace IronSoftware.Drawing
         private int GetStride(SixLabors.ImageSharp.Image source = null)
         {
             if (source == null)
-                return 4 * ((Image.Width * Image.PixelType.BitsPerPixel + 31) / 32);
+                return 4 * (((Image.Width * Image.PixelType.BitsPerPixel) + 31) / 32);
             else
-                return 4 * ((source.Width * source.PixelType.BitsPerPixel + 31) / 32);
+                return 4 * (((source.Width * source.PixelType.BitsPerPixel) + 31) / 32);
         }
 
         private IntPtr GetFirstPixelData()
         {
             byte[] pixelBytes = new byte[Image.Width * Image.Height * Unsafe.SizeOf<Rgba32>()];
-            var clonedImage = Image.CloneAs<SixLabors.ImageSharp.PixelFormats.Rgba32>();
+            Image<Rgba32> clonedImage = Image.CloneAs<SixLabors.ImageSharp.PixelFormats.Rgba32>();
             clonedImage.CopyPixelDataTo(pixelBytes);
             ConvertRGBAtoBGRA(pixelBytes, clonedImage.Width, clonedImage.Height);
 
@@ -2235,7 +2248,7 @@ namespace IronSoftware.Drawing
             for (int y = 0; y < height; y++)
             {
                 int offset = stride * y;
-                int strideEnd = offset + width * samplesPerPixel;
+                int strideEnd = offset + (width * samplesPerPixel);
 
                 for (int i = offset; i < strideEnd; i += samplesPerPixel)
                 {
@@ -2351,7 +2364,7 @@ namespace IronSoftware.Drawing
             return memoryStream;
         }
 
-#endregion
+        #endregion
     }
 }
 
