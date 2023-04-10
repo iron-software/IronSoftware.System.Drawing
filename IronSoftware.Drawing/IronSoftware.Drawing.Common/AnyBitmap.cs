@@ -1778,6 +1778,17 @@ namespace IronSoftware.Drawing
         /// </summary>
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases all resources used by this <see cref="AnyBitmap"/>.
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
             if (_disposed)
             {
                 return;
@@ -1787,6 +1798,7 @@ namespace IronSoftware.Drawing
             Image = null;
             Binary = null;
             _disposed = true;
+        }
         }
 
         #region Private Method
