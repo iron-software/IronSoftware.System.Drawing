@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;netstandard2.1;net60</TargetFrameworks>
-		<LangVersion>latest</LangVersion>
-		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>IronSoftware.Drawing.Common.snk</AssemblyOriginatorKeyFile>
 		<Configurations>Debug;Release</Configurations>
-		<Platforms>AnyCPU</Platforms>
-		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-		<TransformOnBuild>true</TransformOnBuild>
+		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<LangVersion>latest</LangVersion>
+		<Platforms>AnyCPU</Platforms>
+		<SignAssembly>true</SignAssembly>
+		<TargetFrameworks>netstandard2.0;netstandard2.1;net60</TargetFrameworks>
+		<TransformOnBuild>true</TransformOnBuild>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">

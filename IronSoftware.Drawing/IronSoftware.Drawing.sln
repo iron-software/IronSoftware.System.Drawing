@@ -8,11 +8,39 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronSoftware.Drawing.Common.Tests", "IronSoftware.Drawing.Common.Tests\IronSoftware.Drawing.Common.Tests.csproj", "{B9418412-12AE-48D8-8B73-14DEB4FF47AD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{87EDECFE-F93E-4E05-A735-D4E0C3B39967}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{54A07B59-E379-431C-A299-129A74F2D7F1}"
+	ProjectSection(SolutionItems) = preProject
+		..\NuGet\EULA.txt = ..\NuGet\EULA.txt
+		..\NuGet\IronSoftware.Drawing.nuspec = ..\NuGet\IronSoftware.Drawing.nuspec
+		..\NuGet\IronSoftware.Drawing.targets = ..\NuGet\IronSoftware.Drawing.targets
+		..\NuGet\README.md = ..\NuGet\README.md
+		..\NuGet\README.txt = ..\NuGet\README.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CI", "CI", "{04C2E93F-8A98-408C-9639-C458260BDE1F}"
 	ProjectSection(SolutionItems) = preProject
 		..\CI\azure-pipelines-build.yml = ..\CI\azure-pipelines-build.yml
 		..\CI\azure-pipelines-linux.yml = ..\CI\azure-pipelines-linux.yml
 		..\CI\azure-pipelines-mac.yml = ..\CI\azure-pipelines-mac.yml
 		..\CI\azure-pipelines-windows.yml = ..\CI\azure-pipelines-windows.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "step_templates", "step_templates", "{FA703EC4-D727-4F3B-94DE-D1F8559D6B39}"
+	ProjectSection(SolutionItems) = preProject
+		..\CI\step_templates\sign_drawing_libraries_dll.yml = ..\CI\step_templates\sign_drawing_libraries_dll.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "stage_templates", "stage_templates", "{2D36500A-FE5B-4C42-B5A9-78A661566F28}"
+	ProjectSection(SolutionItems) = preProject
+		..\CI\stage_templates\run_tests_on_pool.yml = ..\CI\stage_templates\run_tests_on_pool.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "job_templates", "job_templates", "{6BE311CF-867B-46C8-B78D-9762F5575A1A}"
+	ProjectSection(SolutionItems) = preProject
+		..\CI\job_templates\build_drawing_libraries.yml = ..\CI\job_templates\build_drawing_libraries.yml
+		..\CI\job_templates\deploy_drawing_libraries.yml = ..\CI\job_templates\deploy_drawing_libraries.yml
+		..\CI\job_templates\test_drawing_libraries.yml = ..\CI\job_templates\test_drawing_libraries.yml
 	EndProjectSection
 EndProject
 Global
@@ -32,6 +60,13 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{54A07B59-E379-431C-A299-129A74F2D7F1} = {87EDECFE-F93E-4E05-A735-D4E0C3B39967}
+		{04C2E93F-8A98-408C-9639-C458260BDE1F} = {87EDECFE-F93E-4E05-A735-D4E0C3B39967}
+		{FA703EC4-D727-4F3B-94DE-D1F8559D6B39} = {04C2E93F-8A98-408C-9639-C458260BDE1F}
+		{2D36500A-FE5B-4C42-B5A9-78A661566F28} = {04C2E93F-8A98-408C-9639-C458260BDE1F}
+		{6BE311CF-867B-46C8-B78D-9762F5575A1A} = {04C2E93F-8A98-408C-9639-C458260BDE1F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4D16773E-23AA-41B3-BA19-607F88328D7B}
