@@ -1444,7 +1444,7 @@ namespace IronSoftware.Drawing
 #endif
                 }
 
-                throw e;
+                throw new Exception(e.Message, e);
             }
         }
 
@@ -1499,7 +1499,7 @@ namespace IronSoftware.Drawing
 #endif
                 }
 
-                throw e;
+                throw new Exception(e.Message, e);
             }
         }
 
@@ -1534,7 +1534,7 @@ namespace IronSoftware.Drawing
 #endif
                 }
 
-                throw e;
+                throw new Exception(e.Message, e);
             }
         }
 
