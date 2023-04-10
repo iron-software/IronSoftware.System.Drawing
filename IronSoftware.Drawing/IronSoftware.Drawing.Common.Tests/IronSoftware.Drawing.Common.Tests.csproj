@@ -6,6 +6,7 @@
 		<CheckEolTargetFramework>false</CheckEolTargetFramework>
 		<IsPackable>false</IsPackable>
 		<RunSettingsFilePath>$(MSBuildProjectDirectory)\tests.runsettings</RunSettingsFilePath>
+		<NoWarn>CS8002</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
