@@ -6,7 +6,7 @@ using Xunit.Abstractions;
 
 namespace IronSoftware.Drawing.Common.Tests
 {
-    [Trait(TestingTraits.Category, TestingTraits.IntegrationTest)]
+    [Trait(TestingTraits.CATEGORY, TestingTraits.INTEGRATION_TEST)]
     public abstract class TestsBase : IDisposable
     {
         protected static readonly TargetFramework TargetFramework = new TargetFramework();
@@ -23,17 +23,18 @@ namespace IronSoftware.Drawing.Common.Tests
 
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
         }
 
         public static string GetDataPath()
         {
-            var settingsValue = TargetFramework.GetAppSettingsValue("IronSoftware.Drawing.Common.Tests.DataFolder");
+            string settingsValue = TargetFramework.GetAppSettingsValue("IronSoftware.Drawing.Common.Tests.DataFolder");
             settingsValue = settingsValue.Replace('\\', Path.DirectorySeparatorChar);
 
-            var currentFolder = Environment.CurrentDirectory;
+            string currentFolder = Environment.CurrentDirectory;
 
-            var dataPath = Path.Combine(currentFolder, settingsValue);
-            var fullPath = Path.GetFullPath(dataPath);
+            string dataPath = Path.Combine(currentFolder, settingsValue);
+            string fullPath = Path.GetFullPath(dataPath);
             return fullPath;
         }
 
@@ -44,7 +45,7 @@ namespace IronSoftware.Drawing.Common.Tests
 
         public static string GetRelativeFilePath(string mainPath, string fileName)
         {
-            var dataPath = GetDataPath();
+            string dataPath = GetDataPath();
             if (!string.IsNullOrEmpty(mainPath))
             {
                 string fullPath = Path.Combine(dataPath, mainPath);
@@ -52,6 +53,7 @@ namespace IronSoftware.Drawing.Common.Tests
                 {
                     fullPath = Path.Combine(fullPath, "Unix");
                 }
+
                 fullPath = Path.Combine(fullPath, fileName);
                 fullPath = fullPath.Replace('\\', Path.DirectorySeparatorChar);
 
@@ -60,7 +62,7 @@ namespace IronSoftware.Drawing.Common.Tests
             else
             {
                 return Path.Combine(dataPath, fileName);
-            }            
+            }
         }
 
         protected static bool IsUnix()

@@ -9,7 +9,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
             if (charsToReplace != null)
             {
-                base.DisplayName = testMethodName?.Replace(charsToReplace, replacementChars);
+                DisplayName = testMethodName?.Replace(charsToReplace, replacementChars);
             }
 
             if (!IsRunningOnMacOSX())

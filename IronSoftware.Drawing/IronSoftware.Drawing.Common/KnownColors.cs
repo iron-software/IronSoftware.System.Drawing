@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IronSoftware.Drawing
 {
     internal class KnownColors
     {
-        static internal uint[] ArgbValues = new uint[] {
+        internal static uint[] ArgbValues = new uint[] {
             0x00000000,	/* 000 - Empty */
 			0xFFD4D0C8,	/* 001 - ActiveBorder */
 			0xFF0054E3,	/* 002 - ActiveCaption */
@@ -184,8 +183,8 @@ namespace IronSoftware.Drawing
 			0xFF316AC5,	/* 174 - MenuHighlight */
 		};
 
-        static internal string[] Names = {
-            String.Empty,
+        internal static string[] Names = {
+            string.Empty,
             "ActiveBorder",
             "ActiveCaption",
             "ActiveCaptionText",
@@ -361,35 +360,40 @@ namespace IronSoftware.Drawing
             "MenuBar",
             "MenuHighlight"
         };
+        private static Dictionary<string, uint> _argbByName = null;
+        private static Dictionary<uint, string> _nameByArgb = null;
 
-        static Dictionary<String, uint> argbByName = null;
-        static Dictionary<uint, String> nameByArgb = null;
-
-        static internal Dictionary<String, uint> ArgbByName
+        internal static Dictionary<string, uint> ArgbByName
         {
             get
             {
-                if (argbByName == null)
+                if (_argbByName == null)
                 {
-                    argbByName = new Dictionary<string, uint>();
+                    _argbByName = new Dictionary<string, uint>();
                     for (int i = 0; i < ArgbValues.Length; ++i)
-                        argbByName[Names[i].ToLower()] = ArgbValues[i];
+                    {
+                        _argbByName[Names[i].ToLower()] = ArgbValues[i];
+                    }
                 }
-                return argbByName;
+
+                return _argbByName;
             }
         }
 
-        static internal Dictionary<uint, String> NameByArgb
+        internal static Dictionary<uint, string> NameByArgb
         {
             get
             {
-                if (nameByArgb == null)
+                if (_nameByArgb == null)
                 {
-                    nameByArgb = new Dictionary<uint, string>();
+                    _nameByArgb = new Dictionary<uint, string>();
                     for (int i = 0; i < Names.Length; ++i)
-                        nameByArgb[ArgbValues[i]] = Names[i];
+                    {
+                        _nameByArgb[ArgbValues[i]] = Names[i];
+                    }
                 }
-                return nameByArgb;
+
+                return _nameByArgb;
             }
         }
 
@@ -398,17 +402,25 @@ namespace IronSoftware.Drawing
             Color c;
             short n = (short)kc;
             if ((n <= 0) || (n >= ArgbValues.Length))
+            {
                 c = Color.FromArgb(0);
+            }
             else
+            {
                 c = Color.FromArgb((int)ArgbValues[n]);
+            }
+
             return c;
         }
 
         public static string GetName(short kc)
         {
             if (kc > 0 && kc < Names.Length)
+            {
                 return Names[kc];
-            return String.Empty;
+            }
+
+            return string.Empty;
         }
 
         public static string GetName(KnownColor kc)
@@ -419,11 +431,14 @@ namespace IronSoftware.Drawing
         public static Color FindColorMatch(Color c)
         {
             uint argb = (uint)c.ToArgb();
-            for (int i = 0; i < KnownColors.ArgbValues.Length; i++)
+            for (int i = 0; i < ArgbValues.Length; i++)
             {
-                if (argb == KnownColors.ArgbValues[i])
-                    return KnownColors.FromKnownColor((KnownColor)i);
+                if (argb == ArgbValues[i])
+                {
+                    return FromKnownColor((KnownColor)i);
+                }
             }
+
             return Color.Empty;
         }
 

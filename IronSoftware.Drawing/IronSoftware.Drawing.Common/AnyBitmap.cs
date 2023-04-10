@@ -99,7 +99,7 @@ namespace IronSoftware.Drawing
         /// <seealso cref="Convert.ToBase64String(byte[])"/>
         public override string ToString()
         {
-            return Convert.ToBase64String(Binary ?? new byte[0]);
+            return Convert.ToBase64String(Binary ?? Array.Empty<byte>());
         }
 
         /// <summary>
@@ -141,12 +141,12 @@ namespace IronSoftware.Drawing
         /// <a href="https://ironsoftware.com/open-source/csharp/drawing/examples/clone-anybitmap/">
         /// Code Example</a></para>
         /// </summary>
-        /// <param name="Rectangle">Defines the portion of this 
+        /// <param name="rectangle">Defines the portion of this 
         /// <see cref="AnyBitmap"/> to copy.</param>
         /// <returns></returns>
-        public AnyBitmap Clone(CropRectangle Rectangle)
+        public AnyBitmap Clone(CropRectangle rectangle)
         {
-            using Image image = Image.Clone(img => img.Crop(Rectangle));
+            using Image image = Image.Clone(img => img.Crop(rectangle));
             using var memoryStream = new MemoryStream();
             image.Save(memoryStream, new BmpEncoder()
             {
@@ -162,16 +162,16 @@ namespace IronSoftware.Drawing
         /// <para>Add SkiaSharp, System.Drawing.Common, or SixLabors.ImageSharp
         /// to your project to enable this feature.</para>
         /// </summary>
-        /// <param name="Format">An image encoding format.</param>
-        /// <param name="Lossy">JPEG and WebP encoding quality (ignored for all
+        /// <param name="format">An image encoding format.</param>
+        /// <param name="lossy">JPEG and WebP encoding quality (ignored for all
         /// other values of <see cref="ImageFormat"/>). Higher values return 
         /// larger file sizes. 0 is lowest quality , 100 is highest.</param>
         /// <returns>Transcoded image bytes.</returns>
         public byte[] ExportBytes(
-            ImageFormat Format = ImageFormat.Default, int Lossy = 100)
+            ImageFormat format = ImageFormat.Default, int lossy = 100)
         {
             MemoryStream mem = new();
-            ExportStream(mem, Format, Lossy);
+            ExportStream(mem, format, lossy);
             byte[] byteArray = mem.ToArray();
 
             return byteArray;
@@ -187,20 +187,20 @@ namespace IronSoftware.Drawing
         /// Code Example</a></para>
         /// </summary>
         /// <param name="file">A fully qualified file path.</param>
-        /// <param name="Format">An image encoding format.</param>
-        /// <param name="Lossy">JPEG and WebP encoding quality (ignored for all
+        /// <param name="format">An image encoding format.</param>
+        /// <param name="lossy">JPEG and WebP encoding quality (ignored for all
         /// other values of <see cref="ImageFormat"/>). Higher values return 
         /// larger file sizes. 0 is lowest quality, 100 is highest.</param>
         /// <returns>Void. Saves a file to disk.</returns>
 
         public void ExportFile(
             string file,
-            ImageFormat Format = ImageFormat.Default,
-            int Lossy = 100)
+            ImageFormat format = ImageFormat.Default,
+            int lossy = 100)
         {
             using (MemoryStream mem = new())
             {
-                ExportStream(mem, Format, Lossy);
+                ExportStream(mem, format, lossy);
                 byte[] byteArray = mem.ToArray();
 
                 File.WriteAllBytes(file, byteArray);
@@ -216,16 +216,16 @@ namespace IronSoftware.Drawing
         /// <a href="https://ironsoftware.com/open-source/csharp/drawing/examples/bitmap-to-stream/">
         /// Code Example</a></para>
         /// </summary>
-        /// <param name="Format">An image encoding format.</param>
-        /// <param name="Lossy">JPEG and WebP encoding quality (ignored for all
+        /// <param name="format">An image encoding format.</param>
+        /// <param name="lossy">JPEG and WebP encoding quality (ignored for all
         /// other values of <see cref="ImageFormat"/>). Higher values return 
         /// larger file sizes. 0 is lowest quality, 100 is highest.</param>
         /// <returns>Transcoded image bytes in a <see cref="MemoryStream"/>.</returns>
         public MemoryStream ToStream(
-            ImageFormat Format = ImageFormat.Default, int Lossy = 100)
+            ImageFormat format = ImageFormat.Default, int lossy = 100)
         {
             MemoryStream stream = new();
-            ExportStream(stream, Format, Lossy);
+            ExportStream(stream, format, lossy);
             return stream;
         }
 
@@ -235,16 +235,16 @@ namespace IronSoftware.Drawing
         /// <para>Add SkiaSharp, System.Drawing.Common, or SixLabors.ImageSharp
         /// to your project to enable the encoding feature.</para>
         /// </summary>
-        /// <param name="Format">An image encoding format.</param>
-        /// <param name="Lossy">JPEG and WebP encoding quality (ignored for all
+        /// <param name="format">An image encoding format.</param>
+        /// <param name="lossy">JPEG and WebP encoding quality (ignored for all
         /// other values of <see cref="ImageFormat"/>). Higher values return 
         /// larger file sizes. 0 is lowest quality, 100 is highest.</param>
         /// <returns>Transcoded image bytes in a Func <see cref="MemoryStream"/>
         /// </returns>
-        public Func<Stream> ToStreamFn(ImageFormat Format = ImageFormat.Default, int Lossy = 100)
+        public Func<Stream> ToStreamFn(ImageFormat format = ImageFormat.Default, int lossy = 100)
         {
             MemoryStream stream = new();
-            ExportStream(stream, Format, Lossy);
+            ExportStream(stream, format, lossy);
             stream.Position = 0;
             return () => stream;
         }
@@ -255,36 +255,36 @@ namespace IronSoftware.Drawing
         /// <para>Add SkiaSharp, System.Drawing.Common, or SixLabors.ImageSharp
         /// to your project to enable the encoding feature.</para>
         /// </summary>
-        /// <param name="Stream">An image encoding format.</param>
-        /// <param name="Format">An image encoding format.</param>
-        /// <param name="Lossy">JPEG and WebP encoding quality (ignored for all
+        /// <param name="stream">An image encoding format.</param>
+        /// <param name="format">An image encoding format.</param>
+        /// <param name="lossy">JPEG and WebP encoding quality (ignored for all
         /// other values of <see cref="ImageFormat"/>). Higher values return 
         /// larger file sizes. 0 is lowest quality, 100 is highest.</param>
         /// <returns>Void. Saves Transcoded image bytes to you <see cref="Stream"/>.</returns>
         public void ExportStream(
-            Stream Stream,
-            ImageFormat Format = ImageFormat.Default,
-            int Lossy = 100)
+            Stream stream,
+            ImageFormat format = ImageFormat.Default,
+            int lossy = 100)
         {
-            if (Format is ImageFormat.Default or ImageFormat.RawFormat)
+            if (format is ImageFormat.Default or ImageFormat.RawFormat)
             {
-                var writer = new BinaryWriter(Stream);
+                var writer = new BinaryWriter(stream);
                 writer.Write(Binary);
                 return;
             }
 
-            if (Lossy is < 0 or > 100)
+            if (lossy is < 0 or > 100)
             {
-                Lossy = 100;
+                lossy = 100;
             }
 
             try
             {
-                IImageEncoder enc = Format switch
+                IImageEncoder enc = format switch
                 {
                     ImageFormat.Jpeg => new JpegEncoder()
                     {
-                        Quality = Lossy,
+                        Quality = lossy,
 #if NET6_0_OR_GREATER
                         ColorType = JpegEncodingColor.Rgb
 #else
@@ -293,7 +293,7 @@ namespace IronSoftware.Drawing
                     },
                     ImageFormat.Gif => new GifEncoder(),
                     ImageFormat.Png => new PngEncoder(),
-                    ImageFormat.Webp => new WebpEncoder() { Quality = Lossy },
+                    ImageFormat.Webp => new WebpEncoder() { Quality = lossy },
                     ImageFormat.Tiff => new TiffEncoder(),
                     _ => new BmpEncoder()
                     {
@@ -302,7 +302,7 @@ namespace IronSoftware.Drawing
                     },
                 };
 
-                Image.Save(Stream, enc);
+                Image.Save(stream, enc);
             }
             catch (DllNotFoundException e)
             {
@@ -319,11 +319,11 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Saves the raw image data to a file.
         /// </summary>
-        /// <param name="File">A fully qualified file path.</param>
+        /// <param name="file">A fully qualified file path.</param>
         /// <seealso cref="TrySaveAs(string)"/>
-        public void SaveAs(string File)
+        public void SaveAs(string file)
         {
-            SaveAs(File, GetImageFormat(File));
+            SaveAs(file, GetImageFormat(file));
         }
 
         /// <summary>
@@ -332,17 +332,17 @@ namespace IronSoftware.Drawing
         /// <para>Add SkiaSharp, System.Drawing.Common, or SixLabors.ImageSharp
         /// to your project to enable the encoding feature.</para>
         /// </summary>
-        /// <param name="File">A fully qualified file path.</param>
-        /// <param name="Format">An image encoding format.</param>
-        /// <param name="Lossy">JPEG and WebP encoding quality (ignored for all
+        /// <param name="file">A fully qualified file path.</param>
+        /// <param name="format">An image encoding format.</param>
+        /// <param name="lossy">JPEG and WebP encoding quality (ignored for all
         /// other values of <see cref="ImageFormat"/>). Higher values return 
         /// larger file sizes. 0 is lowest quality , 100 is highest.</param>
         /// <returns>Void.  Saves Transcoded image bytes to your File.</returns>
         /// <seealso cref="TrySaveAs(string, ImageFormat, int)"/>
         /// <seealso cref="TrySaveAs(string)"/>
-        public void SaveAs(string File, ImageFormat Format, int Lossy = 100)
+        public void SaveAs(string file, ImageFormat format, int lossy = 100)
         {
-            System.IO.File.WriteAllBytes(File, ExportBytes(Format, Lossy));
+            File.WriteAllBytes(file, ExportBytes(format, lossy));
         }
 
         /// <summary>
@@ -351,18 +351,18 @@ namespace IronSoftware.Drawing
         /// <para>Add SkiaSharp, System.Drawing.Common, or SixLabors.ImageSharp
         /// to your project to enable the encoding feature.</para>
         /// </summary>
-        /// <param name="File">A fully qualified file path.</param>
-        /// <param name="Format">An image encoding format.</param>
-        /// <param name="Lossy">JPEG and WebP encoding quality (ignored for all
+        /// <param name="file">A fully qualified file path.</param>
+        /// <param name="format">An image encoding format.</param>
+        /// <param name="lossy">JPEG and WebP encoding quality (ignored for all
         /// other values of <see cref="ImageFormat"/>). Higher values return 
         /// larger file sizes. 0 is lowest quality , 100 is highest.</param>
         /// <returns>returns true on success, false on failure.</returns>
         /// <seealso cref="SaveAs(string, ImageFormat, int)"/>
-        public bool TrySaveAs(string File, ImageFormat Format, int Lossy = 100)
+        public bool TrySaveAs(string file, ImageFormat format, int lossy = 100)
         {
             try
             {
-                ExportFile(File, Format, Lossy);
+                ExportFile(file, format, lossy);
 
                 return true;
             }
@@ -376,13 +376,13 @@ namespace IronSoftware.Drawing
         /// Tries to Save the raw image data to a file.
         /// <returns>returns true on success, false on failure.</returns>
         /// </summary>
-        /// <param name="File">A fully qualified file path.</param>
+        /// <param name="file">A fully qualified file path.</param>
         /// <seealso cref="SaveAs(string)"/>
-        public bool TrySaveAs(string File)
+        public bool TrySaveAs(string file)
         {
             try
             {
-                SaveAs(File);
+                SaveAs(file);
 
                 return true;
             }
@@ -404,15 +404,15 @@ namespace IronSoftware.Drawing
         /// SixLabors.ImageSharp.Image, SkiaSharp.SKImage, SkiaSharp.SKBitmap,
         /// System.Drawing.Bitmap, System.Drawing.Image and 
         /// Microsoft.Maui.Graphics formats.</typeparam>
-        /// <param name="OtherBitmapFormat">A bitmap or image format from 
+        /// <param name="otherBitmapFormat">A bitmap or image format from 
         /// another graphics library.</param>
         /// <returns>A <see cref="AnyBitmap"/></returns>
-        public static AnyBitmap FromBitmap<T>(T OtherBitmapFormat)
+        public static AnyBitmap FromBitmap<T>(T otherBitmapFormat)
         {
             try
             {
                 var result = (AnyBitmap)Convert.ChangeType(
-                    OtherBitmapFormat,
+                    otherBitmapFormat,
                     typeof(AnyBitmap));
                 return result;
             }
@@ -451,71 +451,71 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Create a new Bitmap from a a Byte Array.
         /// </summary>
-        /// <param name="Bytes">A ByteArray of image data in any common format.</param>
+        /// <param name="bytes">A ByteArray of image data in any common format.</param>
         /// <seealso cref="FromBytes"/>
         /// <seealso cref="AnyBitmap(byte[])"/>
-        public static AnyBitmap FromBytes(byte[] Bytes)
+        public static AnyBitmap FromBytes(byte[] bytes)
         {
-            return new AnyBitmap(Bytes);
+            return new AnyBitmap(bytes);
         }
         /// <summary>
         /// Construct a new Bitmap from binary data (bytes).
         /// </summary>
-        /// <param name="Bytes">A ByteArray of image data in any common format.</param>
+        /// <param name="bytes">A ByteArray of image data in any common format.</param>
         /// <seealso cref="FromBytes"/>
         /// <seealso cref="AnyBitmap"/>
 
-        public AnyBitmap(byte[] Bytes)
+        public AnyBitmap(byte[] bytes)
         {
-            LoadImage(Bytes);
+            LoadImage(bytes);
         }
 
         /// <summary>
         /// Create a new Bitmap from a <see cref="Stream"/> (bytes).
         /// </summary>
-        /// <param name="Stream">A <see cref="Stream"/> of image data in any 
+        /// <param name="stream">A <see cref="Stream"/> of image data in any 
         /// common format.</param>
         /// <seealso cref="FromStream(Stream)"/>
         /// <seealso cref="AnyBitmap"/>
-        public static AnyBitmap FromStream(MemoryStream Stream)
+        public static AnyBitmap FromStream(MemoryStream stream)
         {
-            return new AnyBitmap(Stream);
+            return new AnyBitmap(stream);
         }
 
         /// <summary>
         /// Create a new Bitmap from a <see cref="Stream"/> (bytes).
         /// </summary>
-        /// <param name="Stream">A <see cref="Stream"/> of image data in any 
+        /// <param name="stream">A <see cref="Stream"/> of image data in any 
         /// common format.</param>
         /// <seealso cref="FromStream(MemoryStream)"/>
         /// <seealso cref="AnyBitmap"/>
-        public static AnyBitmap FromStream(Stream Stream)
+        public static AnyBitmap FromStream(Stream stream)
         {
-            return new AnyBitmap(Stream);
+            return new AnyBitmap(stream);
         }
 
         /// <summary>
         /// Construct a new Bitmap from a <see cref="Stream"/> (bytes).
         /// </summary>
-        /// <param name="Stream">A <see cref="Stream"/> of image data in any 
+        /// <param name="stream">A <see cref="Stream"/> of image data in any 
         /// common format.</param>
         /// <seealso cref="FromStream(Stream)"/>
         /// <seealso cref="AnyBitmap"/>
-        public AnyBitmap(MemoryStream Stream)
+        public AnyBitmap(MemoryStream stream)
         {
-            LoadImage(Stream.ToArray());
+            LoadImage(stream.ToArray());
         }
 
         /// <summary>
         /// Construct a new Bitmap from a <see cref="Stream"/> (bytes).
         /// </summary>
-        /// <param name="Stream">A <see cref="Stream"/> of image data in any 
+        /// <param name="stream">A <see cref="Stream"/> of image data in any 
         /// common format.</param>
         /// <seealso cref="FromStream(MemoryStream)"/>
         /// <seealso cref="AnyBitmap"/>
-        public AnyBitmap(Stream Stream)
+        public AnyBitmap(Stream stream)
         {
-            LoadImage(Stream);
+            LoadImage(stream);
         }
 
         /// <summary>
@@ -533,43 +533,43 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Create a new Bitmap from a file.
         /// </summary>
-        /// <param name="File">A fully qualified file path.</param>
+        /// <param name="file">A fully qualified file path.</param>
         /// <seealso cref="FromFile"/>
         /// <seealso cref="AnyBitmap"/>
-        public static AnyBitmap FromFile(string File)
+        public static AnyBitmap FromFile(string file)
         {
-            if (File.ToLower().EndsWith(".svg"))
+            if (file.ToLower().EndsWith(".svg"))
             {
-                return LoadSVGImage(File);
+                return LoadSVGImage(file);
             }
             else
             {
-                return new AnyBitmap(File);
+                return new AnyBitmap(file);
             }
         }
 
         /// <summary>
         /// Construct a new Bitmap from a file.
         /// </summary>
-        /// <param name="File">A fully qualified file path./</param>
+        /// <param name="file">A fully qualified file path./</param>
         /// <seealso cref="FromFile"/>
         /// <seealso cref="AnyBitmap"/>
-        public AnyBitmap(string File)
+        public AnyBitmap(string file)
         {
-            LoadImage(File);
+            LoadImage(file);
         }
 
         /// <summary>
         /// Construct a new Bitmap from a Uri
         /// </summary>
-        /// <param name="Uri">The uri of the image.</param>
+        /// <param name="uri">The uri of the image.</param>
         /// <seealso cref="FromUriAsync"/>
         /// <seealso cref="AnyBitmap"/>
-        public AnyBitmap(Uri Uri)
+        public AnyBitmap(Uri uri)
         {
             try
             {
-                using Stream stream = LoadUriAsync(Uri).GetAwaiter().GetResult();
+                using Stream stream = LoadUriAsync(uri).GetAwaiter().GetResult();
                 LoadImage(stream);
             }
             catch (Exception e)
@@ -581,16 +581,16 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Construct a new Bitmap from a Uri
         /// </summary>
-        /// <param name="Uri">The uri of the image.</param>
+        /// <param name="uri">The uri of the image.</param>
         /// <returns></returns>
         /// <seealso cref="AnyBitmap"/>
         /// <seealso cref="FromUri"/>
         /// <seealso cref="FromUriAsync"/>
-        public static async Task<AnyBitmap> FromUriAsync(Uri Uri)
+        public static async Task<AnyBitmap> FromUriAsync(Uri uri)
         {
             try
             {
-                using Stream stream = await LoadUriAsync(Uri);
+                using Stream stream = await LoadUriAsync(uri);
                 return new AnyBitmap(stream);
             }
             catch (Exception e)
@@ -602,19 +602,19 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Construct a new Bitmap from a Uri
         /// </summary>
-        /// <param name="Uri">The uri of the image.</param>
+        /// <param name="uri">The uri of the image.</param>
         /// <returns></returns>
         /// <seealso cref="AnyBitmap"/>
         /// <seealso cref="FromUriAsync"/>
 #if NET6_0_OR_GREATER
         [Obsolete("FromUri(Uri) is obsolete for net60 or greater because it uses WebClient which is obsolete. Consider using FromUriAsync(Uri) method.")]
 #endif
-        public static AnyBitmap FromUri(Uri Uri)
+        public static AnyBitmap FromUri(Uri uri)
         {
             try
             {
                 using WebClient client = new();
-                return new AnyBitmap(client.OpenRead(Uri));
+                return new AnyBitmap(client.OpenRead(uri));
             }
             catch (Exception e)
             {
@@ -978,13 +978,13 @@ namespace IronSoftware.Drawing
         {
             if (x < 0 || x >= Width)
             {
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentOutOfRangeException(nameof(x),
                     "x is less than 0, or greater than or equal to Width.");
             }
 
             if (y < 0 || y >= Height)
             {
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentOutOfRangeException(nameof(y),
                     "y is less than 0, or greater than or equal to Height.");
             }
 
@@ -998,14 +998,14 @@ namespace IronSoftware.Drawing
         /// parameters or return types, you now automatically support ImageSharp
         /// as well.</para>
         /// </summary>
-        /// <param name="Image">SixLabors.ImageSharp.Image will automatically 
+        /// <param name="image">SixLabors.ImageSharp.Image will automatically 
         /// be cast to <see cref="AnyBitmap"/>.</param>
-        public static implicit operator AnyBitmap(Image<Rgb24> Image)
+        public static implicit operator AnyBitmap(Image<Rgb24> image)
         {
             try
             {
                 using var memoryStream = new MemoryStream();
-                Image.Save(memoryStream, new BmpEncoder()
+                image.Save(memoryStream, new BmpEncoder()
                 {
                     BitsPerPixel = BmpBitsPerPixel.Pixel24
                 });
@@ -1058,14 +1058,14 @@ namespace IronSoftware.Drawing
         /// parameters or return types, you now automatically support ImageSharp
         /// as well.</para>
         /// </summary>
-        /// <param name="Image">SixLabors.ImageSharp.Image will automatically be
+        /// <param name="image">SixLabors.ImageSharp.Image will automatically be
         /// cast to <see cref="AnyBitmap"/>.</param>
-        public static implicit operator AnyBitmap(Image<Rgba32> Image)
+        public static implicit operator AnyBitmap(Image<Rgba32> image)
         {
             try
             {
                 using var memoryStream = new MemoryStream();
-                Image.Save(memoryStream, new BmpEncoder()
+                image.Save(memoryStream, new BmpEncoder()
                 {
                     BitsPerPixel = BmpBitsPerPixel.Pixel32,
                     SupportTransparency = true
@@ -1118,14 +1118,14 @@ namespace IronSoftware.Drawing
         /// parameters or return types, you now automatically support ImageSharp
         /// as well.</para>
         /// </summary>
-        /// <param name="Image">SixLabors.ImageSharp.Image will automatically
+        /// <param name="image">SixLabors.ImageSharp.Image will automatically
         /// be cast to <see cref="AnyBitmap"/>.</param>
-        public static implicit operator AnyBitmap(Image Image)
+        public static implicit operator AnyBitmap(Image image)
         {
             try
             {
                 using var memoryStream = new MemoryStream();
-                Image.Save(memoryStream, new BmpEncoder()
+                image.Save(memoryStream, new BmpEncoder()
                 {
                     BitsPerPixel = BmpBitsPerPixel.Pixel32,
                     SupportTransparency = true
@@ -1178,14 +1178,14 @@ namespace IronSoftware.Drawing
         /// parameters or return types, you now automatically support SkiaSharp
         /// as well.</para>
         /// </summary>
-        /// <param name="Image">SkiaSharp.SKImage will automatically be cast to
+        /// <param name="image">SkiaSharp.SKImage will automatically be cast to
         /// <see cref="AnyBitmap"/>.</param>
-        public static implicit operator AnyBitmap(SKImage Image)
+        public static implicit operator AnyBitmap(SKImage image)
         {
             try
             {
                 return new AnyBitmap(
-                    Image.Encode(SKEncodedImageFormat.Png, 100)
+                    image.Encode(SKEncodedImageFormat.Png, 100)
                     .ToArray());
             }
             catch (DllNotFoundException e)
@@ -1243,14 +1243,14 @@ namespace IronSoftware.Drawing
         /// parameters or return types, you now automatically support SkiaSharp
         /// as well.</para>
         /// </summary>
-        /// <param name="Image">SkiaSharp.SKBitmap will automatically be cast
+        /// <param name="image">SkiaSharp.SKBitmap will automatically be cast
         /// to <see cref="AnyBitmap"/>.</param>
-        public static implicit operator AnyBitmap(SKBitmap Image)
+        public static implicit operator AnyBitmap(SKBitmap image)
         {
             try
             {
                 return new AnyBitmap(
-                    Image.Encode(SKEncodedImageFormat.Png, 100)
+                    image.Encode(SKEncodedImageFormat.Png, 100)
                     .ToArray());
             }
             catch (DllNotFoundException e)
@@ -1310,15 +1310,15 @@ namespace IronSoftware.Drawing
         /// parameters or return types, you now automatically support 
         /// Microsoft.Maui.Graphics as well.</para>
         /// </summary>
-        /// <param name="Image">Microsoft.Maui.Graphics.Platform.PlatformImage 
+        /// <param name="image">Microsoft.Maui.Graphics.Platform.PlatformImage 
         /// will automatically be cast to <see cref="AnyBitmap"/>.</param>
 
-        public static implicit operator AnyBitmap(PlatformImage Image)
+        public static implicit operator AnyBitmap(PlatformImage image)
         {
             try
             {
                 using var memoryStream = new MemoryStream();
-                Image.Save(memoryStream);
+                image.Save(memoryStream);
                 return new AnyBitmap(memoryStream.ToArray());
             }
             catch (DllNotFoundException e)
@@ -1365,24 +1365,24 @@ namespace IronSoftware.Drawing
         /// parameters or return types, you now automatically support 
         /// System.Drawing.Common as well.</para>
         /// </summary>
-        /// <param name="Image">System.Drawing.Bitmap will automatically be cast to <see cref="AnyBitmap"/> </param>
-        public static implicit operator AnyBitmap(System.Drawing.Bitmap Image)
+        /// <param name="image">System.Drawing.Bitmap will automatically be cast to <see cref="AnyBitmap"/> </param>
+        public static implicit operator AnyBitmap(System.Drawing.Bitmap image)
         {
             byte[] data;
             try
             {
-                System.Drawing.Bitmap blank = new(Image.Width, Image.Height);
+                System.Drawing.Bitmap blank = new(image.Width, image.Height);
                 var g = System.Drawing.Graphics.FromImage(blank);
                 g.Clear(Color.Transparent);
-                g.DrawImage(Image, 0, 0, Image.Width, Image.Height);
+                g.DrawImage(image, 0, 0, image.Width, image.Height);
                 g.Dispose();
 
                 System.Drawing.Bitmap tempImage = new(blank);
                 blank.Dispose();
 
                 System.Drawing.Imaging.ImageFormat imageFormat =
-                    GetMimeType(Image) != "image/unknown"
-                    ? Image.RawFormat
+                    GetMimeType(image) != "image/unknown"
+                    ? image.RawFormat
                     : System.Drawing.Imaging.ImageFormat.Bmp;
 
                 using var memoryStream = new MemoryStream();
@@ -1425,7 +1425,7 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                return (System.Drawing.Bitmap)System.Drawing.Bitmap.FromStream(new MemoryStream(bitmap.Binary));
+                return (System.Drawing.Bitmap)System.Drawing.Image.FromStream(new MemoryStream(bitmap.Binary));
             }
             catch (DllNotFoundException e)
             {
@@ -1455,25 +1455,25 @@ namespace IronSoftware.Drawing
         /// parameters or return types, you now automatically support 
         /// System.Drawing.Common as well.</para>
         /// </summary>
-        /// <param name="Image">System.Drawing.Image will automatically be cast
+        /// <param name="image">System.Drawing.Image will automatically be cast
         /// to <see cref="AnyBitmap"/> </param>
-        public static implicit operator AnyBitmap(System.Drawing.Image Image)
+        public static implicit operator AnyBitmap(System.Drawing.Image image)
         {
             byte[] data;
             try
             {
-                System.Drawing.Bitmap blank = new(Image.Width, Image.Height);
+                System.Drawing.Bitmap blank = new(image.Width, image.Height);
                 var g = System.Drawing.Graphics.FromImage(blank);
                 g.Clear(Color.Transparent);
-                g.DrawImage(Image, 0, 0, Image.Width, Image.Height);
+                g.DrawImage(image, 0, 0, image.Width, image.Height);
                 g.Dispose();
 
                 System.Drawing.Bitmap tempImage = new(blank);
                 blank.Dispose();
 
                 System.Drawing.Imaging.ImageFormat imageFormat =
-                    GetMimeType(Image) != "image/unknown"
-                    ? Image.RawFormat
+                    GetMimeType(image) != "image/unknown"
+                    ? image.RawFormat
                     : System.Drawing.Imaging.ImageFormat.Bmp;
                 using var memoryStream = new MemoryStream();
                 tempImage.Save(memoryStream, imageFormat);
@@ -1587,43 +1587,18 @@ namespace IronSoftware.Drawing
         /// </summary>
         internal static (RotateMode, FlipMode) ParseRotateFlipType(RotateFlipType rotateFlipType)
         {
-            switch (rotateFlipType)
+            return rotateFlipType switch
             {
-                case RotateFlipType.RotateNoneFlipNone: // case 0
-                case RotateFlipType.Rotate180FlipXY: // case 0
-                    return (RotateMode.None, FlipMode.None);
-
-                case RotateFlipType.Rotate90FlipNone: // case 1
-                case RotateFlipType.Rotate270FlipXY: // case 1
-                    return (RotateMode.Rotate90, FlipMode.None);
-
-                case RotateFlipType.RotateNoneFlipXY: // case 2
-                case RotateFlipType.Rotate180FlipNone: // case 2
-                    return (RotateMode.Rotate180, FlipMode.None);
-
-                case RotateFlipType.Rotate90FlipXY: // case 3
-                case RotateFlipType.Rotate270FlipNone: // case 3
-                    return (RotateMode.Rotate270, FlipMode.None);
-
-                case RotateFlipType.RotateNoneFlipX: // case 4
-                case RotateFlipType.Rotate180FlipY: // case 4
-                    return (RotateMode.None, FlipMode.Horizontal);
-
-                case RotateFlipType.Rotate90FlipX: // case 5
-                case RotateFlipType.Rotate270FlipY: // case 5
-                    return (RotateMode.Rotate90, FlipMode.Horizontal);
-
-                case RotateFlipType.RotateNoneFlipY: // case 6
-                case RotateFlipType.Rotate180FlipX: // case 6
-                    return (RotateMode.None, FlipMode.Vertical);
-
-                case RotateFlipType.Rotate90FlipY: // case 7
-                case RotateFlipType.Rotate270FlipX: // case 7
-                    return (RotateMode.Rotate90, FlipMode.Vertical);
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(rotateFlipType), rotateFlipType, null);
-            }
+                RotateFlipType.RotateNoneFlipNone or RotateFlipType.Rotate180FlipXY => (RotateMode.None, FlipMode.None),
+                RotateFlipType.Rotate90FlipNone or RotateFlipType.Rotate270FlipXY => (RotateMode.Rotate90, FlipMode.None),
+                RotateFlipType.RotateNoneFlipXY or RotateFlipType.Rotate180FlipNone => (RotateMode.Rotate180, FlipMode.None),
+                RotateFlipType.Rotate90FlipXY or RotateFlipType.Rotate270FlipNone => (RotateMode.Rotate270, FlipMode.None),
+                RotateFlipType.RotateNoneFlipX or RotateFlipType.Rotate180FlipY => (RotateMode.None, FlipMode.Horizontal),
+                RotateFlipType.Rotate90FlipX or RotateFlipType.Rotate270FlipY => (RotateMode.Rotate90, FlipMode.Horizontal),
+                RotateFlipType.RotateNoneFlipY or RotateFlipType.Rotate180FlipX => (RotateMode.None, FlipMode.Vertical),
+                RotateFlipType.Rotate90FlipY or RotateFlipType.Rotate270FlipX => (RotateMode.Rotate90, FlipMode.Vertical),
+                _ => throw new ArgumentOutOfRangeException(nameof(rotateFlipType), rotateFlipType, null),
+            };
         }
 
         /// <summary>
@@ -1789,32 +1764,32 @@ namespace IronSoftware.Drawing
         {
             if (disposing)
             {
-            if (_disposed)
-            {
-                return;
-            }
+                if (_disposed)
+                {
+                    return;
+                }
 
-            Image?.Dispose();
-            Image = null;
-            Binary = null;
-            _disposed = true;
-        }
+                Image?.Dispose();
+                Image = null;
+                Binary = null;
+                _disposed = true;
+            }
         }
 
         #region Private Method
 
-        private void LoadImage(byte[] Bytes)
+        private void LoadImage(byte[] bytes)
         {
             try
             {
 #if NET6_0_OR_GREATER
-                Image = SixLabors.ImageSharp.Image.Load(Bytes);
+                Image = Image.Load(bytes);
                 Format = Image.Metadata.DecodedImageFormat;
 #else
-                Image = Image.Load(Bytes, out IImageFormat format);
+                Image = Image.Load(bytes, out IImageFormat format);
                 Format = format;
 #endif
-                Binary = Bytes;
+                Binary = bytes;
             }
             catch (DllNotFoundException e)
             {
@@ -1825,7 +1800,7 @@ namespace IronSoftware.Drawing
             {
                 try
                 {
-                    OpenTiffToImageSharp(Bytes);
+                    OpenTiffToImageSharp(bytes);
                 }
                 catch
                 {
@@ -1840,18 +1815,18 @@ namespace IronSoftware.Drawing
             }
         }
 
-        private void LoadImage(string File)
+        private void LoadImage(string file)
         {
             try
             {
 #if NET6_0_OR_GREATER
-                Image = SixLabors.ImageSharp.Image.Load(File);
+                Image = Image.Load(file);
                 Format = Image.Metadata.DecodedImageFormat;
 #else
-                Image = Image.Load(File, out IImageFormat format);
+                Image = Image.Load(file, out IImageFormat format);
                 Format = format;
 #endif
-                Binary = System.IO.File.ReadAllBytes(File);
+                Binary = File.ReadAllBytes(file);
             }
             catch (DllNotFoundException e)
             {
@@ -1862,7 +1837,7 @@ namespace IronSoftware.Drawing
             {
                 try
                 {
-                    OpenTiffToImageSharp(System.IO.File.ReadAllBytes(File));
+                    OpenTiffToImageSharp(File.ReadAllBytes(file));
                 }
                 catch (Exception e)
                 {
@@ -1897,12 +1872,12 @@ namespace IronSoftware.Drawing
             LoadImage(ms.ToArray());
         }
 
-        private static AnyBitmap LoadSVGImage(string File)
+        private static AnyBitmap LoadSVGImage(string file)
         {
             try
             {
                 return new AnyBitmap(
-                    DecodeSVG(File).Encode(SKEncodedImageFormat.Png, 100)
+                    DecodeSVG(file).Encode(SKEncodedImageFormat.Png, 100)
                     .ToArray());
             }
             catch (DllNotFoundException e)
@@ -1959,9 +1934,9 @@ namespace IronSoftware.Drawing
                 innerException);
         }
 
-        private static string GetMimeType(System.Drawing.Bitmap Image)
+        private static string GetMimeType(System.Drawing.Bitmap image)
         {
-            Guid imgguid = Image.RawFormat.Guid;
+            Guid imgguid = image.RawFormat.Guid;
             foreach (ImageCodecInfo codec in ImageCodecInfo.GetImageDecoders())
             {
                 if (codec.FormatID == imgguid)
@@ -1973,9 +1948,9 @@ namespace IronSoftware.Drawing
             return "image/unknown";
         }
 
-        private static string GetMimeType(System.Drawing.Image Image)
+        private static string GetMimeType(System.Drawing.Image image)
         {
-            Guid imgguid = Image.RawFormat.Guid;
+            Guid imgguid = image.RawFormat.Guid;
             foreach (ImageCodecInfo codec in ImageCodecInfo.GetImageDecoders())
             {
                 if (codec.FormatID == imgguid)
@@ -2201,7 +2176,7 @@ namespace IronSoftware.Drawing
             maxHeight = images.Select(img => img.Height).Max();
         }
 
-        private Image<Rgba32> CloneAndResizeImageSharp(
+        private static Image<Rgba32> CloneAndResizeImageSharp(
             Image source, int maxWidth, int maxHeight)
         {
             using Image<Rgba32> image =
@@ -2272,7 +2247,7 @@ namespace IronSoftware.Drawing
             return result;
         }
 
-        private void ConvertRGBAtoBGRA(byte[] data, int width, int height, int samplesPerPixel = 4)
+        private static void ConvertRGBAtoBGRA(byte[] data, int width, int height, int samplesPerPixel = 4)
         {
             int stride = data.Length / height;
 
@@ -2327,7 +2302,7 @@ namespace IronSoftware.Drawing
         private void LoadAndResizeImage(AnyBitmap original, int width, int height)
         {
 #if NET6_0_OR_GREATER
-            using var image = SixLabors.ImageSharp.Image.Load<Rgba32>(original.Binary);
+            using var image = Image.Load<Rgba32>(original.Binary);
             IImageFormat format = image.Metadata.DecodedImageFormat;
 #else
             using var image = Image.Load<Rgba32>(original.Binary, out IImageFormat format);
@@ -2341,7 +2316,7 @@ namespace IronSoftware.Drawing
             Format = format;
         }
 
-        private ImageFormat GetImageFormat(string filename)
+        private static ImageFormat GetImageFormat(string filename)
         {
             if (string.IsNullOrEmpty(filename))
             {
@@ -2374,11 +2349,11 @@ namespace IronSoftware.Drawing
             }
         }
 
-        private static async Task<Stream> LoadUriAsync(Uri Uri)
+        private static async Task<Stream> LoadUriAsync(Uri uri)
         {
             using HttpClient httpClient = new();
             MemoryStream memoryStream = new();
-            using Stream stream = await httpClient.GetStreamAsync(Uri);
+            using Stream stream = await httpClient.GetStreamAsync(uri);
             await stream.CopyToAsync(memoryStream);
             memoryStream.Position = 0;
             return memoryStream;

@@ -58,7 +58,7 @@ namespace IronSoftware.Drawing.Common.Tests
                 throw new InvalidOperationException($"Can not find the Environment variable by the name='{key}'");
             }
 
-            var configValue = Environment.GetEnvironmentVariable(key);
+            string configValue = Environment.GetEnvironmentVariable(key);
             return configValue;
         }
 
@@ -66,7 +66,7 @@ namespace IronSoftware.Drawing.Common.Tests
 
         public bool IsFramework { get; private set; }
 
-        public string OsGeneralName
+        public static string OsGeneralName
         {
             get
             {
@@ -85,9 +85,14 @@ namespace IronSoftware.Drawing.Common.Tests
                             & Directory.Exists("/System")
                             & Directory.Exists("/Users")
                             & Directory.Exists("/Volumes"))
+                        {
                             goto case PlatformID.MacOSX;
+                        }
                         else
+                        {
                             return "linux";
+                        }
+
                     case PlatformID.MacOSX:
                         return "osx";
                 }
@@ -117,8 +122,9 @@ namespace IronSoftware.Drawing.Common.Tests
         }
 
         public string SuffixName { get; private set; }
-        public string TestEnvironmentName => Environment.GetEnvironmentVariable("TEST_ENVIRONMENT_NAME");
+        public static string TestEnvironmentName => Environment.GetEnvironmentVariable("TEST_ENVIRONMENT_NAME");
     }
+
 #if NETFRAMEWORK
     // do not use short name for the System.Serializable, because it conflicts with the SerializableAttribute
     // from the file PdfSharpCore\SilverlightInternals\AgHacks.cs : 55
