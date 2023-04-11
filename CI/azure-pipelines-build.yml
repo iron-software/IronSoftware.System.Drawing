@@ -1,13 +1,50 @@
 ##### DECLARATIONS #####
 # Variables
+parameters:
+  - name: UnitTests
+    displayName: Unit Tests
+    type: boolean
+    default: True
+  - name: githubRelease
+    displayName: GitHub Release
+    type: boolean
+    default: True
+  - name: preRelease
+    displayName: Pre-Release
+    type: boolean
+    default: true
+  - name: inputNuGetVersion
+    displayName: NuGet-Version
+    type: string
+    default: '0'
+
 variables:
   - group: IronDrawingVersions
+  
   - name: Configuration
     value: 'Release'
+
   - name: IronDrawingPatch
     value: $[counter(format('{0}.{1}', variables['IronDrawingMajorVersion'], variables['IronDrawingMinorVersion']), 1)]
-  - name: NuGetVersion
-    value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingPatch)-ci
+  
+  - name: AssemblyVersion
+    ${{ if eq(parameters.inputNuGetVersion, '0') }}:
+      value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingPatch).$(IronDrawingRevisionVersion)
+    ${{ if ne(parameters.inputNuGetVersion, '0') }}:
+      value: ${{ parameters.inputNuGetVersion }}.$(IronDrawingRevisionVersion)
+
+  - name: NugetVersion
+    ${{ if eq(parameters.inputNuGetVersion, '0') }}:
+      ${{ if eq(parameters.preRelease, true) }}:
+        value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingPatch)-prerelease
+      ${{ if eq(parameters.preRelease, false) }}:
+        value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingPatch)
+    ${{ if ne(parameters.inputNuGetVersion, '0') }}:
+      ${{ if eq(parameters.preRelease, true) }}:
+        value: ${{ parameters.inputNuGetVersion }}-prerelease
+      ${{ if eq(parameters.preRelease, false) }}:
+        value: ${{ parameters.inputNuGetVersion }}
+
 # Build Trigger
 trigger:
     branches:
@@ -33,18 +70,21 @@ stages:
     OSPlatform: 'Windows'
     pool:
       vmImage: 'windows-latest'
+    runUnitTests: ${{ parameters.UnitTests }}
 ## Test Linux
 - template: stage_templates/run_tests_on_pool.yml
   parameters:
     OSPlatform: 'Linux'
     pool:
       vmImage: 'ubuntu-latest'
+    runUnitTests: ${{ parameters.UnitTests }}
 ## Test MacOs
 - template: stage_templates/run_tests_on_pool.yml
   parameters:
     OSPlatform: 'MacOs'
     pool:
       vmImage: 'macOS-latest'
+    runUnitTests: ${{ parameters.UnitTests }}
 ## Push NuGet Package
 - stage: DeployDrawingLibraries
   pool:
