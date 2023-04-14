@@ -24,10 +24,12 @@ namespace IronSoftware.Drawing.Common.Tests
         public AppDomain CreateAppDomain(string domainName)
         {
 #if NETFRAMEWORK
-            AppDomainSetup setup = new AppDomainSetup();
-            setup.ApplicationBase = Directory.GetCurrentDirectory();
-            setup.ConfigurationFile = $"{Assembly.GetExecutingAssembly().Location}.config";
-            setup.TargetFrameworkName = AppDomain.CurrentDomain.SetupInformation.TargetFrameworkName;
+            var setup = new AppDomainSetup
+            {
+                ApplicationBase = Directory.GetCurrentDirectory(),
+                ConfigurationFile = $"{Assembly.GetExecutingAssembly().Location}.config",
+                TargetFrameworkName = AppDomain.CurrentDomain.SetupInformation.TargetFrameworkName
+            };
             return AppDomain.CreateDomain(domainName, null, setup);
 #else
             throw new NotImplementedException();
@@ -41,7 +43,7 @@ namespace IronSoftware.Drawing.Common.Tests
             domain.DoCallBack(crossAppDomainAction.Invoke);
 
             // rethrow exception from the domain into the current AppDomain. 
-            var exception = crossAppDomainAction.GetException(domain);
+            Exception exception = crossAppDomainAction.GetException(domain);
             if(exception != null)
             {
                 throw exception;
@@ -131,7 +133,7 @@ namespace IronSoftware.Drawing.Common.Tests
     [System.Serializable]
     internal class CrossAppDomainAction : MarshalByRefObject
     {
-        private static readonly string ExceptionStoreKey =
+        private static readonly string _exceptionStoreKey =
             $"{typeof(CrossAppDomainAction).FullName}.{nameof(SetException)}";
 
         private readonly Action _action;
@@ -145,17 +147,17 @@ namespace IronSoftware.Drawing.Common.Tests
         {
             if(exception.GetType().IsSerializable)
             {
-                AppDomain.CurrentDomain.SetData(ExceptionStoreKey, exception);
+                AppDomain.CurrentDomain.SetData(_exceptionStoreKey, exception);
             }
             else
             {
-                AppDomain.CurrentDomain.SetData(ExceptionStoreKey, new InvalidOperationException(exception.ToString()));
+                AppDomain.CurrentDomain.SetData(_exceptionStoreKey, new InvalidOperationException(exception.ToString()));
             }
         }
 
         public Exception GetException(AppDomain domain)
         {
-            var data = domain.GetData(ExceptionStoreKey);
+            object data = domain.GetData(_exceptionStoreKey);
             return (Exception)data;
         }
 
