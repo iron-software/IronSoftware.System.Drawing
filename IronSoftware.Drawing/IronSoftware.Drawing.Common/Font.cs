@@ -22,7 +22,7 @@ namespace IronSoftware.Drawing
         /// Gets a value that indicates whether this Font is bold.
         /// </summary>
         public bool Bold
-        { 
+        {
             get
             {
                 return Style.HasFlag(FontStyle.Bold);
@@ -33,7 +33,7 @@ namespace IronSoftware.Drawing
         /// Gets a value that indicates whether this font has the italic style applied.
         /// </summary>
         public bool Italic
-        { 
+        {
             get
             {
                 return Style.HasFlag(FontStyle.Italic);
@@ -71,87 +71,87 @@ namespace IronSoftware.Drawing
         /// Initializes a new Font that uses the specified existing FamilyName.
         /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/create-and-cast-font/">Code Example</a></para>
         /// </summary>
-        /// <param name="FamilyName">The FontFamily of the new Font.</param>
-        public Font(string FamilyName)
+        /// <param name="familyName">The FontFamily of the new Font.</param>
+        public Font(string familyName)
         {
-            this.FamilyName = FamilyName;
+            FamilyName = familyName;
         }
 
         /// <summary>
         /// Initializes a new Font that uses the specified existing FamilyName and FontStyle enumeration.
         /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/create-and-cast-font/">Code Example</a></para>
         /// </summary>
-        /// <param name="FamilyName">The FontFamily of the new Font.</param>
-        /// <param name="Style">The FontStyle to apply to the new Font. Multiple values of the FontStyle enumeration can be combined with the OR operator.</param>
-        public Font(string FamilyName, FontStyle Style)
+        /// <param name="familyName">The FontFamily of the new Font.</param>
+        /// <param name="style">The FontStyle to apply to the new Font. Multiple values of the FontStyle enumeration can be combined with the OR operator.</param>
+        public Font(string familyName, FontStyle style)
         {
-            this.FamilyName = FamilyName;
-            this.Style = Style;
+            FamilyName = familyName;
+            Style = style;
         }
 
         /// <summary>
         /// Initializes a new Font that uses the specified existing FamilyName, FontStyle enumeration, FontWeight, Bold, Italic and Size.
         /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/create-and-cast-font/">Code Example</a></para>
         /// </summary>
-        /// <param name="FamilyName">The FontFamily of the new Font.</param>
-        /// <param name="Style">The FontStyle to apply to the new Font. Multiple values of the FontStyle enumeration can be combined with the OR operator.</param>
-        /// <param name="Size">The em-size of the new font in the units specified by the unit parameter.</param>
-        public Font(string FamilyName, FontStyle Style, float Size)
+        /// <param name="familyName">The FontFamily of the new Font.</param>
+        /// <param name="style">The FontStyle to apply to the new Font. Multiple values of the FontStyle enumeration can be combined with the OR operator.</param>
+        /// <param name="size">The em-size of the new font in the units specified by the unit parameter.</param>
+        public Font(string familyName, FontStyle style, float size)
         {
-            this.FamilyName = FamilyName;
-            this.Style = Style;
-            this.Size = Size;
+            FamilyName = familyName;
+            Style = style;
+            Size = size;
         }
 
         /// <summary>
         /// Initializes a new Font that uses the specified existing FamilyName, FontWeight, Bold, Italic and Size.
         /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/create-and-cast-font/">Code Example</a></para>
         /// </summary>
-        /// <param name="FamilyName">The FontFamily of the new Font.</param>
-        /// <param name="Size">The em-size of the new font in the units specified by the unit parameter.</param>
-        public Font(string FamilyName, float Size)
+        /// <param name="familyName">The FontFamily of the new Font.</param>
+        /// <param name="size">The em-size of the new font in the units specified by the unit parameter.</param>
+        public Font(string familyName, float size)
         {
-            this.FamilyName = FamilyName;
-            this.Size = Size;
+            FamilyName = familyName;
+            Size = size;
         }
 
         /// <summary>
         /// Implicitly casts System.Drawing.Font objects to <see cref="Font"/>.  
         /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
-        /// <param name="Font">System.Drawing.Font will automatically be cast to <see cref="Font"/> </param>
-        public static implicit operator Font(System.Drawing.Font Font)
+        /// <param name="font">System.Drawing.Font will automatically be cast to <see cref="Font"/> </param>
+        public static implicit operator Font(System.Drawing.Font font)
         {
-            return new Font(Font.FontFamily.Name, (FontStyle)Font.Style, Font.Size);
+            return new Font(font.FontFamily.Name, (FontStyle)font.Style, font.Size);
         }
 
         /// <summary>
         /// Implicitly casts to System.Drawing.Font objects from <see cref="Font"/>.  
         /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
-        /// <param name="Font"><see cref="Font"/> is explicitly cast to a System.Drawing.Font </param>
-        static public implicit operator System.Drawing.Font(Font Font)
+        /// <param name="font"><see cref="Font"/> is explicitly cast to a System.Drawing.Font </param>
+        public static implicit operator System.Drawing.Font(Font font)
         {
-            return new System.Drawing.Font(new System.Drawing.FontFamily(Font.FamilyName), Font.Size, (System.Drawing.FontStyle)Font.Style);
+            return new System.Drawing.Font(new System.Drawing.FontFamily(font.FamilyName), font.Size, (System.Drawing.FontStyle)font.Style);
         }
 
         /// <summary>
         /// Implicitly casts SixLabors.Fonts.Font objects to <see cref="Font"/>.  
         /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
-        /// <param name="Font">SixLabors.Fonts.Font will automatically be cast to <see cref="Font"/> </param>
-        public static implicit operator Font(SixLabors.Fonts.Font Font)
+        /// <param name="font">SixLabors.Fonts.Font will automatically be cast to <see cref="Font"/> </param>
+        public static implicit operator Font(SixLabors.Fonts.Font font)
         {
             FontStyle fontStyle;
-            if (Font.IsBold && Font.IsItalic)
+            if (font.IsBold && font.IsItalic)
             {
                 fontStyle = FontStyle.Bold | FontStyle.Italic;
             }
-            else if (Font.IsBold)
+            else if (font.IsBold)
             {
                 fontStyle = FontStyle.Bold;
             }
-            else if (Font.IsItalic)
+            else if (font.IsItalic)
             {
                 fontStyle = FontStyle.Italic;
             }
@@ -159,36 +159,37 @@ namespace IronSoftware.Drawing
             {
                 fontStyle = FontStyle.Regular;
             }
-            return new Font(Font.Family.Name, fontStyle, Font.Size);
+
+            return new Font(font.Family.Name, fontStyle, font.Size);
         }
 
         /// <summary>
         /// Implicitly casts to SixLabors.Fonts.Font objects from <see cref="Font"/>.  
         /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
-        /// <param name="Font"><see cref="Font"/> is explicitly cast to a SixLabors.Fonts.Font </param>
-        static public implicit operator SixLabors.Fonts.Font(Font Font)
+        /// <param name="font"><see cref="Font"/> is explicitly cast to a SixLabors.Fonts.Font </param>
+        public static implicit operator SixLabors.Fonts.Font(Font font)
         {
-            return SixLabors.Fonts.SystemFonts.CreateFont(Font.FamilyName, Font.Size, (SixLabors.Fonts.FontStyle)Font.Style);
+            return SixLabors.Fonts.SystemFonts.CreateFont(font.FamilyName, font.Size, (SixLabors.Fonts.FontStyle)font.Style);
         }
 
         /// <summary>
         /// Implicitly casts SkiaSharp.SKFont objects to <see cref="Font"/>.  
         /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
-        /// <param name="Font">SkiaSharp.SKFont will automatically be cast to <see cref="Font"/> </param>
-        public static implicit operator Font(SkiaSharp.SKFont Font)
+        /// <param name="font">SkiaSharp.SKFont will automatically be cast to <see cref="Font"/> </param>
+        public static implicit operator Font(SkiaSharp.SKFont font)
         {
             FontStyle fontStyle;
-            if (Font.Typeface.IsBold && Font.Typeface.IsItalic)
+            if (font.Typeface.IsBold && font.Typeface.IsItalic)
             {
                 fontStyle = FontStyle.Bold | FontStyle.Italic;
             }
-            else if (Font.Typeface.IsBold)
+            else if (font.Typeface.IsBold)
             {
                 fontStyle = FontStyle.Bold;
             }
-            else if (Font.Typeface.IsItalic)
+            else if (font.Typeface.IsItalic)
             {
                 fontStyle = FontStyle.Italic;
             }
@@ -196,7 +197,8 @@ namespace IronSoftware.Drawing
             {
                 fontStyle = FontStyle.Regular;
             }
-            Font result = new Font(Font.Typeface.FamilyName, fontStyle, Font.Size);
+
+            var result = new Font(font.Typeface.FamilyName, fontStyle, font.Size);
 
             return result;
         }
@@ -205,38 +207,37 @@ namespace IronSoftware.Drawing
         /// Implicitly casts to System.Drawing.Font objects from <see cref="Font"/>.  
         /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
-        /// <param name="Font"><see cref="Font"/> is explicitly cast to a SkiaSharp.SKFont </param>
-        static public implicit operator SkiaSharp.SKFont(Font Font)
+        /// <param name="font"><see cref="Font"/> is explicitly cast to a SkiaSharp.SKFont </param>
+        public static implicit operator SkiaSharp.SKFont(Font font)
         {
-            SkiaSharp.SKFontStyle sKFontStyle;
-            switch (Font.Style)
+            SkiaSharp.SKFontStyle sKFontStyle = font.Style switch
             {
-                case FontStyle.Bold: sKFontStyle = SkiaSharp.SKFontStyle.Bold; break;
-                case FontStyle.Italic: sKFontStyle = SkiaSharp.SKFontStyle.Italic; break;
-                case FontStyle.Bold | FontStyle.Italic: sKFontStyle = SkiaSharp.SKFontStyle.BoldItalic; break;
-                
-                default: sKFontStyle = SkiaSharp.SKFontStyle.Normal; break;
-            }
-            return new SkiaSharp.SKFont(SkiaSharp.SKTypeface.FromFamilyName(Font.FamilyName, sKFontStyle), Font.Size);
+                FontStyle.Bold => SkiaSharp.SKFontStyle.Bold,
+                FontStyle.Italic => SkiaSharp.SKFontStyle.Italic,
+                FontStyle.Bold | FontStyle.Italic => SkiaSharp.SKFontStyle.BoldItalic,
+                _ => SkiaSharp.SKFontStyle.Normal,
+            };
+
+            return new SkiaSharp.SKFont(SkiaSharp.SKTypeface.FromFamilyName(font.FamilyName, sKFontStyle), font.Size);
         }
 
         /// <summary>
         /// Implicitly casts Microsoft.Maui.Graphics.Font objects to <see cref="Font"/>.  
         /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
-        /// <param name="Font">Microsoft.Maui.Graphics.Font will automatically be cast to <see cref="Font"/> </param>
-        public static implicit operator Font(Microsoft.Maui.Graphics.Font Font)
+        /// <param name="font">Microsoft.Maui.Graphics.Font will automatically be cast to <see cref="Font"/> </param>
+        public static implicit operator Font(Microsoft.Maui.Graphics.Font font)
         {
             FontStyle style;
-            if (Font.Weight >= 700 && (Font.StyleType == Microsoft.Maui.Graphics.FontStyleType.Italic || Font.StyleType == Microsoft.Maui.Graphics.FontStyleType.Oblique))
+            if (font.Weight >= 700 && (font.StyleType == Microsoft.Maui.Graphics.FontStyleType.Italic || font.StyleType == Microsoft.Maui.Graphics.FontStyleType.Oblique))
             {
                 style = FontStyle.Bold | FontStyle.Italic;
             }
-            else if (Font.Weight >= 700)
+            else if (font.Weight >= 700)
             {
                 style = FontStyle.Bold;
             }
-            else if (Font.StyleType == Microsoft.Maui.Graphics.FontStyleType.Italic || Font.StyleType == Microsoft.Maui.Graphics.FontStyleType.Oblique)
+            else if (font.StyleType is Microsoft.Maui.Graphics.FontStyleType.Italic or Microsoft.Maui.Graphics.FontStyleType.Oblique)
             {
                 style = FontStyle.Italic;
             }
@@ -244,27 +245,30 @@ namespace IronSoftware.Drawing
             {
                 style = FontStyle.Regular;
             }
-            return new Font(Font.Name, style);
+
+            return new Font(font.Name, style);
         }
 
         /// <summary>
         /// Implicitly casts to Microsoft.Maui.Graphics.Font objects from <see cref="Font"/>.  
         /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
-        /// <param name="Font"><see cref="Font"/> is explicitly cast to a Microsoft.Maui.Graphics.Font </param>
-        static public implicit operator Microsoft.Maui.Graphics.Font(Font Font)
+        /// <param name="font"><see cref="Font"/> is explicitly cast to a Microsoft.Maui.Graphics.Font </param>
+        public static implicit operator Microsoft.Maui.Graphics.Font(Font font)
         {
             int fontWeight = 400;
             Microsoft.Maui.Graphics.FontStyleType fontStyleType = Microsoft.Maui.Graphics.FontStyleType.Normal;
-            if (Font.Bold)
+            if (font.Bold)
             {
                 fontWeight = 700;
             }
-            if (Font.Italic)
+
+            if (font.Italic)
             {
                 fontStyleType = Microsoft.Maui.Graphics.FontStyleType.Italic;
             }
-            return new Microsoft.Maui.Graphics.Font(Font.FamilyName, fontWeight, fontStyleType);
+
+            return new Microsoft.Maui.Graphics.Font(font.FamilyName, fontWeight, fontStyleType);
         }
     }
 
