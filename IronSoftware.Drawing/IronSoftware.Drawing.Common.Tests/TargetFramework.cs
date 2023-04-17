@@ -24,10 +24,12 @@ namespace IronSoftware.Drawing.Common.Tests
         public AppDomain CreateAppDomain(string domainName)
         {
 #if NETFRAMEWORK
-            AppDomainSetup setup = new AppDomainSetup();
-            setup.ApplicationBase = Directory.GetCurrentDirectory();
-            setup.ConfigurationFile = $"{Assembly.GetExecutingAssembly().Location}.config";
-            setup.TargetFrameworkName = AppDomain.CurrentDomain.SetupInformation.TargetFrameworkName;
+            var setup = new AppDomainSetup
+            {
+                ApplicationBase = Directory.GetCurrentDirectory(),
+                ConfigurationFile = $"{Assembly.GetExecutingAssembly().Location}.config",
+                TargetFrameworkName = AppDomain.CurrentDomain.SetupInformation.TargetFrameworkName
+            };
             return AppDomain.CreateDomain(domainName, null, setup);
 #else
             throw new NotImplementedException();
@@ -41,7 +43,7 @@ namespace IronSoftware.Drawing.Common.Tests
             domain.DoCallBack(crossAppDomainAction.Invoke);
 
             // rethrow exception from the domain into the current AppDomain. 
-            var exception = crossAppDomainAction.GetException(domain);
+            Exception exception = crossAppDomainAction.GetException(domain);
             if(exception != null)
             {
                 throw exception;
@@ -58,7 +60,7 @@ namespace IronSoftware.Drawing.Common.Tests
                 throw new InvalidOperationException($"Can not find the Environment variable by the name='{key}'");
             }
 
-            var configValue = Environment.GetEnvironmentVariable(key);
+            string configValue = Environment.GetEnvironmentVariable(key);
             return configValue;
         }
 
@@ -66,7 +68,7 @@ namespace IronSoftware.Drawing.Common.Tests
 
         public bool IsFramework { get; private set; }
 
-        public string OsGeneralName
+        public static string OsGeneralName
         {
             get
             {
@@ -85,9 +87,14 @@ namespace IronSoftware.Drawing.Common.Tests
                             & Directory.Exists("/System")
                             & Directory.Exists("/Users")
                             & Directory.Exists("/Volumes"))
+                        {
                             goto case PlatformID.MacOSX;
+                        }
                         else
+                        {
                             return "linux";
+                        }
+
                     case PlatformID.MacOSX:
                         return "osx";
                 }
@@ -117,15 +124,16 @@ namespace IronSoftware.Drawing.Common.Tests
         }
 
         public string SuffixName { get; private set; }
-        public string TestEnvironmentName => Environment.GetEnvironmentVariable("TEST_ENVIRONMENT_NAME");
+        public static string TestEnvironmentName => Environment.GetEnvironmentVariable("TEST_ENVIRONMENT_NAME");
     }
+
 #if NETFRAMEWORK
     // do not use short name for the System.Serializable, because it conflicts with the SerializableAttribute
     // from the file PdfSharpCore\SilverlightInternals\AgHacks.cs : 55
     [System.Serializable]
     internal class CrossAppDomainAction : MarshalByRefObject
     {
-        private static readonly string ExceptionStoreKey =
+        private static readonly string _exceptionStoreKey =
             $"{typeof(CrossAppDomainAction).FullName}.{nameof(SetException)}";
 
         private readonly Action _action;
@@ -139,17 +147,17 @@ namespace IronSoftware.Drawing.Common.Tests
         {
             if(exception.GetType().IsSerializable)
             {
-                AppDomain.CurrentDomain.SetData(ExceptionStoreKey, exception);
+                AppDomain.CurrentDomain.SetData(_exceptionStoreKey, exception);
             }
             else
             {
-                AppDomain.CurrentDomain.SetData(ExceptionStoreKey, new InvalidOperationException(exception.ToString()));
+                AppDomain.CurrentDomain.SetData(_exceptionStoreKey, new InvalidOperationException(exception.ToString()));
             }
         }
 
         public Exception GetException(AppDomain domain)
         {
-            var data = domain.GetData(ExceptionStoreKey);
+            object data = domain.GetData(_exceptionStoreKey);
             return (Exception)data;
         }
 

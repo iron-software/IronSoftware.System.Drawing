@@ -507,7 +507,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void Should_Return_Argb()
         {
             System.Drawing.Color bmColor = System.Drawing.Color.Azure;
-            IronSoftware.Drawing.Color ironColor = IronSoftware.Drawing.Color.Azure;
+            IronSoftware.Drawing.Color ironColor = Color.Azure;
             IronSoftware.Drawing.Color fromImageSharp = SixLabors.ImageSharp.Color.Azure;
             IronSoftware.Drawing.Color rgba32 = new SixLabors.ImageSharp.PixelFormats.Rgba32(bmColor.R, bmColor.G, bmColor.B, bmColor.A);
             IronSoftware.Drawing.Color rgb24 = new SixLabors.ImageSharp.PixelFormats.Rgb24(bmColor.R, bmColor.G, bmColor.B);

@@ -19,10 +19,13 @@ parameters:
     default: '0'
 variables:
   - group: IronDrawingVersions
+  
   - name: Configuration
     value: 'Release'
+
   - name: IronDrawingPatch
     value: $[counter(format('{0}.{1}', variables['IronDrawingMajorVersion'], variables['IronDrawingMinorVersion']), 1)]
+  
   - name: AssemblyVersion
     ${{ if eq(parameters.inputNuGetVersion, '0') }}:
       value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingPatch).$(IronDrawingRevisionVersion)

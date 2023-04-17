@@ -20,10 +20,10 @@ Works seamlessly with popular Image and Bitmap formats such as System.Drawing.Bi
 Implicit casting means that using this class to input and output Bitmap and image types from public API's gives full compatibility to all image type fully supported by Microsoft.
 
 Key library features include:
-  * AnyBitmap: A universally compatible Bitmap class. Implicit casting between System.Drawing.Bitmap, System.Drawing.Image, SkiaSharp.SKBitmap, SkiaSharp.SKImage, SixLabors.ImageSharp, Microsoft.Maui.Graphics.Platform.PlatformImage to IronSoftware.Drawing.AnyBitmap
-  * Color: A universally compatible Color class. Implicit casting between System.Drawing.Color, SkiaSharp.SKColor, SixLabors.ImageSharp.Color, SixLabors.ImageSharp.PixelFormats to IronSoftware.Drawing.Color
-  * CropRectangle: A universally compatible Rectangle class. Implicit casting between System.Drawing.Rectangle, SkiaSharp.SKRect, SkiaSharp.SKRectI, SixLabors.ImageSharp.Rectangle to IronSoftware.Drawing.CropRectangle
-  * Font: A universally compatible Font class. Implicit casting between System.Drawing.Font, SkiaSharp.SKFont, SixLabors.Fonts.Font to IronSoftware.Drawing.Font
+* AnyBitmap: A universally compatible Bitmap class. Implicit casting between System.Drawing.Bitmap, System.Drawing.Image, SkiaSharp.SKBitmap, SkiaSharp.SKImage, SixLabors.ImageSharp, Microsoft.Maui.Graphics.Platform.PlatformImage to IronSoftware.Drawing.AnyBitmap
+* Color: A universally compatible Color class. Implicit casting between System.Drawing.Color, SkiaSharp.SKColor, SixLabors.ImageSharp.Color, SixLabors.ImageSharp.PixelFormats to IronSoftware.Drawing.Color
+* CropRectangle: A universally compatible Rectangle class. Implicit casting between System.Drawing.Rectangle, SkiaSharp.SKRect, SkiaSharp.SKRectI, SixLabors.ImageSharp.Rectangle to IronSoftware.Drawing.CropRectangle
+* Font: A universally compatible Font class. Implicit casting between System.Drawing.Font, SkiaSharp.SKFont, SixLabors.Fonts.Font to IronSoftware.Drawing.Font
 
 IronSoftware.Drawing can be used within C#, VB.NET, F#, ASP.NET projects, MVC, Web Services, Console &amp; Desktop Applications.
 
@@ -36,20 +36,29 @@ Supports:
 
 For general support and technical inquiries, please email us at: developers@ironsoftware.com</description>
 		<summary>IronSoftware.System.Drawing is an open-source solution for .NET developers to replace System.Drawing.Common with a universal and flexible library.</summary>
-		<releaseNotes>* Add support for the new version of SixLabors.</releaseNotes>
+		<releaseNotes>- Adds explicit dependency on System.Memory 4.5.5
+- Updates other dependencies
+- BREAKING CHANGE: if a developer is using method parameter names of public API of this package in their code - there will be design-time errors after this update, due to these parameters being refactored to follow camelCase naming schema.</releaseNotes>
 		<copyright>Copyright © Iron Software 2022-2023</copyright>
 		<tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, TIFF, TIF, GIF, JPEG, PNG, Color, Rectangle, Drawing, C#, VB.NET, ASPX, create, render, generate, standard, netstandard2.0, core, netcore</tags>
 		<repository type="git" url="https://github.com/iron-software/IronSoftware.Drawing.Common" commit="$commit$" />
 		<dependencies>
-      <group targetFramework="netstandard2.0">
-        <dependency id="SixLabors.ImageSharp" version="2.1.3" />
-        <dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
-      </group>
-      <group targetFramework="net60">
-        <dependency id="SixLabors.ImageSharp" version="3.0.0" />
-        <dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
-      </group>
-    </dependencies>
+			<group targetFramework="netstandard2.0">
+				<dependency id="SixLabors.ImageSharp" version="2.1.3" />
+				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
+				<dependency id="System.Memory" version="4.5.5" />
+			</group>
+			<group targetFramework="net60">
+				<dependency id="SixLabors.ImageSharp" version="3.0.0" />
+				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
+				<dependency id="System.Memory" version="4.5.5" />
+			</group>
+			<group targetFramework="netstandard2.1">
+				<dependency id="SixLabors.ImageSharp" version="2.1.3" />
+				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
+				<dependency id="System.Memory" version="4.5.5" />
+			</group>
+		</dependencies>
 	</metadata>
 	<files>
 		<file src=".\ironsoftware-logo.png" target=".\images\" />
@@ -60,3 +69,4 @@ For general support and technical inquiries, please email us at: developers@iron
 		<file src="..\bin\$configuration$\net60\IronSoftware.Drawing.Common.*" target="lib\net60" />
 	</files>
 </package>
+	

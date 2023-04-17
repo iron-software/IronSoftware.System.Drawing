@@ -1,18 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;netstandard2.1;net60</TargetFrameworks>
-		<LangVersion>latest</LangVersion>
-		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>IronSoftware.Drawing.Common.snk</AssemblyOriginatorKeyFile>
 		<Configurations>Debug;Release</Configurations>
-		<Platforms>AnyCPU</Platforms>
-		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-		<TransformOnBuild>true</TransformOnBuild>
+		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<LangVersion>latest</LangVersion>
+		<NoWarn>CS8002</NoWarn>
+		<Platforms>AnyCPU</Platforms>
+		<SignAssembly>true</SignAssembly>
+		<TargetFrameworks>netstandard2.0;netstandard2.1;net60</TargetFrameworks>
+		<TransformOnBuild>true</TransformOnBuild>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
@@ -22,19 +23,20 @@
 
 	<ItemGroup>
 		<PackageReference Include="BitMiracle.LibTiff.NET" Version="2.4.649" />
-		<PackageReference Include="Microsoft.Maui.Graphics" Version="7.0.49" />
+		<PackageReference Include="Microsoft.Maui.Graphics" Version="7.0.81" />
 		<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta15" />
 		<PackageReference Include="SkiaSharp" Version="2.88.3" />
 		<PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.88.3" />
 		<PackageReference Include="SkiaSharp.Svg" Version="1.60.0" />
 		<PackageReference Include="System.Drawing.Common" Version="5.0.3" />
+		<PackageReference Include="System.Memory" Version="4.5.5" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
 	</ItemGroup>
 
 	<Choose>
 		<When Condition="'$(TargetFramework)' == 'net60'">
 			<ItemGroup>
-				<PackageReference Include="SixLabors.ImageSharp" Version="3.0.0" />
+				<PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
 			</ItemGroup>
 		</When>
 		<Otherwise>
