@@ -684,7 +684,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 #endif
 
         [FactWithAutomaticDisplayName]
-        public void Read_Tiff_Zero_Width_Height_Issue()
+        public void Should_Read_Tiff_With_Zero_Width_or_Height()
         {
             string imagePath = GetRelativeFilePath("partial_valid.tif");
             var anyBitmap = AnyBitmap.FromFile(imagePath);
