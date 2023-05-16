@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SixLabors.ImageSharp.PixelFormats;
+using System;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -155,6 +156,36 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             }
 
             return res;
+        }
+
+        protected byte[] GetRGBBuffer(string imagePath)
+        {
+            using var image = SixLabors.ImageSharp.Image.Load<Rgb24>(imagePath); // Load image from file
+
+            int width = image.Width;
+            int height = image.Height;
+
+            byte[] rgbBuffer = new byte[width * height * 3]; // 3 bytes per pixel (RGB)
+
+            image.ProcessPixelRows(accessor =>
+            {
+                for (int y = 0; y < accessor.Height; y++)
+                {
+                    Span<Rgb24> pixelRow = accessor.GetRowSpan(y);
+
+                    for (int x = 0; x < accessor.Width; x++)
+                    {
+                        ref Rgb24 pixel = ref pixelRow[x];
+
+                        int bufferIndex = (y * width + x) * 3;
+                        rgbBuffer[bufferIndex] = pixel.R;
+                        rgbBuffer[bufferIndex + 1] = pixel.G;
+                        rgbBuffer[bufferIndex + 2] = pixel.B;
+                    }
+                }
+            });
+
+            return rgbBuffer;
         }
     }
 }

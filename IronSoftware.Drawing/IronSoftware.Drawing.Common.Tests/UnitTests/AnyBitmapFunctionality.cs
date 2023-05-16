@@ -655,6 +655,73 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             }
         }
 
+        [FactWithAutomaticDisplayName]
+        public void TestGetRGBBuffer()
+        {
+            string imagePath = GetRelativeFilePath("checkmark.jpg");
+            using var bitmap = new AnyBitmap(imagePath);
+            var expectedSize = bitmap.Width * bitmap.Height * 3; // 3 bytes per pixel (RGB)
+
+            byte[] buffer = bitmap.GetRGBBuffer();
+
+            Assert.Equal(expectedSize, buffer.Length);
+
+            // Verify the first pixel's RGB values
+            var firstPixel = bitmap.GetPixel(0, 0);
+            Assert.Equal(firstPixel.R, buffer[0]);
+            Assert.Equal(firstPixel.G, buffer[1]);
+            Assert.Equal(firstPixel.B, buffer[2]);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Test_LoadFromRGBBuffer()
+        {
+            // Arrange
+            int width = 2;
+            int height = 2;
+            byte[] buffer = new byte[]
+            {
+                255, 0, 0, // red
+                0, 255, 0, // green
+                0, 0, 255, // blue
+                255, 255, 255, // white
+            };
+
+            // Act
+            AnyBitmap result = AnyBitmap.LoadAnyBitmapFromRGBBuffer(buffer, width, height);
+
+            // Assert
+            byte[] resultData = result.GetRGBBuffer();
+            Assert.Equal(buffer, resultData);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void TestLoadAnyBitmapFromRGBBuffer()
+        {
+            string imagePath = GetRelativeFilePath("checkmark.jpg");
+
+            using var bitmap = SixLabors.ImageSharp.Image.Load<Rgb24>(imagePath);
+            var width = bitmap.Width;
+            var height = bitmap.Height;
+
+            var buffer = GetRGBBuffer(imagePath);
+
+            AnyBitmap result = AnyBitmap.LoadAnyBitmapFromRGBBuffer(buffer, width, height);
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    var expectedColor = bitmap[x, y];
+                    var actualColor = result.GetPixel(x, y);
+
+                    Assert.Equal(expectedColor.R, actualColor.R);
+                    Assert.Equal(expectedColor.G, actualColor.G);
+                    Assert.Equal(expectedColor.B, actualColor.B);
+                }
+            }
+        }
+
 #if !NETFRAMEWORK
         [FactWithAutomaticDisplayName]
         public void CastMaui_to_AnyBitmap()
