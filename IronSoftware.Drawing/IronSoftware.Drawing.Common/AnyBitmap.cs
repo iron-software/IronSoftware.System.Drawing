@@ -312,7 +312,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception ex)
             {
-                throw new Exception(
+                throw new NotSupportedException(
                     $"Cannot export stream with SixLabors.ImageSharp, {ex.Message}");
             }
         }
@@ -459,17 +459,6 @@ namespace IronSoftware.Drawing
         {
             return new AnyBitmap(bytes);
         }
-        /// <summary>
-        /// Construct a new Bitmap from binary data (bytes).
-        /// </summary>
-        /// <param name="bytes">A ByteArray of image data in any common format.</param>
-        /// <seealso cref="FromBytes"/>
-        /// <seealso cref="AnyBitmap"/>
-
-        public AnyBitmap(byte[] bytes)
-        {
-            LoadImage(bytes);
-        }
 
         /// <summary>
         /// Create a new Bitmap from a <see cref="Stream"/> (bytes).
@@ -493,6 +482,16 @@ namespace IronSoftware.Drawing
         public static AnyBitmap FromStream(Stream stream)
         {
             return new AnyBitmap(stream);
+        }
+        /// <summary>
+        /// Construct a new Bitmap from binary data (bytes).
+        /// </summary>
+        /// <param name="bytes">A ByteArray of image data in any common format.</param>
+        /// <seealso cref="FromBytes"/>
+        /// <seealso cref="AnyBitmap"/>
+        public AnyBitmap(byte[] bytes)
+        {
+            LoadImage(bytes);
         }
 
         /// <summary>
@@ -532,24 +531,6 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Create a new Bitmap from a file.
-        /// </summary>
-        /// <param name="file">A fully qualified file path.</param>
-        /// <seealso cref="FromFile"/>
-        /// <seealso cref="AnyBitmap"/>
-        public static AnyBitmap FromFile(string file)
-        {
-            if (file.ToLower().EndsWith(".svg"))
-            {
-                return LoadSVGImage(file);
-            }
-            else
-            {
-                return new AnyBitmap(file);
-            }
-        }
-
-        /// <summary>
         /// Construct a new Bitmap from a file.
         /// </summary>
         /// <param name="file">A fully qualified file path./</param>
@@ -575,7 +556,25 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e)
             {
-                throw new Exception("Error while loading AnyBitmap from Uri", e);
+                throw new NotSupportedException("Error while loading AnyBitmap from Uri", e);
+            }
+        }
+
+        /// <summary>
+        /// Create a new Bitmap from a file.
+        /// </summary>
+        /// <param name="file">A fully qualified file path.</param>
+        /// <seealso cref="FromFile"/>
+        /// <seealso cref="AnyBitmap"/>
+        public static AnyBitmap FromFile(string file)
+        {
+            if (file.ToLower().EndsWith(".svg"))
+            {
+                return LoadSVGImage(file);
+            }
+            else
+            {
+                return new AnyBitmap(file);
             }
         }
 
@@ -596,7 +595,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e)
             {
-                throw new Exception("Error while loading AnyBitmap from Uri", e);
+                throw new NotSupportedException("Error while loading AnyBitmap from Uri", e);
             }
         }
 
@@ -619,7 +618,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e)
             {
-                throw new Exception("Error while loading AnyBitmap from Uri", e);
+                throw new NotSupportedException("Error while loading AnyBitmap from Uri", e);
             }
         }
 
@@ -1078,7 +1077,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e)
             {
-                throw new Exception(
+                throw new NotSupportedException(
                     "Error while casting AnyBitmap from SixLabors.ImageSharp.Image", e);
             }
         }
@@ -1105,7 +1104,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e)
             {
-                throw new Exception(
+                throw new NotSupportedException(
                     "Error while casting AnyBitmap to SixLabors.ImageSharp.Image", e);
             }
         }
@@ -1138,7 +1137,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e)
             {
-                throw new Exception(
+                throw new NotSupportedException(
                     "Error while casting AnyBitmap from SixLabors.ImageSharp.Image", e);
             }
         }
@@ -1165,7 +1164,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e)
             {
-                throw new Exception(
+                throw new NotSupportedException(
                     "Error while casting AnyBitmap to SixLabors.ImageSharp.Image", e);
             }
         }
@@ -1198,7 +1197,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e)
             {
-                throw new Exception(
+                throw new NotSupportedException(
                     "Error while casting AnyBitmap from SixLabors.ImageSharp.Image", e);
             }
         }
@@ -1225,7 +1224,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e)
             {
-                throw new Exception(
+                throw new NotSupportedException(
                     "Error while casting AnyBitmap to SixLabors.ImageSharp.Image", e);
             }
         }
@@ -1254,7 +1253,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e)
             {
-                throw new Exception(
+                throw new NotSupportedException(
                     "Error while casting AnyBitmap from SkiaSharp", e);
             }
         }
@@ -1276,7 +1275,12 @@ namespace IronSoftware.Drawing
                 {
                     result = SKImage.FromBitmap(SKBitmap.Decode(bitmap.Binary));
                 }
-                catch { }
+                catch
+                {
+                    // Exception can be ignored here because the input image may be in TIFF format.
+                    // TIFF format images are handled elsewhere after this catch block. Therefore, 
+                    // it's expected that decoding may fail here and it's safe to continue execution.
+                }
 
                 if (result != null)
                 {
@@ -1292,7 +1296,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e)
             {
-                throw new Exception(
+                throw new NotSupportedException(
                     "Error while casting AnyBitmap to SkiaSharp", e);
             }
         }
@@ -1319,7 +1323,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e)
             {
-                throw new Exception(
+                throw new NotSupportedException(
                     "Error while casting AnyBitmap from SkiaSharp", e);
             }
         }
@@ -1341,7 +1345,12 @@ namespace IronSoftware.Drawing
                 {
                     result = SKBitmap.Decode(bitmap.Binary);
                 }
-                catch { }
+                catch
+                {
+                    // Exception can be ignored here because the input image may be in TIFF format.
+                    // TIFF format images are handled elsewhere after this catch block. Therefore, 
+                    // it's expected that decoding may fail here and it's safe to continue execution.
+                }
 
                 if (result != null)
                 {
@@ -1357,7 +1366,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e)
             {
-                throw new Exception(
+                throw new NotSupportedException(
                     "Error while casting AnyBitmap to SkiaSharp", e);
             }
         }
@@ -1387,7 +1396,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e)
             {
-                throw new Exception(
+                throw new NotSupportedException(
                     "Error while casting AnyBitmap from Microsoft.Maui.Graphics", e);
             }
         }
@@ -1413,7 +1422,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e)
             {
-                throw new Exception("Error while casting AnyBitmap to Microsoft.Maui.Graphics", e);
+                throw new NotSupportedException("Error while casting AnyBitmap to Microsoft.Maui.Graphics", e);
             }
         }
 
@@ -1808,7 +1817,7 @@ namespace IronSoftware.Drawing
         /// </summary>
         ~AnyBitmap()
         {
-            Dispose();
+            Dispose(false);
         }
 
         /// <summary>
@@ -1859,22 +1868,17 @@ namespace IronSoftware.Drawing
                 throw new DllNotFoundException(
                     "Please install SixLabors.ImageSharp from NuGet.", e);
             }
-            catch (NotSupportedException e)
+            catch (Exception)
             {
                 try
                 {
                     OpenTiffToImageSharp(bytes);
                 }
-                catch
+                catch (Exception e)
                 {
                     throw new NotSupportedException(
                         "Image could not be loaded. File format is not supported.", e);
                 }
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Error while loading image bytes.", e);
-
             }
         }
 
@@ -1896,7 +1900,7 @@ namespace IronSoftware.Drawing
                 throw new DllNotFoundException(
                     "Please install SixLabors.ImageSharp from NuGet.", e);
             }
-            catch (NotSupportedException)
+            catch (Exception)
             {
                 try
                 {
@@ -1908,18 +1912,6 @@ namespace IronSoftware.Drawing
                         "Image could not be loaded. File format is not supported.", e);
                 }
             }
-            catch (Exception e)
-            {
-                throw new Exception("Error while loading image file.", e);
-            }
-        }
-
-        private void SetBinaryFromImageSharp(Image<Rgba32> tiffImage)
-        {
-            using var memoryStream = new MemoryStream();
-            tiffImage.Save(memoryStream, new TiffEncoder());
-            _ = memoryStream.Seek(0, SeekOrigin.Begin);
-            LoadImage(memoryStream);
         }
 
         private void LoadImage(Stream stream)
@@ -1933,6 +1925,14 @@ namespace IronSoftware.Drawing
             }
 
             LoadImage(ms.ToArray());
+        }
+
+        private void SetBinaryFromImageSharp(Image<Rgba32> tiffImage)
+        {
+            using var memoryStream = new MemoryStream();
+            tiffImage.Save(memoryStream, new TiffEncoder());
+            _ = memoryStream.Seek(0, SeekOrigin.Begin);
+            LoadImage(memoryStream);
         }
 
         private static AnyBitmap LoadSVGImage(string file)
@@ -1950,7 +1950,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e)
             {
-                throw new Exception(
+                throw new NotSupportedException(
                     "Error while reading SVG image format.", e);
             }
         }
@@ -1982,7 +1982,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e)
             {
-                throw new Exception("Error while reading SVG image format.", e);
+                throw new NotSupportedException("Error while reading SVG image format.", e);
             }
         }
 
@@ -2083,7 +2083,7 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e)
             {
-                throw new Exception("Error while reading TIFF image format.", e);
+                throw new NotSupportedException("Error while reading TIFF image format.", e);
             }
         }
 
@@ -2091,6 +2091,8 @@ namespace IronSoftware.Drawing
         {
             try
             {
+                int imageWidth = 0;
+                int imageHeight = 0;
                 List<Image> images = new();
 
                 // create a memory stream out of them
@@ -2104,40 +2106,18 @@ namespace IronSoftware.Drawing
                     {
                         _ = tif.SetDirectory(i);
 
-                        // Find the width and height of the image
-                        FieldValue[] value = tif.GetField(TiffTag.IMAGEWIDTH);
-                        int width = value[0].ToInt();
-
-                        value = tif.GetField(TiffTag.IMAGELENGTH);
-                        int height = value[0].ToInt();
+                        var (width, height) = SetWidthHeight(tif, i, ref imageWidth, ref imageHeight);
 
                         // Read the image into the memory buffer
                         int[] raster = new int[height * width];
                         if (!tif.ReadRGBAImage(width, height, raster))
                         {
-                            throw new Exception("Could not read image");
+                            throw new NotSupportedException("Could not read image");
                         }
 
                         using Image<Rgba32> bmp = new(width, height);
-                        Rectangle rect = new(0, 0, bmp.Width, bmp.Height);
 
-                        int stride = GetStride(bmp);
-
-                        byte[] bits = new byte[stride * bmp.Height];
-                        for (int y = 0; y < bmp.Height; y++)
-                        {
-                            int rasterOffset = y * bmp.Width;
-                            int bitsOffset = (bmp.Height - y - 1) * stride;
-
-                            for (int x = 0; x < bmp.Width; x++)
-                            {
-                                int rgba = raster[rasterOffset++];
-                                bits[bitsOffset++] = (byte)(rgba & 0xff); // R
-                                bits[bitsOffset++] = (byte)((rgba >> 8) & 0xff); // G
-                                bits[bitsOffset++] = (byte)((rgba >> 16) & 0xff); // B
-                                bits[bitsOffset++] = (byte)((rgba >> 24) & 0xff); // A
-                            }
-                        }
+                        byte[] bits = PrepareByteArray(bmp, raster, width, height);
 
                         images.Add(Image.LoadPixelData<Rgba32>(bits, bmp.Width, bmp.Height));
                     }
@@ -2167,8 +2147,66 @@ namespace IronSoftware.Drawing
             }
             catch (Exception e)
             {
-                throw new Exception("Error while reading TIFF image format.", e);
+                throw new NotSupportedException("Error while reading TIFF image format.", e);
             }
+        }
+
+        private byte[] PrepareByteArray(Image<Rgba32> bmp, int[] raster, int width, int height)
+        {
+            byte[] bits = new byte[GetStride(bmp) * height];
+
+            for (int y = 0; y < height; y++)
+            {
+                int rasterOffset = y * width;
+                int bitsOffset = (height - y - 1) * GetStride(bmp);
+
+                for (int x = 0; x < width; x++)
+                {
+                    int rgba = raster[rasterOffset++];
+                    bits[bitsOffset++] = (byte)(rgba & 0xff); // R
+                    bits[bitsOffset++] = (byte)((rgba >> 8) & 0xff); // G
+                    bits[bitsOffset++] = (byte)((rgba >> 16) & 0xff); // B
+                    bits[bitsOffset++] = (byte)((rgba >> 24) & 0xff); // A
+                }
+            }
+
+            return bits;
+        }
+
+        private (int width, int height) SetWidthHeight(Tiff tif, short index, ref int imageWidth, ref int imageHeight)
+        {
+            // Find the width and height of the image
+            FieldValue[] value = tif.GetField(TiffTag.IMAGEWIDTH);
+            int width = value[0].ToInt();
+
+            value = tif.GetField(TiffTag.IMAGELENGTH);
+            int height = value[0].ToInt();
+
+            if (index == 0)
+            {
+                if (width == 0 || height == 0)
+                {
+                    throw new NotSupportedException("Width or Height of the first image can't be 0.");
+                }
+                else
+                {
+                    imageWidth = width;
+                    imageHeight = height;
+                }
+            }
+            else
+            {
+                if (width == 0)
+                {
+                    width = imageWidth;
+                }
+                if (height == 0)
+                {
+                    height = imageHeight;
+                }
+            }
+
+            return (width, height);
         }
 
         private static List<AnyBitmap> CreateAnyBitmaps(IEnumerable<string> imagePaths)
@@ -2334,19 +2372,11 @@ namespace IronSoftware.Drawing
             }
             else if (Image is Image<Abgr32>)
             {
-                return (Color)Image.CloneAs<Rgb24>()[x, y];
+                return (Color)Image.CloneAs<Abgr32>()[x, y];
             }
             else if (Image is Image<Argb32>)
             {
                 return (Color)Image.CloneAs<Argb32>()[x, y];
-            }
-            else if (Image is Image<Argb32>)
-            {
-                return (Color)Image.CloneAs<Abgr32>()[x, y];
-            }
-            else if (Image is Image<Abgr32>)
-            {
-                return (Color)Image.CloneAs<Rgb24>()[x, y];
             }
             else if (Image is Image<Bgr24>)
             {
