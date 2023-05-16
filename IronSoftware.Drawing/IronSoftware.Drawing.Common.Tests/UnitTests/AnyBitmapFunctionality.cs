@@ -683,5 +683,13 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 #endif
 
+        [FactWithAutomaticDisplayName]
+        public void Read_Tiff_Zero_Width_Height_Issue()
+        {
+            string imagePath = GetRelativeFilePath("partial_valid.tif");
+            var anyBitmap = AnyBitmap.FromFile(imagePath);
+            anyBitmap.FrameCount.Should().BeGreaterThan(0);
+        }
+
     }
 }
