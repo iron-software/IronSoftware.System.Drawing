@@ -1,6 +1,7 @@
 ﻿using BitMiracle.LibTiff.Classic;
 using Microsoft.Maui.Graphics.Platform;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Bmp;
@@ -623,6 +624,24 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
+        /// Creates an AnyBitmap object from a buffer of RGB pixel data.
+        /// </summary>
+        /// <param name="buffer">An array of bytes representing the RGB pixel data. This should contain 3 bytes (one each for red, green, and blue) for each pixel in the image.</param>
+        /// <param name="width">The width of the image, in pixels.</param>
+        /// <param name="height">The height of the image, in pixels.</param>
+        /// <returns>An AnyBitmap object that represents the image defined by the provided pixel data, width, and height.</returns>
+        public static AnyBitmap LoadAnyBitmapFromRGBBuffer(byte[] buffer, int width, int height)
+        {
+            using var memoryStream = new MemoryStream();
+            using var image = Image.LoadPixelData<Rgb24>(buffer, width, height);
+            image.Save(memoryStream, new BmpEncoder()
+            {
+                BitsPerPixel = BmpBitsPerPixel.Pixel24
+            });
+            return new AnyBitmap(memoryStream.ToArray());
+        }
+
+        /// <summary>
         /// Gets colors depth, in number of bits per pixel.
         /// <br/><para><b>Further Documentation:</b><br/>
         /// <a href="https://ironsoftware.com/open-source/csharp/drawing/examples/get-color-depth/">
@@ -990,6 +1009,46 @@ namespace IronSoftware.Drawing
 
             return GetPixelColor(x, y);
         }
+
+        /// <summary>
+        /// Retrieves the RGB buffer from the image at the specified path.
+        /// </summary>
+        /// <returns>An array of bytes representing the RGB buffer of the image.</returns>
+        /// <remarks>
+        /// Each pixel is represented by three bytes in the order: red, green, blue.
+        /// The pixels are read from the image row by row, from top to bottom and left to right within each row.
+        /// </remarks>
+        public byte[] GetRGBBuffer()
+        {
+            using Image<Rgb24> image = Image.CloneAs<Rgb24>();
+
+            int width = image.Width;
+            int height = image.Height;
+
+            byte[] rgbBuffer = new byte[width * height * 3]; // 3 bytes per pixel (RGB)
+
+            image.ProcessPixelRows(accessor =>
+            {
+                for (int y = 0; y < accessor.Height; y++)
+                {
+                    Span<Rgb24> pixelRow = accessor.GetRowSpan(y);
+
+                    for (int x = 0; x < accessor.Width; x++)
+                    {
+                        ref Rgb24 pixel = ref pixelRow[x];
+
+                        int bufferIndex = (y * width + x) * 3;
+                        rgbBuffer[bufferIndex] = pixel.R;
+                        rgbBuffer[bufferIndex + 1] = pixel.G;
+                        rgbBuffer[bufferIndex + 2] = pixel.B;
+                    }
+                }
+            });
+
+            return rgbBuffer;
+        }
+
+        #region Implicit Casting
 
         /// <summary>
         /// Implicitly casts SixLabors.ImageSharp.Image objects to 
@@ -1537,6 +1596,9 @@ namespace IronSoftware.Drawing
                 throw new Exception(e.Message, e);
             }
         }
+        #endregion
+
+        #region Enum Classes
 
         /// <summary>
         /// Popular image formats which <see cref="AnyBitmap"/> can read and export.
@@ -1739,6 +1801,7 @@ namespace IronSoftware.Drawing
             /// </summary>
             Rotate270FlipX
         }
+        #endregion
 
         /// <summary>
         /// AnyBitmap destructor
