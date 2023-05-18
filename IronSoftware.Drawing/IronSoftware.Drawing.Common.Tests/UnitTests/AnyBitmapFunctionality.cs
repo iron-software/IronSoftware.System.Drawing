@@ -216,6 +216,25 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void AnyBitmap_should_set_Pixel()
+        {
+            string imagePath = GetRelativeFilePath("checkmark.jpg");
+            var anyBitmap = AnyBitmap.FromFile(imagePath);
+
+            // Get the current pixel color - should be white
+            var pixelBefore = anyBitmap.GetPixel(0, 0);
+
+            // Check current pixel color is not black
+            Assert.NotEqual(pixelBefore, Color.Black);
+
+            // Set the pixel color to black
+            anyBitmap.SetPixel(0, 0, Color.Black);
+
+            // Check the pixel color has changed
+            Assert.Equal(anyBitmap.GetPixel(0, 0), Color.Black);
+        }
+
+        [FactWithAutomaticDisplayName]
         public void AnyBitmap_should_get_Stream()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");

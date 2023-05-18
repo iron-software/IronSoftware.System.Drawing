@@ -1010,6 +1010,32 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
+        /// Sets the <see cref="Color"/> of the specified pixel in this 
+        /// <see cref="AnyBitmap"/>
+        /// <para>Set in Rgb24 color format.</para>
+        /// </summary>
+        /// <param name="x">The x-coordinate of the pixel to retrieve.</param>
+        /// <param name="y">The y-coordinate of the pixel to retrieve.</param>
+        /// <param name="color">The color to set the pixel.</param>
+        /// <returns>void</returns>
+        public void SetPixel(int x, int y, Color color)
+        {
+            if (x < 0 || x >= Width)
+            {
+                throw new ArgumentOutOfRangeException(nameof(x),
+                    "x is less than 0, or greater than or equal to Width.");
+            }
+
+            if (y < 0 || y >= Height)
+            {
+                throw new ArgumentOutOfRangeException(nameof(y),
+                    "y is less than 0, or greater than or equal to Height.");
+            }
+
+            SetPixelColor(x, y, color);
+        }
+
+        /// <summary>
         /// Retrieves the RGB buffer from the image at the specified path.
         /// </summary>
         /// <returns>An array of bytes representing the RGB buffer of the image.</returns>
@@ -2389,6 +2415,40 @@ namespace IronSoftware.Drawing
             else
             {
                 return (Color)Image.CloneAs<Rgba32>()[x, y];
+            }
+        }
+
+        private void SetPixelColor(int x, int y, Color color)
+        {
+            if (Image is Image<Rgb24>)
+            {
+                Image<Rgb24> image = (Image<Rgb24>)Image;
+                image[x, y] = color;
+            }
+            else if (Image is Image<Abgr32>)
+            {
+                Image<Abgr32> image = (Image<Abgr32>)Image;
+                image[x, y] = color;
+            }
+            else if (Image is Image<Argb32>)
+            {
+                Image<Argb32> image = (Image<Argb32>)Image;
+                image[x, y] = color;
+            }
+            else if (Image is Image<Bgr24>)
+            {
+                Image<Bgr24> image = (Image<Bgr24>)Image;
+                image[x, y] = color;
+            }
+            else if (Image is Image<Bgra32>)
+            {
+                Image<Bgra32> image = (Image<Bgra32>)Image;
+                image[x, y] = color;
+            }
+            else
+            {
+                Image<Rgba32> image = (Image<Rgba32>)Image;
+                image[x, y] = color;
             }
         }
 
