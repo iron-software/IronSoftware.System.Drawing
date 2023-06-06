@@ -1679,10 +1679,11 @@ namespace IronSoftware.Drawing
 
         }
 
-#pragma warning disable CS0618
         /// <summary>
         /// Converts the legacy <see cref="RotateFlipType"/> to <see cref="RotateMode"/> and <see cref="FlipMode"/>
         /// </summary>
+        [Obsolete("RotateFlipType is legacy support from System.Drawing. " +
+            "Please use RotateMode and FlipMode instead.")]
         internal static (RotateMode, FlipMode) ParseRotateFlipType(RotateFlipType rotateFlipType)
         {
             return rotateFlipType switch
@@ -1698,7 +1699,6 @@ namespace IronSoftware.Drawing
                 _ => throw new ArgumentOutOfRangeException(nameof(rotateFlipType), rotateFlipType, null),
             };
         }
-#pragma warning restore CS01618
 
         /// <summary>
         /// Provides enumeration over how the image should be rotated.
