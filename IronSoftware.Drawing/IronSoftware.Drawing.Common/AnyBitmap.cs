@@ -1679,6 +1679,7 @@ namespace IronSoftware.Drawing
 
         }
 
+#pragma warning disable CS0618
         /// <summary>
         /// Converts the legacy <see cref="RotateFlipType"/> to <see cref="RotateMode"/> and <see cref="FlipMode"/>
         /// </summary>
@@ -1697,6 +1698,7 @@ namespace IronSoftware.Drawing
                 _ => throw new ArgumentOutOfRangeException(nameof(rotateFlipType), rotateFlipType, null),
             };
         }
+#pragma warning restore CS01618
 
         /// <summary>
         /// Provides enumeration over how the image should be rotated.
@@ -2420,35 +2422,26 @@ namespace IronSoftware.Drawing
 
         private void SetPixelColor(int x, int y, Color color)
         {
-            if (Image is Image<Rgb24>)
+            switch (Image)
             {
-                Image<Rgb24> image = (Image<Rgb24>)Image;
-                image[x, y] = color;
-            }
-            else if (Image is Image<Abgr32>)
-            {
-                Image<Abgr32> image = (Image<Abgr32>)Image;
-                image[x, y] = color;
-            }
-            else if (Image is Image<Argb32>)
-            {
-                Image<Argb32> image = (Image<Argb32>)Image;
-                image[x, y] = color;
-            }
-            else if (Image is Image<Bgr24>)
-            {
-                Image<Bgr24> image = (Image<Bgr24>)Image;
-                image[x, y] = color;
-            }
-            else if (Image is Image<Bgra32>)
-            {
-                Image<Bgra32> image = (Image<Bgra32>)Image;
-                image[x, y] = color;
-            }
-            else
-            {
-                Image<Rgba32> image = (Image<Rgba32>)Image;
-                image[x, y] = color;
+                case Image<Rgb24> imageAsFormat:
+                    imageAsFormat[x, y] = color;
+                    break;
+                case Image<Abgr32> imageAsFormat:
+                    imageAsFormat[x, y] = color;
+                    break;
+                case Image<Argb32> imageAsFormat:
+                    imageAsFormat[x, y] = color;
+                    break;
+                case Image<Bgr24> imageAsFormat:
+                    imageAsFormat[x, y] = color;
+                    break;
+                case Image<Bgra32> imageAsFormat:
+                    imageAsFormat[x, y] = color;
+                    break;
+                default:
+                    (Image as Image<Rgba32>)[x, y] = color;
+                    break;
             }
         }
 
