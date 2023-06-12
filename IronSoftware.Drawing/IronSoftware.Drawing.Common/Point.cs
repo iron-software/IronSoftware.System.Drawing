@@ -41,8 +41,7 @@ namespace IronSoftware.Drawing
         #region Implicit Operators
 
         /// <summary>
-        /// Implicitly casts SixLabors.ImageSharp.Point objects to <see cref="Point"/>.  
-        /// <para>When your .NET Class methods use <see cref="Point"/> as parameters or return types, you now automatically support Points as well.</para>
+        /// Implicitly casts SixLabors.ImageSharp.Point objects to Point
         /// </summary>
         /// <param name="point">System.Drawing.Point will automatically be cast to <see cref="Point"/> </param>
         public static implicit operator Point(SixLabors.ImageSharp.Point point)
@@ -51,8 +50,17 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts System.Drawing.Point objects to <see cref="Point"/>.  
-        /// <para>When your .NET Class methods use <see cref="Point"/> as parameters or return types, you now automatically support Points as well.</para>
+        /// Implicitly casts Point objects to SixLabors.ImageSharp.Point
+        /// </summary>
+        /// <remarks>SixLabors.ImageSharp.Point only uses int instead of double for X and Y. Decimals will be removed.</remarks>
+        /// <param name="point">Point will automatically be cast to SixLabors.ImageSharp.Point</param>
+        public static implicit operator SixLabors.ImageSharp.Point(Point point)
+        {
+            return new SixLabors.ImageSharp.Point((int)point.X, (int)point.Y);
+        }
+
+        /// <summary>
+        /// Implicitly casts System.Drawing.Point objects to <see cref="Point"/>.
         /// </summary>
         /// <param name="point">System.Drawing.Point will automatically be cast to <see cref="Point"/> </param>
         public static implicit operator Point(System.Drawing.Point point)
@@ -61,8 +69,17 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts Microsoft.Maui.Graphics.Point objects to <see cref="Point"/>.  
-        /// <para>When your .NET Class methods use <see cref="Point"/> as parameters or return types, you now automatically support Points as well.</para>
+        /// Implicitly casts Point objects to System.Drawing.Point
+        /// </summary>
+        /// <remarks>System.Drawing.Point only uses int instead of double for X and Y. Decimals will be removed.</remarks>
+        /// <param name="point">Point will automatically be cast to System.Drawing.Point</param>
+        public static implicit operator System.Drawing.Point(Point point)
+        {
+            return new System.Drawing.Point((int)point.X, (int)point.Y);
+        }
+
+        /// <summary>
+        /// Implicitly casts Microsoft.Maui.Graphics.Point objects to <see cref="Point"/>.
         /// </summary>
         /// <param name="point">Microsoft.Maui.Graphics.Point will automatically be cast to <see cref="Point"/> </param>
         public static implicit operator Point(Microsoft.Maui.Graphics.Point point)
@@ -71,14 +88,33 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Implicitly casts SkiaSharp.SKPointI objects to <see cref="Point"/>.  
-        /// <para>When your .NET Class methods use <see cref="Point"/> as parameters or return types, you now automatically support Points as well.</para>
+        /// Implicitly casts Point objects to Microsoft.Maui.Graphics.Point
+        /// </summary>
+        /// <param name="point">Point will automatically be cast to Microsoft.Maui.Graphics.Point</param>
+        public static implicit operator Microsoft.Maui.Graphics.Point(Point point)
+        {
+            return new Microsoft.Maui.Graphics.Point(point.X, point.Y);
+        }
+
+        /// <summary>
+        /// Implicitly casts SkiaSharp.SKPointI objects to <see cref="Point"/>.
         /// </summary>
         /// <param name="point">SkiaSharp.SKPointI will automatically be cast to <see cref="Point"/> </param>
         public static implicit operator Point(SkiaSharp.SKPointI point)
         {
             return new Point(point.X, point.Y);
         }
+
+        /// <summary>
+        /// Implicitly casts Point objects to SkiaSharp.SKPointI
+        /// </summary>
+        /// <remarks>SkiaSharp.SKPointI only uses int instead of double for X and Y. Decimals will be removed.</remarks>
+        /// <param name="point">Point will automatically be cast to SkiaSharp.SKPointI</param>
+        public static implicit operator SkiaSharp.SKPointI(Point point)
+        {
+            return new SkiaSharp.SKPointI((int)point.X, (int)point.Y);
+        }
+
         #endregion
 
         #region Override Methods

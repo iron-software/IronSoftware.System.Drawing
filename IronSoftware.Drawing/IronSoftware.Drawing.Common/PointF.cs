@@ -41,33 +41,57 @@ namespace IronSoftware.Drawing
         #region Implicit Operators
 
         /// <summary>
-        /// Implicitly casts SixLabors.ImageSharp.PointF objects to <see cref="Point"/>.  
-        /// <para>When your .NET Class methods use <see cref="Point"/> as parameters or return types, you now automatically support Points as well.</para>
+        /// Implicitly casts SixLabors.ImageSharp.PointF objects to PointF
         /// </summary>
-        /// <param name="point">System.Drawing.PointF will automatically be cast to <see cref="Point"/> </param>
+        /// <param name="point">SixLabors.ImageSharp.PointF will automatically be cast to PointF</param>
         public static implicit operator PointF(SixLabors.ImageSharp.PointF point)
         {
             return new PointF(point.X, point.Y);
         }
 
         /// <summary>
-        /// Implicitly casts Microsoft.Maui.Graphics.Point objects to <see cref="Point"/>.  
-        /// <para>When your .NET Class methods use <see cref="Point"/> as parameters or return types, you now automatically support Points as well.</para>
+        /// Implicitly casts a PointF object to SixLabors.ImageSharp.PointF
         /// </summary>
-        /// <param name="point">Microsoft.Maui.Graphics.Point will automatically be cast to <see cref="Point"/> </param>
+        /// <param name="point">PointF will automatically be cast to SixLabors.ImageSharp.PointF</param>
+        public static implicit operator SixLabors.ImageSharp.PointF(PointF point)
+        {
+            return new SixLabors.ImageSharp.PointF(point.X, point.Y);
+        }
+
+        /// <summary>
+        /// Implicitly casts Microsoft.Maui.Graphics.Point objects to PointF
+        /// </summary>
+        /// <param name="point">Microsoft.Maui.Graphics.Point will automatically be cast to PointF</param>
         public static implicit operator PointF(Microsoft.Maui.Graphics.PointF point)
         {
             return new PointF(point.X, point.Y);
         }
 
         /// <summary>
-        /// Implicitly casts SkiaSharp.SKPoint objects to <see cref="Point"/>.  
-        /// <para>When your .NET Class methods use <see cref="Point"/> as parameters or return types, you now automatically support Points as well.</para>
+        /// Implicitly casts PointF objects to Microsoft.Maui.Graphics.Point
         /// </summary>
-        /// <param name="point">SkiaSharp.SKPoint will automatically be cast to <see cref="Point"/> </param>
+        /// <param name="point">PointF will automatically be cast to Microsoft.Maui.Graphics.Point</param>
+        public static implicit operator Microsoft.Maui.Graphics.PointF(PointF point)
+        {
+            return new Microsoft.Maui.Graphics.PointF(point.X, point.Y);
+        }
+
+        /// <summary>
+        /// Implicitly casts SkiaSharp.SKPoint objects to PointF
+        /// </summary>
+        /// <param name="point">SkiaSharp.SKPoint will automatically be cast to PointF</param>
         public static implicit operator PointF(SkiaSharp.SKPoint point)
         {
             return new PointF(point.X, point.Y);
+        }
+
+        /// <summary>
+        /// Implicitly casts PointF objects to SkiaSharp.SKPoint
+        /// </summary>
+        /// <param name="point">PointF will automatically be cast to SkiaSharp.SKPoint</param>
+        public static implicit operator SkiaSharp.SKPoint(PointF point)
+        {
+            return new SkiaSharp.SKPoint(point.X, point.Y);
         }
 
         #endregion
@@ -75,7 +99,7 @@ namespace IronSoftware.Drawing
         #region Override Methods
 
         /// <summary>
-        /// Specifies whether this <see cref="IronSoftware.Drawing.Point"/> instance contains the same coordinates as another <see cref="IronSoftware.Drawing.Point"/>.
+        /// Specifies whether this <see cref="IronSoftware.Drawing.PointF"/> instance contains the same coordinates as another <see cref="IronSoftware.Drawing.PointF"/>.
         /// </summary>
         /// <param name="obj">The point to test for equality.</param>
         /// <returns>true if other has the same coordinates as this point instance.</returns>
