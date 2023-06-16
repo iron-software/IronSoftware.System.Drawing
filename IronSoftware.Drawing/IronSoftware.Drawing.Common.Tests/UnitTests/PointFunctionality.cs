@@ -39,6 +39,30 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             _ = pt.Should().BeEquivalentTo(new Point(constructorX + xTranslation, constructorY + yTranslation));
         }
 
+        [FactWithAutomaticDisplayName]
+        public void Compare_Point_Equals()
+        {
+            int constructorX = 0;
+            int constructorY = 0;
+            Point pt1 = new Point(constructorX, constructorY);
+            Point pt2 = new Point(constructorX, constructorY);
+            pt1.Equals(pt2).Should().BeTrue();
+            pt2.Equals(pt1).Should().BeTrue();
+
+            constructorX = 20;
+            constructorY = 5;
+            pt1 = new Point(constructorX, constructorY);
+            pt2 = new Point(constructorX, constructorY);
+            pt1.Equals(pt2).Should().BeTrue();
+            pt2.Equals(pt1).Should().BeTrue();
+
+            int a = 5;
+            int b = -20;
+            pt1 = new Point(a, b);
+            pt2 = new Point(b, a);
+            pt1.Equals(pt2).Should().BeFalse();
+            pt2.Equals(pt1).Should().BeFalse();
+        }
 
 
         [FactWithAutomaticDisplayName]
@@ -68,6 +92,32 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             _ = pt.Y.Should().Be(constructorY + yTranslation);
             _ = pt.Should().NotBeEquivalentTo(new Point(constructorX, constructorY));
             _ = pt.Should().BeEquivalentTo(new Point(constructorX + xTranslation, constructorY + yTranslation));
+        }
+        
+
+        [FactWithAutomaticDisplayName]
+        public void Compare_PointF_Equals()
+        {
+            float constructorX = 0.0f;
+            float constructorY = 0.0f;
+            PointF pt1 = new PointF(constructorX, constructorY);
+            PointF pt2 = new PointF(constructorX, constructorY);
+            pt1.Equals(pt2).Should().BeTrue();
+            pt2.Equals(pt1).Should().BeTrue();
+
+            constructorX = 20.5f;
+            constructorY = 5.5f;
+            pt1 = new PointF(constructorX, constructorY);
+            pt2 = new PointF(constructorX, constructorY);
+            pt1.Equals(pt2).Should().BeTrue();
+            pt2.Equals(pt1).Should().BeTrue();
+
+            float a = 5.5f;
+            float b = -20.5f;
+            pt1 = new PointF(a, b);
+            pt2 = new PointF(b, a);
+            pt1.Equals(pt2).Should().BeFalse();
+            pt2.Equals(pt1).Should().BeFalse();
         }
     }
 }

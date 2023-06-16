@@ -105,10 +105,10 @@ namespace IronSoftware.Drawing
         /// <returns>true if other has the same coordinates as this point instance.</returns>
         public override bool Equals(object obj)
         {
-            Point otherPoint;
+            PointF otherPoint;
             try
             {
-                otherPoint = obj as Point;
+                otherPoint = obj as PointF;
             }
             catch
             {
