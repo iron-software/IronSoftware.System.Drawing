@@ -73,14 +73,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             PointF pt = new PointF(constructorX, constructorY);
             _ = pt.X.Should().Be(constructorX);
             _ = pt.Y.Should().Be(constructorY);
-            _ = pt.Should().BeEquivalentTo(new Point(constructorX, constructorY));
+            _ = pt.Should().BeEquivalentTo(new PointF(constructorX, constructorY));
 
             constructorX = 20f;
             constructorY = 5f;
             pt = new PointF(constructorX, constructorY);
             _ = pt.X.Should().Be(constructorX);
             _ = pt.Y.Should().Be(constructorY);
-            _ = pt.Should().BeEquivalentTo(new Point(constructorX, constructorY));
+            _ = pt.Should().BeEquivalentTo(new PointF(constructorX, constructorY));
 
             constructorX = 20.5f;
             constructorY = 5.33f;
@@ -90,8 +90,8 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             pt.Offset(xTranslation, yTranslation);
             _ = pt.X.Should().Be(constructorX + xTranslation);
             _ = pt.Y.Should().Be(constructorY + yTranslation);
-            _ = pt.Should().NotBeEquivalentTo(new Point(constructorX, constructorY));
-            _ = pt.Should().BeEquivalentTo(new Point(constructorX + xTranslation, constructorY + yTranslation));
+            _ = pt.Should().NotBeEquivalentTo(new PointF(constructorX, constructorY));
+            _ = pt.Should().BeEquivalentTo(new PointF(constructorX + xTranslation, constructorY + yTranslation));
         }
         
 

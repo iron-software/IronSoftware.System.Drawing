@@ -52,6 +52,18 @@
 |      `SkiaSharp.SKFont`      |          ✅          |           ✅           |
 |    `SixLabors.Fonts.Font`    |          ✅          |           ✅           |
 
+- **Point** and **PointF**: Universally compatible Point and PointF classes. Implicit casting between `IronSoftware.Drawing.Point` and `IronSoftware.Drawing.PointF` and the following supported:
+
+|   **Implicit Casting Support**   | To `Point` Supported | From `Point` Supported | To `PointF` Supported | From `PointF` Supported |
+|--------------------------------|:----------------------------:|:------------------------------:|:----------------------------:|:------------------------------:|
+| `System.Drawing.Point`            |               ✅              |                ✅               |                              |                                |
+| `SixLabors.ImageSharp.Point`      |               ✅              |                ✅               |                              |                                |
+| `SixLabors.ImageSharp.PointF`     |                              |                                |               ✅              |                ✅               |
+| `Microsoft.Maui.Graphics.Point`   |               ✅              |                ✅               |                              |                                |
+| `Microsoft.Maui.Graphics.PointF`  |                              |                                |               ✅              |                ✅               |
+| `SkiaSharp.SKPoint`               |                              |                                |               ✅              |                ✅               |
+| `SkiaSharp.SKPointI`              |               ✅              |                ✅               |                              |                                |
+
 ### IronSoftware.Drawing has cross platform support compatibility with:
 - .NET 7, .NET 6, .NET 5, .NET Core, Standard, and Framework
 - Windows, macOS, Linux, Docker, Azure, and AWS

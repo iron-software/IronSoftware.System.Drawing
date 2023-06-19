@@ -32,6 +32,14 @@ If you would like to contribute to this open-source project, please visit the pu
   - `System.Drawing.Font`
   - `SkiaSharp.SKFont`
   - `SixLabors.Fonts.Font`
+- **Point** and **PointF**: Universally compatible Point classes. Implicit casting between `IronSoftware.Drawing.Point` and `IronSoftware.Drawing.PointF` and the following supported:
+  - `System.Drawing.Point`
+  - `SixLabors.ImageSharp.Point`
+  - `SixLabors.ImageSharp.PointF`
+  - `Microsoft.Maui.Graphics.Point`
+  - `Microsoft.Maui.Graphics.PointF`
+  - `SkiaSharp.SKPoint`
+  - `SkiaSharp.SKPointI`
 
 ### Code Samples
 A full list of code examples can be found on our [Get Started](https://github.com/iron-software/IronSoftware.System.Drawing#using-ironsoftwaredrawing) on GitHub.
