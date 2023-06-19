@@ -216,6 +216,37 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void AnyBitmap_should_set_Pixel()
+        {
+            string imagePath = GetRelativeFilePath("checkmark.jpg");
+
+            using Image<Rgb24> formatRgb24 = Image.Load<Rgb24>(imagePath);
+            using Image<Abgr32> formatAbgr32 = Image.Load<Abgr32>(imagePath);
+            using Image<Argb32> formatArgb32 = Image.Load<Argb32>(imagePath);
+            using Image<Bgr24> formatBgr24 = Image.Load<Bgr24>(imagePath);
+            using Image<Bgra32> formatBgra32 = Image.Load<Bgra32>(imagePath);
+
+            Image[] images = { formatRgb24, formatAbgr32, formatArgb32, formatBgr24, formatBgra32 };
+
+            foreach (Image image in images)
+            {
+                AnyBitmap bitmap = (AnyBitmap)image;
+
+                // Get the current pixel color - should be white
+                var pixelBefore = bitmap.GetPixel(0, 0);
+
+                // Check current pixel color is not black
+                Assert.NotEqual(pixelBefore, Color.Black);
+
+                // Set the pixel color to black
+                bitmap.SetPixel(0, 0, Color.Black);
+
+                // Check the pixel color has changed
+                Assert.Equal(bitmap.GetPixel(0, 0), Color.Black);
+            }
+        }
+
+        [FactWithAutomaticDisplayName]
         public void AnyBitmap_should_get_Stream()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");

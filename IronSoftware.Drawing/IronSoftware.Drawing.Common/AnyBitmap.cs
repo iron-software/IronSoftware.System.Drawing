@@ -1010,6 +1010,32 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
+        /// Sets the <see cref="Color"/> of the specified pixel in this 
+        /// <see cref="AnyBitmap"/>
+        /// <para>Set in Rgb24 color format.</para>
+        /// </summary>
+        /// <param name="x">The x-coordinate of the pixel to retrieve.</param>
+        /// <param name="y">The y-coordinate of the pixel to retrieve.</param>
+        /// <param name="color">The color to set the pixel.</param>
+        /// <returns>void</returns>
+        public void SetPixel(int x, int y, Color color)
+        {
+            if (x < 0 || x >= Width)
+            {
+                throw new ArgumentOutOfRangeException(nameof(x),
+                    "x is less than 0, or greater than or equal to Width.");
+            }
+
+            if (y < 0 || y >= Height)
+            {
+                throw new ArgumentOutOfRangeException(nameof(y),
+                    "y is less than 0, or greater than or equal to Height.");
+            }
+
+            SetPixelColor(x, y, color);
+        }
+
+        /// <summary>
         /// Retrieves the RGB buffer from the image at the specified path.
         /// </summary>
         /// <returns>An array of bytes representing the RGB buffer of the image.</returns>
@@ -1652,10 +1678,12 @@ namespace IronSoftware.Drawing
             Default = -1
 
         }
-
+# pragma warning disable CS0618
         /// <summary>
         /// Converts the legacy <see cref="RotateFlipType"/> to <see cref="RotateMode"/> and <see cref="FlipMode"/>
         /// </summary>
+        [Obsolete("RotateFlipType is legacy support from System.Drawing. " +
+            "Please use RotateMode and FlipMode instead.")]
         internal static (RotateMode, FlipMode) ParseRotateFlipType(RotateFlipType rotateFlipType)
         {
             return rotateFlipType switch
@@ -1671,6 +1699,7 @@ namespace IronSoftware.Drawing
                 _ => throw new ArgumentOutOfRangeException(nameof(rotateFlipType), rotateFlipType, null),
             };
         }
+# pragma warning restore CS0618
 
         /// <summary>
         /// Provides enumeration over how the image should be rotated.
@@ -2389,6 +2418,31 @@ namespace IronSoftware.Drawing
             else
             {
                 return (Color)Image.CloneAs<Rgba32>()[x, y];
+            }
+        }
+
+        private void SetPixelColor(int x, int y, Color color)
+        {
+            switch (Image)
+            {
+                case Image<Rgb24> imageAsFormat:
+                    imageAsFormat[x, y] = color;
+                    break;
+                case Image<Abgr32> imageAsFormat:
+                    imageAsFormat[x, y] = color;
+                    break;
+                case Image<Argb32> imageAsFormat:
+                    imageAsFormat[x, y] = color;
+                    break;
+                case Image<Bgr24> imageAsFormat:
+                    imageAsFormat[x, y] = color;
+                    break;
+                case Image<Bgra32> imageAsFormat:
+                    imageAsFormat[x, y] = color;
+                    break;
+                default:
+                    (Image as Image<Rgba32>)[x, y] = color;
+                    break;
             }
         }
 
