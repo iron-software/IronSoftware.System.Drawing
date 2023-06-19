@@ -36,10 +36,8 @@ Supports:
 
 For general support and technical inquiries, please email us at: developers@ironsoftware.com</description>
 		<summary>IronSoftware.System.Drawing is an open-source solution for .NET developers to replace System.Drawing.Common with a universal and flexible library.</summary>
-		<releaseNotes>- Improved handling of Tiff image frames
-- Added LoadAnyBitmapFromRGBBuffer method: This new feature allows you to create an AnyBitmap object directly from an RGB pixel data buffer, providing a straightforward way to convert byte arrays into AnyBitmap objects.
-- Added GetRGBBuffer method: This enhancement simplifies the process of retrieving an RGB buffer from an image. You can now obtain the RGB pixel data from any image with a single method call.
-- Added new Point and PointF types and casting.</releaseNotes>
+		<releaseNotes>- Added Point and PointF classes
+- Added a SetPixel method to AnyBitmap to set a pixel's color</releaseNotes>
 		<copyright>Copyright © Iron Software 2022-2023</copyright>
 		<tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, TIFF, TIF, GIF, JPEG, PNG, Color, Rectangle, Drawing, C#, VB.NET, ASPX, create, render, generate, standard, netstandard2.0, core, netcore</tags>
 		<repository type="git" url="https://github.com/iron-software/IronSoftware.Drawing.Common" commit="$commit$" />
