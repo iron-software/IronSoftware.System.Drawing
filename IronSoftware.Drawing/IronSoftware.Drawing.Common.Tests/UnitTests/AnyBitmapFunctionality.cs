@@ -789,5 +789,18 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             anyBitmap.FrameCount.Should().BeGreaterThan(0);
         }
 
+        [FactWithAutomaticDisplayName]
+        public void Create_New_Image_Instance()
+        {
+            string blankBitmapPath = "blank_bitmap.bmp";
+            var bitmap = new AnyBitmap(8, 8);
+            bitmap.SaveAs(blankBitmapPath);
+
+            AnyBitmap blankBitmap = AnyBitmap.FromFile(blankBitmapPath);
+
+            blankBitmap.Width.Should().Be(8);
+            blankBitmap.Height.Should().Be(8);
+        }
+
     }
 }

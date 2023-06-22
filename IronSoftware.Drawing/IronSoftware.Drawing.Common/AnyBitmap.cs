@@ -1,7 +1,6 @@
 ﻿using BitMiracle.LibTiff.Classic;
 using Microsoft.Maui.Graphics.Platform;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Bmp;
@@ -558,6 +557,17 @@ namespace IronSoftware.Drawing
             {
                 throw new NotSupportedException("Error while loading AnyBitmap from Uri", e);
             }
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from width and height
+        /// </summary>
+        /// <param name="width">Width of new AnyBitmap</param>
+        /// <param name="height">Height of new AnyBitmap</param>
+        /// <param name="backgrounColor">Background color of new AnyBitmap</param>
+        public AnyBitmap(int width, int height, Color backgrounColor = null)
+        {
+            CreateNewImageInstance(width, height, backgrounColor);
         }
 
         /// <summary>
@@ -1878,6 +1888,18 @@ namespace IronSoftware.Drawing
         }
 
         #region Private Method
+
+        private void CreateNewImageInstance(int width, int height, Color backgrounColor)
+        {
+            Image = new Image<Rgba32>(width, height);
+            if (backgrounColor != null)
+            {
+                Image.Mutate(context => context.Fill(backgrounColor));
+            }
+            using var stream = new MemoryStream();
+            Image.SaveAsBmp(stream);
+            Binary = stream.ToArray();
+        }
 
         private void LoadImage(byte[] bytes)
         {
