@@ -615,6 +615,20 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(expectedHtml, actualHtml);
         }
 
+        [Theory]
+        [InlineData(0, 0, 0, 0.0)]     // Black
+        [InlineData(255, 255, 255, 1.0)] // White
+        [InlineData(255, 0, 0, 1.0)]     // Red
+        [InlineData(0, 255, 0, 1.0)]     // Green
+        [InlineData(0, 0, 255, 1.0)]     // Blue
+        [InlineData(127, 127, 127, 0.4980392156862745)] // Gray
+        public void TestBrightness(byte red, byte green, byte blue, double expectedBrightness)
+        {
+            Color color = Color.FromArgb(red, green, blue);
+            double brightness = color.GetBrightness();
+            Assert.Equal(expectedBrightness, brightness, 5);
+        }
+
 #if !NETFRAMEWORK
         [FactWithAutomaticDisplayName]
         public void Cast_Maui_from_Color()
