@@ -926,6 +926,16 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
+        /// Calculates the brightness of a color.
+        /// </summary>
+        /// <returns>The brightness of the color, a value between 0 (black) and 1 (white).</returns>
+        public double GetBrightness()
+        {
+            byte max = Math.Max(R, Math.Max(G, B));
+            return max / 255.0;
+        }
+
+        /// <summary>
         /// Gets the 32-bit ARGB value of this <see cref="Color"/> structure.
         /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/convert-color-to-32-bit-argb-value/">Code Example</a></para>
         /// </summary>
