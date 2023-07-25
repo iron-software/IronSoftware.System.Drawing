@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace IronSoftware.Drawing
 {
@@ -270,6 +271,61 @@ namespace IronSoftware.Drawing
 
             return new Microsoft.Maui.Graphics.Font(font.FamilyName, fontWeight, fontStyleType);
         }
+
+        /// <summary>
+        /// Implicitly casts IronPdf.Font.FontTypes objects to <see cref="Font"/>.  
+        /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
+        /// </summary>
+        /// <param name="fontTypes">IronPdf.Font.FontTypes will automatically be cast to <see cref="Font"/> </param>
+        public static implicit operator Font(IronPdf.Font.FontTypes fontTypes)
+        {
+            FontStyle style;
+            string[] names = fontTypes.Name.Split('-');
+            if (names.Length > 1)
+            {
+                style = names[1] switch
+                {
+                    "Bold" => FontStyle.Bold,
+                    "Italic" or "Oblique" => FontStyle.Italic,
+                    "BoldItalic" or "BoldOblique" => FontStyle.BoldItalic,
+                    _ => FontStyle.Regular,
+                };
+            }
+            else
+            {
+                style = FontStyle.Regular;
+            }
+
+            string fontName = fontTypes.Name.Split('-')[0] switch
+            {
+                "CourierNew" => "Courier New",
+                "TimesNewRoman" => "Times New Roman",
+                _ => fontTypes.Name.Split('-')[0]
+            };
+
+            return new Font(fontName, style);
+        }
+
+        private static readonly string[] _obliqueFonts = { "Courier", "Helvetica" };
+
+        /// <summary>
+        /// Implicitly casts to IronPdf.Font.FontTypes objects from <see cref="Font"/>.  
+        /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
+        /// </summary>
+        /// <param name="font"><see cref="Font"/> is explicitly cast to a IronPdf.Font.FontTypes </param>
+        public static implicit operator IronPdf.Font.FontTypes(Font font)
+        {
+            string fontName = font.FamilyName.Replace(" ", "");
+            fontName += font.Style switch
+            {
+                FontStyle.Bold => "-Bold",
+                FontStyle.Italic => _obliqueFonts.Contains(fontName) ? "-Oblique" : "-Italic",
+                FontStyle.BoldItalic => _obliqueFonts.Contains(fontName) ? "-BoldOblique" : "-BoldItalic",
+                _ => ""
+            };
+
+            return IronPdf.Font.FontTypes.FromString(fontName);
+        }
     }
 
     /// <summary>
@@ -302,6 +358,11 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Text with a line through the middle.
         /// </summary>
-        Strikeout = 8
+        Strikeout = 8,
+
+        /// <summary>
+        /// Bold and Italic text.
+        /// </summary>
+        BoldItalic = 16
     }
 }

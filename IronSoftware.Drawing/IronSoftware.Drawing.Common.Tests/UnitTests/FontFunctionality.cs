@@ -1,5 +1,7 @@
 ﻿using FluentAssertions;
+using System;
 using System.Runtime.InteropServices;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace IronSoftware.Drawing.Common.Tests.UnitTests
@@ -293,6 +295,83 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
                 _ = sixLaborsFont.IsBold.Should().BeTrue();
                 _ = sixLaborsFont.IsItalic.Should().BeTrue();
             }
+        }
+
+        [TheoryWithAutomaticDisplayName]
+        [InlineData("Arial", "Arial", FontStyle.Regular)]
+        [InlineData("Arial-Bold", "Arial", FontStyle.Bold)]
+        [InlineData("Arial-Italic", "Arial", FontStyle.Italic)]
+        [InlineData("Arial-BoldItalic", "Arial", FontStyle.BoldItalic)]
+        [InlineData("CourierNew", "Courier New", FontStyle.Regular)]
+        [InlineData("CourierNew-Bold", "Courier New", FontStyle.Bold)]
+        [InlineData("CourierNew-Italic", "Courier New", FontStyle.Italic)]
+        [InlineData("CourierNew-BoldItalic", "Courier New", FontStyle.BoldItalic)]
+        [InlineData("Helvetica", "Helvetica", FontStyle.Regular)]
+        [InlineData("Helvetica-Bold", "Helvetica", FontStyle.Bold)]
+        [InlineData("Helvetica-Oblique", "Helvetica", FontStyle.Italic)]
+        [InlineData("Helvetica-BoldOblique", "Helvetica", FontStyle.BoldItalic)]
+        [InlineData("TimesNewRoman", "Times New Roman", FontStyle.Regular)]
+        [InlineData("TimesNewRoman-Bold", "Times New Roman", FontStyle.Bold)]
+        [InlineData("TimesNewRoman-Italic", "Times New Roman", FontStyle.Italic)]
+        [InlineData("TimesNewRoman-BoldItalic", "Times New Roman", FontStyle.BoldItalic)]
+        public void CastFontTypes_to_Font(string fontTypesName, string expectedFontName, FontStyle expectedFontStyle)
+        {
+            IronPdf.Font.FontTypes fontTypes = IronPdf.Font.FontTypes.FromString(fontTypesName);
+            Font font = fontTypes; // Implicit cast
+
+            font.FamilyName.Should().Be(expectedFontName);
+            font.Style.Should().Be(expectedFontStyle);
+        }
+
+        [TheoryWithAutomaticDisplayName]
+        [InlineData("Arial", "Arial", FontStyle.Regular)]
+        [InlineData("Arial-Bold", "Arial", FontStyle.Bold)]
+        [InlineData("Arial-Italic", "Arial", FontStyle.Italic)]
+        [InlineData("Arial-BoldItalic", "Arial", FontStyle.BoldItalic)]
+        [InlineData("CourierNew", "Courier New", FontStyle.Regular)]
+        [InlineData("CourierNew-Bold", "Courier New", FontStyle.Bold)]
+        [InlineData("CourierNew-Italic", "Courier New", FontStyle.Italic)]
+        [InlineData("CourierNew-BoldItalic", "Courier New", FontStyle.BoldItalic)]
+        [InlineData("Helvetica", "Helvetica", FontStyle.Regular)]
+        [InlineData("Helvetica-Bold", "Helvetica", FontStyle.Bold)]
+        [InlineData("Helvetica-Oblique", "Helvetica", FontStyle.Italic)]
+        [InlineData("Helvetica-BoldOblique", "Helvetica", FontStyle.BoldItalic)]
+        [InlineData("TimesNewRoman", "Times New Roman", FontStyle.Regular)]
+        [InlineData("TimesNewRoman-Bold", "Times New Roman", FontStyle.Bold)]
+        [InlineData("TimesNewRoman-Italic", "Times New Roman", FontStyle.Italic)]
+        [InlineData("TimesNewRoman-BoldItalic", "Times New Roman", FontStyle.BoldItalic)]
+        public void CastFontTypes_from_Font(string expectedfontTypeName, string fontName, FontStyle fontStyle)
+        {
+            var font = new Font(fontName, fontStyle);
+
+            IronPdf.Font.FontTypes fontTypes = font; // Implicit cast
+
+            fontTypes.Name.Should().Be(expectedfontTypeName);
+        }
+
+        [TheoryWithAutomaticDisplayName]
+        [InlineData("Comic Sans MS", FontStyle.Regular)]
+        [InlineData("Optima", FontStyle.Bold)]
+        [InlineData("Gill Sans", FontStyle.Italic)]
+        [InlineData("Garamond", FontStyle.BoldItalic)]
+        public void CastFontTypes_from_Font_Should_throw_exception(string fontName, FontStyle fontStyle)
+        {
+            var font = new Font(fontName, fontStyle);
+
+            Exception ex = Assert.Throws<InvalidCastException>(() =>
+            {
+                IronPdf.Font.FontTypes fontTypes = font; // Implicit cast
+            });
+
+            string expectedFontName = fontStyle switch
+            {
+                FontStyle.Bold => $"{fontName.Replace(" ", "")}-Bold",
+                FontStyle.Italic => $"{fontName.Replace(" ", "")}-Italic",
+                FontStyle.BoldItalic => $"{fontName.Replace(" ", "")}-BoldItalic",
+                _ => fontName.Replace(" ", "")
+            };
+
+            Assert.Contains($"You have set a non PDF standatd FontType: {expectedFontName}, Please select one from IronPdf.Font.FontTypes.", ex.Message);
         }
 
 #if !NETFRAMEWORK
