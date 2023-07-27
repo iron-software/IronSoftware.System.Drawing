@@ -1,10 +1,14 @@
 ﻿using IronSoftware.Drawing.Extensions;
+using System.ComponentModel;
 
-namespace IronPdf.Font
+namespace IronSoftware.Drawing
 {
     /// <summary>
     /// Supported PDF Fonts
     /// </summary>
+    [Browsable(false)]
+    [Bindable(false)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public class FontTypes : Enumeration
     {
         /// E

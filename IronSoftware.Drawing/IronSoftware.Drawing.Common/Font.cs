@@ -277,7 +277,7 @@ namespace IronSoftware.Drawing
         /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
         /// <param name="fontTypes">IronPdf.Font.FontTypes will automatically be cast to <see cref="Font"/> </param>
-        public static implicit operator Font(IronPdf.Font.FontTypes fontTypes)
+        public static implicit operator Font(IronSoftware.Drawing.FontTypes fontTypes)
         {
             FontStyle style;
             string[] names = fontTypes.Name.Split('-');
@@ -313,7 +313,7 @@ namespace IronSoftware.Drawing
         /// <para>When your .NET Class methods use <see cref="Font"/> as parameters or return types, you now automatically support Font as well.</para>
         /// </summary>
         /// <param name="font"><see cref="Font"/> is explicitly cast to a IronPdf.Font.FontTypes </param>
-        public static implicit operator IronPdf.Font.FontTypes(Font font)
+        public static implicit operator IronSoftware.Drawing.FontTypes(Font font)
         {
             string fontName = font.FamilyName.Replace(" ", "");
             fontName += font.Style switch
@@ -324,7 +324,7 @@ namespace IronSoftware.Drawing
                 _ => ""
             };
 
-            return IronPdf.Font.FontTypes.FromString(fontName);
+            return IronSoftware.Drawing.FontTypes.FromString(fontName);
         }
     }
 

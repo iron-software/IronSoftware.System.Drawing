@@ -316,7 +316,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [InlineData("TimesNewRoman-BoldItalic", "Times New Roman", FontStyle.BoldItalic)]
         public void CastFontTypes_to_Font(string fontTypesName, string expectedFontName, FontStyle expectedFontStyle)
         {
-            IronPdf.Font.FontTypes fontTypes = IronPdf.Font.FontTypes.FromString(fontTypesName);
+            IronSoftware.Drawing.FontTypes fontTypes = IronSoftware.Drawing.FontTypes.FromString(fontTypesName);
             Font font = fontTypes; // Implicit cast
 
             font.FamilyName.Should().Be(expectedFontName);
@@ -344,7 +344,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
             var font = new Font(fontName, fontStyle);
 
-            IronPdf.Font.FontTypes fontTypes = font; // Implicit cast
+            IronSoftware.Drawing.FontTypes fontTypes = font; // Implicit cast
 
             fontTypes.Name.Should().Be(expectedfontTypeName);
         }
@@ -360,7 +360,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             Exception ex = Assert.Throws<InvalidCastException>(() =>
             {
-                IronPdf.Font.FontTypes fontTypes = font; // Implicit cast
+                IronSoftware.Drawing.FontTypes fontTypes = font; // Implicit cast
             });
 
             string expectedFontName = fontStyle switch
