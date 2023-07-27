@@ -1,14 +1,10 @@
 ﻿using IronSoftware.Drawing.Extensions;
-using System.ComponentModel;
 
 namespace IronSoftware.Drawing
 {
     /// <summary>
     /// Supported PDF Fonts
     /// </summary>
-    [Browsable(false)]
-    [Bindable(false)]
-    [EditorBrowsable(EditorBrowsableState.Never)]
     public class FontTypes : Enumeration
     {
         /// E
@@ -150,7 +146,7 @@ namespace IronSoftware.Drawing
                 "TimesNewRoman-BoldItalic" => TimesNewRomanBoldItalic,
                 "TimesNewRoman-Italic" => TimesNewRomanItalic,
                 "ZapfDingbats" => ZapfDingbats,
-                _ => throw new System.InvalidCastException($"You have set a non PDF standatd FontType: {fontName}, Please select one from IronPdf.Font.FontTypes.")
+                _ => throw new System.InvalidCastException($"You have set a non PDF standatd FontType: {fontName}, Please select one from IronSoftware.Drawing.FontTypes.")
             };
         }
     }
