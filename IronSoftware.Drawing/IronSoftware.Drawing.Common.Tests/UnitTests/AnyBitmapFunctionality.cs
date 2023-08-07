@@ -815,10 +815,10 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             // Assert
             Assert.NotNull(result);
             Assert.Equal(0, result[0]);
-            Assert.Equal(0, result[1]);
-            Assert.Equal(0, result[2]);
-            Assert.Equal(0, result[3]);
-            Assert.Equal(0, result[4]);
+            Assert.Equal(5, result[49282]);
+            Assert.Equal(108, result[49292]);
+            Assert.Equal(211, result[49300]);
+            Assert.Equal(0, result[47999]);
         }
 
         [FactWithAutomaticDisplayName]
