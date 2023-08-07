@@ -796,6 +796,41 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
+        /// Extracts the alpha channel data from an image.
+        /// </summary>
+        /// <returns>An array of bytes representing the alpha values of the image's pixels.</returns>
+        /// <exception cref="NotSupportedException">Thrown when the image's bit depth is not 32 bpp.</exception>
+        public byte[] ExtractAlphaData()
+        {
+            if (BitsPerPixel == 32)
+            {
+                var alpha = new List<byte>(Image.Width * Image.Height);
+                using var rgbaImage = Image is Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image
+                    ? image
+                    : Image.CloneAs<SixLabors.ImageSharp.PixelFormats.Rgba32>();
+                rgbaImage.ProcessPixelRows(accessor =>
+                {
+                    for (int y = 0; y < accessor.Height; y++)
+                    {
+                        Span<SixLabors.ImageSharp.PixelFormats.Rgba32> pixelRow = accessor.GetRowSpan(y);
+
+                        for (int x = 0; x < pixelRow.Length; x++)
+                        {
+                            SixLabors.ImageSharp.PixelFormats.Rgba32 pixel = pixelRow[x];
+                            alpha.Add(pixel.A);
+                        }
+                    }
+                });
+
+                return alpha.ToArray();
+            }
+            else
+            {
+                throw new NotSupportedException($"Extracting alpha data is not supported for {BitsPerPixel} bpp images.");
+            }
+        }
+
+        /// <summary>
         /// Specifies how much an <see cref="AnyBitmap"/> is rotated and the 
         /// axis used to flip the image.
         /// </summary>
