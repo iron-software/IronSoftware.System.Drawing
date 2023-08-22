@@ -76,3 +76,9 @@ jobs:
         PathtoPublish: 'VersionInformation'
         ArtifactName: 'IronDrawingVersions'
         publishLocation: 'Container'
+    # Tag
+    - task: PowerShell@2
+      displayName: 'Display NuGet Version'
+      inputs:
+        targetType: 'inline'
+        script: 'Write-Host "##vso[build.addbuildtag]${{ parameters.NuGetVersion }}"'

@@ -789,5 +789,49 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             anyBitmap.FrameCount.Should().BeGreaterThan(0);
         }
 
+        [FactWithAutomaticDisplayName]
+        public void Create_New_Image_Instance()
+        {
+            string blankBitmapPath = "blank_bitmap.bmp";
+            var bitmap = new AnyBitmap(8, 8);
+            bitmap.SaveAs(blankBitmapPath);
+
+            AnyBitmap blankBitmap = AnyBitmap.FromFile(blankBitmapPath);
+
+            blankBitmap.Width.Should().Be(8);
+            blankBitmap.Height.Should().Be(8);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void ExtractAlphaData_With32bppImage_ReturnsAlphaChannel()
+        {
+            // Arrange
+            string imagePath = GetRelativeFilePath("32_bit_transparent.png");
+            var bitmap = new AnyBitmap(imagePath);
+
+            // Act
+            var result = bitmap.ExtractAlphaData();
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(0, result[0]);
+            Assert.Equal(5, result[49282]);
+            Assert.Equal(108, result[49292]);
+            Assert.Equal(211, result[49300]);
+            Assert.Equal(0, result[47999]);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void ExtractAlphaData_WithUnsupportedBppImage_ThrowsException()
+        {
+            // Arrange
+            string imagePath = GetRelativeFilePath("24_bit.png");
+            var bitmap = new AnyBitmap(imagePath);
+
+            // Act & Assert
+            var exception = Assert.Throws<NotSupportedException>(() => bitmap.ExtractAlphaData());
+            Assert.Equal($"Extracting alpha data is not supported for {bitmap.BitsPerPixel} bpp images.", exception.Message);
+        }
+
     }
 }
