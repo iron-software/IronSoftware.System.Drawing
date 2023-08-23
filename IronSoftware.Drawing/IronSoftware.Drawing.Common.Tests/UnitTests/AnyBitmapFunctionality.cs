@@ -803,6 +803,26 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void Create_New_Image_With_Background_Instance()
+        {
+            string blankBitmapPath = "blank_bitmap.bmp";
+            var bitmap = new AnyBitmap(8, 8, Color.DarkRed);
+            bitmap.SaveAs(blankBitmapPath);
+
+            AnyBitmap blankBitmap = AnyBitmap.FromFile(blankBitmapPath);
+
+            blankBitmap.Width.Should().Be(8);
+            blankBitmap.Height.Should().Be(8);
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    blankBitmap.GetPixel(i, j).Should().Be(Color.DarkRed);
+                }
+            }
+        }
+
+        [FactWithAutomaticDisplayName]
         public void ExtractAlphaData_With32bppImage_ReturnsAlphaChannel()
         {
             // Arrange
