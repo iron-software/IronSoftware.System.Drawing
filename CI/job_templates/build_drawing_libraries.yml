@@ -2,6 +2,7 @@ parameters:
   publishAssemblies: false
   buildConfiguration: ''
   dependsOn: ''
+  assemblyVersion: '1.0.0.0'
 
 jobs:
   - job: BuildDrawingLibraries
@@ -52,6 +53,7 @@ jobs:
           ${{ parameters.buildConfiguration }}
           --no-restore
           --verbosity normal
+          --property:AssemblyVersion=${{ parameters.assemblyVersion }}
         versioningScheme: byEnvVar
         versionEnvVar: AssemblyVersion
     # Publish Pipeline Artifacts

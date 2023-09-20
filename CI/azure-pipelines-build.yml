@@ -73,6 +73,7 @@ stages:
       publishAssemblies: true
       buildConfiguration: $(Configuration)
       dependsOn: 'PrepareDrawingAssemblyVersion'
+      assemblyVersion: $(AssemblyVersion)
 ## Test Windows
 - template: stage_templates/run_tests_on_pool.yml
   parameters:
