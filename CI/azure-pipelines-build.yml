@@ -8,11 +8,11 @@ parameters:
   - name: githubRelease
     displayName: GitHub Release
     type: boolean
-    default: True
+    default: False
   - name: preRelease
     displayName: Pre-Release
     type: boolean
-    default: true
+    default: True
   - name: inputNuGetVersion
     displayName: NuGet-Version
     type: string
@@ -26,12 +26,6 @@ variables:
 
   - name: IronDrawingPatch
     value: $[counter(format('{0}.{1}', variables['IronDrawingMajorVersion'], variables['IronDrawingMinorVersion']), 1)]
-  
-  - name: AssemblyVersion
-    ${{ if eq(parameters.inputNuGetVersion, '0') }}:
-      value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingPatch).$(IronDrawingRevisionVersion)
-    ${{ if ne(parameters.inputNuGetVersion, '0') }}:
-      value: ${{ parameters.inputNuGetVersion }}.$(IronDrawingRevisionVersion)
 
   - name: NugetVersion
     ${{ if eq(parameters.inputNuGetVersion, '0') }}:
@@ -60,10 +54,25 @@ stages:
   displayName: Build IronSoftware.Drawing Libraries
   dependsOn: []
   jobs:
+  - job: PrepareDrawingAssemblyVersion
+    steps:
+    # Prepare Assembly version
+    - powershell: |
+        if ("${{ parameters.inputNuGetVersion }}" -eq "0") {
+          $AssemblyVersion = "$(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingRevisionVersion).$(IronDrawingPatch)"
+        } else {
+          $splitVersion = "${{ parameters.inputNuGetVersion }}".Split('.')
+          $AssemblyVersion = "$($splitVersion[0]).$($splitVersion[1]).$(IronDrawingRevisionVersion).$($splitVersion[2])"
+        }
+        Set-Content -Path "AssemblyVersion.txt" -Value $AssemblyVersion
+      displayName: 'Generate Assembly version'
+    - publish: 'AssemblyVersion.txt'
+      artifact: 'AssemblyVersionInfo'
   - template: job_templates/build_drawing_libraries.yml
     parameters:
       publishAssemblies: true
       buildConfiguration: $(Configuration)
+      dependsOn: 'PrepareDrawingAssemblyVersion'
 ## Test Windows
 - template: stage_templates/run_tests_on_pool.yml
   parameters:
