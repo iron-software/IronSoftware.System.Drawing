@@ -8,11 +8,11 @@ parameters:
   - name: githubRelease
     displayName: GitHub Release
     type: boolean
-    default: True
+    default: False
   - name: preRelease
     displayName: Pre-Release
     type: boolean
-    default: true
+    default: True
   - name: inputNuGetVersion
     displayName: NuGet-Version
     type: string
@@ -64,15 +64,15 @@ stages:
           $splitVersion = "${{ parameters.inputNuGetVersion }}".Split('.')
           $AssemblyVersion = "$($splitVersion[0]).$($splitVersion[1]).$(IronDrawingRevisionVersion).$($splitVersion[2])"
         }
-        Write-Host "##vso[task.setvariable variable=AssemblyVersion]$AssemblyVersion"
+        Set-Content -Path "AssemblyVersion.txt" -Value $AssemblyVersion
       displayName: 'Generate Assembly version'
-      name: setVarStep
+    - publish: 'AssemblyVersion.txt'
+      artifact: 'AssemblyVersionInfo'
   - template: job_templates/build_drawing_libraries.yml
     parameters:
       publishAssemblies: true
       buildConfiguration: $(Configuration)
       dependsOn: 'PrepareDrawingAssemblyVersion'
-      assemblyVersion: $[ dependencies.PrepareDrawingAssemblyVersion.outputs['setVarStep.AssemblyVersion'] ]
 ## Test Windows
 - template: stage_templates/run_tests_on_pool.yml
   parameters:
