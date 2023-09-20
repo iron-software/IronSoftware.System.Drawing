@@ -26,12 +26,15 @@ variables:
 
   - name: IronDrawingPatch
     value: $[counter(format('{0}.{1}', variables['IronDrawingMajorVersion'], variables['IronDrawingMinorVersion']), 1)]
+
+  - name: splitVersion
+    value: $[split(parameters.inputNuGetVersion, '.')]
   
   - name: AssemblyVersion
     ${{ if eq(parameters.inputNuGetVersion, '0') }}:
-      value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingPatch).$(IronDrawingRevisionVersion)
+      value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingRevisionVersion).$(IronDrawingPatch)
     ${{ if ne(parameters.inputNuGetVersion, '0') }}:
-      value: ${{ parameters.inputNuGetVersion }}.$(IronDrawingRevisionVersion)
+      value: $[format('{0}.{1}.{2}.{3}', splitVersion[0], splitVersion[1], variables.IronDrawingRevisionVersion, splitVersion[2])]
 
   - name: NugetVersion
     ${{ if eq(parameters.inputNuGetVersion, '0') }}:
