@@ -27,15 +27,6 @@ variables:
   - name: IronDrawingPatch
     value: $[counter(format('{0}.{1}', variables['IronDrawingMajorVersion'], variables['IronDrawingMinorVersion']), 1)]
 
-  - name: splitVersion
-    value: $[split(parameters.inputNuGetVersion, '.')]
-  
-  - name: AssemblyVersion
-    ${{ if eq(parameters.inputNuGetVersion, '0') }}:
-      value: $(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingRevisionVersion).$(IronDrawingPatch)
-    ${{ if ne(parameters.inputNuGetVersion, '0') }}:
-      value: $[format('{0}.{1}.{2}.{3}', splitVersion[0], splitVersion[1], variables.IronDrawingRevisionVersion, splitVersion[2])]
-
   - name: NugetVersion
     ${{ if eq(parameters.inputNuGetVersion, '0') }}:
       ${{ if eq(parameters.preRelease, true) }}:
@@ -63,10 +54,25 @@ stages:
   displayName: Build IronSoftware.Drawing Libraries
   dependsOn: []
   jobs:
+  - job: PrepareDrawingAssemblyVersion
+    steps:
+    # Prepare Assembly version
+    - powershell: |
+        if ("${{ parameters.inputNuGetVersion }}" -eq "0") {
+          $AssemblyVersion = "$(IronDrawingMajorVersion).$(IronDrawingMinorVersion).$(IronDrawingRevisionVersion).$(IronDrawingPatch)"
+        } else {
+          $splitVersion = "${{ parameters.inputNuGetVersion }}".Split('.')
+          $AssemblyVersion = "$($splitVersion[0]).$($splitVersion[1]).$(IronDrawingRevisionVersion).$($splitVersion[2])"
+        }
+        Write-Host "##vso[task.setvariable variable=AssemblyVersion]$AssemblyVersion"
+      displayName: 'Generate Assembly version'    
+    - script: echo $(AssemblyVersion)
+      displayName: 'Display Assembly version'
   - template: job_templates/build_drawing_libraries.yml
     parameters:
       publishAssemblies: true
       buildConfiguration: $(Configuration)
+      dependsOn: 'PrepareDrawingAssemblyVersion'
 ## Test Windows
 - template: stage_templates/run_tests_on_pool.yml
   parameters:

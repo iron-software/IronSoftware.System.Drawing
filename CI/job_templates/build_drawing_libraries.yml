@@ -1,9 +1,11 @@
 parameters:
   publishAssemblies: false
   buildConfiguration: ''
+  dependsOn: ''
 
 jobs:
   - job: BuildDrawingLibraries
+    dependsOn: ${{ parameters.dependsOn }}
     steps:
     # Checkout Repo
     - checkout: self
