@@ -65,15 +65,14 @@ stages:
           $AssemblyVersion = "$($splitVersion[0]).$($splitVersion[1]).$(IronDrawingRevisionVersion).$($splitVersion[2])"
         }
         Write-Host "##vso[task.setvariable variable=AssemblyVersion]$AssemblyVersion"
-      displayName: 'Generate Assembly version'    
-    - script: echo $(AssemblyVersion)
-      displayName: 'Display Assembly version'
+      displayName: 'Generate Assembly version'
+      name: setVarStep
   - template: job_templates/build_drawing_libraries.yml
     parameters:
       publishAssemblies: true
       buildConfiguration: $(Configuration)
       dependsOn: 'PrepareDrawingAssemblyVersion'
-      assemblyVersion: $(AssemblyVersion)
+      assemblyVersion: $[ dependencies.PrepareDrawingAssemblyVersion.outputs['setVarStep.AssemblyVersion'] ]
 ## Test Windows
 - template: stage_templates/run_tests_on_pool.yml
   parameters:
