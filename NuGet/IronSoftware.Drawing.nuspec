@@ -51,7 +51,7 @@ For general support and technical inquiries, please email us at: developers@iron
 			</group>
 			<group targetFramework="net60">
 				<dependency id="SixLabors.ImageSharp" version="3.0.1" />
-				<dependency id="SixLabors.ImageSharp.Drawing" version="1.0.0" />
+				<dependency id="SixLabors.ImageSharp.Drawing" version="2.0.0" />
 				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
 				<dependency id="System.Memory" version="4.5.5" />
 			</group>
