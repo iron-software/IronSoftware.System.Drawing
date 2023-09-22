@@ -12,12 +12,18 @@ jobs:
       - download: current
         artifact: 'AssemblyVersionInfo'
     - powershell: |
-        $AssemblyVersion = Get-Content "$(Pipeline.Workspace)\AssemblyVersionInfo\AssemblyVersion.txt"
-        if (![string]::IsNullOrEmpty($AssemblyVersion)) {
-          Write-Host "Using AssemblyVersion from previous job: $AssemblyVersion"
-          Write-Host "##vso[task.setvariable variable=finalAssemblyVersion]$AssemblyVersion"
+        $assemblyVersionFilePath = "$(Pipeline.Workspace)\AssemblyVersionInfo\AssemblyVersion.txt"
+        if (Test-Path $assemblyVersionFilePath) {
+          $AssemblyVersion = Get-Content $assemblyVersionFilePath
+          if (![string]::IsNullOrEmpty($AssemblyVersion)) {
+            Write-Host "Using AssemblyVersion from previous job: $AssemblyVersion"
+            Write-Host "##vso[task.setvariable variable=finalAssemblyVersion]$AssemblyVersion"
+          } else {
+            Write-Host "AssemblyVersion is empty, using default: 1.0.0.0"
+            Write-Host "##vso[task.setvariable variable=finalAssemblyVersion]1.0.0.0"
+          }
         } else {
-          Write-Host "AssemblyVersion is not set, using default: 1.0.0.0"
+          Write-Host "AssemblyVersion.txt not found, using default: 1.0.0.0"
           Write-Host "##vso[task.setvariable variable=finalAssemblyVersion]1.0.0.0"
         }
       displayName: 'Use or Set Assembly Version'
