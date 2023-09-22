@@ -2,23 +2,25 @@ parameters:
   publishAssemblies: false
   buildConfiguration: ''
   dependsOn: ''
+  prepareAssemblyVersion: false
 
 jobs:
   - job: BuildDrawingLibraries
     dependsOn: ${{ parameters.dependsOn }}
     steps:
-    - download: current
-      artifact: 'AssemblyVersionInfo'
-    - powershell: |
-        $AssemblyVersion = Get-Content "$(Pipeline.Workspace)\AssemblyVersionInfo\AssemblyVersion.txt"
-        if (![string]::IsNullOrEmpty($AssemblyVersion)) {
-          Write-Host "Using AssemblyVersion from previous job: $AssemblyVersion"
-          Write-Host "##vso[task.setvariable variable=finalAssemblyVersion]$AssemblyVersion"
-        } else {
-          Write-Host "AssemblyVersion is not set, using default: 1.0.0.0"
-          Write-Host "##vso[task.setvariable variable=finalAssemblyVersion]1.0.0.0"
-        }
-      displayName: 'Use or Set Assembly Version'
+    - ${{ if eq(parameters.prepareAssemblyVersion, true) }}:
+      - download: current
+        artifact: 'AssemblyVersionInfo'
+      - powershell: |
+          $AssemblyVersion = Get-Content "$(Pipeline.Workspace)\AssemblyVersionInfo\AssemblyVersion.txt"
+          if (![string]::IsNullOrEmpty($AssemblyVersion)) {
+            Write-Host "Using AssemblyVersion from previous job: $AssemblyVersion"
+            Write-Host "##vso[task.setvariable variable=finalAssemblyVersion]$AssemblyVersion"
+          } else {
+            Write-Host "AssemblyVersion is not set, using default: 1.0.0.0"
+            Write-Host "##vso[task.setvariable variable=finalAssemblyVersion]1.0.0.0"
+          }
+        displayName: 'Use or Set Assembly Version'
     # Checkout Repo
     - checkout: self
       displayName: Checkout IronSoftware.Drawing repository
