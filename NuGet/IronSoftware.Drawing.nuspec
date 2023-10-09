@@ -36,9 +36,11 @@ Supports:
 
 For general support and technical inquiries, please email us at: developers@ironsoftware.com</description>
 		<summary>IronSoftware.System.Drawing is an open-source solution for .NET developers to replace System.Drawing.Common with a universal and flexible library.</summary>
-		<releaseNotes>- Adds MonoAndroid Target Framework
-		- Updates version of Microsoft.Maui.Graphics dependency
-		- Updates version of SkiaSharp dependency</releaseNotes>
+		<releaseNotes>- Fixes vulnerability to CVE-2023-4863 by updating SkiaSharp dependency to 2.88.6
+- Updates SixLabors.ImageSharp.Drawing to 2.0.0 for net60 and above
+- Updates SixLabors.ImageSharp to:
+	- 2.1.6 for netstandard2.0, netstandard2.1, MonoAndroid10.0
+	- 3.0.2 for net60 and above</releaseNotes>
 		<copyright>Copyright © Iron Software 2022-2023</copyright>
 		<tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, TIFF, TIF, GIF, JPEG, PNG, Color, Rectangle, Drawing, C#, VB.NET, ASPX, create, render, generate, standard, netstandard2.0, core, netcore</tags>
 		<repository type="git" url="https://github.com/iron-software/IronSoftware.Drawing.Common" commit="$commit$" />
