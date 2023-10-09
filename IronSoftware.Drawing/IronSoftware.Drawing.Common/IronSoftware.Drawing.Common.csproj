@@ -35,12 +35,14 @@
 	<Choose>
 		<When Condition="'$(TargetFramework)' == 'net60'">
 			<ItemGroup>
-				<PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
+				<PackageReference Include="SixLabors.ImageSharp" Version="3.0.2" />
+				<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.0.0" />
 			</ItemGroup>
 		</When>
 		<Otherwise>
 			<ItemGroup>
-				<PackageReference Include="SixLabors.ImageSharp" Version="2.1.5" />
+				<PackageReference Include="SixLabors.ImageSharp" Version="2.1.6" />
+				<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0" />
 			</ItemGroup>
 		</Otherwise>
 	</Choose>
