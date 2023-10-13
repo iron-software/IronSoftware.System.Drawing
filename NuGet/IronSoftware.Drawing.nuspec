@@ -69,7 +69,7 @@ For general support and technical inquiries, please email us at: developers@iron
 				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
 				<dependency id="System.Memory" version="4.5.5" />
 				<dependency id="Microsoft.Maui.Graphics" version="7.0.92" />
-				<dependency id="SkiaSharp" version="2.88.5" />
+				<dependency id="SkiaSharp" version="2.88.6" />
 				<dependency id="SkiaSharp.Svg" version="1.60.0" />
 			</group>
 		</dependencies>

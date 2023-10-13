@@ -24,10 +24,9 @@
 	<ItemGroup>
 		<PackageReference Include="BitMiracle.LibTiff.NET" Version="2.4.649" />
 		<PackageReference Include="Microsoft.Maui.Graphics" Version="7.0.92" />
-		<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0" />
-		<PackageReference Include="SkiaSharp" Version="2.88.5" />
+		<PackageReference Include="SkiaSharp" Version="2.88.6" />
 		<PackageReference Include="SkiaSharp.Svg" Version="1.60.0" />
-		<PackageReference Include="System.Drawing.Common" Version="5.0.3" />
+		<PackageReference Include="System.Drawing.Common" Version="6.0.0" />
 		<PackageReference Include="System.Memory" Version="4.5.5" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
 	</ItemGroup>
