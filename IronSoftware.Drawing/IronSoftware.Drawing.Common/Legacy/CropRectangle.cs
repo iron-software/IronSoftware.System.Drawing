@@ -1,12 +1,18 @@
 using System;
+using System.ComponentModel;
 
 namespace IronSoftware.Drawing
 {
-    /// <summary>
-    /// A universally compatible Rectangle for .NET 7, .NET 6, .NET 5, and .NET Core. As well as compatiblity with Windows, NanoServer, IIS, macOS, Mobile, Xamarin, iOS, Android, Google Compute, Azure, AWS, and Linux.
+
+    /// A universally compatible Rectangle for .NET 7, .NET 6, .NET 5, and .NET Core. As well as compatibility with Windows, NanoServer, IIS, macOS, Mobile, Xamarin, iOS, Android, Google Compute, Azure, AWS, and Linux.
     /// <para>Works nicely with popular Image Rectangle such as System.Drawing.Rectangle, SkiaSharp.SKRect, SixLabors.ImageSharp.Rectangle, Microsoft.Maui.Graphics.Rect.</para>
-    /// <para>Implicit casting means that using this class to input and output Rectangle from public API's gives full compatibility to all Rectangle type fully supported by Microsoft.</para>
+    /// <para>Implicit casting means that using this class to input and output Rectangle from public APIs gives full compatibility to all Rectangle type fully supported by Microsoft.</para>
+    /// <para>Legacy support.</para>
     /// </summary>
+    [Browsable(false)]
+    [Bindable(false)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("Please use Rectangle instead of CropRectangle", false)]
     public class CropRectangle
     {
         /// <summary>
