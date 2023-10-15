@@ -1,4 +1,5 @@
 ﻿using BitMiracle.LibTiff.Classic;
+using IronSoftware.Drawing.Common.Legacy;
 using Microsoft.Maui.Graphics.Platform;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
@@ -147,7 +148,7 @@ namespace IronSoftware.Drawing
         /// <param name="rectangle">Defines the portion of this 
         /// <see cref="AnyBitmap"/> to copy.</param>
         /// <returns></returns>
-        public AnyBitmap Clone(CropRectangle rectangle)
+        public AnyBitmap Clone(Rectangle rectangle)
         {
             using Image image = Image.Clone(img => img.Crop(rectangle));
             using var memoryStream = new MemoryStream();
@@ -906,35 +907,35 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Creates a new bitmap with the region defined by the specified crop
+        /// Creates a new bitmap with the region defined by the specified
         /// rectangle redacted with the specified color.
         /// </summary>
-        /// <param name="cropRectangle">The crop rectangle defining the region
+        /// <param name="Rectangle">The rectangle defining the region
         /// to redact.</param>
         /// <param name="color">The color to use for redaction.</param>
         /// <returns>A new bitmap with the specified region redacted.</returns>
-        public AnyBitmap Redact(CropRectangle cropRectangle, Color color)
+        public AnyBitmap Redact(Rectangle Rectangle, Color color)
         {
-            return Redact(this, cropRectangle, color);
+            return Redact(this, Rectangle, color);
         }
 
         /// <summary>
-        /// Creates a new bitmap with the region defined by the specified crop
+        /// Creates a new bitmap with the region defined by the specified
         /// rectangle in the specified bitmap redacted with the specified color.
         /// </summary>
         /// <param name="bitmap">The bitmap to redact.</param>
-        /// <param name="cropRectangle">The crop rectangle defining the region
+        /// <param name="Rectangle">The rectangle defining the region
         /// to redact.</param>
         /// <param name="color">The color to use for redaction.</param>
         /// <returns>A new bitmap with the specified region redacted.</returns>
         public static AnyBitmap Redact(
             AnyBitmap bitmap,
-            CropRectangle cropRectangle,
+            Rectangle Rectangle,
             Color color)
         {
             using var memoryStream = new MemoryStream();
             using var image = Image.Load(bitmap.ExportBytes());
-            Rectangle rectangle = cropRectangle;
+            Rectangle rectangle = Rectangle;
             var brush = new SolidBrush(color);
             image.Mutate(ctx => ctx.Fill(brush, rectangle));
             image.Save(memoryStream, new BmpEncoder()

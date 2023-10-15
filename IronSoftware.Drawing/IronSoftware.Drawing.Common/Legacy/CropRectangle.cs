@@ -7,7 +7,7 @@ namespace IronSoftware.Drawing
     /// <para>Works nicely with popular Image Rectangle such as System.Drawing.Rectangle, SkiaSharp.SKRect, SixLabors.ImageSharp.Rectangle, Microsoft.Maui.Graphics.Rect.</para>
     /// <para>Implicit casting means that using this class to input and output Rectangle from public API's gives full compatibility to all Rectangle type fully supported by Microsoft.</para>
     /// </summary>
-    public partial class CropRectangle
+    public class CropRectangle
     {
         /// <summary>
         /// Construct a new CropRectangle.
@@ -275,6 +275,38 @@ namespace IronSoftware.Drawing
             return new Microsoft.Maui.Graphics.RectF(cropRectangle.X, cropRectangle.Y, cropRectangle.Width, cropRectangle.Height);
         }
 
+        /// <summary>
+        /// Implicitly casts new Rectangle objects to deprecated CropRectangle
+        /// </summary>
+        /// <param name="rectangle">Rectangle will automatically be cast to CropRectangle</param>
+        public static implicit operator CropRectangle(Rectangle rectangle)
+        {
+            return new CropRectangle
+            {
+                X = rectangle.X,
+                Y = rectangle.Y,
+                Width = rectangle.Width,
+                Height = rectangle.Height,
+                Units = rectangle.Units
+            };
+        }
+
+        /// <summary>
+        /// Implicitly casts deprecated CropRectangle objects to new Rectangle
+        /// </summary>
+        /// <param name="rectangle">CropRectangle will automatically be cast to Rectangle</param>
+        public static implicit operator Rectangle(CropRectangle rectangle)
+        {
+            return new Rectangle
+            {
+                X = rectangle.X,
+                Y = rectangle.Y,
+                Width = rectangle.Width,
+                Height = rectangle.Height,
+                Units = rectangle.Units
+            };
+        }
+
         #region Private Method
 
         private static CropRectangle CreateCropRectangle(int left, int top, int right, int bottom)
@@ -285,18 +317,4 @@ namespace IronSoftware.Drawing
         #endregion
     }
 
-    /// <summary>
-    /// A defined unit of measurement
-    /// </summary>
-    public enum MeasurementUnits : int
-    {
-        /// <summary>
-        /// Pixels
-        /// </summary>
-        Pixels = 0,
-        /// <summary>
-        /// Millimeters
-        /// </summary>
-        Millimeters = 1
-    }
 }
