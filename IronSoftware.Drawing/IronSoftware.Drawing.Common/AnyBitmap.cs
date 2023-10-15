@@ -1,5 +1,4 @@
 ﻿using BitMiracle.LibTiff.Classic;
-using IronSoftware.Drawing.Common.Legacy;
 using Microsoft.Maui.Graphics.Platform;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
