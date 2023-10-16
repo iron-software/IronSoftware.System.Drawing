@@ -57,12 +57,6 @@ For general support and technical inquiries, please email us at: developers@iron
 				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
 				<dependency id="System.Memory" version="4.5.5" />
 			</group>
-			<group targetFramework="netstandard2.1">
-				<dependency id="SixLabors.ImageSharp" version="2.1.6" />
-				<dependency id="SixLabors.ImageSharp.Drawing" version="1.0.0" />
-				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
-				<dependency id="System.Memory" version="4.5.5" />
-			</group>
 			<group targetFramework="MonoAndroid10.0">
 				<dependency id="SixLabors.ImageSharp" version="2.1.6" />
 				<dependency id="SixLabors.ImageSharp.Drawing" version="1.0.0" />
