@@ -308,7 +308,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             using Image image = anyBitmap;
             image.Mutate(img => img.Crop(new Rectangle(0, 0, 100, 100)));
-            AnyBitmap clonedWithRect = anyBitmap.Clone(new CropRectangle(0, 0, 100, 100));
+            AnyBitmap clonedWithRect = anyBitmap.Clone(new Rectangle(0, 0, 100, 100));
 
             image.SaveAsPng("expected.png");
             clonedWithRect.SaveAs("result.png");
@@ -662,7 +662,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             });
 
             var anyBitmap = new AnyBitmap(memoryStream.ToArray());
-            var rectangle = new CropRectangle(10, 10, 50, 50);
+            var rectangle = new Rectangle(10, 10, 50, 50);
             Color color = Color.Black;
 
             // Act
