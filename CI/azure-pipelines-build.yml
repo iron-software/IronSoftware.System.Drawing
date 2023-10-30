@@ -17,7 +17,6 @@ parameters:
     displayName: NuGet-Version
     type: string
     default: '0'
-
 variables:
   - group: IronDrawingVersions
   
@@ -26,7 +25,6 @@ variables:
 
   - name: IronDrawingPatch
     value: $[counter(format('{0}.{1}', variables['IronDrawingMajorVersion'], variables['IronDrawingMinorVersion']), 1)]
-
   - name: NugetVersion
     ${{ if eq(parameters.inputNuGetVersion, '0') }}:
       ${{ if eq(parameters.preRelease, true) }}:
@@ -38,7 +36,6 @@ variables:
         value: ${{ parameters.inputNuGetVersion }}-prerelease
       ${{ if eq(parameters.preRelease, false) }}:
         value: ${{ parameters.inputNuGetVersion }}
-
 # Build Trigger
 trigger:
     branches:
