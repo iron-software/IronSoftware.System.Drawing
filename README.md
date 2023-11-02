@@ -11,7 +11,7 @@
 - [Using IronSoftware.Drawing](#using-ironsoftwaredrawing)
   - [AnyBitmap Example](#anybitmap-code-example)
   - [Color Example](#color-code-example)
-  - [CropRectangle Example](#croprectangle-code-example)
+  - [Rectangle Example](#croprectangle-code-example)
   - [Font Example](#font-code-example)
 - [Support](#support-available)
 
@@ -35,9 +35,9 @@
 |     `SixLabors.ImageSharp.Color`    |           ✅          |            ✅           |
 | `SixLabors.ImageSharp.PixelFormats` |           ✅          |            ✅           |
   
-- **CropRectangle**: A universally compatible Rectangle class. Implicit casting between `IronSoftware.Drawing.CropRectangle` and following popular Rectangle formats supported:
+- **Rectangle**: A universally compatible Rectangle class. Implicit casting between `IronSoftware.Drawing.Rectangle` and following popular Rectangle formats supported:
 
-|   **Implicit Casting Support**   | To `CropRectangle` Supported | From `CropRectangle` Supported |
+|   **Implicit Casting Support**   | To `Rectangle` Supported | From `Rectangle` Supported |
 |--------------------------------|:----------------------------:|:------------------------------:|
 |    `System.Drawing.Rectangle`    |               ✅              |                ✅               |
 |        `SkiaSharp.SKRect`        |               ✅              |                ✅               |
@@ -141,24 +141,24 @@ ironColor.GetLuminance();
 // Gets the 32-bit ARGB value of this Color structure.
 ironColor.ToArgb()
 ```
-### `CropRectangle` Code Example
+### `Rectangle` Code Example
 ```csharp
 using IronSoftware.Drawing;
 
-// Create a new CropRectangle object
-CropRectangle cropRectangle = new CropRectangle(5, 5, 50, 50);
+// Create a new Rectangle object
+Rectangle rectangle = new Rectangle(5, 5, 50, 50);
 
-// Create a new CropRectangle object with MeasurementUnits
-CropRectangle mmRectangle = new CropRectangle(5, 5, 50, 50, MeasurementUnits.Millimeters);
+// Create a new Rectangle object with MeasurementUnits
+Rectangle mmRectangle = new Rectangle(5, 5, 50, 50, MeasurementUnits.Millimeters);
 
 // Convert between MeasurementUnits
-CropRectangle pxRectangle = mmRectangle.ConvertTo(MeasurementUnits.Millimeters);
+Rectangle pxRectangle = mmRectangle.ConvertTo(MeasurementUnits.Millimeters);
 // Or specify DPI
-CropRectangle pxRectangleWithDPI = mmRectangle.ConvertTo(MeasurementUnits.Millimeters, 200);
+Rectangle pxRectangleWithDPI = mmRectangle.ConvertTo(MeasurementUnits.Millimeters, 200);
 
-// Casting between System.Drawing.Rectangle and IronSoftware.Drawing.CropRectangle
+// Casting between System.Drawing.Rectangle and IronSoftware.Drawing.Rectangle
 System.Drawing.Rectangle rectangle = new System.Drawing.Rectangle(10, 10, 150, 150);
-IronSoftware.Drawing.CropRectangle ironRectangle = rectangle;
+IronSoftware.Drawing.Rectangle ironRectangle = rectangle;
 
 ironRectangle.X;
 ironRectangle.Y;
