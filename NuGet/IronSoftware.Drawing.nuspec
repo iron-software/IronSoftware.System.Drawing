@@ -22,7 +22,7 @@ Implicit casting means that using this class to input and output Bitmap and imag
 Key library features include:
 * AnyBitmap: A universally compatible Bitmap class. Implicit casting between System.Drawing.Bitmap, System.Drawing.Image, SkiaSharp.SKBitmap, SkiaSharp.SKImage, SixLabors.ImageSharp, Microsoft.Maui.Graphics.Platform.PlatformImage to IronSoftware.Drawing.AnyBitmap
 * Color: A universally compatible Color class. Implicit casting between System.Drawing.Color, SkiaSharp.SKColor, SixLabors.ImageSharp.Color, SixLabors.ImageSharp.PixelFormats to IronSoftware.Drawing.Color
-* CropRectangle: A universally compatible Rectangle class. Implicit casting between System.Drawing.Rectangle, SkiaSharp.SKRect, SkiaSharp.SKRectI, SixLabors.ImageSharp.Rectangle to IronSoftware.Drawing.CropRectangle
+* Rectangle: A universally compatible Rectangle class. Implicit casting between System.Drawing.Rectangle, SkiaSharp.SKRect, SkiaSharp.SKRectI, SixLabors.ImageSharp.Rectangle to IronSoftware.Drawing.Rectangle
 * Font: A universally compatible Font class. Implicit casting between System.Drawing.Font, SkiaSharp.SKFont, SixLabors.Fonts.Font to IronSoftware.Drawing.Font
 
 IronSoftware.Drawing can be used within C#, VB.NET, F#, ASP.NET projects, MVC, Web Services, Console &amp; Desktop Applications.
@@ -36,11 +36,7 @@ Supports:
 
 For general support and technical inquiries, please email us at: developers@ironsoftware.com</description>
 		<summary>IronSoftware.System.Drawing is an open-source solution for .NET developers to replace System.Drawing.Common with a universal and flexible library.</summary>
-		<releaseNotes>- Fixes vulnerability to CVE-2023-4863 by updating SkiaSharp dependency to 2.88.6
-- Updates SixLabors.ImageSharp.Drawing to 2.0.0 for net60 and above
-- Updates SixLabors.ImageSharp to:
-	- 2.1.6 for netstandard2.0, netstandard2.1, MonoAndroid10.0
-	- 3.0.2 for net60 and above</releaseNotes>
+		<releaseNotes>- Changes CropRectangle class to Rectangle</releaseNotes>
 		<copyright>Copyright © Iron Software 2022-2023</copyright>
 		<tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, TIFF, TIF, GIF, JPEG, PNG, Color, Rectangle, Drawing, C#, VB.NET, ASPX, create, render, generate, standard, netstandard2.0, core, netcore</tags>
 		<repository type="git" url="https://github.com/iron-software/IronSoftware.Drawing.Common" commit="$commit$" />

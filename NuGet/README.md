@@ -23,7 +23,7 @@ If you would like to contribute to this open-source project, please visit the pu
   - `SkiaSharp.SKColor`
   - `SixLabors.ImageSharp.Color`
   - `SixLabors.ImageSharp.PixelFormats`
-- **CropRectangle**: A universally compatible Rectangle class. Implicit casting between `IronSoftware.Drawing.CropRectangle` and the following supported:
+- **Rectangle**: A universally compatible Rectangle class. Implicit casting between `IronSoftware.Drawing.Rectangle` and the following supported:
   - `System.Drawing.Rectangle`
   - `SkiaSharp.SKRect`
   - `SkiaSharp.SKRectI`
