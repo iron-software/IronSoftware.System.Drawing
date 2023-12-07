@@ -11,6 +11,7 @@ pr:
     include:
     - master
     - main
+    - develop
   paths:
     exclude:
     - NuGet
