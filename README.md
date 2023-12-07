@@ -6,14 +6,16 @@
 
 ## Table of Contents
 
-- [Features](#ironsoftwaredrawing-features)
-  - [Compatibility](#ironsoftwaredrawing-has-cross-platform-support-compatibility-with)
-- [Using IronSoftware.Drawing](#using-ironsoftwaredrawing)
-  - [AnyBitmap Example](#anybitmap-code-example)
-  - [Color Example](#color-code-example)
-  - [Rectangle Example](#croprectangle-code-example)
-  - [Font Example](#font-code-example)
-- [Support](#support-available)
+- [IronSoftware.Drawing - Image, Color, Rectangle, and Font class for .NET Applications](#ironsoftwaredrawing---image-color-rectangle-and-font-class-for-net-applications)
+  - [Table of Contents](#table-of-contents)
+  - [IronSoftware.Drawing Features:](#ironsoftwaredrawing-features)
+    - [IronSoftware.Drawing has cross platform support compatibility with:](#ironsoftwaredrawing-has-cross-platform-support-compatibility-with)
+  - [Using IronSoftware.Drawing](#using-ironsoftwaredrawing)
+    - [`AnyBitmap` Code Example](#anybitmap-code-example)
+    - [`Color` Code Example](#color-code-example)
+    - [`Rectangle` Code Example](#rectangle-code-example)
+    - [`Font` Code Example](#font-code-example)
+  - [Support Available](#support-available)
 
 ## IronSoftware.Drawing Features:
 - **AnyBitmap**: A universally compatible Bitmap class. Implicit casting between `IronSoftware.Drawing.AnyBitmap` and following popular Bitmap/Image formats supported:
@@ -125,6 +127,7 @@ using IronSoftware.Drawing;
 Color fromHex = new Color("#191919");
 Color fromRgb = new Color(255, 255, 0);
 Color fromEnum = Color.Crimson;
+Color transparentBlack = new Color();
 
 // Casting between System.Drawing.Color and IronSoftware.Drawing.Color
 System.Drawing.Color drawingColor = System.Drawing.Color.Red;
