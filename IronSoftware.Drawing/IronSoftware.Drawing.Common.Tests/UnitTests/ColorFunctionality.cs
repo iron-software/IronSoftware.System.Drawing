@@ -629,6 +629,17 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(expectedBrightness, brightness, 5);
         }
 
+        [FactWithAutomaticDisplayName]
+        public void TestEmptyConstructor()
+        {
+            var color = new Color();
+
+            color.A.Should().Be(0);
+            color.R.Should().Be(0);
+            color.G.Should().Be(0);
+            color.B.Should().Be(0);
+        }
+
 #if !NETFRAMEWORK
         [FactWithAutomaticDisplayName]
         public void Cast_Maui_from_Color()
