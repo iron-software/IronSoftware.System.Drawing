@@ -104,6 +104,20 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="Color"/> class with default values.
+        /// </summary>
+        /// <remarks>
+        /// The default color is fully transparent black, with an ARGB value of (0, 0, 0, 0).
+        /// </remarks>
+        public Color()
+        {
+            A = 0;
+            R = 0;
+            G = 0;
+            B = 0;
+        }
+
+        /// <summary>
         /// Represents a color that is null.
         /// </summary>
         public static readonly Color Empty;
