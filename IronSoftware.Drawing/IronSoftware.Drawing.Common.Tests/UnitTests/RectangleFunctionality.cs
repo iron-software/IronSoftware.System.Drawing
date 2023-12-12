@@ -334,5 +334,241 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(215, rect.Bottom);
         }
 #endif
+        [FactWithAutomaticDisplayName]
+        public void Create_new_RectangleF()
+        {
+            RectangleF RectangleF = new RectangleF();
+            Assert.NotNull(RectangleF);
+            Assert.Equal(0, RectangleF.Width);
+            Assert.Equal(0, RectangleF.Height);
+            Assert.Equal(0, RectangleF.X);
+            Assert.Equal(0, RectangleF.Y);
+
+            RectangleF.Width = 100;
+            RectangleF.Height = 100;
+            RectangleF.X = 25;
+            RectangleF.Y = 50;
+            Assert.Equal(100, RectangleF.Width);
+            Assert.Equal(100, RectangleF.Height);
+            Assert.Equal(25, RectangleF.X);
+            Assert.Equal(50, RectangleF.Y);
+
+            RectangleF = new RectangleF(5, 5, 50, 50);
+            Assert.NotNull(RectangleF);
+            Assert.Equal(50, RectangleF.Width);
+            Assert.Equal(50, RectangleF.Height);
+            Assert.Equal(5, RectangleF.X);
+            Assert.Equal(5, RectangleF.Y);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CastRectangleF_to_RectangleF()
+        {
+            System.Drawing.RectangleF RectangleF = new System.Drawing.RectangleF(10, 10, 150, 150);
+            RectangleF Rectangle = RectangleF;
+            Assert.NotNull(Rectangle);
+            Assert.Equal(150, Rectangle.Width);
+            Assert.Equal(150, Rectangle.Height);
+            Assert.Equal(10, Rectangle.X);
+            Assert.Equal(10, Rectangle.Y);
+
+            RectangleF = new System.Drawing.RectangleF(new System.Drawing.Point(15, 15), new System.Drawing.Size(75, 75));
+            Rectangle = RectangleF;
+            Assert.NotNull(Rectangle);
+            Assert.Equal(75, Rectangle.Width);
+            Assert.Equal(75, Rectangle.Height);
+            Assert.Equal(15, Rectangle.X);
+            Assert.Equal(15, Rectangle.Y);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CastRectangleF_from_RectangleF()
+        {
+            RectangleF RectangleF = new RectangleF(5, 5, 50, 50);
+
+            System.Drawing.RectangleF Rectangle = RectangleF;
+
+            Assert.NotNull(Rectangle);
+            Assert.Equal(50, Rectangle.Width);
+            Assert.Equal(50, Rectangle.Height);
+            Assert.Equal(5, Rectangle.X);
+            Assert.Equal(5, Rectangle.Y);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CastImageSharp_RectangleF_to_RectangleF()
+        {
+            SixLabors.ImageSharp.RectangleF RectangleF = new SixLabors.ImageSharp.RectangleF(10, 10, 150, 150);
+            RectangleF Rectangle = RectangleF;
+            Assert.NotNull(Rectangle);
+            Assert.Equal(150, Rectangle.Width);
+            Assert.Equal(150, Rectangle.Height);
+            Assert.Equal(10, Rectangle.X);
+            Assert.Equal(10, Rectangle.Y);
+
+            RectangleF = new SixLabors.ImageSharp.RectangleF(new SixLabors.ImageSharp.Point(15, 15), new SixLabors.ImageSharp.Size(75, 75));
+            Rectangle = RectangleF;
+            Assert.NotNull(Rectangle);
+            Assert.Equal(75, Rectangle.Width);
+            Assert.Equal(75, Rectangle.Height);
+            Assert.Equal(15, Rectangle.X);
+            Assert.Equal(15, Rectangle.Y);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CastImageSharp_RectangleF_from_RectangleF()
+        {
+            RectangleF RectangleF = new RectangleF(5, 5, 50, 50);
+
+            SixLabors.ImageSharp.RectangleF Rectangle = RectangleF;
+
+            Assert.Equal(50, Rectangle.Width);
+            Assert.Equal(50, Rectangle.Height);
+            Assert.Equal(5, Rectangle.X);
+            Assert.Equal(5, Rectangle.Y);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CastSKRect_to_RectangleF()
+        {
+            SkiaSharp.SKRect rect = new SkiaSharp.SKRect(50, 100, 150, 25);
+            RectangleF RectangleF = rect;
+            Assert.NotNull(RectangleF);
+            Assert.Equal(100, RectangleF.Width);
+            Assert.Equal(75, RectangleF.Height);
+            Assert.Equal(50, RectangleF.X);
+            Assert.Equal(25, RectangleF.Y);
+
+            rect = new SkiaSharp.SKRect(150, 25, 50, 100);
+            RectangleF = rect;
+            Assert.NotNull(RectangleF);
+            Assert.Equal(100, RectangleF.Width);
+            Assert.Equal(75, RectangleF.Height);
+            Assert.Equal(50, RectangleF.X);
+            Assert.Equal(25, RectangleF.Y);
+
+            rect = SkiaSharp.SKRect.Create(200, 200);
+            RectangleF = rect;
+            Assert.NotNull(RectangleF);
+            Assert.Equal(200, RectangleF.Width);
+            Assert.Equal(200, RectangleF.Height);
+            Assert.Equal(0, RectangleF.X);
+            Assert.Equal(0, RectangleF.Y);
+
+            rect = SkiaSharp.SKRect.Create(15, 15, 200, 200);
+            RectangleF = rect;
+            Assert.NotNull(RectangleF);
+            Assert.Equal(200, RectangleF.Width);
+            Assert.Equal(200, RectangleF.Height);
+            Assert.Equal(15, RectangleF.X);
+            Assert.Equal(15, RectangleF.Y);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CastSKRect_from_RectangleF()
+        {
+            RectangleF RectangleF = new RectangleF(50, 25, 50, 50);
+            SkiaSharp.SKRect rect = RectangleF;
+            Assert.Equal(50, rect.Left);
+            Assert.Equal(25, rect.Top);
+            Assert.Equal(100, rect.Right);
+            Assert.Equal(75, rect.Bottom);
+
+            RectangleF = new RectangleF(15, 15, 200, 200);
+            rect = RectangleF;
+            Assert.Equal(15, rect.Left);
+            Assert.Equal(15, rect.Top);
+            Assert.Equal(215, rect.Right);
+            Assert.Equal(215, rect.Bottom);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void ConvertMeasurementF()
+        {
+            RectangleF pxCropRect = new RectangleF(15, 25, 150, 175);
+            RectangleF mmCropRect = pxCropRect.ConvertTo(MeasurementUnits.Millimeters, 96);
+            Assert.Equal(3, mmCropRect.X);
+            Assert.Equal(6, mmCropRect.Y);
+            Assert.Equal(39, mmCropRect.Width);
+            Assert.Equal(46, mmCropRect.Height);
+        }
+
+#if !NETFRAMEWORK
+
+        [FactWithAutomaticDisplayName]
+        public void CastMaui_Rect_to_RectangleF()
+        {
+            Microsoft.Maui.Graphics.RectF rect = new Microsoft.Maui.Graphics.RectF(50, 100, 150, 25);
+            RectangleF RectangleF = rect;
+            Assert.NotNull(RectangleF);
+            Assert.Equal(150, RectangleF.Width);
+            Assert.Equal(25, RectangleF.Height);
+            Assert.Equal(50, RectangleF.X);
+            Assert.Equal(100, RectangleF.Y);
+
+            rect = new Microsoft.Maui.Graphics.RectF(150, 25, 50, 100);
+            RectangleF = rect;
+            Assert.NotNull(RectangleF);
+            Assert.Equal(50, RectangleF.Width);
+            Assert.Equal(100, RectangleF.Height);
+            Assert.Equal(150, RectangleF.X);
+            Assert.Equal(25, RectangleF.Y);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CastMaui_Rect_from_RectangleF()
+        {
+            RectangleF RectangleF = new RectangleF(50, 25, 50, 50);
+            Microsoft.Maui.Graphics.Rect rect = RectangleF;
+            Assert.Equal(50, rect.Left);
+            Assert.Equal(25, rect.Top);
+            Assert.Equal(100, rect.Right);
+            Assert.Equal(75, rect.Bottom);
+
+            RectangleF = new RectangleF(15, 15, 200, 200);
+            rect = RectangleF;
+            Assert.Equal(15, rect.Left);
+            Assert.Equal(15, rect.Top);
+            Assert.Equal(215, rect.Right);
+            Assert.Equal(215, rect.Bottom);
+        }
+        [FactWithAutomaticDisplayName]
+        public void CastMaui_RectF_to_RectangleF()
+        {
+            Microsoft.Maui.Graphics.RectF rect = new Microsoft.Maui.Graphics.RectF(50, 100, 150, 25);
+            RectangleF RectangleF = rect;
+            Assert.NotNull(RectangleF);
+            Assert.Equal(150, RectangleF.Width);
+            Assert.Equal(25, RectangleF.Height);
+            Assert.Equal(50, RectangleF.X);
+            Assert.Equal(100, RectangleF.Y);
+
+            rect = new Microsoft.Maui.Graphics.RectF(150, 25, 50, 100);
+            RectangleF = rect;
+            Assert.NotNull(RectangleF);
+            Assert.Equal(50, RectangleF.Width);
+            Assert.Equal(100, RectangleF.Height);
+            Assert.Equal(150, RectangleF.X);
+            Assert.Equal(25, RectangleF.Y);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CastMaui_RectF_from_RectangleF()
+        {
+            RectangleF RectangleF = new RectangleF(50, 25, 50, 50);
+            Microsoft.Maui.Graphics.RectF rect = RectangleF;
+            Assert.Equal(50, rect.Left);
+            Assert.Equal(25, rect.Top);
+            Assert.Equal(100, rect.Right);
+            Assert.Equal(75, rect.Bottom);
+
+            RectangleF = new RectangleF(15, 15, 200, 200);
+            rect = RectangleF;
+            Assert.Equal(15, rect.Left);
+            Assert.Equal(15, rect.Top);
+            Assert.Equal(215, rect.Right);
+            Assert.Equal(215, rect.Bottom);
+        }
+#endif
     }
 }
