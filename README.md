@@ -11,7 +11,7 @@
 - [Using IronSoftware.Drawing](#using-ironsoftwaredrawing)
   - [AnyBitmap Example](#anybitmap-code-example)
   - [Color Example](#color-code-example)
-  - [Rectangle Example](#croprectangle-code-example)
+  - [Rectangle Example](#rectangle-code-example)
   - [Font Example](#font-code-example)
 - [Support](#support-available)
 
@@ -37,12 +37,13 @@
   
 - **Rectangle**: A universally compatible Rectangle class. Implicit casting between `IronSoftware.Drawing.Rectangle` and following popular Rectangle formats supported:
 
-|   **Implicit Casting Support**   | To `Rectangle` Supported | From `Rectangle` Supported |
-|--------------------------------|:----------------------------:|:------------------------------:|
-|    `System.Drawing.Rectangle`    |               ✅              |                ✅               |
-|        `SkiaSharp.SKRect`        |               ✅              |                ✅               |
-|        `SkiaSharp.SKRectI`       |               ✅              |                ✅               |
-| `SixLabors.ImageSharp.Rectangle` |               ✅              |                ✅               |
+|   **Implicit Casting Support**   | To `Rectangle` Supported | From `Rectangle` Supported | To `RectangleF` Supported | From `RectangleF` Supported |
+|--------------------------------|:----------------------------:|:------------------------------:|:----------------------------:|:------------------------------:|
+|    `System.Drawing.Rectangle`    |               ✅              |                ✅               |               ✅              |                ✅               |
+|        `SkiaSharp.SKRect`        |               ✅              |                ✅               |               ✅              |                ✅               |
+|        `SkiaSharp.SKRectI`       |               ✅              |                ✅               |               ✅              |                ✅               |
+| `SixLabors.ImageSharp.Rectangle` |               ✅              |                ✅               |               ✅              |                ✅               |
+| `Microsoft.Maui.Graphics.Rect` |               ✅              |                ✅               |               ✅              |                ✅               |
 
 - **Font**: A universally compatible Font class. Implicit casting between `IronSoftware.Drawing.Font` and following popular Font formats supported:
 
@@ -187,4 +188,4 @@ ironFont.Bold;
 
 For more information about Iron Software please visit our website: [https://ironsoftware.com/](https://ironsoftware.com/)
 
-For general support and technical inquiries, please email us at: developers@ironsoftware.com
+For general support and technical inquiries, please email us at: support@ironsoftware.com

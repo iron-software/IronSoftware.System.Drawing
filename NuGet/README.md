@@ -7,7 +7,7 @@
 If you would like to contribute to this open-source project, please visit the public GitHub and open a branch [here](https://github.com/iron-software/IronSoftware.System.Drawing/).
 
 ## Cross platform support compatibility with:
-- .NET 7, .NET 6, .NET 5, .NET Core, Standard, and Framework
+- .NET 8, .NET 7, .NET 6, .NET 5, .NET Core, Standard, and Framework
 - Windows, macOS, Linux, Docker, Azure, and AWS
 
 ## IronSoftware.Drawing Features:
@@ -23,11 +23,16 @@ If you would like to contribute to this open-source project, please visit the pu
   - `SkiaSharp.SKColor`
   - `SixLabors.ImageSharp.Color`
   - `SixLabors.ImageSharp.PixelFormats`
-- **Rectangle**: A universally compatible Rectangle class. Implicit casting between `IronSoftware.Drawing.Rectangle` and the following supported:
+- **Rectangle** and **RectangleF**: A universally compatible Rectangle class. Implicit casting between `IronSoftware.Drawing.Rectangle` and `IronSoftware.Drawing.RectangleF` and the following supported:
   - `System.Drawing.Rectangle`
   - `SkiaSharp.SKRect`
   - `SkiaSharp.SKRectI`
   - `SixLabors.ImageSharp.Rectangle`
+  - `Microsoft.Maui.Graphics.Rect`
+  - `System.Drawing.RectangleF`
+  - `SkiaSharp.SKRect`
+  - `SixLabors.ImageSharp.RectangleF`
+  - `Microsoft.Maui.Graphics.RectF`
 - **Font**: A universally compatible Font class. Implicit casting between `IronSoftware.Drawing.Font` and the following supported:
   - `System.Drawing.Font`
   - `SkiaSharp.SKFont`
@@ -51,4 +56,4 @@ To report an issue with IronSoftware.System.Drawing please raise them on the [Gi
 
 For more information about Iron Software please visit our website: [https://ironsoftware.com/](https://ironsoftware.com/)
 
-For general support and technical inquiries, please email us at: developers@ironsoftware.com
+For general support and technical inquiries, please email us at: support@ironsoftware.com
