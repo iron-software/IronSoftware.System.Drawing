@@ -133,6 +133,16 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
+        /// Implicitly casts to RectangleF objects from <see cref="Rectangle"/>.
+        /// <para>When your .NET Class methods use <see cref="Rectangle"/> as parameters and return types, you now automatically support RectangleF as well.</para>
+        /// </summary>
+        /// <param name="Rectangle"><see cref="Rectangle"/> is explicitly cast to a RectangleF.</param>
+        public static implicit operator RectangleF(Rectangle Rectangle)
+        {
+            return new RectangleF(Rectangle.X, Rectangle.Y, Rectangle.Width, Rectangle.Height);
+        }
+
+        /// <summary>
         /// Implicitly casts System.Drawing.Rectangle objects to <see cref="Rectangle"/>.
         /// <para>When your .NET Class methods use <see cref="Rectangle"/> as parameters and return types, you now automatically support Rectangle as well.</para>
         /// </summary>
