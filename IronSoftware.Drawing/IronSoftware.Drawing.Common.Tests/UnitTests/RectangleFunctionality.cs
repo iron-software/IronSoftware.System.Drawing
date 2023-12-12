@@ -487,10 +487,10 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
             RectangleF pxCropRect = new RectangleF(15, 25, 150, 175);
             RectangleF mmCropRect = pxCropRect.ConvertTo(MeasurementUnits.Millimeters, 96);
-            Assert.Equal(3, mmCropRect.X);
-            Assert.Equal(6, mmCropRect.Y);
-            Assert.Equal(39, mmCropRect.Width);
-            Assert.Equal(46, mmCropRect.Height);
+            Assert.Equal(3.96875f, mmCropRect.X);
+            Assert.Equal(6.61458302f, mmCropRect.Y);
+            Assert.Equal(39.6875f, mmCropRect.Width);
+            Assert.Equal(46.3020821f, mmCropRect.Height);
         }
 
 #if !NETFRAMEWORK
