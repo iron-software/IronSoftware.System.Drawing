@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
-namespace IronSoftware.Drawing.Common;
+namespace IronSoftware.Drawing;
 
 /// <summary>
 /// Stores an ordered pair of integers, which specify a height and width.
