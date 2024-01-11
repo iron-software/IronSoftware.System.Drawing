@@ -208,9 +208,6 @@ public struct SizeF : IEquatable<SizeF>
     }
 
     /// <inheritdoc/>
-    public override int GetHashCode() => HashCode.Combine(Width, Height);
-
-    /// <inheritdoc/>
     public override string ToString() => $"SizeF [ Width={Width}, Height={Height} ]";
 
     /// <inheritdoc/>

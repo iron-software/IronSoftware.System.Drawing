@@ -196,6 +196,15 @@ public struct Size : IEquatable<Size>
     public static bool operator !=(Size left, Size right) => !left.Equals(right);
 
     /// <summary>
+    /// Convert to a <see cref="SixLabors.ImageSharp.Size"/> type.
+    /// </summary>
+    /// <param name="v"></param>
+    public static implicit operator SixLabors.ImageSharp.Size(Size v)
+    {
+        return new SixLabors.ImageSharp.Size(v.Width, v.Height);
+    }
+
+    /// <summary>
     /// Performs vector addition of two <see cref="Size"/> objects.
     /// </summary>
     /// <param name="left">The size on the left hand of the operand.</param>
@@ -212,22 +221,6 @@ public struct Size : IEquatable<Size>
     /// <returns>The <see cref="Size"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Size Subtract(Size left, Size right) => new(unchecked(left.Width - right.Width), unchecked(left.Height - right.Height));
-
-    /// <summary>
-    /// Converts a <see cref="SizeF"/> to a <see cref="Size"/> by performing a ceiling operation on all the dimensions.
-    /// </summary>
-    /// <param name="size">The size.</param>
-    /// <returns>The <see cref="Size"/>.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Size Ceiling(SizeF size) => new(unchecked((int)MathF.Ceiling(size.Width)), unchecked((int)MathF.Ceiling(size.Height)));
-
-    /// <summary>
-    /// Converts a <see cref="SizeF"/> to a <see cref="Size"/> by performing a round operation on all the dimensions.
-    /// </summary>
-    /// <param name="size">The size.</param>
-    /// <returns>The <see cref="Size"/>.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Size Round(SizeF size) => new(unchecked((int)MathF.Round(size.Width)), unchecked((int)MathF.Round(size.Height)));
 
     /// <summary>
     /// Transforms a size by the given matrix.
@@ -260,9 +253,6 @@ public struct Size : IEquatable<Size>
         width = Width;
         height = Height;
     }
-
-    /// <inheritdoc/>
-    public override int GetHashCode() => HashCode.Combine(Width, Height);
 
     /// <inheritdoc/>
     public override string ToString() => $"Size [ Width={Width}, Height={Height} ]";
