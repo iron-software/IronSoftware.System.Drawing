@@ -166,12 +166,30 @@ public struct SizeF : IEquatable<SizeF>
     public static bool operator !=(SizeF left, SizeF right) => !left.Equals(right);
 
     /// <summary>
+    /// Convert a <see cref="System.Drawing.SizeF"/> type to a <see cref="SizeF"/> type.
+    /// </summary>
+    /// <param name="v"></param>
+    public static implicit operator SizeF(System.Drawing.SizeF v)
+    {
+        return new SizeF(v.Width, v.Height);
+    }
+
+    /// <summary>
     /// Convert to a <see cref="System.Drawing.Size"/> type.
     /// </summary>
     /// <param name="v"></param>
     public static implicit operator System.Drawing.SizeF(SizeF v)
     {
         return new System.Drawing.SizeF(v.Width, v.Height);
+    }
+
+    /// <summary>
+    /// Convert a <see cref="System.Drawing.SizeF"/> type to a <see cref="SizeF"/> type.
+    /// </summary>
+    /// <param name="v"></param>
+    public static implicit operator SizeF(SixLabors.ImageSharp.SizeF v)
+    {
+        return new SizeF(v.Width, v.Height);
     }
 
     /// <summary>
@@ -184,12 +202,30 @@ public struct SizeF : IEquatable<SizeF>
     }
 
     /// <summary>
+    /// Convert a <see cref="SkiaSharp.SKSize"/> type to a <see cref="SizeF"/> type.
+    /// </summary>
+    /// <param name="v"></param>
+    public static implicit operator SizeF(SkiaSharp.SKSize v)
+    {
+        return new SizeF(v.Width, v.Height);
+    }
+
+    /// <summary>
     /// Convert to a <see cref="SkiaSharp.SKSize"/> type.
     /// </summary>
     /// <param name="v"></param>
     public static implicit operator SkiaSharp.SKSize(SizeF v)
     {
         return new SkiaSharp.SKSize(v.Width, v.Height);
+    }
+
+    /// <summary>
+    /// Convert a <see cref="Microsoft.Maui.Graphics.SizeF"/> type to a <see cref="SizeF"/> type.
+    /// </summary>
+    /// <param name="v"></param>
+    public static implicit operator SizeF(Microsoft.Maui.Graphics.SizeF v)
+    {
+        return new SizeF(v.Width, v.Height);
     }
 
     /// <summary>
