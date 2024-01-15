@@ -11,7 +11,8 @@
 - [Using IronSoftware.Drawing](#using-ironsoftwaredrawing)
   - [AnyBitmap Example](#anybitmap-code-example)
   - [Color Example](#color-code-example)
-  - [Rectangle Example](#croprectangle-code-example)
+  - [Rectangle Example](#rectangle-code-example)
+  - [Size Example](#size-code-example)
   - [Font Example](#font-code-example)
 - [Support](#support-available)
 
