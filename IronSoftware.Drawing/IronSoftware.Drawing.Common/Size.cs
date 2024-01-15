@@ -205,6 +205,33 @@ public struct Size : IEquatable<Size>
     }
 
     /// <summary>
+    /// Convert to a <see cref="System.Drawing.Size"/> type.
+    /// </summary>
+    /// <param name="v"></param>
+    public static implicit operator System.Drawing.Size(Size v)
+    {
+        return new System.Drawing.Size(v.Width, v.Height);
+    }
+
+    /// <summary>
+    /// Convert to a <see cref="SkiaSharp.SKSizeI"/> type.
+    /// </summary>
+    /// <param name="v"></param>
+    public static implicit operator SkiaSharp.SKSizeI(Size v)
+    {
+        return new SkiaSharp.SKSizeI(v.Width, v.Height);
+    }
+
+    /// <summary>
+    /// Convert to a <see cref="Microsoft.Maui.Graphics.Size"/> type.
+    /// </summary>
+    /// <param name="v"></param>
+    public static implicit operator Microsoft.Maui.Graphics.Size(Size v)
+    {
+        return new Microsoft.Maui.Graphics.Size(v.Width, v.Height);
+    }
+
+    /// <summary>
     /// Performs vector addition of two <see cref="Size"/> objects.
     /// </summary>
     /// <param name="left">The size on the left hand of the operand.</param>

@@ -67,7 +67,7 @@ public struct SizeF : IEquatable<SizeF>
     /// Gets a value indicating whether this <see cref="SizeF"/> is empty.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public bool IsEmpty => this.Equals(Empty);
+    public bool IsEmpty => Equals(Empty);
 
     /// <summary>
     /// Creates a <see cref="Vector2"/> with the coordinates of the specified <see cref="PointF"/>.
@@ -164,6 +164,42 @@ public struct SizeF : IEquatable<SizeF>
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator !=(SizeF left, SizeF right) => !left.Equals(right);
+
+    /// <summary>
+    /// Convert to a <see cref="System.Drawing.Size"/> type.
+    /// </summary>
+    /// <param name="v"></param>
+    public static implicit operator System.Drawing.SizeF(SizeF v)
+    {
+        return new System.Drawing.SizeF(v.Width, v.Height);
+    }
+
+    /// <summary>
+    /// Convert to a <see cref="SixLabors.ImageSharp.SizeF"/> type.
+    /// </summary>
+    /// <param name="v"></param>
+    public static implicit operator SixLabors.ImageSharp.SizeF(SizeF v)
+    {
+        return new SixLabors.ImageSharp.SizeF(v.Width, v.Height);
+    }
+
+    /// <summary>
+    /// Convert to a <see cref="SkiaSharp.SKSize"/> type.
+    /// </summary>
+    /// <param name="v"></param>
+    public static implicit operator SkiaSharp.SKSize(SizeF v)
+    {
+        return new SkiaSharp.SKSize(v.Width, v.Height);
+    }
+
+    /// <summary>
+    /// Convert to a <see cref="Microsoft.Maui.Graphics.SizeF"/> type.
+    /// </summary>
+    /// <param name="v"></param>
+    public static implicit operator Microsoft.Maui.Graphics.SizeF(SizeF v)
+    {
+        return new Microsoft.Maui.Graphics.Size(v.Width, v.Height);
+    }
 
     /// <summary>
     /// Performs vector addition of two <see cref="SizeF"/> objects.
