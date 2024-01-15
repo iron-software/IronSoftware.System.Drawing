@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace IronSoftware.Drawing
 {
@@ -30,6 +32,26 @@ namespace IronSoftware.Drawing
             Y = y;
             Width = width;
             Height = height;
+            Units = units;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RectangleF"/> struct.
+        /// </summary>
+        /// <param name="point">
+        /// The <see cref="Point"/> which specifies the rectangles point in a two-dimensional plane.
+        /// </param>
+        /// <param name="size">
+        /// The <see cref="Size"/> which specifies the rectangles height and width.
+        /// <param name="units">The measurement unit of this RectangleF</param>
+        /// </param>
+        /// <seealso cref="RectangleF"/>
+        public RectangleF(PointF point, SizeF size, MeasurementUnits units = MeasurementUnits.Pixels)
+        {
+            X = point.X;
+            Y = point.Y;
+            Width = size.Width;
+            Height = size.Height;
             Units = units;
         }
 
@@ -93,6 +115,23 @@ namespace IronSoftware.Drawing
             }
 
             throw new NotImplementedException($"RectangleF conversion from {Units} to {units} is not implemented");
+        }
+        
+        /// <summary>
+        /// Gets or sets the size of this <see cref="RectangleF"/>.
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public SizeF Size
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => new(Width, Height);
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            set
+            {
+                Width = value.Width;
+                Height = value.Height;
+            }
         }
 
         /// <summary>

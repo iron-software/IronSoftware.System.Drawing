@@ -44,6 +44,19 @@
 |        `SkiaSharp.SKRectI`       |               ✅              |                ✅               |
 | `SixLabors.ImageSharp.Rectangle` |               ✅              |                ✅               |
 
+- **Size**: A universally compatible Size class. Implicit casting between `IronSoftware.Drawing.Size` and following popular Size formats supported:
+
+|   **Implicit Casting Support**   | To `Size` Supported | From `Size` Supported |
+|--------------------------------|:----------------------------:|:------------------------------:|
+|    `System.Drawing.Size`    |               ✅              |                ✅               |
+|    `System.Drawing.SizeF`    |               ✅              |                ✅               |
+|        `SkiaSharp.SKSize`        |               ✅              |                ✅               |
+|        `SkiaSharp.SKSizeI`       |               ✅              |                ✅               |
+| `SixLabors.ImageSharp.Size` |               ✅              |                ✅    
+| `SixLabors.ImageSharp.SizeF` |               ✅              |                ✅    
+| `Microsoft.Maui.Graphics.Size` |               ✅              |                ✅    
+| `Microsoft.Maui.Graphics.SizeF` |               ✅              |                ✅    
+
 - **Font**: A universally compatible Font class. Implicit casting between `IronSoftware.Drawing.Font` and following popular Font formats supported:
 
 | **Implicit Casting Support** | To `Font` Supported | From `Font` Supported |
@@ -164,6 +177,28 @@ ironRectangle.X;
 ironRectangle.Y;
 ironRectangle.Width;
 ironRectangle.Height;
+```
+### `Size` Code Example
+```csharp
+using IronSoftware.Drawing;
+
+// Create a new Size object
+Size size = new Size(50, 50);
+
+// Create a new Size object with MeasurementUnits
+Size mmSize = new Size(50, 50, MeasurementUnits.Millimeters);
+
+// Convert between MeasurementUnits
+Size pxSize = mmSize.ConvertTo(MeasurementUnits.Millimeters);
+// Or specify DPI
+Size pxSizeWithDPI = mmSize.ConvertTo(MeasurementUnits.Millimeters, 200);
+
+// Casting between System.Drawing.Size and IronSoftware.Drawing.Size
+System.Drawing.Size size = new System.Drawing.Size(150, 150);
+IronSoftware.Drawing.Size ironSize = size;
+
+ironSize.Width;
+ironSize.Height;
 ```
 ### `Font` Code Example
 ```csharp
