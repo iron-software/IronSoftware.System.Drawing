@@ -36,7 +36,7 @@ Supports:
 
 For general support and technical inquiries, please email us at: developers@ironsoftware.com</description>
 		<summary>IronSoftware.System.Drawing is an open-source solution for .NET developers to replace System.Drawing.Common with a universal and flexible library.</summary>
-		<releaseNotes>- Changes CropRectangle class to Rectangle</releaseNotes>
+		<releaseNotes>- Added Size and SizeF classes</releaseNotes>
 		<copyright>Copyright © Iron Software 2022-2023</copyright>
 		<tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, TIFF, TIF, GIF, JPEG, PNG, Color, Rectangle, Drawing, C#, VB.NET, ASPX, create, render, generate, standard, netstandard2.0, core, netcore</tags>
 		<repository type="git" url="https://github.com/iron-software/IronSoftware.Drawing.Common" commit="$commit$" />
