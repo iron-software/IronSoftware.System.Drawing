@@ -44,6 +44,19 @@
 |        `SkiaSharp.SKRectI`       |               ✅              |                ✅               |
 | `SixLabors.ImageSharp.Rectangle` |               ✅              |                ✅               |
 
+- **Size**: A universally compatible Size class. Implicit casting between `IronSoftware.Drawing.Size` and following popular Size formats supported:
+
+|   **Implicit Casting Support**   | To `Size` Supported | From `Size` Supported |
+|--------------------------------|:----------------------------:|:------------------------------:|
+|    `System.Drawing.Size`    |               ✅              |                ✅               |
+|    `System.Drawing.SizeF`    |               ✅              |                ✅               |
+|        `SkiaSharp.SKSize`        |               ✅              |                ✅               |
+|        `SkiaSharp.SKSizeI`       |               ✅              |                ✅               |
+| `SixLabors.ImageSharp.Size` |               ✅              |                ✅    
+| `SixLabors.ImageSharp.SizeF` |               ✅              |                ✅    
+| `Microsoft.Maui.Graphics.Size` |               ✅              |                ✅    
+| `Microsoft.Maui.Graphics.SizeF` |               ✅              |                ✅    
+
 - **Font**: A universally compatible Font class. Implicit casting between `IronSoftware.Drawing.Font` and following popular Font formats supported:
 
 | **Implicit Casting Support** | To `Font` Supported | From `Font` Supported |
