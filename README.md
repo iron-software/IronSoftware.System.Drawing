@@ -178,6 +178,28 @@ ironRectangle.Y;
 ironRectangle.Width;
 ironRectangle.Height;
 ```
+### `Size` Code Example
+```csharp
+using IronSoftware.Drawing;
+
+// Create a new Size object
+Size size = new Size(50, 50);
+
+// Create a new Size object with MeasurementUnits
+Size mmSize = new Size(50, 50, MeasurementUnits.Millimeters);
+
+// Convert between MeasurementUnits
+Size pxSize = mmSize.ConvertTo(MeasurementUnits.Millimeters);
+// Or specify DPI
+Size pxSizeWithDPI = mmSize.ConvertTo(MeasurementUnits.Millimeters, 200);
+
+// Casting between System.Drawing.Size and IronSoftware.Drawing.Size
+System.Drawing.Size size = new System.Drawing.Size(150, 150);
+IronSoftware.Drawing.Size ironSize = size;
+
+ironSize.Width;
+ironSize.Height;
+```
 ### `Font` Code Example
 ```csharp
 using IronSoftware.Drawing;
