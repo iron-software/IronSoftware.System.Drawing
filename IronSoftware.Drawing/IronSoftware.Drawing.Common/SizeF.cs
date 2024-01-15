@@ -261,4 +261,16 @@ public struct SizeF : IEquatable<SizeF>
     /// <returns>Product of type SizeF.</returns>
     private static SizeF Multiply(SizeF size, float multiplier) =>
         new(size.Width * multiplier, size.Height * multiplier);
+
+    /// <summary>
+    /// Calculate a hash code.
+    /// </summary>
+    /// <returns></returns>
+    public override int GetHashCode()
+    {
+        int hashCode = 859600377;
+        hashCode = hashCode * -1521134295 + Width.GetHashCode();
+        hashCode = hashCode * -1521134295 + Height.GetHashCode();
+        return hashCode;
+    }
 }
