@@ -28,6 +28,15 @@ If you would like to contribute to this open-source project, please visit the pu
   - `SkiaSharp.SKRect`
   - `SkiaSharp.SKRectI`
   - `SixLabors.ImageSharp.Rectangle`
+- **Size**: A universally compatible Size class. Implicit casting between `IronSoftware.Drawing.Size` and the following supported:
+  - `System.Drawing.Size`
+  - `System.Drawing.SizeF`
+  - `SkiaSharp.SKSize`
+  - `SkiaSharp.SKSizeI`
+  - `SixLabors.ImageSharp.Size`
+  - `SixLabors.ImageSharp.SizeF`
+  - `Microsoft.Maui.Graphics.Size`
+  - `Microsoft.Maui.Graphics.SizeF`
 - **Font**: A universally compatible Font class. Implicit casting between `IronSoftware.Drawing.Font` and the following supported:
   - `System.Drawing.Font`
   - `SkiaSharp.SKFont`
