@@ -1178,10 +1178,9 @@ namespace IronSoftware.Drawing
         {
             if (ColorInfo == null) { GetColorInfo(); }
 
-            // when checking color, cast back the normalized color to Color object
             var count = ColorInfo.Keys.Count(c => c == color);
 
-            return count != 0;
+            return count > 0;
         }
 
         #region Implicit Casting
