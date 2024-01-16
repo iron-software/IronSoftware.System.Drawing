@@ -132,7 +132,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Color color3 = new("#AABBFF");
 
             Assert.True(color1.GetHashCode() != 0 && color2.GetHashCode() != 0 && color3.GetHashCode() != 0);
-            Assert.True(color2.GetHashCode() == color2.GetHashCode());
+            Assert.True(color1.GetHashCode() == color2.GetHashCode());
             Assert.False(color1.GetHashCode() != color2.GetHashCode());
         }
 
