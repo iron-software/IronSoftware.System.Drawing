@@ -133,6 +133,35 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void Check_Bitmap_Colors()
+        {
+            string imagePath = GetRelativeFilePath("colors.png");
+            var anyBitmap = new AnyBitmap(imagePath);
+
+            var colorInfo = anyBitmap.GetColorInfo();
+            Assert.True(colorInfo.Keys.Count == 6);
+
+            Assert.True(colorInfo.ContainsKey(new Color("#00A2E8")));
+            Assert.True(colorInfo.ContainsKey(new Color("#A349A4")));
+            Assert.True(colorInfo.ContainsKey(new Color("#FFF200")));
+            Assert.True(colorInfo.ContainsKey(new Color("#ED1C24")));
+            Assert.True(colorInfo.ContainsKey(new Color("#22B14C")));
+            Assert.True(colorInfo.ContainsKey(new Color("#FFFFFF")));
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Check_Color_Exists()
+        {
+            string imagePath = GetRelativeFilePath("colors.png");
+            var anyBitmap = new AnyBitmap(imagePath);
+
+            Assert.True(anyBitmap.ContainsColor(new Color("#00A2E8")));
+            Assert.False(anyBitmap.ContainsColor(new Color("#00AABB")));
+        }
+
+        // TODO: check for specific color ...
+
+        [FactWithAutomaticDisplayName]
         public void Export_file()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");

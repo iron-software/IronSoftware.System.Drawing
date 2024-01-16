@@ -11,7 +11,6 @@ namespace IronSoftware.Drawing
     /// </summary>
     public partial class Color
     {
-
         /// <summary>
         /// Gets the alpha component value of this <see cref="Color"/> structure.
         /// </summary>
@@ -1262,7 +1261,12 @@ namespace IronSoftware.Drawing
         /// <inheritdoc/>
         public override int GetHashCode()
         {
-            return 0;
+            int hashCode = -558445964;
+            hashCode = hashCode * -1521134295 + A.GetHashCode();
+            hashCode = hashCode * -1521134295 + G.GetHashCode();
+            hashCode = hashCode * -1521134295 + B.GetHashCode();
+            hashCode = hashCode * -1521134295 + R.GetHashCode();
+            return hashCode;
         }
 
         /// <summary>
