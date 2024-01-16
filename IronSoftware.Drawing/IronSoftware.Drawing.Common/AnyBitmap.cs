@@ -49,6 +49,7 @@ namespace IronSoftware.Drawing
         private Image Image { get; set; }
         private byte[] Binary { get; set; }
         private IImageFormat Format { get; set; }
+        private Dictionary<Color, int> ColorInfo { get; set; }
 
         /// <summary>
         /// Width of the image.
@@ -1119,6 +1120,67 @@ namespace IronSoftware.Drawing
             });
 
             return rgbBuffer;
+        }
+
+        /// <summary>
+        /// Get a dictionary of colors and related occurence (pixel) count.
+        /// </summary>
+        /// <returns>A dictionary of colors and related occurence (pixel) count.</returns>
+        public Dictionary<Color, int> GetColorInfo()
+        {
+            // cache results in ColorInfo for subsequent calls
+            if (ColorInfo == null)
+            {
+                ColorInfo = Image switch
+                {
+                    Image<A8> a8 => GetColorInfo(Image, (x, y) => a8[x, y]),
+                    Image<Abgr32> abgr32 => GetColorInfo(Image, (x, y) => abgr32[x, y]),
+                    Image<Argb32> argb32 => GetColorInfo(Image, (x, y) => argb32[x, y]),
+                    Image<Bgr24> bgr24 => GetColorInfo(Image, (x, y) => bgr24[x, y]),
+                    Image<Bgr565> bgr565 => GetColorInfo(Image, (x, y) => bgr565[x, y]),
+                    Image<Bgra32> bgra32 => GetColorInfo(Image, (x, y) => bgra32[x, y]),
+                    Image<Bgra4444> bgra4444 => GetColorInfo(Image, (x, y) => bgra4444[x, y]),
+                    Image<Bgra5551> bgra5551 => GetColorInfo(Image, (x, y) => bgra5551[x, y]),
+                    Image<Byte4> byte4 => GetColorInfo(Image, (x, y) => byte4[x, y]),
+                    Image<HalfSingle> halfSingle => GetColorInfo(Image, (x, y) => halfSingle[x, y]),
+                    Image<HalfVector2> halfVector2 => GetColorInfo(Image, (x, y) => halfVector2[x, y]),
+                    Image<HalfVector4> halfVector4 => GetColorInfo(Image, (x, y) => halfVector4[x, y]),
+                    Image<L16> l16 => GetColorInfo(Image, (x, y) => l16[x, y]),
+                    Image<L8> l8 => GetColorInfo(Image, (x, y) => l8[x, y]),
+                    Image<La16> la16 => GetColorInfo(Image, (x, y) => la16[x, y]),
+                    Image<La32> la32 => GetColorInfo(Image, (x, y) => la32[x, y]),
+                    Image<NormalizedByte2> normalizedByte2 => GetColorInfo(Image, (x, y) => normalizedByte2[x, y]),
+                    Image<NormalizedByte4> normalizedByte4 => GetColorInfo(Image, (x, y) => normalizedByte4[x, y]),
+                    Image<NormalizedShort2> normalizedShort2 => GetColorInfo(Image, (x, y) => normalizedShort2[x, y]),
+                    Image<NormalizedShort4> normalizedShort4 => GetColorInfo(Image, (x, y) => normalizedShort4[x, y]),
+                    Image<Rg32> rg32 => GetColorInfo(Image, (x, y) => rg32[x, y]),
+                    Image<Rgb24> rgb24 => GetColorInfo(Image, (x, y) => rgb24[x, y]),
+                    Image<Rgb48> rgb48 => GetColorInfo(Image, (x, y) => rgb48[x, y]),
+                    Image<Rgba1010102> rgba1010102 => GetColorInfo(Image, (x, y) => rgba1010102[x, y]),
+                    Image<Rgba32> rgba32 => GetColorInfo(Image, (x, y) => rgba32[x, y]),
+                    Image<Rgba64> rgba64 => GetColorInfo(Image, (x, y) => rgba64[x, y]),
+                    Image<RgbaVector> rgbaVector => GetColorInfo(Image, (x, y) => rgbaVector[x, y]),
+                    Image<Short2> short2 => GetColorInfo(Image, (x, y) => short2[x, y]),
+                    Image<Short4> short4 => GetColorInfo(Image, (x, y) => short4[x, y]),
+                    _ => throw new NotImplementedException("pixel format not implemented"),
+                };
+            }
+
+            return ColorInfo;
+        }
+
+        /// <summary>
+        /// Check if a color occurs in a bitmap.
+        /// </summary>
+        /// <param name="color">The color to check.</param>
+        /// <returns>True if the given color was found in the bitmap, otherwise false.</returns>
+        public bool ContainsColor(Color color)
+        {
+            if (ColorInfo == null) { GetColorInfo(); }
+
+            var count = ColorInfo.Keys.Count(c => c == color);
+
+            return count > 0;
         }
 
         #region Implicit Casting
@@ -2552,7 +2614,7 @@ namespace IronSoftware.Drawing
                     (Image as Image<Rgba32>)[x, y] = color;
                     break;
             }
-        }
+        }       
 
         private void LoadAndResizeImage(AnyBitmap original, int width, int height)
         {
@@ -2612,6 +2674,34 @@ namespace IronSoftware.Drawing
             await stream.CopyToAsync(memoryStream);
             memoryStream.Position = 0;
             return memoryStream;
+        }
+
+        private static Dictionary<Color, int> GetColorInfo(Image image, Func<int, int, IPixel> getColorValue)
+        {
+            var colorInfo = new Dictionary<Color, int>();
+
+            Rgba32 rgba32 = new();
+
+            for (var x = 0; x < image.Width; x++)
+            {
+                for (var y = 0; y < image.Height; y++)
+                {
+                    // all colors are normalized to Rgba32 color range, which
+                    // matches how colors are stored in the Color class
+                    getColorValue(x, y).ToRgba32(ref rgba32);
+                    var pixelColor = (Color)rgba32;
+
+                    if (colorInfo.Keys.Contains(pixelColor))
+                    {
+                        colorInfo[pixelColor]++;
+                    }
+                    else
+                    {
+                        colorInfo.Add(pixelColor, 1);
+                    }
+                }
+            }
+            return colorInfo;
         }
 
         #endregion

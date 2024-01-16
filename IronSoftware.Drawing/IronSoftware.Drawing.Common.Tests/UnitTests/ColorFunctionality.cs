@@ -125,6 +125,18 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void Get_HashCode_from_Color()
+        {
+            Color color1 = Color.Black;
+            Color color2 = new("#000000");
+            Color color3 = new("#AABBFF");
+
+            Assert.True(color1.GetHashCode() != 0 && color2.GetHashCode() != 0 && color3.GetHashCode() != 0);
+            Assert.True(color1.GetHashCode() == color2.GetHashCode());
+            Assert.False(color1.GetHashCode() != color2.GetHashCode());
+        }
+
+        [FactWithAutomaticDisplayName]
         public void Cast_System_Drawing_Color_from_Color()
         {
             System.Drawing.Color drawingColor = System.Drawing.Color.Red;
