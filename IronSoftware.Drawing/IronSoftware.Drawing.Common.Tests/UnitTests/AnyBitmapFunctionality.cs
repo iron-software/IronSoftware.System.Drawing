@@ -772,13 +772,13 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             // Arrange
             int width = 2;
             int height = 2;
-            byte[] buffer = new byte
-            [
+            var buffer = new byte[]
+            {
                 255, 0, 0, // red
                 0, 255, 0, // green
                 0, 0, 255, // blue
                 255, 255, 255, // white
-            ];
+            };
 
             // Act
             using AnyBitmap result = AnyBitmap.LoadAnyBitmapFromRGBBuffer(buffer, width, height);
