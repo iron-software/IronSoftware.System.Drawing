@@ -772,7 +772,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             // Arrange
             int width = 2;
             int height = 2;
-            byte[] buffer =
+            byte[] buffer = new byte
             [
                 255, 0, 0, // red
                 0, 255, 0, // green
