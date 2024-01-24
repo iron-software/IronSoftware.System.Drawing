@@ -567,10 +567,10 @@ namespace IronSoftware.Drawing
         /// </summary>
         /// <param name="width">Width of new AnyBitmap</param>
         /// <param name="height">Height of new AnyBitmap</param>
-        /// <param name="backgrounColor">Background color of new AnyBitmap</param>
-        public AnyBitmap(int width, int height, Color backgrounColor = null)
+        /// <param name="backgroundColor">Background color of new AnyBitmap</param>
+        public AnyBitmap(int width, int height, Color backgroundColor = null)
         {
-            CreateNewImageInstance(width, height, backgrounColor);
+            CreateNewImageInstance(width, height, backgroundColor);
         }
 
         /// <summary>
@@ -1975,12 +1975,12 @@ namespace IronSoftware.Drawing
 
         #region Private Method
 
-        private void CreateNewImageInstance(int width, int height, Color backgrounColor)
+        private void CreateNewImageInstance(int width, int height, Color backgroundColor)
         {
             Image = new Image<Rgba32>(width, height);
-            if (backgrounColor != null)
+            if (backgroundColor != null)
             {
-                Image.Mutate(context => context.Fill(backgrounColor));
+                Image.Mutate(context => context.Fill(backgroundColor));
             }
             using var stream = new MemoryStream();
             Image.SaveAsBmp(stream);
