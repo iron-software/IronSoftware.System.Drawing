@@ -16,8 +16,9 @@ pr:
     exclude:
     - NuGet
 
+
 pool:
-  vmImage: 'macOS-latest'
+  vmImage: 'windows-latest'
 
 variables:
   - group: IronDrawingVersions
@@ -37,7 +38,19 @@ stages:
       parameters:
         publishAssemblies: false
         buildConfiguration: $(buildConfiguration)
-## Execute Unit Tests
+## Execute Windows Unit Tests
+- template: stage_templates/run_tests_on_pool.yml
+  parameters:
+    OSPlatform: 'Windows'
+    pool:
+      vmImage: 'windows-latest'
+## Execute Linux Unit Tests
+- template: stage_templates/run_tests_on_pool.yml
+  parameters:
+    OSPlatform: 'Ubuntu'
+    pool:
+      vmImage: 'ubuntu-latest'
+## Execute macOS Unit Tests
 - template: stage_templates/run_tests_on_pool.yml
   parameters:
     OSPlatform: 'MacOs'
