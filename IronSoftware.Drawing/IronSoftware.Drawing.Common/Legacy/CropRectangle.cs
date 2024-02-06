@@ -143,7 +143,7 @@ namespace IronSoftware.Drawing
         /// Implicitly casts System.Drawing.Rectangle objects to <see cref="CropRectangle"/>.
         /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support Rectangle as well.</para>
         /// </summary>
-        /// <param name="rectangle">System.Drawing.Rectangle will automatically be cast to <see cref="CropRectangle"/>.</param>
+        /// <param name="rectangle">System.Drawing.Rectangle will automatically be casted to <see cref="CropRectangle"/>.</param>
         public static implicit operator CropRectangle(System.Drawing.Rectangle rectangle)
         {
             return new CropRectangle(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
@@ -163,7 +163,7 @@ namespace IronSoftware.Drawing
         /// Implicitly casts SkiaSharp.SKRect objects to <see cref="CropRectangle"/>.
         /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SkiaSharp.SKRect as well.</para>
         /// </summary>
-        /// <param name="sKRect">SkiaSharp.SKRect will automatically be cast to <see cref="CropRectangle"/>.</param>
+        /// <param name="sKRect">SkiaSharp.SKRect will automatically be casted to <see cref="CropRectangle"/>.</param>
         public static implicit operator CropRectangle(SkiaSharp.SKRect sKRect)
         {
             SkiaSharp.SKRect standardizedSKRect = sKRect.Standardized;
@@ -184,7 +184,7 @@ namespace IronSoftware.Drawing
         /// Implicitly casts SkiaSharp.SKRectI objects to <see cref="CropRectangle"/>.
         /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SkiaSharp.SKRectI as well.</para>
         /// </summary>
-        /// <param name="sKRectI">SkiaSharp.SKRectI will automatically be cast to <see cref="CropRectangle"/>.</param>
+        /// <param name="sKRectI">SkiaSharp.SKRectI will automatically be casted to <see cref="CropRectangle"/>.</param>
         public static implicit operator CropRectangle(SkiaSharp.SKRectI sKRectI)
         {
             SkiaSharp.SKRectI standardizedSKRectI = sKRectI.Standardized;
@@ -205,7 +205,7 @@ namespace IronSoftware.Drawing
         /// Implicitly casts SixLabors.ImageSharp.Rectangle objects to <see cref="CropRectangle"/>.
         /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SixLabors.ImageSharp.Rectangle as well.</para>
         /// </summary>
-        /// <param name="rectangle">SixLabors.ImageSharp.Rectangle will automatically be cast to <see cref="CropRectangle"/>.</param>
+        /// <param name="rectangle">SixLabors.ImageSharp.Rectangle will automatically be casted to <see cref="CropRectangle"/>.</param>
         public static implicit operator CropRectangle(SixLabors.ImageSharp.Rectangle rectangle)
         {
             return new CropRectangle(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
@@ -225,7 +225,7 @@ namespace IronSoftware.Drawing
         /// Implicitly casts SixLabors.ImageSharp.RectangleF objects to <see cref="CropRectangle"/>.
         /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support SixLabors.ImageSharp.RectangleF as well.</para>
         /// </summary>
-        /// <param name="rectangle">SixLabors.ImageSharp.RectangleF will automatically be cast to <see cref="CropRectangle"/>.</param>
+        /// <param name="rectangle">SixLabors.ImageSharp.RectangleF will automatically be casted to <see cref="CropRectangle"/>.</param>
         public static implicit operator CropRectangle(SixLabors.ImageSharp.RectangleF rectangle)
         {
             return new CropRectangle((int)rectangle.X, (int)rectangle.Y, (int)rectangle.Width, (int)rectangle.Height);
@@ -245,7 +245,7 @@ namespace IronSoftware.Drawing
         /// Implicitly casts Microsoft.Maui.Graphics.Rect objects to <see cref="CropRectangle"/>.
         /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support Microsoft.Maui.Graphics.Rect as well.</para>
         /// </summary>
-        /// <param name="rectangle">Microsoft.Maui.Graphics.Rect will automatically be cast to <see cref="CropRectangle"/>.</param>
+        /// <param name="rectangle">Microsoft.Maui.Graphics.Rect will automatically be casted to <see cref="CropRectangle"/>.</param>
         public static implicit operator CropRectangle(Microsoft.Maui.Graphics.Rect rectangle)
         {
             return new CropRectangle((int)rectangle.X, (int)rectangle.Y, (int)rectangle.Width, (int)rectangle.Height);
@@ -265,7 +265,7 @@ namespace IronSoftware.Drawing
         /// Implicitly casts Microsoft.Maui.Graphics.RectF objects to <see cref="CropRectangle"/>.
         /// <para>When your .NET Class methods use <see cref="CropRectangle"/> as parameters and return types, you now automatically support Microsoft.Maui.Graphics.RectF as well.</para>
         /// </summary>
-        /// <param name="rectangle">Microsoft.Maui.Graphics.RectF will automatically be cast to <see cref="CropRectangle"/>.</param>
+        /// <param name="rectangle">Microsoft.Maui.Graphics.RectF will automatically be casted to <see cref="CropRectangle"/>.</param>
         public static implicit operator CropRectangle(Microsoft.Maui.Graphics.RectF rectangle)
         {
             return new CropRectangle((int)rectangle.X, (int)rectangle.Y, (int)rectangle.Width, (int)rectangle.Height);
@@ -284,7 +284,7 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Implicitly casts new Rectangle objects to deprecated CropRectangle
         /// </summary>
-        /// <param name="rectangle">Rectangle will automatically be cast to CropRectangle</param>
+        /// <param name="rectangle">Rectangle will automatically be casted to CropRectangle</param>
         public static implicit operator CropRectangle(Rectangle rectangle)
         {
             return new CropRectangle
@@ -300,7 +300,7 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Implicitly casts deprecated CropRectangle objects to new Rectangle
         /// </summary>
-        /// <param name="rectangle">CropRectangle will automatically be cast to Rectangle</param>
+        /// <param name="rectangle">CropRectangle will automatically be casted to Rectangle</param>
         public static implicit operator Rectangle(CropRectangle rectangle)
         {
             return new Rectangle

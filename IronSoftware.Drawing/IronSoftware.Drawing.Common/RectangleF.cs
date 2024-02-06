@@ -175,7 +175,7 @@ namespace IronSoftware.Drawing
         /// Implicitly casts System.Drawing.RectangleF objects to <see cref="RectangleF"/>.
         /// <para>When your .NET Class methods use <see cref="RectangleF"/> as parameters and return types, you now automatically support RectangleF as well.</para>
         /// </summary>
-        /// <param name="RectangleF">System.Drawing.RectangleF will automatically be cast to <see cref="RectangleF"/>.</param>
+        /// <param name="RectangleF">System.Drawing.RectangleF will automatically be casted to <see cref="RectangleF"/>.</param>
         public static implicit operator RectangleF(System.Drawing.RectangleF RectangleF)
         {
             return new RectangleF(RectangleF.X, RectangleF.Y, RectangleF.Width, RectangleF.Height);
@@ -195,7 +195,7 @@ namespace IronSoftware.Drawing
         /// Implicitly casts SkiaSharp.SKRect objects to <see cref="RectangleF"/>.
         /// <para>When your .NET Class methods use <see cref="RectangleF"/> as parameters and return types, you now automatically support SkiaSharp.SKRect as well.</para>
         /// </summary>
-        /// <param name="sKRect">SkiaSharp.SKRect will automatically be cast to <see cref="RectangleF"/>.</param>
+        /// <param name="sKRect">SkiaSharp.SKRect will automatically be casted to <see cref="RectangleF"/>.</param>
         public static implicit operator RectangleF(SkiaSharp.SKRect sKRect)
         {
             SkiaSharp.SKRect standardizedSKRect = sKRect.Standardized;
@@ -216,7 +216,7 @@ namespace IronSoftware.Drawing
         /// Implicitly casts SixLabors.ImageSharp.RectangleF objects to <see cref="RectangleF"/>.
         /// <para>When your .NET Class methods use <see cref="RectangleF"/> as parameters and return types, you now automatically support SixLabors.ImageSharp.RectangleF as well.</para>
         /// </summary>
-        /// <param name="RectangleF">SixLabors.ImageSharp.RectangleF will automatically be cast to <see cref="RectangleF"/>.</param>
+        /// <param name="RectangleF">SixLabors.ImageSharp.RectangleF will automatically be casted to <see cref="RectangleF"/>.</param>
         public static implicit operator RectangleF(SixLabors.ImageSharp.RectangleF RectangleF)
         {
             return new RectangleF(RectangleF.X, RectangleF.Y, RectangleF.Width, RectangleF.Height);
@@ -236,7 +236,7 @@ namespace IronSoftware.Drawing
         /// Implicitly casts Microsoft.Maui.Graphics.Rect objects to <see cref="RectangleF"/>.
         /// <para>When your .NET Class methods use <see cref="RectangleF"/> as parameters and return types, you now automatically support Microsoft.Maui.Graphics.Rect as well.</para>
         /// </summary>
-        /// <param name="RectangleF">Microsoft.Maui.Graphics.Rect will automatically be cast to <see cref="RectangleF"/>.</param>
+        /// <param name="RectangleF">Microsoft.Maui.Graphics.Rect will automatically be casted to <see cref="RectangleF"/>.</param>
         public static implicit operator RectangleF(Microsoft.Maui.Graphics.Rect RectangleF)
         {
             return new RectangleF((float)RectangleF.X, (float)RectangleF.Y, (float)RectangleF.Width, (float)RectangleF.Height);
@@ -256,7 +256,7 @@ namespace IronSoftware.Drawing
         /// Implicitly casts Microsoft.Maui.Graphics.RectF objects to <see cref="RectangleF"/>.
         /// <para>When your .NET Class methods use <see cref="RectangleF"/> as parameters and return types, you now automatically support Microsoft.Maui.Graphics.RectF as well.</para>
         /// </summary>
-        /// <param name="RectangleF">Microsoft.Maui.Graphics.RectF will automatically be cast to <see cref="RectangleF"/>.</param>
+        /// <param name="RectangleF">Microsoft.Maui.Graphics.RectF will automatically be casted to <see cref="RectangleF"/>.</param>
         public static implicit operator RectangleF(Microsoft.Maui.Graphics.RectF RectangleF)
         {
             return new RectangleF(RectangleF.X, RectangleF.Y, RectangleF.Width, RectangleF.Height);
