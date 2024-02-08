@@ -1153,7 +1153,7 @@ namespace IronSoftware.Drawing
         /// to avoid unnecessary memory allocation.</para>
         /// </summary>
         /// <param name="image">SixLabors.ImageSharp.Image will automatically 
-        /// be cast to <see cref="AnyBitmap"/>.</param>
+        /// be casted to <see cref="AnyBitmap"/>.</param>
         public static implicit operator AnyBitmap(Image<Rgb24> image)
         {
             try
@@ -1285,7 +1285,7 @@ namespace IronSoftware.Drawing
         /// to avoid unnecessary memory allocation.</para>
         /// </summary>
         /// <param name="image">SixLabors.ImageSharp.Image will automatically
-        /// be cast to <see cref="AnyBitmap"/>.</param>
+        /// be casted to <see cref="AnyBitmap"/>.</param>
         public static implicit operator AnyBitmap(Image image)
         {
             try
@@ -1350,7 +1350,7 @@ namespace IronSoftware.Drawing
         /// please remember to dispose your original SkiaSharp.SKImage object
         /// to avoid unnecessary memory allocation.</para>
         /// </summary>
-        /// <param name="image">SkiaSharp.SKImage will automatically be cast to
+        /// <param name="image">SkiaSharp.SKImage will automatically be casted to
         /// <see cref="AnyBitmap"/>.</param>
         public static implicit operator AnyBitmap(SKImage image)
         {
@@ -1426,7 +1426,7 @@ namespace IronSoftware.Drawing
         /// please remember to dispose your original SkiaSharp.SKBitmap object
         /// to avoid unnecessary memory allocation.</para>
         /// </summary>
-        /// <param name="image">SkiaSharp.SKBitmap will automatically be cast
+        /// <param name="image">SkiaSharp.SKBitmap will automatically be casted
         /// to <see cref="AnyBitmap"/>.</param>
         public static implicit operator AnyBitmap(SKBitmap image)
         {
@@ -1505,7 +1505,7 @@ namespace IronSoftware.Drawing
         /// to avoid unnecessary memory allocation.</para>
         /// </summary>
         /// <param name="image">Microsoft.Maui.Graphics.Platform.PlatformImage 
-        /// will automatically be cast to <see cref="AnyBitmap"/>.</param>
+        /// will automatically be casted to <see cref="AnyBitmap"/>.</param>
 
         public static implicit operator AnyBitmap(PlatformImage image)
         {
@@ -1565,7 +1565,7 @@ namespace IronSoftware.Drawing
         /// please remember to dispose your original System.Drawing.Bitmap object
         /// to avoid unnecessary memory allocation.</para>
         /// </summary>
-        /// <param name="image">System.Drawing.Bitmap will automatically be cast to <see cref="AnyBitmap"/> </param>
+        /// <param name="image">System.Drawing.Bitmap will automatically be casted to <see cref="AnyBitmap"/> </param>
         public static implicit operator AnyBitmap(System.Drawing.Bitmap image)
         {
             byte[] data;
@@ -1661,7 +1661,7 @@ namespace IronSoftware.Drawing
         /// please remember to dispose your original System.Drawing.Image object
         /// to avoid unnecessary memory allocation.</para>
         /// </summary>
-        /// <param name="image">System.Drawing.Image will automatically be cast
+        /// <param name="image">System.Drawing.Image will automatically be casted
         /// to <see cref="AnyBitmap"/> </param>
         public static implicit operator AnyBitmap(System.Drawing.Image image)
         {

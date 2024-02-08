@@ -43,7 +43,7 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Implicitly casts SixLabors.ImageSharp.PointF objects to PointF
         /// </summary>
-        /// <param name="point">SixLabors.ImageSharp.PointF will automatically be cast to PointF</param>
+        /// <param name="point">SixLabors.ImageSharp.PointF will automatically be casted to PointF</param>
         public static implicit operator PointF(SixLabors.ImageSharp.PointF point)
         {
             return new PointF(point.X, point.Y);
@@ -52,7 +52,7 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Implicitly casts a PointF object to SixLabors.ImageSharp.PointF
         /// </summary>
-        /// <param name="point">PointF will automatically be cast to SixLabors.ImageSharp.PointF</param>
+        /// <param name="point">PointF will automatically be casted to SixLabors.ImageSharp.PointF</param>
         public static implicit operator SixLabors.ImageSharp.PointF(PointF point)
         {
             return new SixLabors.ImageSharp.PointF(point.X, point.Y);
@@ -61,7 +61,7 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Implicitly casts Microsoft.Maui.Graphics.Point objects to PointF
         /// </summary>
-        /// <param name="point">Microsoft.Maui.Graphics.Point will automatically be cast to PointF</param>
+        /// <param name="point">Microsoft.Maui.Graphics.Point will automatically be casted to PointF</param>
         public static implicit operator PointF(Microsoft.Maui.Graphics.PointF point)
         {
             return new PointF(point.X, point.Y);
@@ -70,7 +70,7 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Implicitly casts PointF objects to Microsoft.Maui.Graphics.Point
         /// </summary>
-        /// <param name="point">PointF will automatically be cast to Microsoft.Maui.Graphics.Point</param>
+        /// <param name="point">PointF will automatically be casted to Microsoft.Maui.Graphics.Point</param>
         public static implicit operator Microsoft.Maui.Graphics.PointF(PointF point)
         {
             return new Microsoft.Maui.Graphics.PointF(point.X, point.Y);
@@ -79,7 +79,7 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Implicitly casts SkiaSharp.SKPoint objects to PointF
         /// </summary>
-        /// <param name="point">SkiaSharp.SKPoint will automatically be cast to PointF</param>
+        /// <param name="point">SkiaSharp.SKPoint will automatically be casted to PointF</param>
         public static implicit operator PointF(SkiaSharp.SKPoint point)
         {
             return new PointF(point.X, point.Y);
@@ -88,7 +88,7 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Implicitly casts PointF objects to SkiaSharp.SKPoint
         /// </summary>
-        /// <param name="point">PointF will automatically be cast to SkiaSharp.SKPoint</param>
+        /// <param name="point">PointF will automatically be casted to SkiaSharp.SKPoint</param>
         public static implicit operator SkiaSharp.SKPoint(PointF point)
         {
             return new SkiaSharp.SKPoint(point.X, point.Y);
