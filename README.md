@@ -39,7 +39,7 @@
 - **Rectangle**: A universally compatible Rectangle class. Implicit casting between `IronSoftware.Drawing.Rectangle` and following popular Rectangle formats supported:
 
 |   **Implicit Casting Support**   | To `Rectangle` Supported | From `Rectangle` Supported | To `RectangleF` Supported | From `RectangleF` Supported |
-|--------------------------------|:----------------------------:|:------------------------------:|
+|--------------------------------|:----------------------------:|:------------------------------:|:----------------------------:|:------------------------------:|
 |    `System.Drawing.Rectangle`    |               ✅              |                ✅               |                               |                                |
 |    `System.Drawing.RectangleF`   |                               |                                 |               ✅              |                ✅               |
 |        `SkiaSharp.SKRect`        |                               |                                 |               ✅              |                ✅               |
@@ -50,7 +50,7 @@
 - **Size**: A universally compatible Size class. Implicit casting between `IronSoftware.Drawing.Size` and following popular Size formats supported:
 
 |   **Implicit Casting Support**   | To `Size` Supported | From `Size` Supported | To `SizeF` Supported | From `SizeF` Supported |
-|--------------------------------|:----------------------------:|:------------------------------:|
+|--------------------------------|:----------------------------:|:------------------------------:|:----------------------------:|:------------------------------:|
 |    `System.Drawing.Size`    |               ✅              |                ✅               |                              |                                |
 |    `System.Drawing.SizeF`   |                               |                                |               ✅              |                ✅               |
 |        `SkiaSharp.SKSize`        |                               |                                 |               ✅              |                ✅               |
