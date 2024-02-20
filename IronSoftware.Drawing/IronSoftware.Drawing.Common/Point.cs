@@ -52,7 +52,6 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Implicitly casts Point objects to SixLabors.ImageSharp.Point
         /// </summary>
-        /// <remarks>SixLabors.ImageSharp.Point only uses int instead of double for X and Y. Decimals will be removed.</remarks>
         /// <param name="point">Point will automatically be casted to SixLabors.ImageSharp.Point</param>
         public static implicit operator SixLabors.ImageSharp.Point(Point point)
         {
@@ -71,7 +70,6 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Implicitly casts Point objects to System.Drawing.Point
         /// </summary>
-        /// <remarks>System.Drawing.Point only uses int instead of double for X and Y. Decimals will be removed.</remarks>
         /// <param name="point">Point will automatically be casted to System.Drawing.Point</param>
         public static implicit operator System.Drawing.Point(Point point)
         {
@@ -108,11 +106,10 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Implicitly casts Point objects to SkiaSharp.SKPointI
         /// </summary>
-        /// <remarks>SkiaSharp.SKPointI only uses int instead of double for X and Y. Decimals will be removed.</remarks>
         /// <param name="point">Point will automatically be casted to SkiaSharp.SKPointI</param>
         public static implicit operator SkiaSharp.SKPointI(Point point)
         {
-            return new SkiaSharp.SKPointI((int)point.X, (int)point.Y);
+            return new SkiaSharp.SKPointI(point.X, point.Y);
         }
 
         #endregion
