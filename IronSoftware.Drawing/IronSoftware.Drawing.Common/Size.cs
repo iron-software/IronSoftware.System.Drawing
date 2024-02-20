@@ -60,8 +60,8 @@ public struct Size : IEquatable<Size>
     /// <param name="point">The point.</param>
     public Size(Point point)
     {
-        Width = (int)point.X;
-        Height = (int)point.Y;
+        Width = point.X;
+        Height = point.Y;
     }
 
     /// <summary>

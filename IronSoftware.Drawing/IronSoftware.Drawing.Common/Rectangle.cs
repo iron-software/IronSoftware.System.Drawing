@@ -48,8 +48,8 @@ namespace IronSoftware.Drawing
         /// <seealso cref="Rectangle"/>
         public Rectangle(Point point, Size size, MeasurementUnits units = MeasurementUnits.Pixels)
         {
-            X = (int)point.X;
-            Y = (int)point.Y;
+            X = point.X;
+            Y = point.Y;
             Width = size.Width;
             Height = size.Height;
             Units = units;
