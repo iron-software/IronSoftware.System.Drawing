@@ -38,25 +38,27 @@
   
 - **Rectangle**: A universally compatible Rectangle class. Implicit casting between `IronSoftware.Drawing.Rectangle` and following popular Rectangle formats supported:
 
-|   **Implicit Casting Support**   | To `Rectangle` Supported | From `Rectangle` Supported |
+|   **Implicit Casting Support**   | To `Rectangle` Supported | From `Rectangle` Supported | To `RectangleF` Supported | From `RectangleF` Supported |
 |--------------------------------|:----------------------------:|:------------------------------:|
-|    `System.Drawing.Rectangle`    |               ✅              |                ✅               |
-|        `SkiaSharp.SKRect`        |               ✅              |                ✅               |
-|        `SkiaSharp.SKRectI`       |               ✅              |                ✅               |
-| `SixLabors.ImageSharp.Rectangle` |               ✅              |                ✅               |
+|    `System.Drawing.Rectangle`    |               ✅              |                ✅               |                               |                                |
+|    `System.Drawing.RectangleF`   |                               |                                 |               ✅              |                ✅               |
+|        `SkiaSharp.SKRect`        |                               |                                 |               ✅              |                ✅               |
+|        `SkiaSharp.SKRectI`       |               ✅              |                ✅               |                               |                                |
+| `SixLabors.ImageSharp.Rectangle` |               ✅              |                ✅               |                               |                                |
+| `SixLabors.ImageSharp.RectangleF` |                               |                                 |               ✅              |                ✅               |
 
 - **Size**: A universally compatible Size class. Implicit casting between `IronSoftware.Drawing.Size` and following popular Size formats supported:
 
-|   **Implicit Casting Support**   | To `Size` Supported | From `Size` Supported |
+|   **Implicit Casting Support**   | To `Size` Supported | From `Size` Supported | To `SizeF` Supported | From `SizeF` Supported |
 |--------------------------------|:----------------------------:|:------------------------------:|
-|    `System.Drawing.Size`    |               ✅              |                ✅               |
-|    `System.Drawing.SizeF`    |               ✅              |                ✅               |
-|        `SkiaSharp.SKSize`        |               ✅              |                ✅               |
-|        `SkiaSharp.SKSizeI`       |               ✅              |                ✅               |
-| `SixLabors.ImageSharp.Size` |               ✅              |                ✅    
-| `SixLabors.ImageSharp.SizeF` |               ✅              |                ✅    
-| `Microsoft.Maui.Graphics.Size` |               ✅              |                ✅    
-| `Microsoft.Maui.Graphics.SizeF` |               ✅              |                ✅    
+|    `System.Drawing.Size`    |               ✅              |                ✅               |                              |                                |
+|    `System.Drawing.SizeF`   |                               |                                |               ✅              |                ✅               |
+|        `SkiaSharp.SKSize`        |                               |                                 |               ✅              |                ✅               |
+|        `SkiaSharp.SKSizeI`       |               ✅              |                ✅               |                               |                                 |
+| `SixLabors.ImageSharp.Size` |               ✅              |                ✅               |                              |                                |
+| `SixLabors.ImageSharp.SizeF` |                               |                                 |               ✅              |                ✅               |
+| `Microsoft.Maui.Graphics.Size` |               ✅              |                ✅               |                              |                                |
+| `Microsoft.Maui.Graphics.SizeF` |                               |                                 |               ✅              |                ✅               |
 
 - **Font**: A universally compatible Font class. Implicit casting between `IronSoftware.Drawing.Font` and following popular Font formats supported:
 
@@ -71,6 +73,7 @@
 |   **Implicit Casting Support**   | To `Point` Supported | From `Point` Supported | To `PointF` Supported | From `PointF` Supported |
 |--------------------------------|:----------------------------:|:------------------------------:|:----------------------------:|:------------------------------:|
 | `System.Drawing.Point`            |               ✅              |                ✅               |                              |                                |
+| `System.Drawing.PointF`           |               ✅              |                ✅               |                              |                                |
 | `SixLabors.ImageSharp.Point`      |               ✅              |                ✅               |                              |                                |
 | `SixLabors.ImageSharp.PointF`     |                              |                                |               ✅              |                ✅               |
 | `Microsoft.Maui.Graphics.Point`   |               ✅              |                ✅               |                              |                                |
@@ -79,7 +82,7 @@
 | `SkiaSharp.SKPointI`              |               ✅              |                ✅               |                              |                                |
 
 ### IronSoftware.Drawing has cross platform support compatibility with:
-- .NET 7, .NET 6, .NET 5, .NET Core, Standard, and Framework
+- .NET 8, .NET 7, .NET 6, .NET 5, .NET Core, Standard, and Framework
 - Windows, macOS, Linux, Docker, Azure, and AWS
 
 ## Using IronSoftware.Drawing
@@ -103,7 +106,7 @@ bitmap.SaveAs("result.jpg");
 var bytes = bitmap.ExportBytes();
 
 var resultExport = new System.IO.MemoryStream();
-bimtap.ExportStream(resultExport, AnyBitmap.ImageFormat.Jpeg, 100);
+bitmap.ExportStream(resultExport, AnyBitmap.ImageFormat.Jpeg, 100);
 
 // Casting between System.Drawing.Bitmap and IronSoftware.Drawing.AnyBitmap
 System.Drawing.Bitmap image = new System.Drawing.Bitmap("FILE_PATH");
@@ -129,7 +132,7 @@ AnyBitmap anyBitmap = AnyBitmap.CreateMultiFrameTiff(imagePaths);
 
 // Manipulate image frames
 int frameCount = anyBitmap.FrameCount;
-List<AnyBitmap> frames = anyBitmap.GetAllFrames();
+List<AnyBitmap> frames = (List<AnyBitmap>)anyBitmap.GetAllFrames;
 ```
 ### `Color` Code Example
 ```csharp
@@ -153,7 +156,7 @@ ironColor.B;
 ironColor.GetLuminance();
 
 // Gets the 32-bit ARGB value of this Color structure.
-ironColor.ToArgb()
+ironColor.ToArgb();
 ```
 ### `Rectangle` Code Example
 ```csharp
@@ -186,17 +189,9 @@ using IronSoftware.Drawing;
 // Create a new Size object
 Size size = new Size(50, 50);
 
-// Create a new Size object with MeasurementUnits
-Size mmSize = new Size(50, 50, MeasurementUnits.Millimeters);
-
-// Convert between MeasurementUnits
-Size pxSize = mmSize.ConvertTo(MeasurementUnits.Millimeters);
-// Or specify DPI
-Size pxSizeWithDPI = mmSize.ConvertTo(MeasurementUnits.Millimeters, 200);
-
 // Casting between System.Drawing.Size and IronSoftware.Drawing.Size
-System.Drawing.Size size = new System.Drawing.Size(150, 150);
-IronSoftware.Drawing.Size ironSize = size;
+System.Drawing.Size systemSize = new System.Drawing.Size(150, 150);
+IronSoftware.Drawing.Size ironSize = systemSize;
 
 ironSize.Width;
 ironSize.Height;
@@ -223,4 +218,4 @@ ironFont.Bold;
 
 For more information about Iron Software please visit our website: [https://ironsoftware.com/](https://ironsoftware.com/)
 
-For general support and technical inquiries, please email us at: developers@ironsoftware.com
+For general support and technical inquiries, please email us at: support@ironsoftware.com
