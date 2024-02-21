@@ -40,7 +40,7 @@ Supports:
 For general support and technical inquiries, please email us at: support@ironsoftware.com</description>
 		<summary>IronSoftware.System.Drawing is an open-source solution for .NET developers to replace System.Drawing.Common with a universal and flexible library.</summary>
 		<releaseNotes>
-		- Add AnyBitmap.FromSpan() and new AnyBitmap constructor both which take ReadOnlySpan<byte> which help with less memory usage.
+		- Add AnyBitmap.FromSpan() and new AnyBitmap constructor both which take ReadOnlySpan<byte> that can help with less memory usage.
 		- Update Point to take Integer instead of Double
 		</releaseNotes>
 		<copyright>Copyright © Iron Software 2022-2024</copyright>
