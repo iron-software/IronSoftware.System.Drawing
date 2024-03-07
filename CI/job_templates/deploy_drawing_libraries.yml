@@ -1,5 +1,7 @@
 parameters:
   NuGetVersion: ''
+  gitHubRelease: false
+  preRelease: true
 
 jobs:
   - job: DeployDrawingLibraries
@@ -82,3 +84,19 @@ jobs:
       inputs:
         targetType: 'inline'
         script: 'Write-Host "##vso[build.addbuildtag]${{ parameters.NuGetVersion }}"'
+
+    # Create GitHub Release with version tag
+    - task: GitHubRelease@1
+      condition: and(succeeded(), eq('${{ parameters.gitHubRelease }}', true), eq('${{ parameters.preRelease }}', false))
+      inputs:
+        isPreRelease: true
+        gitHubConnection: 'ironsoftwarebuild'
+        repositoryName: 'iron-software/IronSoftware.System.Drawing'
+        action: 'create'
+        target: '$(Build.SourceVersion)'
+        tagSource: 'userSpecifiedTag'
+        tag: '$(NugetVersion)'
+        title: 'IronSoftware.System.Drawing v$(NugetVersion)'
+        releaseNotesSource: 'inline'
+        changeLogCompareToRelease: 'lastFullRelease'
+        changeLogType: 'commitBased'
