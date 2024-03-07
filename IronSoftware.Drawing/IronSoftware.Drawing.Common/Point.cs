@@ -10,18 +10,18 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Gets or sets the x-coordinate of this <see cref="IronSoftware.Drawing.Point"/>.
         /// </summary>
-        public double X { get; set; } = 0;
+        public int X { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets the y-coordinate of this <see cref="IronSoftware.Drawing.Point"/>.
         /// </summary>
-        public double Y { get; set; } = 0;
+        public int Y { get; set; } = 0;
         /// <summary>
         /// Initializes a new instance of the <see cref="IronSoftware.Drawing.Point"/> struct with the specified coordinates.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public Point(double x, double y)
+        public Point(int x, int y)
         {
             X = x;
             Y = y;
@@ -32,7 +32,7 @@ namespace IronSoftware.Drawing
         /// </summary>
         /// <param name="dx">The amount to offset the x-coordinate.</param>
         /// <param name="dy">The amount to offset the y-coordinate.</param>
-        public void Offset(double dx, double dy)
+        public void Offset(int dx, int dy)
         {
             X += dx;
             Y += dy;
@@ -52,11 +52,10 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Implicitly casts Point objects to SixLabors.ImageSharp.Point
         /// </summary>
-        /// <remarks>SixLabors.ImageSharp.Point only uses int instead of double for X and Y. Decimals will be removed.</remarks>
         /// <param name="point">Point will automatically be casted to SixLabors.ImageSharp.Point</param>
         public static implicit operator SixLabors.ImageSharp.Point(Point point)
         {
-            return new SixLabors.ImageSharp.Point((int)point.X, (int)point.Y);
+            return new SixLabors.ImageSharp.Point(point.X, point.Y);
         }
 
         /// <summary>
@@ -71,11 +70,10 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Implicitly casts Point objects to System.Drawing.Point
         /// </summary>
-        /// <remarks>System.Drawing.Point only uses int instead of double for X and Y. Decimals will be removed.</remarks>
         /// <param name="point">Point will automatically be casted to System.Drawing.Point</param>
         public static implicit operator System.Drawing.Point(Point point)
         {
-            return new System.Drawing.Point((int)point.X, (int)point.Y);
+            return new System.Drawing.Point(point.X, point.Y);
         }
 
         /// <summary>
@@ -84,7 +82,7 @@ namespace IronSoftware.Drawing
         /// <param name="point">Microsoft.Maui.Graphics.Point will automatically be casted to <see cref="Point"/> </param>
         public static implicit operator Point(Microsoft.Maui.Graphics.Point point)
         {
-            return new Point(point.X, point.Y);
+            return new Point((int)point.X, (int)point.Y);
         }
 
         /// <summary>
@@ -108,11 +106,10 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Implicitly casts Point objects to SkiaSharp.SKPointI
         /// </summary>
-        /// <remarks>SkiaSharp.SKPointI only uses int instead of double for X and Y. Decimals will be removed.</remarks>
         /// <param name="point">Point will automatically be casted to SkiaSharp.SKPointI</param>
         public static implicit operator SkiaSharp.SKPointI(Point point)
         {
-            return new SkiaSharp.SKPointI((int)point.X, (int)point.Y);
+            return new SkiaSharp.SKPointI(point.X, point.Y);
         }
 
         #endregion
