@@ -853,5 +853,18 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal($"Extracting alpha data is not supported for {bitmap.BitsPerPixel} bpp images.", exception.Message);
         }
 
+        [FactWithAutomaticDisplayName]
+        public void LoadImage_TiffImage_ShouldLoadWithoutThumbnail()
+        {
+            // Arrange
+            string imagePath = GetRelativeFilePath("example.tif");
+
+            // Act
+            var bitmap = new AnyBitmap(imagePath);
+
+            // Assert
+            bitmap.FrameCount.Should().Be(1);
+        }
+
     }
 }

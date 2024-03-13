@@ -2208,12 +2208,17 @@ namespace IronSoftware.Drawing
                 using MemoryStream tiffStream = new(bytes.ToArray());
 
                 // open a TIFF stored in the stream
-                using (var tif = Tiff.ClientOpen("in-memory", "r", tiffStream, new TiffStream()))
+                using (Tiff tif = Tiff.ClientOpen("in-memory", "r", tiffStream, new TiffStream()))
                 {
                     short num = tif.NumberOfDirectories();
                     for (short i = 0; i < num; i++)
                     {
                         _ = tif.SetDirectory(i);
+
+                        if (IsThumbnail(tif))
+                        {
+                            continue;
+                        }
 
                         var (width, height) = SetWidthHeight(tif, i, ref imageWidth, ref imageHeight);
 
@@ -2279,6 +2284,22 @@ namespace IronSoftware.Drawing
             {
                 throw new NotSupportedException("Error while reading TIFF image format.", e);
             }
+        }
+
+        /// <summary>
+        /// Determines if a TIFF frame contains a thumbnail.
+        /// </summary>
+        /// <param name="tif">The <see cref="Tiff"/> which set number of directory to analyze.</param>
+        /// <returns>True if the frame contains a thumbnail, otherwise false.</returns>
+        private bool IsThumbnail(Tiff tif)
+        {
+            FieldValue[] subFileTypeFieldValue = tif.GetField(TiffTag.SUBFILETYPE);
+
+            // Current thumbnail identification relies on the SUBFILETYPE tag with a value of FileType.REDUCEDIMAGE.
+            // This may need refinement in the future to include additional checks
+            // (e.g., FileType.COMPRESSION is NONE, Image Dimensions).
+            return subFileTypeFieldValue != null && subFileTypeFieldValue.Length > 0 
+                && (FileType)subFileTypeFieldValue[0].Value == FileType.REDUCEDIMAGE;
         }
 
         private ReadOnlySpan<byte> PrepareByteArray(Image<Rgba32> bmp, int[] raster, int width, int height)
