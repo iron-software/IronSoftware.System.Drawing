@@ -11,12 +11,27 @@ pr:
     include:
     - master
     - main
+    - develop
   paths:
     exclude:
     - NuGet
 
+parameters:
+  - name: testWindows
+    displayName: Test Windows
+    type: boolean
+    default: True
+  - name: testLinux
+    displayName: Test Linux
+    type: boolean
+    default: True
+  - name: testMacOS
+    displayName: Test macOS
+    type: boolean
+    default: True
+
 pool:
-  vmImage: 'macOS-latest'
+  vmImage: 'windows-latest'
 
 variables:
   - group: IronDrawingVersions
@@ -36,9 +51,24 @@ stages:
       parameters:
         publishAssemblies: false
         buildConfiguration: $(buildConfiguration)
-## Execute Unit Tests
+## Execute Windows Unit Tests
+- template: stage_templates/run_tests_on_pool.yml
+  parameters:
+    OSPlatform: 'Windows'
+    pool:
+      vmImage: 'windows-latest'
+    runUnitTests: ${{ parameters.testWindows }}
+## Execute Linux Unit Tests
+- template: stage_templates/run_tests_on_pool.yml
+  parameters:
+    OSPlatform: 'Ubuntu'
+    pool:
+      vmImage: 'ubuntu-latest'
+    runUnitTests: ${{ parameters.testLinux }}
+## Execute macOS Unit Tests
 - template: stage_templates/run_tests_on_pool.yml
   parameters:
     OSPlatform: 'MacOs'
     pool:
       vmImage: 'macOS-latest'
+    runUnitTests: ${{ parameters.testMacOS }}

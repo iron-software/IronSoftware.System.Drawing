@@ -43,6 +43,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "job_templates", "job_templa
 		..\CI\job_templates\test_drawing_libraries.yml = ..\CI\job_templates\test_drawing_libraries.yml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronSoftware.Drawing.Common.ConsoleTest", "IronSoftware.Drawing.Common.ConsoleTest\IronSoftware.Drawing.Common.ConsoleTest.csproj", "{A0B0F474-108B-4B60-834B-8FB169743687}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{B9418412-12AE-48D8-8B73-14DEB4FF47AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9418412-12AE-48D8-8B73-14DEB4FF47AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9418412-12AE-48D8-8B73-14DEB4FF47AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0B0F474-108B-4B60-834B-8FB169743687}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0B0F474-108B-4B60-834B-8FB169743687}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0B0F474-108B-4B60-834B-8FB169743687}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0B0F474-108B-4B60-834B-8FB169743687}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -21,6 +21,7 @@ using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 
 namespace IronSoftware.Drawing
@@ -452,11 +453,18 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
+        /// Create a new Bitmap from a a Byte Span.
+        /// </summary>
+        /// <param name="span">A Byte Span of image data in any common format.</param>
+        public static AnyBitmap FromSpan(ReadOnlySpan<byte> span)
+        {
+            return new AnyBitmap(span);
+        }
+
+        /// <summary>
         /// Create a new Bitmap from a a Byte Array.
         /// </summary>
         /// <param name="bytes">A ByteArray of image data in any common format.</param>
-        /// <seealso cref="FromBytes"/>
-        /// <seealso cref="AnyBitmap(byte[])"/>
         public static AnyBitmap FromBytes(byte[] bytes)
         {
             return new AnyBitmap(bytes);
@@ -485,6 +493,17 @@ namespace IronSoftware.Drawing
         {
             return new AnyBitmap(stream);
         }
+
+        /// <summary>
+        /// Construct a new Bitmap from binary data (byte span).
+        /// </summary>
+        /// <param name="span">A byte span of image data in any common format.</param>
+        /// <seealso cref="AnyBitmap"/>
+        public AnyBitmap(ReadOnlySpan<byte> span)
+        {
+            LoadImage(span);
+        }
+
         /// <summary>
         /// Construct a new Bitmap from binary data (bytes).
         /// </summary>
@@ -540,7 +559,7 @@ namespace IronSoftware.Drawing
         /// <seealso cref="AnyBitmap"/>
         public AnyBitmap(string file)
         {
-            LoadImage(file);
+            LoadImage(File.ReadAllBytes(file));
         }
 
         /// <summary>
@@ -567,10 +586,10 @@ namespace IronSoftware.Drawing
         /// </summary>
         /// <param name="width">Width of new AnyBitmap</param>
         /// <param name="height">Height of new AnyBitmap</param>
-        /// <param name="backgrounColor">Background color of new AnyBitmap</param>
-        public AnyBitmap(int width, int height, Color backgrounColor = null)
+        /// <param name="backgroundColor">Background color of new AnyBitmap</param>
+        public AnyBitmap(int width, int height, Color backgroundColor = null)
         {
-            CreateNewImageInstance(width, height, backgrounColor);
+            CreateNewImageInstance(width, height, backgroundColor);
         }
 
         /// <summary>
@@ -1134,7 +1153,7 @@ namespace IronSoftware.Drawing
         /// to avoid unnecessary memory allocation.</para>
         /// </summary>
         /// <param name="image">SixLabors.ImageSharp.Image will automatically 
-        /// be cast to <see cref="AnyBitmap"/>.</param>
+        /// be casted to <see cref="AnyBitmap"/>.</param>
         public static implicit operator AnyBitmap(Image<Rgb24> image)
         {
             try
@@ -1266,7 +1285,7 @@ namespace IronSoftware.Drawing
         /// to avoid unnecessary memory allocation.</para>
         /// </summary>
         /// <param name="image">SixLabors.ImageSharp.Image will automatically
-        /// be cast to <see cref="AnyBitmap"/>.</param>
+        /// be casted to <see cref="AnyBitmap"/>.</param>
         public static implicit operator AnyBitmap(Image image)
         {
             try
@@ -1331,7 +1350,7 @@ namespace IronSoftware.Drawing
         /// please remember to dispose your original SkiaSharp.SKImage object
         /// to avoid unnecessary memory allocation.</para>
         /// </summary>
-        /// <param name="image">SkiaSharp.SKImage will automatically be cast to
+        /// <param name="image">SkiaSharp.SKImage will automatically be casted to
         /// <see cref="AnyBitmap"/>.</param>
         public static implicit operator AnyBitmap(SKImage image)
         {
@@ -1407,7 +1426,7 @@ namespace IronSoftware.Drawing
         /// please remember to dispose your original SkiaSharp.SKBitmap object
         /// to avoid unnecessary memory allocation.</para>
         /// </summary>
-        /// <param name="image">SkiaSharp.SKBitmap will automatically be cast
+        /// <param name="image">SkiaSharp.SKBitmap will automatically be casted
         /// to <see cref="AnyBitmap"/>.</param>
         public static implicit operator AnyBitmap(SKBitmap image)
         {
@@ -1486,7 +1505,7 @@ namespace IronSoftware.Drawing
         /// to avoid unnecessary memory allocation.</para>
         /// </summary>
         /// <param name="image">Microsoft.Maui.Graphics.Platform.PlatformImage 
-        /// will automatically be cast to <see cref="AnyBitmap"/>.</param>
+        /// will automatically be casted to <see cref="AnyBitmap"/>.</param>
 
         public static implicit operator AnyBitmap(PlatformImage image)
         {
@@ -1546,7 +1565,7 @@ namespace IronSoftware.Drawing
         /// please remember to dispose your original System.Drawing.Bitmap object
         /// to avoid unnecessary memory allocation.</para>
         /// </summary>
-        /// <param name="image">System.Drawing.Bitmap will automatically be cast to <see cref="AnyBitmap"/> </param>
+        /// <param name="image">System.Drawing.Bitmap will automatically be casted to <see cref="AnyBitmap"/> </param>
         public static implicit operator AnyBitmap(System.Drawing.Bitmap image)
         {
             byte[] data;
@@ -1642,7 +1661,7 @@ namespace IronSoftware.Drawing
         /// please remember to dispose your original System.Drawing.Image object
         /// to avoid unnecessary memory allocation.</para>
         /// </summary>
-        /// <param name="image">System.Drawing.Image will automatically be cast
+        /// <param name="image">System.Drawing.Image will automatically be casted
         /// to <see cref="AnyBitmap"/> </param>
         public static implicit operator AnyBitmap(System.Drawing.Image image)
         {
@@ -1975,79 +1994,40 @@ namespace IronSoftware.Drawing
 
         #region Private Method
 
-        private void CreateNewImageInstance(int width, int height, Color backgrounColor)
+        private void CreateNewImageInstance(int width, int height, Color backgroundColor)
         {
             Image = new Image<Rgba32>(width, height);
-            if (backgrounColor != null)
+            if (backgroundColor != null)
             {
-                Image.Mutate(context => context.Fill(backgrounColor));
+                Image.Mutate(context => context.Fill(backgroundColor));
             }
             using var stream = new MemoryStream();
             Image.SaveAsBmp(stream);
             Binary = stream.ToArray();
         }
-
-        private void LoadImage(byte[] bytes)
+        
+        private void LoadImage(ReadOnlySpan<byte> bytes)
         {
+            Format = Image.DetectFormat(bytes);
             try
             {
-#if NET6_0_OR_GREATER
-                Image = Image.Load(bytes);
-                Format = Image.Metadata.DecodedImageFormat;
-#else
-                Image = Image.Load(bytes, out IImageFormat format);
-                Format = format;
-#endif
-                Binary = bytes;
-            }
-            catch (DllNotFoundException e)
-            {
-                throw new DllNotFoundException(
-                    "Please install SixLabors.ImageSharp from NuGet.", e);
-            }
-            catch (Exception)
-            {
-                try
-                {
+                if(Format is TiffFormat)
                     OpenTiffToImageSharp(bytes);
-                }
-                catch (Exception e)
+                else
                 {
-                    throw new NotSupportedException(
-                        "Image could not be loaded. File format is not supported.", e);
+                    Binary = bytes.ToArray();
+                    Image = Image.Load(bytes);
                 }
-            }
-        }
-
-        private void LoadImage(string file)
-        {
-            try
-            {
-#if NET6_0_OR_GREATER
-                Image = Image.Load(file);
-                Format = Image.Metadata.DecodedImageFormat;
-#else
-                Image = Image.Load(file, out IImageFormat format);
-                Format = format;
-#endif
-                Binary = File.ReadAllBytes(file);
             }
             catch (DllNotFoundException e)
             {
                 throw new DllNotFoundException(
                     "Please install SixLabors.ImageSharp from NuGet.", e);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                try
-                {
-                    OpenTiffToImageSharp(File.ReadAllBytes(file));
-                }
-                catch (Exception e)
-                {
-                    throw new NotSupportedException(
-                        "Image could not be loaded. File format is not supported.", e);
-                }
+                throw new NotSupportedException(
+                    "Image could not be loaded. File format is not supported.", e);
             }
         }
 
@@ -2062,14 +2042,6 @@ namespace IronSoftware.Drawing
             }
 
             LoadImage(ms.ToArray());
-        }
-
-        private void SetBinaryFromImageSharp(Image<Rgba32> tiffImage)
-        {
-            using var memoryStream = new MemoryStream();
-            tiffImage.Save(memoryStream, new TiffEncoder());
-            _ = memoryStream.Seek(0, SeekOrigin.Begin);
-            LoadImage(memoryStream);
         }
 
         private static AnyBitmap LoadSVGImage(string file)
@@ -2224,7 +2196,7 @@ namespace IronSoftware.Drawing
             }
         }
 
-        private void OpenTiffToImageSharp(byte[] bytes)
+        private void OpenTiffToImageSharp(ReadOnlySpan<byte> bytes)
         {
             try
             {
@@ -2233,7 +2205,7 @@ namespace IronSoftware.Drawing
                 List<Image> images = new();
 
                 // create a memory stream out of them
-                using MemoryStream tiffStream = new(bytes);
+                using MemoryStream tiffStream = new(bytes.ToArray());
 
                 // open a TIFF stored in the stream
                 using (var tif = Tiff.ClientOpen("in-memory", "r", tiffStream, new TiffStream()))
@@ -2254,29 +2226,50 @@ namespace IronSoftware.Drawing
 
                         using Image<Rgba32> bmp = new(width, height);
 
-                        byte[] bits = PrepareByteArray(bmp, raster, width, height);
+                        var bits = PrepareByteArray(bmp, raster, width, height);
 
                         images.Add(Image.LoadPixelData<Rgba32>(bits, bmp.Width, bmp.Height));
                     }
                 }
-
-                Image?.Dispose();
-
+                
+                // find max
                 FindMaxWidthAndHeight(images, out int maxWidth, out int maxHeight);
 
-                using Image<Rgba32> tiffImage = CloneAndResizeImageSharp(images[0], maxWidth, maxHeight);
+                // mute first image
+                images[0].Mutate(img => img.Resize(new ResizeOptions
+                {
+                    Size = new Size(maxWidth, maxHeight),
+                    Mode = ResizeMode.BoxPad,
+                    PadColor = SixLabors.ImageSharp.Color.Transparent
+                }));
+
+                // iterate through images past the first
                 for (int i = 1; i < images.Count; i++)
                 {
-                    Image<Rgba32> image = CloneAndResizeImageSharp(images[i], maxWidth, maxHeight);
-                    _ = tiffImage.Frames.AddFrame(image.Frames.RootFrame);
+                    // mute image
+                    images[i].Mutate(img => img.Resize(new ResizeOptions
+                    {
+                        Size = new Size(maxWidth, maxHeight),
+                        Mode = ResizeMode.BoxPad,
+                        PadColor = SixLabors.ImageSharp.Color.Transparent
+                    }));
+
+                    // add frames to first image
+                    _ = images[0].Frames.AddFrame(images[i].Frames.RootFrame);
+
+                    // dispose images past the first
+                    images[i].Dispose();
                 }
 
-                SetBinaryFromImageSharp(tiffImage);
+                // get raw binary
+                using var memoryStream = new MemoryStream();
+                images[0].Save(memoryStream, new TiffEncoder());
+                memoryStream.Seek(0, SeekOrigin.Begin);
 
-                foreach (Image image in images)
-                {
-                    image.Dispose();
-                }
+                // store result
+                Binary = memoryStream.ToArray();
+                Image?.Dispose();
+                Image = images[0];
             }
             catch (DllNotFoundException e)
             {
@@ -2288,7 +2281,7 @@ namespace IronSoftware.Drawing
             }
         }
 
-        private byte[] PrepareByteArray(Image<Rgba32> bmp, int[] raster, int width, int height)
+        private ReadOnlySpan<byte> PrepareByteArray(Image<Rgba32> bmp, int[] raster, int width, int height)
         {
             byte[] bits = new byte[GetStride(bmp) * height];
 
