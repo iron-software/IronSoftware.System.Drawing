@@ -40,38 +40,57 @@ namespace IronSoftware.Drawing
         /// Construct a new <see cref="Color"/>.
         /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/create-color/">Code Example</a></para>
         /// </summary>
-        /// <param name="colorcode">The hexadecimal representation of the combined color components arranged in rgb, argb, rrggbb, or aarrggbb format to match web syntax.</param>
-        public Color(string colorcode)
+        /// <param name="color">The hexadecimal representation of the combined color components arranged in rgb, argb, rrggbb, or aarrggbb format to match web syntax.</param>
+        public Color(string color)
         {
-            string trimmedColorcode = colorcode.TrimStart('#');
-
-            if (trimmedColorcode.Length == 8)
+            if (IsThemeColor(color))
             {
-                A = ConvertToHexNumberByte(trimmedColorcode, 0, 2);
-                R = ConvertToHexNumberByte(trimmedColorcode, 2, 2);
-                G = ConvertToHexNumberByte(trimmedColorcode, 4, 2);
-                B = ConvertToHexNumberByte(trimmedColorcode, 6, 2);
-            }
-            else if (trimmedColorcode.Length == 6)
-            {
-                A = 255;
-                R = ConvertToHexNumberByte(trimmedColorcode, 0, 2);
-                G = ConvertToHexNumberByte(trimmedColorcode, 2, 2);
-                B = ConvertToHexNumberByte(trimmedColorcode, 4, 2);
-            }
-            else if (trimmedColorcode.Length == 3)
-            {
-                A = 255;
-                R = ConvertToHexNumberByte(trimmedColorcode, 0, 1);
-                G = ConvertToHexNumberByte(trimmedColorcode, 1, 1);
-                B = ConvertToHexNumberByte(trimmedColorcode, 2, 1);
+                ColorValue = color;
             }
             else
             {
-                throw NoConverterException(colorcode, null);
-            }
-        }
+                string trimmedColorCode = color.TrimStart('#');
 
+
+                if (trimmedColorCode.Length == 8)
+                {
+                    A = ConvertToHexNumberByte(trimmedColorCode, 0, 2);
+                    R = ConvertToHexNumberByte(trimmedColorCode, 2, 2);
+                    G = ConvertToHexNumberByte(trimmedColorCode, 4, 2);
+                    B = ConvertToHexNumberByte(trimmedColorCode, 6, 2);
+
+                }
+                else if (trimmedColorCode.Length == 6)
+                {
+                    A = 255;
+                    R = ConvertToHexNumberByte(trimmedColorCode, 0, 2);
+                    G = ConvertToHexNumberByte(trimmedColorCode, 2, 2);
+                    B = ConvertToHexNumberByte(trimmedColorCode, 4, 2);
+                }
+                else if (trimmedColorCode.Length == 3)
+                {
+                    A = 255;
+                    R = ConvertToHexNumberByte(trimmedColorCode, 0, 1);
+                    G = ConvertToHexNumberByte(trimmedColorCode, 1, 1);
+                    B = ConvertToHexNumberByte(trimmedColorCode, 2, 1);
+                }
+                else
+                {
+                    throw NoConverterException(color, null);
+                }
+
+                ColorValue = trimmedColorCode;
+            }
+
+        }
+        private bool IsThemeColor(string color)
+        {
+            // List of theme color names
+            string[] themeColors = { "Automatic", "Accent1", "Accent2", "Accent3", "Accent4", "Accent5", "Accent6", "Dark1", "Dark2", "Light1", "Light2", "Background1", "Background2", "Text1", "Text2", "Hyperlink", "FollowedHyperlink" };
+
+            // Check if the given color matches any of the theme color names
+            return themeColors.Contains(color, StringComparer.OrdinalIgnoreCase);
+        }
         /// <summary>
         /// Construct a new <see cref="Color"/>.
         /// <br/><para><b>Further Documentation:</b><br/><a href="https://ironsoftware.com/open-source/csharp/drawing/examples/create-color/">Code Example</a></para>
@@ -815,8 +834,112 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of #9ACD32.
         /// </summary>
-        /// <return>A <see cref="Color"/> representing a system-defined color.</return>
-        public static readonly Color YellowGreen = new("#9ACD32");
+        /// <returns>A <see cref="Color"/> representing a system-defined color.</returns>
+        public static readonly Color YellowGreen = new Color("#9ACD32");
+
+        #region IronWord Properties
+
+        /// <summary>
+        /// Represents the automatic color.
+        /// </summary>
+        public static readonly Color Automatic = new Color("Automatic");
+
+        /// <summary>
+        /// Represents the accent color.
+        /// </summary>
+        public static readonly Color Accent = new Color("Accent");
+
+        /// <summary>
+        /// Represents the accent1 color.
+        /// </summary>
+        public static readonly Color Accent1 = new Color("Accent1");
+
+        /// <summary>
+        /// Represents the accent2 color.
+        /// </summary>
+        public static readonly Color Accent2 = new Color("Accent2");
+
+        /// <summary>
+        /// Represents the accent3 color.
+        /// </summary>
+        public static readonly Color Accent3 = new Color("Accent3");
+
+        /// <summary>
+        /// Represents the accent4 color.
+        /// </summary>
+        public static readonly Color Accent4 = new Color("Accent4");
+
+        /// <summary>
+        /// Represents the accent5 color.
+        /// </summary>
+        public static readonly Color Accent5 = new Color("Accent5");
+
+        /// <summary>
+        /// Represents the accent6 color.
+        /// </summary>
+        public static readonly Color Accent6 = new Color("Accent6");
+
+        /// <summary>
+        /// Represents the dark1 color.
+        /// </summary>
+        public static readonly Color Dark1 = new Color("Dark1");
+
+        /// <summary>
+        /// Represents the dark2 color.
+        /// </summary>
+        public static readonly Color Dark2 = new Color("Dark2");
+
+        /// <summary>
+        /// Represents the light1 color.
+        /// </summary>
+        public static readonly Color Light1 = new Color("Light1");
+
+        /// <summary>
+        /// Represents the light2 color.
+        /// </summary>
+        public static readonly Color Light2 = new Color("Light2");
+
+        /// <summary>
+        /// Represents the background1 color.
+        /// </summary>
+        public static readonly Color Background1 = new Color("Background1");
+
+        /// <summary>
+        /// Represents the background2 color.
+        /// </summary>
+        public static readonly Color Background2 = new Color("Background2");
+
+        /// <summary>
+        /// Represents the text1 color.
+        /// </summary>
+        public static readonly Color Text1 = new Color("Text1");
+
+        /// <summary>
+        /// Represents the text2 color.
+        /// </summary>
+        public static readonly Color Text2 = new Color("Text2");
+
+        /// <summary>
+        /// Represents the hyperlink color.
+        /// </summary>
+        public static readonly Color Hyperlink = new Color("Hyperlink");
+
+        /// <summary>
+        /// Represents the followed hyperlink color.
+        /// </summary>
+        public static readonly Color FollowedHyperlink = new Color("FollowedHyperlink");
+
+        /// <summary>
+        /// Represents none as the color.
+        /// </summary>
+        public static readonly Color None = new Color("None");
+
+        /// <summary>
+        /// Gets or sets the color value represented by this IronColor.
+        /// </summary>
+        public string ColorValue { get; private set; }
+
+        #endregion IronWord Properties
 
         /// <summary>
         /// Creates a <see cref="Color"/> structure from the specified 8-bit color values
