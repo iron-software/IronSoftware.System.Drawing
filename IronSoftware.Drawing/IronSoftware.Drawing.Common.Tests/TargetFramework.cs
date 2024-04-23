@@ -57,6 +57,11 @@ namespace IronSoftware.Drawing.Common.Tests
         {
             if (!Environment.GetEnvironmentVariables().Contains(key))
             {
+                if (key == "IronSoftware.Drawing.Common.Tests.DataFolder")
+                {
+                    return "../../../Data";
+                }
+
                 throw new InvalidOperationException($"Can not find the Environment variable by the name='{key}'");
             }
 
