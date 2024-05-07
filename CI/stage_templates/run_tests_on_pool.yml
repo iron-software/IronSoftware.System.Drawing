@@ -56,7 +56,7 @@ stages:
         framework: 'net50'
         architecture: ''
         buildConfiguration: $(Configuration)
-    # Windows .NET 6.0 Tests
+    # Windows .NET 6.0 x64 Tests
     - template: ../job_templates/test_drawing_libraries.yml
       parameters:
         name: UnitTest${{ parameters.OSPlatform }}net60
@@ -64,11 +64,27 @@ stages:
         framework: 'net60'
         architecture: ''
         buildConfiguration: $(Configuration)
-    # Windows .NET 7.0 Tests
+    # Windows .NET 6.0 x86 Tests
+    - template: ../job_templates/test_drawing_libraries.yml
+      parameters:
+        name: UnitTest${{ parameters.OSPlatform }}net60x86
+        OSPlatform: ${{ parameters.OSPlatform }}
+        framework: 'net60'
+        architecture: '.x86'
+        buildConfiguration: $(Configuration)
+    # Windows .NET 7.0 x64 Tests
     - template: ../job_templates/test_drawing_libraries.yml
       parameters:
         name: UnitTest${{ parameters.OSPlatform }}net70
         OSPlatform: ${{ parameters.OSPlatform }}
         framework: 'net70'
         architecture: ''
+        buildConfiguration: $(Configuration)
+    # Windows .NET 7.0 x86 Tests
+    - template: ../job_templates/test_drawing_libraries.yml
+      parameters:
+        name: UnitTest${{ parameters.OSPlatform }}net70x86
+        OSPlatform: ${{ parameters.OSPlatform }}
+        framework: 'net70'
+        architecture: '.x86'
         buildConfiguration: $(Configuration)
