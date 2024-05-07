@@ -879,7 +879,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             image.Save("expected.bmp");
             anyBitmap.SaveAs("result.bmp");
 
-            AssertImageAreEqual("expected.bmp", "result.bmp", true);
+            AssertLargeImageAreEqual("expected.bmp", "result.bmp", true);
         }
 
     }
