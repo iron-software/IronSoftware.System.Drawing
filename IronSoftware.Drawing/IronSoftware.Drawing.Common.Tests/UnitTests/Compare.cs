@@ -1,4 +1,5 @@
 ﻿using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 using System;
 using System.IO;
 using System.Linq;
@@ -14,43 +15,74 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
         }
 
+        protected static void AssertLargeImageAreEqual(string expectedImagePath, string resultImagePath, bool isCleanAll = false)
+        {
+            using SixLabors.ImageSharp.Image<Rgba32> expectedImageSharp = SixLabors.ImageSharp.Image.Load<Rgba32>(expectedImagePath);
+            using SixLabors.ImageSharp.Image<Rgba32> actualImageSharp = SixLabors.ImageSharp.Image.Load<Rgba32>(resultImagePath);
+
+            CleanCompareResultFile(expectedImagePath, resultImagePath, isCleanAll);
+
+            expectedImageSharp.Mutate(x => x.Resize(100, 100));
+            actualImageSharp.Mutate(x => x.Resize(100, 100));
+
+            AssertImageAreEqual(expectedImageSharp, actualImageSharp);
+        }
+
         protected static void AssertImageAreEqual(string expectedImagePath, string resultImagePath, bool isCleanAll = false)
         {
-            string assertName = "AssertImage.AreEqual";
+            using var expected = AnyBitmap.FromFile(expectedImagePath);
+            using var actual = AnyBitmap.FromFile(resultImagePath);
 
-            var expected = AnyBitmap.FromFile(expectedImagePath);
-            var actual = AnyBitmap.FromFile(resultImagePath);
+            CleanCompareResultFile(expectedImagePath, resultImagePath, isCleanAll);
 
+            AssertImageAreEqual(expected, actual);
+        }
+
+        protected static void AssertImageAreEqual(AnyBitmap expected, AnyBitmap actual)
+        {
+            try
+            {
+                string assertName = "AssertImage.AreEqual";
+
+                //Test to see if we have the same size of image
+                if (expected.Width != actual.Width || expected.Height != actual.Height)
+                {
+                    throw new AssertActualExpectedException($"Expected:<Height {expected.Height}, Width {expected.Width}>.", $"Actual:<Height {actual.Height},Width {actual.Width}>.", $"{assertName} failed.");
+                }
+
+                //Convert each image to a byte array
+                byte[] btImageExpected = expected.ExportBytes();
+                byte[] btImageActual = expected.ExportBytes();
+
+                //Compute a hash for each image
+                var shaM = SHA256.Create();
+                byte[] hash1 = shaM.ComputeHash(btImageExpected);
+                byte[] hash2 = shaM.ComputeHash(btImageActual);
+
+                //Compare the hash values
+                for (int i = 0; i < hash1.Length && i < hash2.Length; i++)
+                {
+                    if (hash1[i] != hash2[i])
+                    {
+                        throw new AssertActualExpectedException($"Expected:<hash value {hash1[i]}>.", $"Actual:<hash value {hash2[i]}>.", $"{assertName} failed.");
+                    }
+                }
+            }
+            finally
+            {
+                expected?.Dispose();
+                actual?.Dispose();
+            }
+        }
+
+        private static void CleanCompareResultFile(string expectedImagePath, string resultImagePath, bool isCleanAll)
+        {
             if (isCleanAll)
             {
                 CleanResultFile(expectedImagePath);
             }
 
             CleanResultFile(resultImagePath);
-
-            //Test to see if we have the same size of image
-            if (expected.Width != actual.Width || expected.Height != actual.Height)
-            {
-                throw new AssertActualExpectedException($"Expected:<Height {expected.Height}, Width {expected.Width}>.", $"Actual:<Height {actual.Height},Width {actual.Width}>.", $"{assertName} failed.");
-            }
-
-            //Convert each image to a byte array
-            byte[] btImageExpected = expected.ExportBytes();
-            byte[] btImageActual = expected.ExportBytes();
-
-            //Compute a hash for each image
-            var shaM = SHA256.Create();
-            byte[] hash1 = shaM.ComputeHash(btImageExpected);
-            byte[] hash2 = shaM.ComputeHash(btImageActual);
-
-            //Compare the hash values
-            for (int i = 0; i < hash1.Length && i < hash2.Length; i++)
-            {
-                if (hash1[i] != hash2[i])
-                {
-                    throw new AssertActualExpectedException($"Expected:<hash value {hash1[i]}>.", $"Actual:<hash value {hash2[i]}>.", $"{assertName} failed.");
-                }
-            }
         }
 
         protected static void CleanResultFile(string filename)
@@ -60,6 +92,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
                 File.Delete(filename);
             }
         }
+
         protected static void AssertStreamAreEqual(MemoryStream expected, MemoryStream actual)
         {
             string assertName = "AssertStream.AreEqual";
