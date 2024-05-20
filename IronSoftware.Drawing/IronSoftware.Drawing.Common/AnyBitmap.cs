@@ -174,7 +174,7 @@ namespace IronSoftware.Drawing
         public byte[] ExportBytes(
             ImageFormat format = ImageFormat.Default, int lossy = 100)
         {
-            MemoryStream mem = new();
+            using MemoryStream mem = new();
             ExportStream(mem, format, lossy);
             byte[] byteArray = mem.ToArray();
 
@@ -202,13 +202,7 @@ namespace IronSoftware.Drawing
             ImageFormat format = ImageFormat.Default,
             int lossy = 100)
         {
-            using (MemoryStream mem = new())
-            {
-                ExportStream(mem, format, lossy);
-                byte[] byteArray = mem.ToArray();
-
-                File.WriteAllBytes(file, byteArray);
-            }
+            SaveAs(file, format, lossy);
         }
 
         /// <summary>
@@ -346,7 +340,8 @@ namespace IronSoftware.Drawing
         /// <seealso cref="TrySaveAs(string)"/>
         public void SaveAs(string file, ImageFormat format, int lossy = 100)
         {
-            File.WriteAllBytes(file, ExportBytes(format, lossy));
+            using var fileStream = new FileStream(file, FileMode.Create);
+            ExportStream(fileStream, format, lossy);
         }
 
         /// <summary>

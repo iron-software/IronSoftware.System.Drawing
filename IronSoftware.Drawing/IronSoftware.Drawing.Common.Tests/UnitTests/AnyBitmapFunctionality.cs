@@ -866,5 +866,21 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             bitmap.FrameCount.Should().Be(1);
         }
 
+
+        [FactWithAutomaticDisplayName]
+        public void CastAnyBitmap_from_SixLabors()
+        {
+            //This test throw System.OutOfMemoryException in x86
+
+            var image = Image.Load(GetRelativeFilePath("RenderedFromChrome.bmp"));
+
+            var anyBitmap = (AnyBitmap)image;
+
+            image.Save("expected.bmp");
+            anyBitmap.SaveAs("result.bmp");
+
+            AssertLargeImageAreEqual("expected.bmp", "result.bmp", true);
+        }
+
     }
 }

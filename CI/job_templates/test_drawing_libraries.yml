@@ -32,6 +32,15 @@ jobs:
         inputs:
           packageType: 'sdk'
           version: '5.x'
+    # .NET 7.0 need to install only on x86
+    - ${{ if and(eq(parameters.framework, 'net70'), eq(parameters.architecture, '.x86')) }}:
+      - task: UseDotNet@2
+        displayName: 'Install .NET7 sdk'
+        inputs:
+          packageType: 'sdk'
+          version: '7.x'
+        env:
+          PROCESSOR_ARCHITECTURE: x86
     - ${{ if ne(parameters.framework, 'net60') }}:
       - task: DotNetCoreCLI@2
         displayName: Execute ${{ parameters.OSPlatform }} ${{ parameters.framework}} ${{ parameters.architecture }} Tests
