@@ -29,6 +29,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\IronSoftware.Drawing.Common\IronSoftware.Drawing.Common.csproj" />
+		<RuntimeHostConfigurationOption Include="System.Drawing.EnableUnixSupport" Value="true" />
 	</ItemGroup>
 
 	<ItemGroup>
