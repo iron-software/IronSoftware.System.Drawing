@@ -408,6 +408,19 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void CastBitmap_to_AnyBitmap_using_FromBitmap()
+        {
+            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
+            var imgSharp = Image.Load<Rgba32>(imagePath);
+            var anyBitmap = AnyBitmap.FromBitmap(imgSharp);
+
+            imgSharp.Save("expected.png");
+            anyBitmap.SaveAs("result.png");
+
+            AssertImageAreEqual("expected.png", "result.png", true);
+        }
+
+        [FactWithAutomaticDisplayName]
         public void Load_Tiff_Image()
         {
             var anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("IRON-274-39065.tif"));
