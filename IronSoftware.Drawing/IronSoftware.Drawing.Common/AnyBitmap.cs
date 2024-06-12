@@ -8,6 +8,7 @@ using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Formats.Tiff;
+using SixLabors.ImageSharp.Formats.Tiff.Constants;
 using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -21,7 +22,6 @@ using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 
 namespace IronSoftware.Drawing
@@ -50,6 +50,7 @@ namespace IronSoftware.Drawing
         private Image Image { get; set; }
         private byte[] Binary { get; set; }
         private IImageFormat Format { get; set; }
+        private TiffCompression TiffCompression { get; set; } = TiffCompression.Lzw;
 
         /// <summary>
         /// Width of the image.
@@ -292,7 +293,10 @@ namespace IronSoftware.Drawing
                     ImageFormat.Gif => new GifEncoder(),
                     ImageFormat.Png => new PngEncoder(),
                     ImageFormat.Webp => new WebpEncoder() { Quality = lossy },
-                    ImageFormat.Tiff => new TiffEncoder(),
+                    ImageFormat.Tiff => new TiffEncoder()
+                    {
+                        Compression = TiffCompression
+                    },
                     _ => new BmpEncoder()
                     {
                         BitsPerPixel = BmpBitsPerPixel.Pixel32,
@@ -2205,6 +2209,8 @@ namespace IronSoftware.Drawing
                 // open a TIFF stored in the stream
                 using (Tiff tif = Tiff.ClientOpen("in-memory", "r", tiffStream, new TiffStream()))
                 {
+                    SetTiffCompression(tif);
+
                     short num = tif.NumberOfDirectories();
                     for (short i = 0; i < num; i++)
                     {
@@ -2231,7 +2237,7 @@ namespace IronSoftware.Drawing
                         images.Add(Image.LoadPixelData<Rgba32>(bits, bmp.Width, bmp.Height));
                     }
                 }
-                
+
                 // find max
                 FindMaxWidthAndHeight(images, out int maxWidth, out int maxHeight);
 
@@ -2259,7 +2265,7 @@ namespace IronSoftware.Drawing
 
                     // dispose images past the first
                     images[i].Dispose();
-                }
+                }                
 
                 // get raw binary
                 using var memoryStream = new MemoryStream();
@@ -2279,6 +2285,29 @@ namespace IronSoftware.Drawing
             {
                 throw new NotSupportedException("Error while reading TIFF image format.", e);
             }
+        }
+
+        private Compression SetTiffCompression(Tiff tif)
+        {
+            Compression tifCompression = tif.GetField(TiffTag.COMPRESSION) != null && tif.GetField(TiffTag.COMPRESSION).Length > 0
+                                                        ? (Compression)tif.GetField(TiffTag.COMPRESSION)[0].ToInt()
+                                                        : Compression.NONE;
+
+            TiffCompression = tifCompression switch
+            {
+                Compression.CCITTRLE => TiffCompression.Ccitt1D,
+                Compression.CCITTFAX3 => TiffCompression.CcittGroup3Fax,
+                Compression.CCITTFAX4 => TiffCompression.CcittGroup4Fax,
+                Compression.LZW => TiffCompression.Lzw,
+                Compression.OJPEG => TiffCompression.OldJpeg,
+                Compression.NEXT => TiffCompression.NeXT,
+                Compression.PACKBITS => TiffCompression.PackBits,
+                Compression.THUNDERSCAN => TiffCompression.ThunderScan,
+                Compression.DEFLATE => TiffCompression.Deflate,
+                _ => TiffCompression.Jpeg
+            };
+
+            return tifCompression;
         }
 
         /// <summary>
