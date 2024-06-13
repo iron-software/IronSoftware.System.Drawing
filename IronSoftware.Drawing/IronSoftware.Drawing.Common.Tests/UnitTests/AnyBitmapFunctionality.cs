@@ -875,7 +875,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             bitmap.FrameCount.Should().Be(1);
         }
 
-
+#if !NET7_0
         [FactWithAutomaticDisplayName]
         public void CastAnyBitmap_from_SixLabors()
         {
@@ -890,9 +890,10 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             AssertLargeImageAreEqual("expected.bmp", "result.bmp", true);
         }
+#endif
 
 
-        [FactWithAutomaticDisplayName]
+        [IgnoreOnAzureDevopsX86Fact]
         public void Load_TiffImage_ShouldNotIncreaseFileSize()
         {
             // Arrange

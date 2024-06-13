@@ -69,5 +69,18 @@ namespace IronSoftware.Drawing.Common.Tests
         {
             return RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
         }
+        
+        /// <summary>
+        /// Get current processor architecture/bittiness string
+        /// </summary>
+        /// <returns>String representing architecture of the current process</returns>
+        public static string GetArchitecture()
+        {
+            return RuntimeInformation.ProcessArchitecture == Architecture.Arm64
+                ? "arm64"
+                : Environment.Is64BitProcess
+                ? "x64"
+                : "x86";
+        }
     }
 }
