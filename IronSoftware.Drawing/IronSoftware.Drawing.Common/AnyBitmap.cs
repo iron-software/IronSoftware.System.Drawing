@@ -2287,27 +2287,25 @@ namespace IronSoftware.Drawing
             }
         }
 
-        private Compression SetTiffCompression(Tiff tif)
+        private void SetTiffCompression(Tiff tif)
         {
-            Compression tifCompression = tif.GetField(TiffTag.COMPRESSION) != null && tif.GetField(TiffTag.COMPRESSION).Length > 0
+            Compression tiffCompression  = tif.GetField(TiffTag.COMPRESSION) != null && tif.GetField(TiffTag.COMPRESSION).Length > 0
                                                         ? (Compression)tif.GetField(TiffTag.COMPRESSION)[0].ToInt()
                                                         : Compression.NONE;
 
-            TiffCompression = tifCompression switch
+            TiffCompression = tiffCompression switch
             {
                 Compression.CCITTRLE => TiffCompression.Ccitt1D,
                 Compression.CCITTFAX3 => TiffCompression.CcittGroup3Fax,
                 Compression.CCITTFAX4 => TiffCompression.CcittGroup4Fax,
-                Compression.LZW => TiffCompression.Lzw,
+                Compression.JPEG => TiffCompression.Jpeg,
                 Compression.OJPEG => TiffCompression.OldJpeg,
                 Compression.NEXT => TiffCompression.NeXT,
                 Compression.PACKBITS => TiffCompression.PackBits,
                 Compression.THUNDERSCAN => TiffCompression.ThunderScan,
                 Compression.DEFLATE => TiffCompression.Deflate,
-                _ => TiffCompression.Jpeg
+                _ => TiffCompression.Lzw
             };
-
-            return tifCompression;
         }
 
         /// <summary>
