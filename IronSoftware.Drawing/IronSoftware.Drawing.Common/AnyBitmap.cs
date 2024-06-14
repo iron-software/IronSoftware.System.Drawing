@@ -1325,7 +1325,7 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                return Image.Load<Rgba32>(bitmap.Binary);
+                return Image.Load(bitmap.Binary);
             }
             catch (DllNotFoundException e)
             {
