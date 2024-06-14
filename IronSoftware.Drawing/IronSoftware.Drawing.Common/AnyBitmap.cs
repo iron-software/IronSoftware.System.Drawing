@@ -2207,25 +2207,25 @@ namespace IronSoftware.Drawing
                 using MemoryStream tiffStream = new(bytes.ToArray());
 
                 // open a TIFF stored in the stream
-                using (Tiff tif = Tiff.ClientOpen("in-memory", "r", tiffStream, new TiffStream()))
+                using (Tiff tiff = Tiff.ClientOpen("in-memory", "r", tiffStream, new TiffStream()))
                 {
-                    SetTiffCompression(tif);
+                    SetTiffCompression(tiff);
 
-                    short num = tif.NumberOfDirectories();
+                    short num = tiff.NumberOfDirectories();
                     for (short i = 0; i < num; i++)
                     {
-                        _ = tif.SetDirectory(i);
+                        _ = tiff.SetDirectory(i);
 
-                        if (IsThumbnail(tif))
+                        if (IsThumbnail(tiff))
                         {
                             continue;
                         }
 
-                        var (width, height) = SetWidthHeight(tif, i, ref imageWidth, ref imageHeight);
+                        var (width, height) = SetWidthHeight(tiff, i, ref imageWidth, ref imageHeight);
 
                         // Read the image into the memory buffer
                         int[] raster = new int[height * width];
-                        if (!tif.ReadRGBAImage(width, height, raster))
+                        if (!tiff.ReadRGBAImage(width, height, raster))
                         {
                             throw new NotSupportedException("Could not read image");
                         }
@@ -2287,10 +2287,10 @@ namespace IronSoftware.Drawing
             }
         }
 
-        private void SetTiffCompression(Tiff tif)
+        private void SetTiffCompression(Tiff tiff)
         {
-            Compression tiffCompression  = tif.GetField(TiffTag.COMPRESSION) != null && tif.GetField(TiffTag.COMPRESSION).Length > 0
-                                                        ? (Compression)tif.GetField(TiffTag.COMPRESSION)[0].ToInt()
+            Compression tiffCompression  = tiff.GetField(TiffTag.COMPRESSION) != null && tiff.GetField(TiffTag.COMPRESSION).Length > 0
+                                                        ? (Compression)tiff.GetField(TiffTag.COMPRESSION)[0].ToInt()
                                                         : Compression.NONE;
 
             TiffCompression = tiffCompression switch
@@ -2311,11 +2311,11 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Determines if a TIFF frame contains a thumbnail.
         /// </summary>
-        /// <param name="tif">The <see cref="Tiff"/> which set number of directory to analyze.</param>
+        /// <param name="tiff">The <see cref="Tiff"/> which set number of directory to analyze.</param>
         /// <returns>True if the frame contains a thumbnail, otherwise false.</returns>
-        private bool IsThumbnail(Tiff tif)
+        private bool IsThumbnail(Tiff tiff)
         {
-            FieldValue[] subFileTypeFieldValue = tif.GetField(TiffTag.SUBFILETYPE);
+            FieldValue[] subFileTypeFieldValue = tiff.GetField(TiffTag.SUBFILETYPE);
 
             // Current thumbnail identification relies on the SUBFILETYPE tag with a value of FileType.REDUCEDIMAGE.
             // This may need refinement in the future to include additional checks
@@ -2346,13 +2346,13 @@ namespace IronSoftware.Drawing
             return bits;
         }
 
-        private (int width, int height) SetWidthHeight(Tiff tif, short index, ref int imageWidth, ref int imageHeight)
+        private (int width, int height) SetWidthHeight(Tiff tiff, short index, ref int imageWidth, ref int imageHeight)
         {
             // Find the width and height of the image
-            FieldValue[] value = tif.GetField(TiffTag.IMAGEWIDTH);
+            FieldValue[] value = tiff.GetField(TiffTag.IMAGEWIDTH);
             int width = value[0].ToInt();
 
-            value = tif.GetField(TiffTag.IMAGELENGTH);
+            value = tiff.GetField(TiffTag.IMAGELENGTH);
             int height = value[0].ToInt();
 
             if (index == 0)
