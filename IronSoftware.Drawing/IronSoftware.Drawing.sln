@@ -43,7 +43,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "job_templates", "job_templa
 		..\CI\job_templates\test_drawing_libraries.yml = ..\CI\job_templates\test_drawing_libraries.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronSoftware.Drawing.Common.ConsoleTest", "IronSoftware.Drawing.Common.ConsoleTest\IronSoftware.Drawing.Common.ConsoleTest.csproj", "{A0B0F474-108B-4B60-834B-8FB169743687}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronSoftware.Drawing.Common.ConsoleTest", "IronSoftware.Drawing.Common.ConsoleTest\IronSoftware.Drawing.Common.ConsoleTest.csproj", "{A0B0F474-108B-4B60-834B-8FB169743687}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

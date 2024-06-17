@@ -4,11 +4,13 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
+using Image = SixLabors.ImageSharp.Image;
 
 namespace IronSoftware.Drawing.Common.Tests.UnitTests
 {
@@ -405,6 +407,19 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             imgSharp.Save("result.bmp");
 
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CastBitmap_to_AnyBitmap_using_FromBitmap()
+        {
+            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
+            System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(imagePath);
+            AnyBitmap anyBitmap = AnyBitmap.FromBitmap(bitmap);
+
+            bitmap.Save("expected.png");
+            anyBitmap.SaveAs("result.png");
+
+            AssertImageAreEqual("expected.png", "result.png", true);
         }
 
         [FactWithAutomaticDisplayName]

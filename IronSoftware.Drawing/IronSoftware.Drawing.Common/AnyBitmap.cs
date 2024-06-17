@@ -414,10 +414,10 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                var result = (AnyBitmap)Convert.ChangeType(
+                var bitmap = (System.Drawing.Bitmap)Convert.ChangeType(
                     otherBitmapFormat,
-                    typeof(AnyBitmap));
-                return result;
+                    typeof(System.Drawing.Bitmap));
+                return (AnyBitmap)bitmap;
             }
             catch (Exception e)
             {
