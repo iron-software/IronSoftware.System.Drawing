@@ -413,10 +413,10 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void CastBitmap_to_AnyBitmap_using_FromBitmap()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
-            var imgSharp = Image.Load<Rgba32>(imagePath);
+            var bitmap = (Bitmap)System.Drawing.Image.FromFile(imagePath);
             var anyBitmap = AnyBitmap.FromBitmap(new Bitmap(imagePath));
 
-            imgSharp.Save("expected.png");
+            bitmap.Save("expected.png");
             anyBitmap.SaveAs("result.png");
 
             AssertImageAreEqual("expected.png", "result.png", true);
