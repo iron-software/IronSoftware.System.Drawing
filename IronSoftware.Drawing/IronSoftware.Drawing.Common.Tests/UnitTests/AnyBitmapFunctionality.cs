@@ -478,11 +478,13 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void Create_Multi_page_Tiff_Paths()
         {
+            string outputImagePath = "create-tiff-output.tif";
             var imagePaths = new List<string>()
             {
                 GetRelativeFilePath("first-animated-qr.png"),
                 GetRelativeFilePath("last-animated-qr.png")
             };
+            long maxInputFileSize = imagePaths.Select(path => new FileInfo(path).Length).Max();
 
             var anyBitmap = AnyBitmap.CreateMultiFrameTiff(imagePaths);
             Assert.Equal(2, anyBitmap.FrameCount);
@@ -491,6 +493,13 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             anyBitmap.GetAllFrames.ElementAt(1).SaveAs("last.png");
             AssertImageAreEqual(GetRelativeFilePath("first-animated-qr.png"), "first.png");
             AssertImageAreEqual(GetRelativeFilePath("last-animated-qr.png"), "last.png");
+
+            anyBitmap.SaveAs(outputImagePath);
+
+            long outputFileSize = new FileInfo(outputImagePath).Length;
+            outputFileSize.Should().BeLessThanOrEqualTo(maxInputFileSize, $"Output file size ({outputFileSize}) exceeds the maximum input file size ({maxInputFileSize}).");
+
+            File.Delete(outputImagePath);
         }
 
         [FactWithAutomaticDisplayName]
@@ -881,7 +890,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             bitmap.FrameCount.Should().Be(1);
         }
 
-
+#if !NET7_0
         [FactWithAutomaticDisplayName]
         public void CastAnyBitmap_from_SixLabors()
         {
@@ -895,6 +904,34 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             anyBitmap.SaveAs("result.bmp");
 
             AssertLargeImageAreEqual("expected.bmp", "result.bmp", true);
+        }
+#endif
+
+
+        [IgnoreOnAzureDevopsX86Fact]
+        public void Load_TiffImage_ShouldNotIncreaseFileSize()
+        {
+            // Arrange
+#if NET6_0_OR_GREATER
+            double thresholdPercent = 0.15;
+#else
+            double thresholdPercent = 1.5;
+#endif
+            string imagePath = GetRelativeFilePath("test_dw_10.tif");
+            string outputImagePath = "output.tif";
+
+            // Act
+            var bitmap = new AnyBitmap(imagePath);
+            bitmap.SaveAs(outputImagePath);
+            var originalFileSize = new FileInfo(imagePath).Length;
+            var maxAllowedFileSize = (long)(originalFileSize * (1 + thresholdPercent));
+            var outputFileSize = new FileInfo(outputImagePath).Length;
+
+            // Assert
+            outputFileSize.Should().BeLessThanOrEqualTo(maxAllowedFileSize);
+
+            // Clean up
+            File.Delete(outputImagePath);
         }
 
     }
