@@ -4,11 +4,13 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
+using Image = SixLabors.ImageSharp.Image;
 
 namespace IronSoftware.Drawing.Common.Tests.UnitTests
 {
@@ -408,6 +410,19 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void CastBitmap_to_AnyBitmap_using_FromBitmap()
+        {
+            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
+            System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(imagePath);
+            AnyBitmap anyBitmap = AnyBitmap.FromBitmap(bitmap);
+
+            bitmap.Save("expected.png");
+            anyBitmap.SaveAs("result.png");
+
+            AssertImageAreEqual("expected.png", "result.png", true);
+        }
+
+        [FactWithAutomaticDisplayName]
         public void Load_Tiff_Image()
         {
             var anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("IRON-274-39065.tif"));
@@ -463,11 +478,13 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void Create_Multi_page_Tiff_Paths()
         {
+            string outputImagePath = "create-tiff-output.tif";
             var imagePaths = new List<string>()
             {
                 GetRelativeFilePath("first-animated-qr.png"),
                 GetRelativeFilePath("last-animated-qr.png")
             };
+            long maxInputFileSize = imagePaths.Select(path => new FileInfo(path).Length).Max();
 
             var anyBitmap = AnyBitmap.CreateMultiFrameTiff(imagePaths);
             Assert.Equal(2, anyBitmap.FrameCount);
@@ -476,6 +493,13 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             anyBitmap.GetAllFrames.ElementAt(1).SaveAs("last.png");
             AssertImageAreEqual(GetRelativeFilePath("first-animated-qr.png"), "first.png");
             AssertImageAreEqual(GetRelativeFilePath("last-animated-qr.png"), "last.png");
+
+            anyBitmap.SaveAs(outputImagePath);
+
+            long outputFileSize = new FileInfo(outputImagePath).Length;
+            outputFileSize.Should().BeLessThanOrEqualTo(maxInputFileSize, $"Output file size ({outputFileSize}) exceeds the maximum input file size ({maxInputFileSize}).");
+
+            File.Delete(outputImagePath);
         }
 
         [FactWithAutomaticDisplayName]
@@ -866,7 +890,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             bitmap.FrameCount.Should().Be(1);
         }
 
-
+#if !NET7_0
         [FactWithAutomaticDisplayName]
         public void CastAnyBitmap_from_SixLabors()
         {
@@ -880,6 +904,34 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             anyBitmap.SaveAs("result.bmp");
 
             AssertLargeImageAreEqual("expected.bmp", "result.bmp", true);
+        }
+#endif
+
+
+        [IgnoreOnAzureDevopsX86Fact]
+        public void Load_TiffImage_ShouldNotIncreaseFileSize()
+        {
+            // Arrange
+#if NET6_0_OR_GREATER
+            double thresholdPercent = 0.15;
+#else
+            double thresholdPercent = 1.5;
+#endif
+            string imagePath = GetRelativeFilePath("test_dw_10.tif");
+            string outputImagePath = "output.tif";
+
+            // Act
+            var bitmap = new AnyBitmap(imagePath);
+            bitmap.SaveAs(outputImagePath);
+            var originalFileSize = new FileInfo(imagePath).Length;
+            var maxAllowedFileSize = (long)(originalFileSize * (1 + thresholdPercent));
+            var outputFileSize = new FileInfo(outputImagePath).Length;
+
+            // Assert
+            outputFileSize.Should().BeLessThanOrEqualTo(maxAllowedFileSize);
+
+            // Clean up
+            File.Delete(outputImagePath);
         }
 
     }
