@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="2.88.7" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\IronSoftware.Drawing.Common\IronSoftware.Drawing.Common.csproj" />
   </ItemGroup>
 
