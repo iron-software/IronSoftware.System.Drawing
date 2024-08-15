@@ -44,7 +44,7 @@ namespace IronSoftware.Drawing
     /// self-memory-managing and does not need to be explicitly 'used' 
     /// or 'disposed'.</para>
     /// </summary>
-    public partial class AnyBitmap : IDisposable
+    public partial class AnyBitmap : IDisposable, IAnyImage
     {
         private bool _disposed = false;
         private Image Image { get; set; }
@@ -180,6 +180,12 @@ namespace IronSoftware.Drawing
             byte[] byteArray = mem.ToArray();
 
             return byteArray;
+        }
+
+        /// <inheritdoc/>
+        public byte[] ExportBytesAsJpg()
+        {
+            return this.ExportBytes(ImageFormat.Jpeg);
         }
 
         /// <summary>
