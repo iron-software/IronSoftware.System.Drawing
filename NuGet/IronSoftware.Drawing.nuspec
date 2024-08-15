@@ -39,27 +39,25 @@ Supports:
 
 For general support and technical inquiries, please email us at: support@ironsoftware.com</description>
 		<summary>IronSoftware.System.Drawing is an open-source solution for .NET developers to replace System.Drawing.Common with a universal and flexible library.</summary>
-		<releaseNotes>- Efficient compression significantly reduces output TIFF file size (Up to 80%).
-- Automatic compression when creating multi-frame TIFFs.
-- Fix the issue of exception error thrown when converting Bitmap to AnyBitmap.</releaseNotes>
+		<releaseNotes>- Update SixLabors.ImageSharp &amp; SixLabors.ImageSharp.Drawing to address known vulnerabilities.</releaseNotes>
 		<copyright>Copyright © Iron Software 2022-2024</copyright>
 		<tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, TIFF, TIF, GIF, JPEG, PNG, Color, Rectangle, Drawing, C#, VB.NET, ASPX, create, render, generate, standard, netstandard2.0, core, netcore</tags>
 		<repository type="git" url="https://github.com/iron-software/IronSoftware.Drawing.Common" commit="$commit$" />
 		<dependencies>
 			<group targetFramework="netstandard2.0">
-				<dependency id="SixLabors.ImageSharp" version="2.1.8" />
+				<dependency id="SixLabors.ImageSharp" version="2.1.9" />
 				<dependency id="SixLabors.ImageSharp.Drawing" version="1.0.0" />
 				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
 				<dependency id="System.Memory" version="4.5.5" />
 			</group>
 			<group targetFramework="net60">
-				<dependency id="SixLabors.ImageSharp" version="3.1.4" />
-				<dependency id="SixLabors.ImageSharp.Drawing" version="2.1.3" />
+				<dependency id="SixLabors.ImageSharp" version="3.1.5" />
+				<dependency id="SixLabors.ImageSharp.Drawing" version="2.1.4" />
 				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
 				<dependency id="System.Memory" version="4.5.5" />
 			</group>
 			<group targetFramework="MonoAndroid10.0">
-				<dependency id="SixLabors.ImageSharp" version="2.1.8" />
+				<dependency id="SixLabors.ImageSharp" version="2.1.9" />
 				<dependency id="SixLabors.ImageSharp.Drawing" version="1.0.0" />
 				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
 				<dependency id="System.Memory" version="4.5.5" />
