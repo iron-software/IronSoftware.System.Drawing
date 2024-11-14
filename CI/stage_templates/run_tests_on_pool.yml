@@ -16,20 +16,20 @@ stages:
       - script: echo "Skip Unit tests"
   - ${{ if eq(parameters.runUnitTests, true) }}:
     - ${{ if eq(parameters.OSPlatform, 'Windows') }}:
-      # Windows .NET 472 x86 Tests
+      # Windows .NET 48 x86 Tests
       - template: ../job_templates/test_drawing_libraries.yml
         parameters:
-          name: UnitTest${{ parameters.OSPlatform }}net472x86
+          name: UnitTest${{ parameters.OSPlatform }}net48x86
           OSPlatform: ${{ parameters.OSPlatform }}
-          framework: 'net472'
+          framework: 'net48'
           architecture: '.x86'
           buildConfiguration: $(Configuration)
-      # Windows .NET 472 x64 Tests
+      # Windows .NET 48 x64 Tests
       - template: ../job_templates/test_drawing_libraries.yml
         parameters:
-          name: UnitTest${{ parameters.OSPlatform }}net472x64
+          name: UnitTest${{ parameters.OSPlatform }}net48x64
           OSPlatform: ${{ parameters.OSPlatform }}
-          framework: 'net472'
+          framework: 'net48'
           architecture: ''
           buildConfiguration: $(Configuration)
     # .NET 8.0 Tests
