@@ -16,75 +16,27 @@ stages:
       - script: echo "Skip Unit tests"
   - ${{ if eq(parameters.runUnitTests, true) }}:
     - ${{ if eq(parameters.OSPlatform, 'Windows') }}:
-      # Windows .NET 472 x86 Tests
+      # Windows .NET 48 x86 Tests
       - template: ../job_templates/test_drawing_libraries.yml
         parameters:
-          name: UnitTest${{ parameters.OSPlatform }}net472x86
+          name: UnitTest${{ parameters.OSPlatform }}net48x86
           OSPlatform: ${{ parameters.OSPlatform }}
-          framework: 'net472'
+          framework: 'net48'
           architecture: '.x86'
           buildConfiguration: $(Configuration)
-      # Windows .NET 472 x64 Tests
+      # Windows .NET 48 x64 Tests
       - template: ../job_templates/test_drawing_libraries.yml
         parameters:
-          name: UnitTest${{ parameters.OSPlatform }}net472x64
+          name: UnitTest${{ parameters.OSPlatform }}net48x64
           OSPlatform: ${{ parameters.OSPlatform }}
-          framework: 'net472'
+          framework: 'net48'
           architecture: ''
           buildConfiguration: $(Configuration)
-      # Windows .NET Core x64 Tests
-      - template: ../job_templates/test_drawing_libraries.yml
-        parameters:
-          name: UnitTest${{ parameters.OSPlatform }}netcore
-          OSPlatform: ${{ parameters.OSPlatform }}
-          framework: 'netcoreapp3.1'
-          architecture: ''
-          buildConfiguration: $(Configuration)
-      # Windows .NET Core x86 Tests
-      - template: ../job_templates/test_drawing_libraries.yml
-        parameters:
-          name: UnitTest${{ parameters.OSPlatform }}netcorex86
-          OSPlatform: ${{ parameters.OSPlatform }}
-          framework: 'netcoreapp3.1'
-          architecture: '.x86'
-          buildConfiguration: $(Configuration)
-      # Windows .NET 6.0 x86 Tests
-      - template: ../job_templates/test_drawing_libraries.yml
-        parameters:
-          name: UnitTest${{ parameters.OSPlatform }}net60x86
-          OSPlatform: ${{ parameters.OSPlatform }}
-          framework: 'net60'
-          architecture: '.x86'
-          buildConfiguration: $(Configuration)
-      # Windows .NET 7.0 x86 Tests
-      - template: ../job_templates/test_drawing_libraries.yml
-        parameters:
-          name: UnitTest${{ parameters.OSPlatform }}net70x86
-          OSPlatform: ${{ parameters.OSPlatform }}
-          framework: 'net70'
-          architecture: '.x86'
-          buildConfiguration: $(Configuration)
-    # .NET 5.0 Tests
+    # .NET 8.0 Tests
     - template: ../job_templates/test_drawing_libraries.yml
       parameters:
-        name: UnitTest${{ parameters.OSPlatform }}net50
+        name: UnitTest${{ parameters.OSPlatform }}net80
         OSPlatform: ${{ parameters.OSPlatform }}
-        framework: 'net50'
-        architecture: ''
-        buildConfiguration: $(Configuration)
-    # .NET 6.0 x64 Tests
-    - template: ../job_templates/test_drawing_libraries.yml
-      parameters:
-        name: UnitTest${{ parameters.OSPlatform }}net60
-        OSPlatform: ${{ parameters.OSPlatform }}
-        framework: 'net60'
-        architecture: ''
-        buildConfiguration: $(Configuration)
-    # .NET 7.0 x64 Tests
-    - template: ../job_templates/test_drawing_libraries.yml
-      parameters:
-        name: UnitTest${{ parameters.OSPlatform }}net70
-        OSPlatform: ${{ parameters.OSPlatform }}
-        framework: 'net70'
+        framework: 'net80'
         architecture: ''
         buildConfiguration: $(Configuration)

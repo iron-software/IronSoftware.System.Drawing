@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<AssemblyOriginatorKeyFile>IronSoftware.Drawing.Common.snk</AssemblyOriginatorKeyFile>
@@ -12,7 +12,7 @@
 		<NoWarn>CS8002</NoWarn>
 		<Platforms>AnyCPU</Platforms>
 		<SignAssembly>true</SignAssembly>
-		<TargetFrameworks>netstandard2.0;netstandard2.1;net60</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net60</TargetFrameworks>
 		<TransformOnBuild>true</TransformOnBuild>
 	</PropertyGroup>
 
@@ -24,7 +24,8 @@
 	<ItemGroup>
 		<PackageReference Include="BitMiracle.LibTiff.NET" Version="2.4.649" />
 		<PackageReference Include="Microsoft.Maui.Graphics" Version="7.0.92" />
-		<PackageReference Include="SkiaSharp" Version="2.88.7" />
+        <PackageReference Include="SkiaSharp" Version="2.88.7" />
+        <PackageReference Include="IronSoftware.Drawing.Abstractions" Version="2024.11.8" />
 		<PackageReference Include="SkiaSharp.Svg" Version="1.60.0" />
 		<PackageReference Include="System.Drawing.Common" Version="6.0.0" />
 		<PackageReference Include="System.Memory" Version="4.5.5" />

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net472;netcoreapp3.1;net50;net60;net70</TargetFrameworks>
+		<TargetFrameworks>net48;net80</TargetFrameworks>
 		<LangVersion>latest</LangVersion>
 		<CheckEolTargetFramework>false</CheckEolTargetFramework>
 		<IsPackable>false</IsPackable>
