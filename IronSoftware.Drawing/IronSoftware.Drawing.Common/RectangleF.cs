@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IronSoftware.Drawing.Common.Extensions;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -83,38 +84,25 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Convert this RectangleF to the specified units of measurement using the specified DPI
         /// </summary>
-        /// <param name="units">Unit of measurement</param>
+        /// <param name="toUnits">Unit of measurement</param>
         /// <param name="dpi">DPI (Dots per inch) for conversion</param>
         /// <returns>A new RectangleF which uses the desired units of measurement</returns>
         /// <exception cref="NotImplementedException">Conversion not implemented</exception>
-        public RectangleF ConvertTo(MeasurementUnits units, int dpi = 96)
+        public RectangleF ConvertTo(MeasurementUnits toUnits, int dpi = 96)
         {
-            // no conversion
-            if (units == Units)
+            if (toUnits == Units)
             {
                 return this;
             }
-            // convert mm to pixels
-            if (units == MeasurementUnits.Pixels)
-            {
-                float x = X / 25.4f * dpi;
-                float y = Y / 25.4f * dpi;
-                float width = Width / 25.4f * dpi;
-                float height = Height / 25.4f * dpi;
-                return new RectangleF(x, y, width, height, MeasurementUnits.Pixels);
-            }
-            // convert pixels to mm
-            if (units == MeasurementUnits.Millimeters)
-            {
-                float x = X / dpi * 25.4f;
-                float y = Y / dpi * 25.4f;
-                float width = Width / dpi * 25.4f;
-                float height = Height / dpi * 25.4f;
-                return new RectangleF(x, y, width, height, MeasurementUnits.Millimeters);
 
-            }
+            double conversionFactor = Units.GetConversionFactor(toUnits, dpi);
 
-            throw new NotImplementedException($"RectangleF conversion from {Units} to {units} is not implemented");
+            float newX = (float)(X * conversionFactor);
+            float newY = (float)(Y * conversionFactor);
+            float newWidth = (float)(Width * conversionFactor);
+            float newHeight = (float)(Height * conversionFactor);
+
+            return new RectangleF(newX, newY, newWidth, newHeight, toUnits);
         }
         
         /// <summary>
