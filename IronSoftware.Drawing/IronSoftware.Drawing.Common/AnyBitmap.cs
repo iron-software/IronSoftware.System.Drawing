@@ -135,7 +135,7 @@ namespace IronSoftware.Drawing
         /// Code Example</a></para>
         /// </summary>
         /// <returns></returns>
-        public AnyBitmap Clone()
+        public object Clone()
         {
             return new AnyBitmap(Binary);
         }
@@ -735,7 +735,7 @@ namespace IronSoftware.Drawing
                 }
                 else
                 {
-                    return new List<AnyBitmap>() { Clone() };
+                    return new List<AnyBitmap>() { (AnyBitmap)Clone() };
                 }
             }
         }

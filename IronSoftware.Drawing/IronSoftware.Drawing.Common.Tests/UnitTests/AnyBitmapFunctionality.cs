@@ -301,7 +301,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
             var anyBitmap = AnyBitmap.FromFile(imagePath);
-            AnyBitmap clonedAnyBitmap = anyBitmap.Clone();
+            AnyBitmap clonedAnyBitmap = (AnyBitmap)anyBitmap.Clone();
 
             anyBitmap.SaveAs("expected.png");
             clonedAnyBitmap.SaveAs("result.png");
