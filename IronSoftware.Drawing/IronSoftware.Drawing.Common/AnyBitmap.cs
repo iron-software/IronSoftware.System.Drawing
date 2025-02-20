@@ -2337,20 +2337,35 @@ namespace IronSoftware.Drawing
 
         private ReadOnlySpan<byte> PrepareByteArray(Image<Rgba32> bmp, int[] raster, int width, int height)
         {
-            byte[] bits = new byte[GetStride(bmp) * height];
+            int stride = GetStride(bmp);
+            byte[] bits = new byte[stride * height];
 
-            for (int y = 0; y < height; y++)
+            // If no extra padding exists, copy entire rows at once.
+            if (stride == width * 4 && true)
             {
-                int rasterOffset = y * width;
-                int bitsOffset = (height - y - 1) * GetStride(bmp);
-
-                for (int x = 0; x < width; x++)
+                int bytesPerRow = stride;
+                for (int y = 0; y < height; y++)
                 {
-                    int rgba = raster[rasterOffset++];
-                    bits[bitsOffset++] = (byte)(rgba & 0xff); // R
-                    bits[bitsOffset++] = (byte)((rgba >> 8) & 0xff); // G
-                    bits[bitsOffset++] = (byte)((rgba >> 16) & 0xff); // B
-                    bits[bitsOffset++] = (byte)((rgba >> 24) & 0xff); // A
+                    int srcByteIndex = y * bytesPerRow;
+                    int destByteIndex = (height - y - 1) * bytesPerRow;
+                    Buffer.BlockCopy(raster, srcByteIndex, bits, destByteIndex, bytesPerRow);
+                }
+            }
+            else
+            {
+                // Fallback to per-pixel processing if stride includes padding.
+                for (int y = 0; y < height; y++)
+                {
+                    int rasterOffset = y * width;
+                    int bitsOffset = (height - y - 1) * stride;
+                    for (int x = 0; x < width; x++)
+                    {
+                        int rgba = raster[rasterOffset++];
+                        bits[bitsOffset++] = (byte)(rgba & 0xff); // R
+                        bits[bitsOffset++] = (byte)((rgba >> 8) & 0xff); // G
+                        bits[bitsOffset++] = (byte)((rgba >> 16) & 0xff); // B
+                        bits[bitsOffset++] = (byte)((rgba >> 24) & 0xff); // A
+                    }
                 }
             }
 
