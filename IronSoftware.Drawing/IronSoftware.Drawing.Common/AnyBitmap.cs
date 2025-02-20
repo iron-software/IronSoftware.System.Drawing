@@ -2545,29 +2545,36 @@ namespace IronSoftware.Drawing
 
         private Color GetPixelColor(int x, int y)
         {
-            if (Image is Image<Rgb24>)
+            switch (Image)
             {
-                return (Color)Image.CloneAs<Rgb24>()[x, y];
-            }
-            else if (Image is Image<Abgr32>)
-            {
-                return (Color)Image.CloneAs<Abgr32>()[x, y];
-            }
-            else if (Image is Image<Argb32>)
-            {
-                return (Color)Image.CloneAs<Argb32>()[x, y];
-            }
-            else if (Image is Image<Bgr24>)
-            {
-                return (Color)Image.CloneAs<Bgr24>()[x, y];
-            }
-            else if (Image is Image<Bgra32>)
-            {
-                return (Color)Image.CloneAs<Bgra32>()[x, y];
-            }
-            else
-            {
-                return (Color)Image.CloneAs<Rgba32>()[x, y];
+                case Image<Rgba32> imageAsFormat:
+                    return imageAsFormat[x, y];
+                case Image<Rgb24> imageAsFormat:
+                    return imageAsFormat[x, y];
+                case Image<Abgr32> imageAsFormat:
+                    return imageAsFormat[x, y];
+                case Image<Argb32> imageAsFormat:
+                    return imageAsFormat[x, y];
+                case Image<Bgr24> imageAsFormat:
+                    return imageAsFormat[x, y];
+                case Image<Bgra32> imageAsFormat:
+                    return imageAsFormat[x, y];
+                case Image<Rgb48> imageAsFormat:
+                    return imageAsFormat[x, y];
+                case Image<Rgba64> imageAsFormat:
+                    return imageAsFormat[x, y];
+                default:
+                    //Fallback
+
+                    //We didn't have Converter to IronSoftware.Drawing.Color for other pixel format
+                    //A8, L8, L16, La16, Bgr565, Bgra4444, RgbaVector
+
+                    //CloneAs() is expensive!
+                    //Can throw out of memory exception, when this fucntion get called too much
+                    using (Image<Rgb24> converted = Image.CloneAs<Rgb24>())
+                    {
+                        return converted[x, y];
+                    }
             }
         }
 
