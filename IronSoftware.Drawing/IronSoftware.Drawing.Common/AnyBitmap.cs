@@ -828,7 +828,8 @@ namespace IronSoftware.Drawing
         {
             if (BitsPerPixel == 32)
             {
-                var alpha = new List<byte>(Image.Width * Image.Height);
+                var alpha = new byte[Image.Width * Image.Height];
+                int alphaIndex = 0;
                 using var rgbaImage = Image is Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image
                     ? image
                     : Image.CloneAs<SixLabors.ImageSharp.PixelFormats.Rgba32>();
@@ -836,12 +837,16 @@ namespace IronSoftware.Drawing
                 {
                     for (int y = 0; y < accessor.Height; y++)
                     {
-                        Span<SixLabors.ImageSharp.PixelFormats.Rgba32> pixelRow = accessor.GetRowSpan(y);
+                        // Get the row as a span of Rgba32.
+                        Span<Rgba32> pixelRow = accessor.GetRowSpan(y);
+                        // Interpret the row as a span of bytes.
+                        Span<byte> rowBytes = MemoryMarshal.AsBytes(pixelRow);
 
-                        for (int x = 0; x < pixelRow.Length; x++)
+                        // Each pixel is 4 bytes: R, G, B, A.
+                        // The alpha channel is the fourth byte (index 3, 7, 11, ...).
+                        for (int i = 3; i < rowBytes.Length; i += 4)
                         {
-                            SixLabors.ImageSharp.PixelFormats.Rgba32 pixel = pixelRow[x];
-                            alpha.Add(pixel.A);
+                            alpha[alphaIndex++] = rowBytes[i];
                         }
                     }
                 });
