@@ -297,6 +297,36 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void AnyBitmap_GetPixel_should_not_throw_OutOfMemoryException()
+        {
+            //Should not throw exception
+            //previously GetPixel always called CloneAs() which resulted to OutOfMemoryException
+            string imagePath = GetRelativeFilePath("google_large_1500dpi.bmp");
+            using Image<Rgb24> formatRgb24 = Image.Load<Rgb24>(imagePath);
+            using Image<Abgr32> formatAbgr32 = Image.Load<Abgr32>(imagePath);
+            using Image<Argb32> formatArgb32 = Image.Load<Argb32>(imagePath);
+            using Image<Bgr24> formatBgr24 = Image.Load<Bgr24>(imagePath);
+            using Image<Bgra32> formatBgra32 = Image.Load<Bgra32>(imagePath);
+
+            Image[] images = { formatRgb24, formatAbgr32, formatArgb32, formatBgr24, formatBgra32 };
+
+            foreach (Image image in images)
+            {
+                AnyBitmap bitmap = (AnyBitmap)image;
+
+                int hash = 0;
+                for (int y = 0; y < bitmap.Height; y += 8)
+                {
+                    for (int x = 0; x < bitmap.Width; x += 8)
+                    {
+                        var pixel = bitmap.GetPixel(x, y);
+                        hash += pixel.ToArgb();
+                    }
+                }
+            }
+        }
+
+        [FactWithAutomaticDisplayName]
         public void Clone_AnyBitmap()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
