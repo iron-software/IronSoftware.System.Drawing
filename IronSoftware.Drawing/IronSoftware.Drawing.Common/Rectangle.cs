@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IronSoftware.Drawing.Common.Extensions;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -83,38 +84,25 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Convert this rectangle to the specified units of measurement using the specified DPI
         /// </summary>
-        /// <param name="units">Unit of measurement</param>
+        /// <param name="toUnits">Unit of measurement</param>
         /// <param name="dpi">DPI (Dots per inch) for conversion</param>
         /// <returns>A new rectangle which uses the desired units of measurement</returns>
         /// <exception cref="NotImplementedException">Conversion not implemented</exception>
-        public Rectangle ConvertTo(MeasurementUnits units, int dpi = 96)
+        public Rectangle ConvertTo(MeasurementUnits toUnits, int dpi = 96)
         {
-            // no conversion
-            if (units == Units)
+            if (toUnits == Units)
             {
                 return this;
             }
-            // convert mm to pixels
-            if (units == MeasurementUnits.Pixels)
-            {
-                int x = (int)(X / 25.4 * dpi);
-                int y = (int)(Y / 25.4 * dpi);
-                int width = (int)(Width / 25.4 * dpi);
-                int height = (int)(Height / 25.4 * dpi);
-                return new Rectangle(x, y, width, height, MeasurementUnits.Pixels);
-            }
-            // convert pixels to mm
-            if (units == MeasurementUnits.Millimeters)
-            {
-                int x = (int)(X / (double)dpi * 25.4);
-                int y = (int)(Y / (double)dpi * 25.4);
-                int width = (int)(Width / (double)dpi * 25.4);
-                int height = (int)(Height / (double)dpi * 25.4);
-                return new Rectangle(x, y, width, height, MeasurementUnits.Millimeters);
 
-            }
+            double conversionFactor = Units.GetConversionFactor(toUnits, dpi);
 
-            throw new NotImplementedException($"Rectangle conversion from {Units} to {units} is not implemented");
+            int newX = (int)(X * conversionFactor);
+            int newY = (int)(Y * conversionFactor);
+            int newWidth = (int)(Width * conversionFactor);
+            int newHeight = (int)(Height * conversionFactor);
+
+            return new Rectangle(newX, newY, newWidth, newHeight, toUnits);
         }
 
         /// <summary>
@@ -339,12 +327,18 @@ namespace IronSoftware.Drawing
     public enum MeasurementUnits : int
     {
         /// <summary>
-        /// Pixels
+        /// Pixels (Default screen-based unit)
         /// </summary>
         Pixels = 0,
+
         /// <summary>
-        /// Millimeters
+        /// Millimeters (Used for precise physical measurements)
         /// </summary>
-        Millimeters = 1
+        Millimeters = 1,
+
+        /// <summary>
+        /// Points (PDF native unit; 1 Point equals 1/72 inch)
+        /// </summary>
+        Points = 2
     }
 }

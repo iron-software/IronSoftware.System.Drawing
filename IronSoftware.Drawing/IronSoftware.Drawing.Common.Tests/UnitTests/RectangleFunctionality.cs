@@ -249,12 +249,28 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void ConvertMeasurement()
         {
-            Rectangle pxCropRect = new Rectangle(15, 25, 150, 175);
-            Rectangle mmCropRect = pxCropRect.ConvertTo(MeasurementUnits.Millimeters, 96);
-            Assert.Equal(3, mmCropRect.X);
-            Assert.Equal(6, mmCropRect.Y);
-            Assert.Equal(39, mmCropRect.Width);
-            Assert.Equal(46, mmCropRect.Height);
+            Rectangle pxCropRect = new(15, 25, 150, 175, MeasurementUnits.Pixels);
+            Rectangle mmCropRect = new(10, 20, 15, 60, MeasurementUnits.Millimeters);
+            Rectangle ptCropRect = new(20, 60, 100, 40, MeasurementUnits.Points);
+
+            Rectangle convertedMmRect = pxCropRect.ConvertTo(MeasurementUnits.Millimeters, 96);
+            Rectangle convertedPxRect = pxCropRect.ConvertTo(MeasurementUnits.Pixels, 96);
+            Rectangle convertedPtRect = pxCropRect.ConvertTo(MeasurementUnits.Points, 96);
+
+            Assert.Equal(3, convertedMmRect.X);
+            Assert.Equal(6, convertedMmRect.Y);
+            Assert.Equal(39, convertedMmRect.Width);
+            Assert.Equal(46, convertedMmRect.Height);
+
+            Assert.Equal(15, convertedPxRect.X);
+            Assert.Equal(25, convertedPxRect.Y);
+            Assert.Equal(150, convertedPxRect.Width);
+            Assert.Equal(175, convertedPxRect.Height);
+
+            Assert.Equal(11, convertedPtRect.X);
+            Assert.Equal(18, convertedPtRect.Y);
+            Assert.Equal(112, convertedPtRect.Width);
+            Assert.Equal(131, convertedPtRect.Height);
         }
 
 #if !NETFRAMEWORK
@@ -486,11 +502,25 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         public void ConvertMeasurementF()
         {
             RectangleF pxCropRect = new RectangleF(15, 25, 150, 175);
-            RectangleF mmCropRect = pxCropRect.ConvertTo(MeasurementUnits.Millimeters, 96);
-            Assert.Equal(3.96875f, mmCropRect.X);
-            Assert.Equal(6.61458302f, mmCropRect.Y);
-            Assert.Equal(39.6875f, mmCropRect.Width);
-            Assert.Equal(46.3020821f, mmCropRect.Height);
+
+            RectangleF convertedMmRect = pxCropRect.ConvertTo(MeasurementUnits.Millimeters, 96);
+            RectangleF convertedPxRect = pxCropRect.ConvertTo(MeasurementUnits.Pixels, 96);
+            RectangleF convertedPtRect = pxCropRect.ConvertTo(MeasurementUnits.Points, 96);
+
+            Assert.Equal(3.96875f, convertedMmRect.X);
+            Assert.Equal(6.61458349f, convertedMmRect.Y);
+            Assert.Equal(39.6875f, convertedMmRect.Width);
+            Assert.Equal(46.3020821f, convertedMmRect.Height);
+
+            Assert.Equal(15f, convertedPxRect.X);
+            Assert.Equal(25f, convertedPxRect.Y);
+            Assert.Equal(150f, convertedPxRect.Width);
+            Assert.Equal(175f, convertedPxRect.Height);
+
+            Assert.Equal(11.25f, convertedPtRect.X);
+            Assert.Equal(18.75f, convertedPtRect.Y);
+            Assert.Equal(112.5f, convertedPtRect.Width);
+            Assert.Equal(131.25f, convertedPtRect.Height);
         }
 
 #if !NETFRAMEWORK
