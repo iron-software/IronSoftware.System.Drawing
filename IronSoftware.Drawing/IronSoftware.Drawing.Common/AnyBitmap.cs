@@ -2663,6 +2663,11 @@ namespace IronSoftware.Drawing
             return memoryStream;
         }
 
+        object ICloneable.Clone()
+        {
+            return this.Clone();
+        }
+
         #endregion
     }
 }
