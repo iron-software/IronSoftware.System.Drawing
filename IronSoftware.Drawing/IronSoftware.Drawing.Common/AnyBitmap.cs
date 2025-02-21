@@ -2407,7 +2407,7 @@ namespace IronSoftware.Drawing
             return bits;
         }
 
-        private (int width, int height, double horizontalResolution, double verticalResolution) SetWidthHeight(Tiff tiff, short index, ref int imageWidth, ref int imageHeight, ref double imageResolution, ref double imageYResolution)
+        private (int width, int height, double horizontalResolution, double verticalResolution) SetWidthHeight(Tiff tiff, short index, ref int imageWidth, ref int imageHeight, ref double imageXResolution, ref double imageYResolution)
         {
             // Find the width and height of the image
             FieldValue[] value = tiff.GetField(TiffTag.IMAGEWIDTH);
@@ -2416,11 +2416,12 @@ namespace IronSoftware.Drawing
             value = tiff.GetField(TiffTag.IMAGELENGTH);
             int height = value[0].ToInt();
 
+            // If resolutions are null due to damaged files, return the default value of 96
             value = tiff.GetField(TiffTag.XRESOLUTION);
-            double horizontalResolution = Math.Floor(value[0].ToDouble());
+            double horizontalResolution = Math.Floor(value?.FirstOrDefault().ToDouble() ?? 96);
 
             value = tiff.GetField(TiffTag.YRESOLUTION);
-            double verticalResolution = Math.Floor(value[0].ToDouble());
+            double verticalResolution = Math.Floor(value?.FirstOrDefault().ToDouble() ?? 96);
 
             if (index == 0)
             {
