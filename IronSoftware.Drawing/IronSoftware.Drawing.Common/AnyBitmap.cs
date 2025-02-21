@@ -828,7 +828,8 @@ namespace IronSoftware.Drawing
         {
             if (BitsPerPixel == 32)
             {
-                var alpha = new List<byte>(Image.Width * Image.Height);
+                var alpha = new byte[Image.Width * Image.Height];
+                int alphaIndex = 0;
                 using var rgbaImage = Image is Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image
                     ? image
                     : Image.CloneAs<SixLabors.ImageSharp.PixelFormats.Rgba32>();
@@ -836,12 +837,16 @@ namespace IronSoftware.Drawing
                 {
                     for (int y = 0; y < accessor.Height; y++)
                     {
-                        Span<SixLabors.ImageSharp.PixelFormats.Rgba32> pixelRow = accessor.GetRowSpan(y);
+                        // Get the row as a span of Rgba32.
+                        Span<Rgba32> pixelRow = accessor.GetRowSpan(y);
+                        // Interpret the row as a span of bytes.
+                        Span<byte> rowBytes = MemoryMarshal.AsBytes(pixelRow);
 
-                        for (int x = 0; x < pixelRow.Length; x++)
+                        // Each pixel is 4 bytes: R, G, B, A.
+                        // The alpha channel is the fourth byte (index 3, 7, 11, ...).
+                        for (int i = 3; i < rowBytes.Length; i += 4)
                         {
-                            SixLabors.ImageSharp.PixelFormats.Rgba32 pixel = pixelRow[x];
-                            alpha.Add(pixel.A);
+                            alpha[alphaIndex++] = rowBytes[i];
                         }
                     }
                 });
@@ -2332,20 +2337,35 @@ namespace IronSoftware.Drawing
 
         private ReadOnlySpan<byte> PrepareByteArray(Image<Rgba32> bmp, int[] raster, int width, int height)
         {
-            byte[] bits = new byte[GetStride(bmp) * height];
+            int stride = GetStride(bmp);
+            byte[] bits = new byte[stride * height];
 
-            for (int y = 0; y < height; y++)
+            // If no extra padding exists, copy entire rows at once.
+            if (stride == width * 4 && true)
             {
-                int rasterOffset = y * width;
-                int bitsOffset = (height - y - 1) * GetStride(bmp);
-
-                for (int x = 0; x < width; x++)
+                int bytesPerRow = stride;
+                for (int y = 0; y < height; y++)
                 {
-                    int rgba = raster[rasterOffset++];
-                    bits[bitsOffset++] = (byte)(rgba & 0xff); // R
-                    bits[bitsOffset++] = (byte)((rgba >> 8) & 0xff); // G
-                    bits[bitsOffset++] = (byte)((rgba >> 16) & 0xff); // B
-                    bits[bitsOffset++] = (byte)((rgba >> 24) & 0xff); // A
+                    int srcByteIndex = y * bytesPerRow;
+                    int destByteIndex = (height - y - 1) * bytesPerRow;
+                    Buffer.BlockCopy(raster, srcByteIndex, bits, destByteIndex, bytesPerRow);
+                }
+            }
+            else
+            {
+                // Fallback to per-pixel processing if stride includes padding.
+                for (int y = 0; y < height; y++)
+                {
+                    int rasterOffset = y * width;
+                    int bitsOffset = (height - y - 1) * stride;
+                    for (int x = 0; x < width; x++)
+                    {
+                        int rgba = raster[rasterOffset++];
+                        bits[bitsOffset++] = (byte)(rgba & 0xff); // R
+                        bits[bitsOffset++] = (byte)((rgba >> 8) & 0xff); // G
+                        bits[bitsOffset++] = (byte)((rgba >> 16) & 0xff); // B
+                        bits[bitsOffset++] = (byte)((rgba >> 24) & 0xff); // A
+                    }
                 }
             }
 
