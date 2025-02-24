@@ -817,8 +817,8 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [InlineData("DW-26 SinglePageTif72Input.tiff", 72, 72)]
         [InlineData("DW-26 SinglePageTif300Input.tif", 300, 300)]
         [InlineData("DW-26 MultiPageTif120Input.tiff", 120, 120)]
-        [InlineData("DW-26 MultiPageTif300Input.tif", 300, 300)]
-        public void AnyBitmapShouldReturnCorrectHorizontalResolution(string fileName, double expectedHorizontalResolution, double expectedVerticalResolution)
+        [InlineData("DW-26 MultiPageTif200Input.tif", 200, 200)]
+        public void AnyBitmapShouldReturnCorrectResolutions(string fileName, double expectedHorizontalResolution, double expectedVerticalResolution)
         {
             string imagePath = GetRelativeFilePath(fileName);
             var bitmap = AnyBitmap.FromFile(imagePath);
