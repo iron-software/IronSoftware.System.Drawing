@@ -39,8 +39,9 @@ Supports:
 
 For general support and technical inquiries, please email us at: support@ironsoftware.com</description>
 		<summary>IronSoftware.System.Drawing is an open-source solution for .NET developers to replace System.Drawing.Common with a universal and flexible library.</summary>
-		<releaseNotes>- Internal improvement of the library functionality</releaseNotes>
-		<copyright>Copyright © Iron Software 2022-2024</copyright>
+		<releaseNotes>- Fixes incorrect HorizontalResolution and VerticalResolution of AnyBitmap images.
+		- Improves library's internal functionality and performance.</releaseNotes>
+		<copyright>Copyright © Iron Software 2022-2025</copyright>
 		<tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, TIFF, TIF, GIF, JPEG, PNG, Color, Rectangle, Drawing, C#, VB.NET, ASPX, create, render, generate, standard, netstandard2.0, core, netcore</tags>
 		<repository type="git" url="https://github.com/iron-software/IronSoftware.Drawing.Common" commit="$commit$" />
 		<dependencies>
@@ -57,16 +58,6 @@ For general support and technical inquiries, please email us at: support@ironsof
 				<dependency id="SixLabors.ImageSharp.Drawing" version="2.1.4" />
 				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
 				<dependency id="System.Memory" version="4.5.5" />
-			</group>
-			<group targetFramework="MonoAndroid10.0">
-				<dependency id="IronSoftware.Drawing.Abstractions" version="2025.2.6" />
-				<dependency id="SixLabors.ImageSharp" version="2.1.9" />
-				<dependency id="SixLabors.ImageSharp.Drawing" version="1.0.0" />
-				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
-				<dependency id="System.Memory" version="4.5.5" />
-				<dependency id="Microsoft.Maui.Graphics" version="7.0.92" />
-				<dependency id="SkiaSharp" version="2.88.7" />
-				<dependency id="SkiaSharp.Svg" version="1.60.0" />
 			</group>
 		</dependencies>
 	</metadata>
