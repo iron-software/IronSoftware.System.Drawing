@@ -807,6 +807,28 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             }
         }
 
+        [TheoryWithAutomaticDisplayName()]
+        [InlineData("DW-26 Bitmap96Input.bmp", 96, 96)]
+        [InlineData("DW-26 Bitmap300Input.bmp", 300, 300)]
+        [InlineData("DW-26 Jpg300Input.jpg", 300, 300)]
+        [InlineData("DW-26 Jpg72Input.jpg", 72, 72)]
+        [InlineData("DW-26 Png300Input.png", 300, 300)]
+        [InlineData("DW-26 Png96Input.png", 96,96)]
+        [InlineData("DW-26 SinglePageTif72Input.tiff", 72, 72)]
+        [InlineData("DW-26 SinglePageTif300Input.tif", 300, 300)]
+        [InlineData("DW-26 MultiPageTif120Input.tiff", 120, 120)]
+        [InlineData("DW-26 MultiPageTif200Input.tif", 200, 200)]
+        public void AnyBitmapShouldReturnCorrectResolutions(string fileName, double expectedHorizontalResolution, double expectedVerticalResolution)
+        {
+            string imagePath = GetRelativeFilePath(fileName);
+            var bitmap = AnyBitmap.FromFile(imagePath);
+            for (int i = 0; i < bitmap.FrameCount; i++)
+            {
+                Assert.Equal(expectedHorizontalResolution, bitmap.GetAllFrames.ElementAt(i).HorizontalResolution);
+                Assert.Equal(expectedVerticalResolution, bitmap.GetAllFrames.ElementAt(i).VerticalResolution);
+            }
+        }
+
 #if !NETFRAMEWORK
         [FactWithAutomaticDisplayName]
         public void CastMaui_to_AnyBitmap()

@@ -47,6 +47,7 @@ namespace IronSoftware.Drawing
     public partial class AnyBitmap : IDisposable, IAnyImage
     {
         private bool _disposed = false;
+
         private Image Image { get; set; }
         private byte[] Binary { get; set; }
         private IImageFormat Format { get; set; }
@@ -2021,12 +2022,37 @@ namespace IronSoftware.Drawing
             Format = Image.DetectFormat(bytes);
             try
             {
-                if(Format is TiffFormat)
+                if (Format is TiffFormat)
                     OpenTiffToImageSharp(bytes);
+
                 else
                 {
                     Binary = bytes.ToArray();
                     Image = Image.Load(bytes);
+                    
+                    var resolutionUnit = this.Image.Metadata.ResolutionUnits;
+                    var horizontal = this.Image.Metadata.HorizontalResolution;
+                    var vertical = this.Image.Metadata.VerticalResolution;
+
+                    // Check if image metadata is accurate already
+                    switch (resolutionUnit)
+                    {
+                        case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerMeter:
+                            // Convert metadata of the resolution unit to pixel per inch to match the conversion below of 1 meter = 37.3701 inches
+                            this.Image.Metadata.ResolutionUnits = SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerInch;
+                            this.Image.Metadata.HorizontalResolution = Math.Ceiling(horizontal / 39.3701);
+                            this.Image.Metadata.VerticalResolution = Math.Ceiling(vertical / 39.3701);
+                            break;
+                        case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerCentimeter:
+                            // Convert metadata of the resolution unit to pixel per inch to match the conversion below of 1 inch = 2.54 centimeters
+                            this.Image.Metadata.ResolutionUnits = SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerInch;
+                            this.Image.Metadata.HorizontalResolution = Math.Ceiling(horizontal * 2.54);
+                            this.Image.Metadata.VerticalResolution = Math.Ceiling(vertical * 2.54);
+                            break;
+                        default:
+                            // No changes required due to teh metadata are accurate already
+                            break;
+                    }
                 }
             }
             catch (DllNotFoundException e)
@@ -2057,6 +2083,7 @@ namespace IronSoftware.Drawing
         private static AnyBitmap LoadSVGImage(string file)
         {
             try
+
             {
                 return new AnyBitmap(
                     DecodeSVG(file).Encode(SKEncodedImageFormat.Png, 100)
@@ -2212,6 +2239,8 @@ namespace IronSoftware.Drawing
             {
                 int imageWidth = 0;
                 int imageHeight = 0;
+                double imageXResolution = 0;
+                double imageYResolution = 0;
                 List<Image> images = new();
 
                 // create a memory stream out of them
@@ -2232,7 +2261,7 @@ namespace IronSoftware.Drawing
                             continue;
                         }
 
-                        var (width, height) = SetWidthHeight(tiff, i, ref imageWidth, ref imageHeight);
+                        var (width, height, horizontalResolution, verticalResolution) = SetWidthHeight(tiff, i, ref imageWidth, ref imageHeight, ref imageXResolution, ref imageYResolution);
 
                         // Read the image into the memory buffer
                         int[] raster = new int[height * width];
@@ -2246,8 +2275,14 @@ namespace IronSoftware.Drawing
                         var bits = PrepareByteArray(bmp, raster, width, height);
 
                         images.Add(Image.LoadPixelData<Rgba32>(bits, bmp.Width, bmp.Height));
+                        
+                        // Update the metadata for image resolutions
+                        images[0].Metadata.HorizontalResolution = horizontalResolution;
+                        images[0].Metadata.VerticalResolution = verticalResolution;
                     }
                 }
+
+
 
                 // find max
                 FindMaxWidthAndHeight(images, out int maxWidth, out int maxHeight);
@@ -2372,7 +2407,7 @@ namespace IronSoftware.Drawing
             return bits;
         }
 
-        private (int width, int height) SetWidthHeight(Tiff tiff, short index, ref int imageWidth, ref int imageHeight)
+        private (int width, int height, double horizontalResolution, double verticalResolution) SetWidthHeight(Tiff tiff, short index, ref int imageWidth, ref int imageHeight, ref double imageXResolution, ref double imageYResolution)
         {
             // Find the width and height of the image
             FieldValue[] value = tiff.GetField(TiffTag.IMAGEWIDTH);
@@ -2380,6 +2415,13 @@ namespace IronSoftware.Drawing
 
             value = tiff.GetField(TiffTag.IMAGELENGTH);
             int height = value[0].ToInt();
+
+            // If resolutions are null due to damaged files, return the default value of 96
+            value = tiff.GetField(TiffTag.XRESOLUTION);
+            double horizontalResolution = Math.Floor(value?.FirstOrDefault().ToDouble() ?? 96);
+
+            value = tiff.GetField(TiffTag.YRESOLUTION);
+            double verticalResolution = Math.Floor(value?.FirstOrDefault().ToDouble() ?? 96);
 
             if (index == 0)
             {
@@ -2405,7 +2447,7 @@ namespace IronSoftware.Drawing
                 }
             }
 
-            return (width, height);
+            return (width, height, horizontalResolution, verticalResolution);
         }
 
         private static List<AnyBitmap> CreateAnyBitmaps(IEnumerable<string> imagePaths)
