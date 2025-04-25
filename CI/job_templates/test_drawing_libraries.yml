@@ -20,7 +20,7 @@ jobs:
         buildType: 'current'
         artifactName: 'IronDrawingDataTests'
         targetPath: '$(Agent.BuildDirectory)/Data'
-    - ${{ if eq(parameters.OSPlatform, 'Ubuntu') || eq(parameters.OSPlatform, 'Linux') }}:
+    - ${{ if or(eq(parameters.OSPlatform, 'Ubuntu'), eq(parameters.OSPlatform, 'Linux')) }}:
       - task: Bash@3        
         displayName: 'Install GDI+ dependencies'
         inputs:
