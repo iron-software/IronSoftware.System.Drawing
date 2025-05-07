@@ -598,6 +598,10 @@ namespace IronSoftware.Drawing
             CreateNewImageInstance(width, height, backgroundColor);
         }
 
+        public AnyBitmap()
+        {
+        }
+
         /// <summary>
         /// Create a new Bitmap from a file.
         /// </summary>
@@ -2016,7 +2020,38 @@ namespace IronSoftware.Drawing
             Image.SaveAsBmp(stream);
             Binary = stream.ToArray();
         }
-        
+
+        public List<AnyBitmap> GetAnyBitmaps(ReadOnlySpan<byte> bytes, bool loadImg32 = false)
+        {
+            List<AnyBitmap> bitmaps = new List<AnyBitmap>();
+            Format = Image.DetectFormat(bytes);
+
+            try
+            {
+                if (Format is TiffFormat)
+                {
+                    bitmaps = OpenTiffToAnyBitmaps(bytes);
+                }
+                else
+                {
+                    LoadSingleFrameImage(bytes, loadImg32);
+                    bitmaps.Add(this);
+                }
+            }
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException(
+                    "Please install SixLabors.ImageSharp from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new NotSupportedException(
+                    "Image could not be loaded. File format is not supported.", e);
+            }
+
+            return bitmaps;
+        }
+
         private void LoadImage(ReadOnlySpan<byte> bytes)
         {
             Format = Image.DetectFormat(bytes);
@@ -2027,32 +2062,7 @@ namespace IronSoftware.Drawing
 
                 else
                 {
-                    Binary = bytes.ToArray();
-                    Image = Image.Load(bytes);
-                    
-                    var resolutionUnit = this.Image.Metadata.ResolutionUnits;
-                    var horizontal = this.Image.Metadata.HorizontalResolution;
-                    var vertical = this.Image.Metadata.VerticalResolution;
-
-                    // Check if image metadata is accurate already
-                    switch (resolutionUnit)
-                    {
-                        case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerMeter:
-                            // Convert metadata of the resolution unit to pixel per inch to match the conversion below of 1 meter = 37.3701 inches
-                            this.Image.Metadata.ResolutionUnits = SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerInch;
-                            this.Image.Metadata.HorizontalResolution = Math.Ceiling(horizontal / 39.3701);
-                            this.Image.Metadata.VerticalResolution = Math.Ceiling(vertical / 39.3701);
-                            break;
-                        case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerCentimeter:
-                            // Convert metadata of the resolution unit to pixel per inch to match the conversion below of 1 inch = 2.54 centimeters
-                            this.Image.Metadata.ResolutionUnits = SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerInch;
-                            this.Image.Metadata.HorizontalResolution = Math.Ceiling(horizontal * 2.54);
-                            this.Image.Metadata.VerticalResolution = Math.Ceiling(vertical * 2.54);
-                            break;
-                        default:
-                            // No changes required due to teh metadata are accurate already
-                            break;
-                    }
+                    LoadSingleFrameImage(bytes);
                 }
             }
             catch (DllNotFoundException e)
@@ -2078,6 +2088,39 @@ namespace IronSoftware.Drawing
             }
 
             LoadImage(ms.ToArray());
+        }
+
+        private void LoadSingleFrameImage(ReadOnlySpan<byte> bytes, bool loadImg32 = false)
+        {
+            Binary = bytes.ToArray();
+            if (!loadImg32)
+                Image = Image.Load(bytes);
+            else
+                Image = Image.Load<Rgba32>(bytes);
+
+            var resolutionUnit = this.Image.Metadata.ResolutionUnits;
+            var horizontal = this.Image.Metadata.HorizontalResolution;
+            var vertical = this.Image.Metadata.VerticalResolution;
+
+            // Check if image metadata is accurate already
+            switch (resolutionUnit)
+            {
+                case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerMeter:
+                    // Convert metadata of the resolution unit to pixel per inch to match the conversion below of 1 meter = 37.3701 inches
+                    this.Image.Metadata.ResolutionUnits = SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerInch;
+                    this.Image.Metadata.HorizontalResolution = Math.Ceiling(horizontal / 39.3701);
+                    this.Image.Metadata.VerticalResolution = Math.Ceiling(vertical / 39.3701);
+                    break;
+                case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerCentimeter:
+                    // Convert metadata of the resolution unit to pixel per inch to match the conversion below of 1 inch = 2.54 centimeters
+                    this.Image.Metadata.ResolutionUnits = SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerInch;
+                    this.Image.Metadata.HorizontalResolution = Math.Ceiling(horizontal * 2.54);
+                    this.Image.Metadata.VerticalResolution = Math.Ceiling(vertical * 2.54);
+                    break;
+                default:
+                    // No changes required due to teh metadata are accurate already
+                    break;
+            }
         }
 
         private static AnyBitmap LoadSVGImage(string file)
@@ -2233,15 +2276,84 @@ namespace IronSoftware.Drawing
             }
         }
 
+        private List<AnyBitmap> OpenTiffToAnyBitmaps(ReadOnlySpan<byte> bytes)
+        {
+            List<AnyBitmap> bitmaps = new List<AnyBitmap>();
+
+            List<Image> images = TiffToImageList(bytes, out int maxWidth, out int maxHeight);
+            // store first frame to the result list
+            bitmaps.Add(images[0]);
+
+            // iterate through images past the first
+            for (int i = 1; i < images.Count; i++)
+            {
+                // mute image
+                images[i].Mutate(img => img.Resize(new ResizeOptions
+                {
+                    Size = new Size(maxWidth, maxHeight),
+                    Mode = ResizeMode.BoxPad,
+                    PadColor = SixLabors.ImageSharp.Color.Transparent
+                }));
+
+                // store remaining frames to the result list
+                bitmaps.Add(images[i]);
+            }
+
+            // get raw binary
+            using var memoryStream = new MemoryStream();
+            images[0].Save(memoryStream, new TiffEncoder());
+            memoryStream.Seek(0, SeekOrigin.Begin);
+
+            // store result
+            Binary = memoryStream.ToArray();
+            Image?.Dispose();
+            Image = images[0];
+
+            return bitmaps;
+        }
+
         private void OpenTiffToImageSharp(ReadOnlySpan<byte> bytes)
         {
+            List<Image> images = TiffToImageList(bytes, out int maxWidth, out int maxHeight);
+
+            // iterate through images past the first
+            for (int i = 1; i < images.Count; i++)
+            {
+                // mute image
+                images[i].Mutate(img => img.Resize(new ResizeOptions
+                {
+                    Size = new Size(maxWidth, maxHeight),
+                    Mode = ResizeMode.BoxPad,
+                    PadColor = SixLabors.ImageSharp.Color.Transparent
+                }));
+
+                // add frames to fir st image
+                _ = images[0].Frames.AddFrame(images[i].Frames.RootFrame);
+
+                // dispose images past the first
+                images[i].Dispose();
+            }
+
+            // get raw binary
+            using var memoryStream = new MemoryStream();
+            images[0].Save(memoryStream, new TiffEncoder());
+            memoryStream.Seek(0, SeekOrigin.Begin);
+
+            // store result
+            Binary = memoryStream.ToArray();
+            Image?.Dispose();
+            Image = images[0];
+        }
+
+        private List<Image> TiffToImageList(ReadOnlySpan<byte> bytes, out int maxWidth, out int maxHeight)
+        {
+            List<Image> images = new List<Image>();
             try
             {
                 int imageWidth = 0;
                 int imageHeight = 0;
                 double imageXResolution = 0;
                 double imageYResolution = 0;
-                List<Image> images = new();
 
                 // create a memory stream out of them
                 using MemoryStream tiffStream = new(bytes.ToArray());
@@ -2275,53 +2387,23 @@ namespace IronSoftware.Drawing
                         var bits = PrepareByteArray(bmp, raster, width, height);
 
                         images.Add(Image.LoadPixelData<Rgba32>(bits, bmp.Width, bmp.Height));
-                        
+
                         // Update the metadata for image resolutions
                         images[0].Metadata.HorizontalResolution = horizontalResolution;
                         images[0].Metadata.VerticalResolution = verticalResolution;
                     }
                 }
 
-
-
                 // find max
-                FindMaxWidthAndHeight(images, out int maxWidth, out int maxHeight);
+                (maxWidth, maxHeight) = FindMaxWidthAndHeight(images);
 
                 // mute first image
                 images[0].Mutate(img => img.Resize(new ResizeOptions
                 {
-                    Size = new Size(maxWidth, maxHeight),
+                    Size = new Size(FindMaxWidthAndHeight(images).Item1, FindMaxWidthAndHeight(images).Item2),
                     Mode = ResizeMode.BoxPad,
                     PadColor = SixLabors.ImageSharp.Color.Transparent
                 }));
-
-                // iterate through images past the first
-                for (int i = 1; i < images.Count; i++)
-                {
-                    // mute image
-                    images[i].Mutate(img => img.Resize(new ResizeOptions
-                    {
-                        Size = new Size(maxWidth, maxHeight),
-                        Mode = ResizeMode.BoxPad,
-                        PadColor = SixLabors.ImageSharp.Color.Transparent
-                    }));
-
-                    // add frames to first image
-                    _ = images[0].Frames.AddFrame(images[i].Frames.RootFrame);
-
-                    // dispose images past the first
-                    images[i].Dispose();
-                }                
-
-                // get raw binary
-                using var memoryStream = new MemoryStream();
-                images[0].Save(memoryStream, new TiffEncoder());
-                memoryStream.Seek(0, SeekOrigin.Begin);
-
-                // store result
-                Binary = memoryStream.ToArray();
-                Image?.Dispose();
-                Image = images[0];
             }
             catch (DllNotFoundException e)
             {
@@ -2331,6 +2413,8 @@ namespace IronSoftware.Drawing
             {
                 throw new NotSupportedException("Error while reading TIFF image format.", e);
             }
+
+            return images;
         }
 
         private void SetTiffCompression(Tiff tiff)
@@ -2510,6 +2594,14 @@ namespace IronSoftware.Drawing
         {
             maxWidth = images.Select(img => img.Width).Max();
             maxHeight = images.Select(img => img.Height).Max();
+        }
+
+        private static (int, int) FindMaxWidthAndHeight(IEnumerable<Image> images)
+        {
+            int maxWidth = images.Select(img => img.Width).Max();
+            int maxHeight = images.Select(img => img.Height).Max();
+
+            return (maxWidth, maxHeight);
         }
 
         private static void FindMaxWidthAndHeight(IEnumerable<AnyBitmap> images, out int maxWidth, out int maxHeight)

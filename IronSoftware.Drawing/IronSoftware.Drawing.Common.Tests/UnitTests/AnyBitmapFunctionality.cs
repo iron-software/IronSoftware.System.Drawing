@@ -4,6 +4,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -896,6 +897,28 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
                     blankBitmap.GetPixel(i, j).Should().Be(Color.DarkRed);
                 }
             }
+        }
+
+        [Fact]
+        public void OCR294Test()
+        {
+            var tiffBytes = File.ReadAllBytes("OCR294.tif");
+
+            Stopwatch sw1 = new Stopwatch();
+            /*sw1.Start();
+            var bitmap = new AnyBitmap(tiffBytes);
+            var frames = bitmap.GetAllFrames;
+            sw1.Stop();
+            var elapse1 = sw1.ElapsedMilliseconds;*/
+
+            sw1.Restart();
+            var newBitmap = new AnyBitmap();
+            var bitmaps = newBitmap.GetAnyBitmaps(tiffBytes, true);
+            sw1.Stop();
+            var elapse2 = sw1.ElapsedMilliseconds;
+
+            //Assert.True(elapse2 < elapse1);
+            Assert.NotNull(bitmaps);
         }
 
         [FactWithAutomaticDisplayName]
