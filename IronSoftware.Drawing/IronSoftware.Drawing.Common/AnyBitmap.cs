@@ -2233,6 +2233,21 @@ namespace IronSoftware.Drawing
             }
         }
 
+        /// <summary>
+        /// Disable warning message written to console by BitMiracle.LibTiff.NET.
+        /// </summary>
+        private class DisableErrorHandler : TiffErrorHandler
+        {
+            public override void WarningHandler(Tiff tif, string method, string format, params object[] args)
+            {
+                // do nothing, ie, do not write warnings to console
+            }
+            public override void WarningHandlerExt(Tiff tif, object clientData, string method, string format, params object[] args)
+            {
+                // do nothing ie, do not write warnings to console
+            }
+        }
+
         private void OpenTiffToImageSharp(ReadOnlySpan<byte> bytes)
         {
             try
@@ -2245,6 +2260,9 @@ namespace IronSoftware.Drawing
 
                 // create a memory stream out of them
                 using MemoryStream tiffStream = new(bytes.ToArray());
+
+                // Disable warning messages
+                Tiff.SetErrorHandler(new DisableErrorHandler());
 
                 // open a TIFF stored in the stream
                 using (Tiff tiff = Tiff.ClientOpen("in-memory", "r", tiffStream, new TiffStream()))
