@@ -942,6 +942,26 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             bitmap.FrameCount.Should().Be(1);
         }
 
+        [TheoryWithAutomaticDisplayName]
+        [InlineData("24_bit.png")]
+        [InlineData("checkmark.jpg")]
+        [InlineData("DW-26 Jpg72Input.jpg")]
+        [InlineData("DW-26 Jpg300Input.jpg")]
+        [InlineData("mountainclimbers.jpg")]
+        public void LoadImage_SetPreserveOriginalFormat_ShouldReturnCorrectBitPerPixel(string imageFileName)
+        {
+            // Arrange
+            string imagePath = GetRelativeFilePath(imageFileName);
+
+            // Act
+            var preserve = new AnyBitmap(imagePath, true);
+            var notPreserve = new AnyBitmap(imagePath, false);
+
+            // Assert
+            Assert.Equal(24, preserve.BitsPerPixel);
+            Assert.Equal(32, notPreserve.BitsPerPixel);
+        }
+
 #if !NET7_0
         [FactWithAutomaticDisplayName]
         public void CastAnyBitmap_from_SixLabors()
