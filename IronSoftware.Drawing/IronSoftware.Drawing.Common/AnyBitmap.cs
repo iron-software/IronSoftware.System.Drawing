@@ -52,6 +52,7 @@ namespace IronSoftware.Drawing
         private byte[] Binary { get; set; }
         private IImageFormat Format { get; set; }
         private TiffCompression TiffCompression { get; set; } = TiffCompression.Lzw;
+        private bool PreserveOriginalFormat { get; set; } = true;
 
         /// <summary>
         /// Width of the image.
@@ -138,7 +139,7 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         public AnyBitmap Clone()
         {
-            return new AnyBitmap(Binary);
+            return new AnyBitmap(Binary, PreserveOriginalFormat);
         }
 
         /// <summary>
@@ -2054,6 +2055,7 @@ namespace IronSoftware.Drawing
                         Image = Image.Load(bytes);
                     else
                     {
+                        PreserveOriginalFormat = preserveOriginalFormat;
                         Image = Image.Load<Rgba32>(bytes);
 
                         // .png image pre-processing
