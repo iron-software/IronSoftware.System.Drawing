@@ -2063,6 +2063,10 @@ namespace IronSoftware.Drawing
                             Image.Mutate(img => img.BackgroundColor(SixLabors.ImageSharp.Color.White));
                     }
 
+                    // Fix if the input image is auto-rotated; this issue is acknowledged by SixLabors.ImageSharp community
+                    // ref: https://github.com/SixLabors/ImageSharp/discussions/2685
+                    Image.Mutate(x => x.AutoOrient());
+
                     var resolutionUnit = this.Image.Metadata.ResolutionUnits;
                     var horizontal = this.Image.Metadata.HorizontalResolution;
                     var vertical = this.Image.Metadata.VerticalResolution;
