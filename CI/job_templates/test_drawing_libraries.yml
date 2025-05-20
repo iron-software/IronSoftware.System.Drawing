@@ -20,6 +20,14 @@ jobs:
         buildType: 'current'
         artifactName: 'IronDrawingDataTests'
         targetPath: '$(Agent.BuildDirectory)/Data'
+    - ${{ if or(eq(parameters.OSPlatform, 'Ubuntu'), eq(parameters.OSPlatform, 'Linux')) }}:
+      - task: Bash@3        
+        displayName: 'Install GDI+ dependencies'
+        inputs:
+          targetType: 'inline'
+          script: |
+            sudo apt-get update
+            sudo apt-get install -y libgdiplus libc6-dev
     - ${{ if eq(parameters.framework, 'netcoreapp3.1') }}:
       - task: UseDotNet@2
         displayName: 'Install .Netcoreapp3.1 Core sdk'
