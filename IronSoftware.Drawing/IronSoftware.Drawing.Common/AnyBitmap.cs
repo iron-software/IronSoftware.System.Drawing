@@ -463,9 +463,17 @@ namespace IronSoftware.Drawing
         /// Create a new Bitmap from a a Byte Span.
         /// </summary>
         /// <param name="span">A Byte Span of image data in any common format.</param>
-        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.
-        /// Default is true. Set to false to load as Rgba32.</param>
-        public static AnyBitmap FromSpan(ReadOnlySpan<byte> span, bool preserveOriginalFormat = true)
+        public static AnyBitmap FromSpan(ReadOnlySpan<byte> span)
+        {
+            return new AnyBitmap(span, true);
+        }
+
+        /// <summary>
+        /// Create a new Bitmap from a a Byte Span.
+        /// </summary>
+        /// <param name="span">A Byte Span of image data in any common format.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        public static AnyBitmap FromSpan(ReadOnlySpan<byte> span, bool preserveOriginalFormat)
         {
             return new AnyBitmap(span, preserveOriginalFormat);
         }
@@ -474,9 +482,17 @@ namespace IronSoftware.Drawing
         /// Create a new Bitmap from a a Byte Array.
         /// </summary>
         /// <param name="bytes">A ByteArray of image data in any common format.</param>
-        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.
-        /// Default is true. Set to false to load as Rgba32.</param>
-        public static AnyBitmap FromBytes(byte[] bytes, bool preserveOriginalFormat = true)
+        public static AnyBitmap FromBytes(byte[] bytes)
+        {
+            return new AnyBitmap(bytes, true);
+        }
+
+        /// <summary>
+        /// Create a new Bitmap from a a Byte Array.
+        /// </summary>
+        /// <param name="bytes">A ByteArray of image data in any common format.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        public static AnyBitmap FromBytes(byte[] bytes, bool preserveOriginalFormat)
         {
             return new AnyBitmap(bytes, preserveOriginalFormat);
         }
@@ -484,12 +500,23 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Create a new Bitmap from a <see cref="Stream"/> (bytes).
         /// </summary>
-        /// <param name="stream">A <see cref="Stream"/> of image data in any common format.</param> 
-        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.
+        /// <param name="stream">A <see cref="Stream"/> of image data in any common format.</param>
         /// Default is true. Set to false to load as Rgba32.</param>
         /// <seealso cref="FromStream(Stream, bool)"/>
         /// <seealso cref="AnyBitmap"/>
-        public static AnyBitmap FromStream(MemoryStream stream, bool preserveOriginalFormat = true)
+        public static AnyBitmap FromStream(MemoryStream stream)
+        {
+            return new AnyBitmap(stream, true);
+        }
+
+        /// <summary>
+        /// Create a new Bitmap from a <see cref="Stream"/> (bytes).
+        /// </summary>
+        /// <param name="stream">A <see cref="Stream"/> of image data in any common format.</param> 
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <seealso cref="FromStream(Stream, bool)"/>
+        /// <seealso cref="AnyBitmap"/>
+        public static AnyBitmap FromStream(MemoryStream stream, bool preserveOriginalFormat)
         {
             return new AnyBitmap(stream, preserveOriginalFormat);
         }
@@ -498,11 +525,21 @@ namespace IronSoftware.Drawing
         /// Create a new Bitmap from a <see cref="Stream"/> (bytes).
         /// </summary>
         /// <param name="stream">A <see cref="Stream"/> of image data in any common format.</param>
-        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.
-        /// Default is true. Set to false to load as Rgba32.</param>
         /// <seealso cref="FromStream(MemoryStream, bool)"/>
         /// <seealso cref="AnyBitmap"/>
-        public static AnyBitmap FromStream(Stream stream, bool preserveOriginalFormat = true)
+        public static AnyBitmap FromStream(Stream stream)
+        {
+            return new AnyBitmap(stream, true);
+        }
+
+        /// <summary>
+        /// Create a new Bitmap from a <see cref="Stream"/> (bytes).
+        /// </summary>
+        /// <param name="stream">A <see cref="Stream"/> of image data in any common format.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <seealso cref="FromStream(MemoryStream, bool)"/>
+        /// <seealso cref="AnyBitmap"/>
+        public static AnyBitmap FromStream(Stream stream, bool preserveOriginalFormat)
         {
             return new AnyBitmap(stream, preserveOriginalFormat);
         }
@@ -511,10 +548,19 @@ namespace IronSoftware.Drawing
         /// Construct a new Bitmap from binary data (byte span).
         /// </summary>
         /// <param name="span">A byte span of image data in any common format.</param>
-        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.
-        /// Default is true. Set to false to load as Rgba32.</param>
         /// <seealso cref="AnyBitmap"/>
-        public AnyBitmap(ReadOnlySpan<byte> span, bool preserveOriginalFormat = true)
+        public AnyBitmap(ReadOnlySpan<byte> span)
+        {
+            LoadImage(span, true);
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from binary data (byte span).
+        /// </summary>
+        /// <param name="span">A byte span of image data in any common format.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <seealso cref="AnyBitmap"/>
+        public AnyBitmap(ReadOnlySpan<byte> span, bool preserveOriginalFormat)
         {
             LoadImage(span, preserveOriginalFormat);
         }
@@ -523,11 +569,21 @@ namespace IronSoftware.Drawing
         /// Construct a new Bitmap from binary data (bytes).
         /// </summary>
         /// <param name="bytes">A ByteArray of image data in any common format.</param>
-        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.
-        /// Default is true. Set to false to load as Rgba32.</param>
-        /// <seealso cref="FromBytes"/>
+        /// <seealso cref="FromBytes(byte[])"/>
         /// <seealso cref="AnyBitmap"/>
-        public AnyBitmap(byte[] bytes, bool preserveOriginalFormat = true)
+        public AnyBitmap(byte[] bytes)
+        {
+            LoadImage(bytes, true);
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from binary data (bytes).
+        /// </summary>
+        /// <param name="bytes">A ByteArray of image data in any common format.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <seealso cref="FromBytes(byte[], bool)"/>
+        /// <seealso cref="AnyBitmap"/>
+        public AnyBitmap(byte[] bytes, bool preserveOriginalFormat)
         {
             LoadImage(bytes, preserveOriginalFormat);
         }
@@ -536,8 +592,18 @@ namespace IronSoftware.Drawing
         /// Construct a new Bitmap from a <see cref="Stream"/> (bytes).
         /// </summary>
         /// <param name="stream">A <see cref="Stream"/> of image data in any common format.</param>
-        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.
-        /// Default is true. Set to false to load as Rgba32.</param>
+        /// <seealso cref="FromStream(Stream, bool)"/>
+        /// <seealso cref="AnyBitmap"/>
+        public AnyBitmap(MemoryStream stream)
+        {
+            LoadImage(stream.ToArray(), true);
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from a <see cref="Stream"/> (bytes).
+        /// </summary>
+        /// <param name="stream">A <see cref="Stream"/> of image data in any common format.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
         /// <seealso cref="FromStream(Stream, bool)"/>
         /// <seealso cref="AnyBitmap"/>
         public AnyBitmap(MemoryStream stream, bool preserveOriginalFormat = true)
@@ -549,11 +615,21 @@ namespace IronSoftware.Drawing
         /// Construct a new Bitmap from a <see cref="Stream"/> (bytes).
         /// </summary>
         /// <param name="stream">A <see cref="Stream"/> of image data in any common format.</param>
-        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.
-        /// Default is true. Set to false to load as Rgba32.</param>
         /// <seealso cref="FromStream(MemoryStream, bool)"/>
         /// <seealso cref="AnyBitmap"/>
-        public AnyBitmap(Stream stream, bool preserveOriginalFormat = true)
+        public AnyBitmap(Stream stream)
+        {
+            LoadImage(stream, true);
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from a <see cref="Stream"/> (bytes).
+        /// </summary>
+        /// <param name="stream">A <see cref="Stream"/> of image data in any common format.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <seealso cref="FromStream(MemoryStream, bool)"/>
+        /// <seealso cref="AnyBitmap"/>
+        public AnyBitmap(Stream stream, bool preserveOriginalFormat)
         {
             LoadImage(stream, preserveOriginalFormat);
         }
@@ -574,11 +650,21 @@ namespace IronSoftware.Drawing
         /// Construct a new Bitmap from a file.
         /// </summary>
         /// <param name="file">A fully qualified file path./</param>
-        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.
-        /// Default is true. Set to false to load as Rgba32.</param>
-        /// <seealso cref="FromFile"/>
+        /// <seealso cref="FromFile(string)"/>
         /// <seealso cref="AnyBitmap"/>
-        public AnyBitmap(string file, bool preserveOriginalFormat = true)
+        public AnyBitmap(string file)
+        {
+            LoadImage(File.ReadAllBytes(file), true);
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from a file.
+        /// </summary>
+        /// <param name="file">A fully qualified file path./</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <seealso cref="FromFile(string, bool)"/>
+        /// <seealso cref="AnyBitmap"/>
+        public AnyBitmap(string file, bool preserveOriginalFormat)
         {
             LoadImage(File.ReadAllBytes(file), preserveOriginalFormat);
         }
@@ -587,11 +673,29 @@ namespace IronSoftware.Drawing
         /// Construct a new Bitmap from a Uri
         /// </summary>
         /// <param name="uri">The uri of the image.</param>
-        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.
-        /// Default is true. Set to false to load as Rgba32.</param>
-        /// <seealso cref="FromUriAsync"/>
+        /// <seealso cref="FromUriAsync(Uri)"/>
         /// <seealso cref="AnyBitmap"/>
-        public AnyBitmap(Uri uri, bool preserveOriginalFormat = true)
+        public AnyBitmap(Uri uri)
+        {
+            try
+            {
+                using Stream stream = LoadUriAsync(uri).GetAwaiter().GetResult();
+                LoadImage(stream, true);
+            }
+            catch (Exception e)
+            {
+                throw new NotSupportedException("Error while loading AnyBitmap from Uri", e);
+            }
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from a Uri
+        /// </summary>
+        /// <param name="uri">The uri of the image.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <seealso cref="FromUriAsync(Uri, bool)"/>
+        /// <seealso cref="AnyBitmap"/>
+        public AnyBitmap(Uri uri, bool preserveOriginalFormat)
         {
             try
             {
@@ -619,11 +723,28 @@ namespace IronSoftware.Drawing
         /// Create a new Bitmap from a file.
         /// </summary>
         /// <param name="file">A fully qualified file path.</param>
-        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.
-        /// Default is true. Set to false to load as Rgba32.</param>
-        /// <seealso cref="FromFile"/>
+        /// <seealso cref="FromFile(string)"/>
         /// <seealso cref="AnyBitmap"/>
-        public static AnyBitmap FromFile(string file, bool preserveOriginalFormat = true)
+        public static AnyBitmap FromFile(string file)
+        {
+            if (file.ToLower().EndsWith(".svg"))
+            {
+                return LoadSVGImage(file, true);
+            }
+            else
+            {
+                return new AnyBitmap(file, true);
+            }
+        }
+
+        /// <summary>
+        /// Create a new Bitmap from a file.
+        /// </summary>
+        /// <param name="file">A fully qualified file path.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <seealso cref="FromFile(string, bool)"/>
+        /// <seealso cref="AnyBitmap"/>
+        public static AnyBitmap FromFile(string file, bool preserveOriginalFormat)
         {
             if (file.ToLower().EndsWith(".svg"))
             {
@@ -639,13 +760,33 @@ namespace IronSoftware.Drawing
         /// Construct a new Bitmap from a Uri
         /// </summary>
         /// <param name="uri">The uri of the image.</param>
-        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.
-        /// Default is true. Set to false to load as Rgba32.</param>
         /// <returns></returns>
         /// <seealso cref="AnyBitmap"/>
-        /// <seealso cref="FromUri"/>
-        /// <seealso cref="FromUriAsync"/>
-        public static async Task<AnyBitmap> FromUriAsync(Uri uri, bool preserveOriginalFormat = true)
+        /// <seealso cref="FromUri(Uri)"/>
+        /// <seealso cref="FromUriAsync(Uri)"/>
+        public static async Task<AnyBitmap> FromUriAsync(Uri uri)
+        {
+            try
+            {
+                using Stream stream = await LoadUriAsync(uri);
+                return new AnyBitmap(stream, true);
+            }
+            catch (Exception e)
+            {
+                throw new NotSupportedException("Error while loading AnyBitmap from Uri", e);
+            }
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from a Uri
+        /// </summary>
+        /// <param name="uri">The uri of the image.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <returns></returns>
+        /// <seealso cref="AnyBitmap"/>
+        /// <seealso cref="FromUri(Uri, bool)"/>
+        /// <seealso cref="FromUriAsync(Uri, bool)"/>
+        public static async Task<AnyBitmap> FromUriAsync(Uri uri, bool preserveOriginalFormat)
         {
             try
             {
@@ -662,20 +803,42 @@ namespace IronSoftware.Drawing
         /// Construct a new Bitmap from a Uri
         /// </summary>
         /// <param name="uri">The uri of the image.</param>
-        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.
-        /// Default is true. Set to false to load as Rgba32.</param>
         /// <returns></returns>
         /// <seealso cref="AnyBitmap"/>
-        /// <seealso cref="FromUriAsync"/>
+        /// <seealso cref="FromUriAsync(Uri)"/>
 #if NET6_0_OR_GREATER
         [Obsolete("FromUri(Uri) is obsolete for net60 or greater because it uses WebClient which is obsolete. Consider using FromUriAsync(Uri) method.")]
 #endif
-        public static AnyBitmap FromUri(Uri uri, bool preserveOriginalFormat = true)
+        public static AnyBitmap FromUri(Uri uri)
         {
             try
             {
                 using WebClient client = new();
                 return new AnyBitmap(client.OpenRead(uri));
+            }
+            catch (Exception e)
+            {
+                throw new NotSupportedException("Error while loading AnyBitmap from Uri", e);
+            }
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from a Uri
+        /// </summary>
+        /// <param name="uri">The uri of the image.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <returns></returns>
+        /// <seealso cref="AnyBitmap"/>
+        /// <seealso cref="FromUriAsync(Uri, bool)"/>
+#if NET6_0_OR_GREATER
+        [Obsolete("FromUri(Uri) is obsolete for net60 or greater because it uses WebClient which is obsolete. Consider using FromUriAsync(Uri) method.")]
+#endif
+        public static AnyBitmap FromUri(Uri uri, bool preserveOriginalFormat)
+        {
+            try
+            {
+                using WebClient client = new();
+                return new AnyBitmap(client.OpenRead(uri), preserveOriginalFormat);
             }
             catch (Exception e)
             {
