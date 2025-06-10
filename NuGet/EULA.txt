@@ -3,7 +3,7 @@ Iron Drawing End User License Agreement
 
 License Agreement
 Terms and Conditions
-This License Agreement (“Agreement”) is by Iron Software LLC (“Iron”) and the person or entity licensing the Iron Software (“Company”). This Agreement consists of each Order and these Terms and Conditions (“Terms”).
+This License Agreement (“Agreement”) is by Iron Software (“Iron”) and the person or entity licensing the Iron Software (“Company”). This Agreement consists of each Order and these Terms and Conditions (“Terms”).
 
 1. Overview
 a. Iron is the owner and licensor of several software libraries and packages, as described by Iron on Iron’s website and in Iron’s marketing materials (the “Iron Software”). Iron offers Company one or more options to use the Iron Software as documented by Iron subject to the restrictions stated in this Agreement. Iron may also provide support services (“Support and Updates”) and other services, including consulting services regarding Company’s use of the Iron Software (collectively with Support and Updates, the “Services”).
