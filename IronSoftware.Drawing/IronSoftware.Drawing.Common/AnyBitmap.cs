@@ -47,10 +47,12 @@ namespace IronSoftware.Drawing
     public partial class AnyBitmap : IDisposable, IAnyImage
     {
         private bool _disposed = false;
+
         private Image Image { get; set; }
         private byte[] Binary { get; set; }
         private IImageFormat Format { get; set; }
         private TiffCompression TiffCompression { get; set; } = TiffCompression.Lzw;
+        private bool PreserveOriginalFormat { get; set; } = true;
 
         /// <summary>
         /// Width of the image.
@@ -137,7 +139,7 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         public AnyBitmap Clone()
         {
-            return new AnyBitmap(Binary);
+            return new AnyBitmap(Binary, PreserveOriginalFormat);
         }
 
         /// <summary>
@@ -463,7 +465,17 @@ namespace IronSoftware.Drawing
         /// <param name="span">A Byte Span of image data in any common format.</param>
         public static AnyBitmap FromSpan(ReadOnlySpan<byte> span)
         {
-            return new AnyBitmap(span);
+            return new AnyBitmap(span, true);
+        }
+
+        /// <summary>
+        /// Create a new Bitmap from a a Byte Span.
+        /// </summary>
+        /// <param name="span">A Byte Span of image data in any common format.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        public static AnyBitmap FromSpan(ReadOnlySpan<byte> span, bool preserveOriginalFormat)
+        {
+            return new AnyBitmap(span, preserveOriginalFormat);
         }
 
         /// <summary>
@@ -472,31 +484,64 @@ namespace IronSoftware.Drawing
         /// <param name="bytes">A ByteArray of image data in any common format.</param>
         public static AnyBitmap FromBytes(byte[] bytes)
         {
-            return new AnyBitmap(bytes);
+            return new AnyBitmap(bytes, true);
+        }
+
+        /// <summary>
+        /// Create a new Bitmap from a a Byte Array.
+        /// </summary>
+        /// <param name="bytes">A ByteArray of image data in any common format.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        public static AnyBitmap FromBytes(byte[] bytes, bool preserveOriginalFormat)
+        {
+            return new AnyBitmap(bytes, preserveOriginalFormat);
         }
 
         /// <summary>
         /// Create a new Bitmap from a <see cref="Stream"/> (bytes).
         /// </summary>
-        /// <param name="stream">A <see cref="Stream"/> of image data in any 
-        /// common format.</param>
-        /// <seealso cref="FromStream(Stream)"/>
+        /// <param name="stream">A <see cref="Stream"/> of image data in any common format.</param>
+        /// Default is true. Set to false to load as Rgba32.</param>
+        /// <seealso cref="FromStream(Stream, bool)"/>
         /// <seealso cref="AnyBitmap"/>
         public static AnyBitmap FromStream(MemoryStream stream)
         {
-            return new AnyBitmap(stream);
+            return new AnyBitmap(stream, true);
         }
 
         /// <summary>
         /// Create a new Bitmap from a <see cref="Stream"/> (bytes).
         /// </summary>
-        /// <param name="stream">A <see cref="Stream"/> of image data in any 
-        /// common format.</param>
-        /// <seealso cref="FromStream(MemoryStream)"/>
+        /// <param name="stream">A <see cref="Stream"/> of image data in any common format.</param> 
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <seealso cref="FromStream(Stream, bool)"/>
+        /// <seealso cref="AnyBitmap"/>
+        public static AnyBitmap FromStream(MemoryStream stream, bool preserveOriginalFormat)
+        {
+            return new AnyBitmap(stream, preserveOriginalFormat);
+        }
+
+        /// <summary>
+        /// Create a new Bitmap from a <see cref="Stream"/> (bytes).
+        /// </summary>
+        /// <param name="stream">A <see cref="Stream"/> of image data in any common format.</param>
+        /// <seealso cref="FromStream(MemoryStream, bool)"/>
         /// <seealso cref="AnyBitmap"/>
         public static AnyBitmap FromStream(Stream stream)
         {
-            return new AnyBitmap(stream);
+            return new AnyBitmap(stream, true);
+        }
+
+        /// <summary>
+        /// Create a new Bitmap from a <see cref="Stream"/> (bytes).
+        /// </summary>
+        /// <param name="stream">A <see cref="Stream"/> of image data in any common format.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <seealso cref="FromStream(MemoryStream, bool)"/>
+        /// <seealso cref="AnyBitmap"/>
+        public static AnyBitmap FromStream(Stream stream, bool preserveOriginalFormat)
+        {
+            return new AnyBitmap(stream, preserveOriginalFormat);
         }
 
         /// <summary>
@@ -506,42 +551,87 @@ namespace IronSoftware.Drawing
         /// <seealso cref="AnyBitmap"/>
         public AnyBitmap(ReadOnlySpan<byte> span)
         {
-            LoadImage(span);
+            LoadImage(span, true);
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from binary data (byte span).
+        /// </summary>
+        /// <param name="span">A byte span of image data in any common format.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <seealso cref="AnyBitmap"/>
+        public AnyBitmap(ReadOnlySpan<byte> span, bool preserveOriginalFormat)
+        {
+            LoadImage(span, preserveOriginalFormat);
         }
 
         /// <summary>
         /// Construct a new Bitmap from binary data (bytes).
         /// </summary>
         /// <param name="bytes">A ByteArray of image data in any common format.</param>
-        /// <seealso cref="FromBytes"/>
+        /// <seealso cref="FromBytes(byte[])"/>
         /// <seealso cref="AnyBitmap"/>
         public AnyBitmap(byte[] bytes)
         {
-            LoadImage(bytes);
+            LoadImage(bytes, true);
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from binary data (bytes).
+        /// </summary>
+        /// <param name="bytes">A ByteArray of image data in any common format.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <seealso cref="FromBytes(byte[], bool)"/>
+        /// <seealso cref="AnyBitmap"/>
+        public AnyBitmap(byte[] bytes, bool preserveOriginalFormat)
+        {
+            LoadImage(bytes, preserveOriginalFormat);
         }
 
         /// <summary>
         /// Construct a new Bitmap from a <see cref="Stream"/> (bytes).
         /// </summary>
-        /// <param name="stream">A <see cref="Stream"/> of image data in any 
-        /// common format.</param>
-        /// <seealso cref="FromStream(Stream)"/>
+        /// <param name="stream">A <see cref="Stream"/> of image data in any common format.</param>
+        /// <seealso cref="FromStream(Stream, bool)"/>
         /// <seealso cref="AnyBitmap"/>
         public AnyBitmap(MemoryStream stream)
         {
-            LoadImage(stream.ToArray());
+            LoadImage(stream.ToArray(), true);
         }
 
         /// <summary>
         /// Construct a new Bitmap from a <see cref="Stream"/> (bytes).
         /// </summary>
-        /// <param name="stream">A <see cref="Stream"/> of image data in any 
-        /// common format.</param>
-        /// <seealso cref="FromStream(MemoryStream)"/>
+        /// <param name="stream">A <see cref="Stream"/> of image data in any common format.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <seealso cref="FromStream(Stream, bool)"/>
+        /// <seealso cref="AnyBitmap"/>
+        public AnyBitmap(MemoryStream stream, bool preserveOriginalFormat = true)
+        {
+            LoadImage(stream.ToArray(), preserveOriginalFormat);
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from a <see cref="Stream"/> (bytes).
+        /// </summary>
+        /// <param name="stream">A <see cref="Stream"/> of image data in any common format.</param>
+        /// <seealso cref="FromStream(MemoryStream, bool)"/>
         /// <seealso cref="AnyBitmap"/>
         public AnyBitmap(Stream stream)
         {
-            LoadImage(stream);
+            LoadImage(stream, true);
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from a <see cref="Stream"/> (bytes).
+        /// </summary>
+        /// <param name="stream">A <see cref="Stream"/> of image data in any common format.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <seealso cref="FromStream(MemoryStream, bool)"/>
+        /// <seealso cref="AnyBitmap"/>
+        public AnyBitmap(Stream stream, bool preserveOriginalFormat)
+        {
+            LoadImage(stream, preserveOriginalFormat);
         }
 
         /// <summary>
@@ -560,25 +650,57 @@ namespace IronSoftware.Drawing
         /// Construct a new Bitmap from a file.
         /// </summary>
         /// <param name="file">A fully qualified file path./</param>
-        /// <seealso cref="FromFile"/>
+        /// <seealso cref="FromFile(string)"/>
         /// <seealso cref="AnyBitmap"/>
         public AnyBitmap(string file)
         {
-            LoadImage(File.ReadAllBytes(file));
+            LoadImage(File.ReadAllBytes(file), true);
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from a file.
+        /// </summary>
+        /// <param name="file">A fully qualified file path./</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <seealso cref="FromFile(string, bool)"/>
+        /// <seealso cref="AnyBitmap"/>
+        public AnyBitmap(string file, bool preserveOriginalFormat)
+        {
+            LoadImage(File.ReadAllBytes(file), preserveOriginalFormat);
         }
 
         /// <summary>
         /// Construct a new Bitmap from a Uri
         /// </summary>
         /// <param name="uri">The uri of the image.</param>
-        /// <seealso cref="FromUriAsync"/>
+        /// <seealso cref="FromUriAsync(Uri)"/>
         /// <seealso cref="AnyBitmap"/>
         public AnyBitmap(Uri uri)
         {
             try
             {
                 using Stream stream = LoadUriAsync(uri).GetAwaiter().GetResult();
-                LoadImage(stream);
+                LoadImage(stream, true);
+            }
+            catch (Exception e)
+            {
+                throw new NotSupportedException("Error while loading AnyBitmap from Uri", e);
+            }
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from a Uri
+        /// </summary>
+        /// <param name="uri">The uri of the image.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <seealso cref="FromUriAsync(Uri, bool)"/>
+        /// <seealso cref="AnyBitmap"/>
+        public AnyBitmap(Uri uri, bool preserveOriginalFormat)
+        {
+            try
+            {
+                using Stream stream = LoadUriAsync(uri).GetAwaiter().GetResult();
+                LoadImage(stream, preserveOriginalFormat);
             }
             catch (Exception e)
             {
@@ -601,17 +723,36 @@ namespace IronSoftware.Drawing
         /// Create a new Bitmap from a file.
         /// </summary>
         /// <param name="file">A fully qualified file path.</param>
-        /// <seealso cref="FromFile"/>
+        /// <seealso cref="FromFile(string)"/>
         /// <seealso cref="AnyBitmap"/>
         public static AnyBitmap FromFile(string file)
         {
             if (file.ToLower().EndsWith(".svg"))
             {
-                return LoadSVGImage(file);
+                return LoadSVGImage(file, true);
             }
             else
             {
-                return new AnyBitmap(file);
+                return new AnyBitmap(file, true);
+            }
+        }
+
+        /// <summary>
+        /// Create a new Bitmap from a file.
+        /// </summary>
+        /// <param name="file">A fully qualified file path.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <seealso cref="FromFile(string, bool)"/>
+        /// <seealso cref="AnyBitmap"/>
+        public static AnyBitmap FromFile(string file, bool preserveOriginalFormat)
+        {
+            if (file.ToLower().EndsWith(".svg"))
+            {
+                return LoadSVGImage(file, preserveOriginalFormat);
+            }
+            else
+            {
+                return new AnyBitmap(file, preserveOriginalFormat);
             }
         }
 
@@ -621,14 +762,36 @@ namespace IronSoftware.Drawing
         /// <param name="uri">The uri of the image.</param>
         /// <returns></returns>
         /// <seealso cref="AnyBitmap"/>
-        /// <seealso cref="FromUri"/>
-        /// <seealso cref="FromUriAsync"/>
+        /// <seealso cref="FromUri(Uri)"/>
+        /// <seealso cref="FromUriAsync(Uri)"/>
         public static async Task<AnyBitmap> FromUriAsync(Uri uri)
         {
             try
             {
                 using Stream stream = await LoadUriAsync(uri);
-                return new AnyBitmap(stream);
+                return new AnyBitmap(stream, true);
+            }
+            catch (Exception e)
+            {
+                throw new NotSupportedException("Error while loading AnyBitmap from Uri", e);
+            }
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from a Uri
+        /// </summary>
+        /// <param name="uri">The uri of the image.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <returns></returns>
+        /// <seealso cref="AnyBitmap"/>
+        /// <seealso cref="FromUri(Uri, bool)"/>
+        /// <seealso cref="FromUriAsync(Uri, bool)"/>
+        public static async Task<AnyBitmap> FromUriAsync(Uri uri, bool preserveOriginalFormat)
+        {
+            try
+            {
+                using Stream stream = await LoadUriAsync(uri);
+                return new AnyBitmap(stream, preserveOriginalFormat);
             }
             catch (Exception e)
             {
@@ -642,7 +805,7 @@ namespace IronSoftware.Drawing
         /// <param name="uri">The uri of the image.</param>
         /// <returns></returns>
         /// <seealso cref="AnyBitmap"/>
-        /// <seealso cref="FromUriAsync"/>
+        /// <seealso cref="FromUriAsync(Uri)"/>
 #if NET6_0_OR_GREATER
         [Obsolete("FromUri(Uri) is obsolete for net60 or greater because it uses WebClient which is obsolete. Consider using FromUriAsync(Uri) method.")]
 #endif
@@ -652,6 +815,30 @@ namespace IronSoftware.Drawing
             {
                 using WebClient client = new();
                 return new AnyBitmap(client.OpenRead(uri));
+            }
+            catch (Exception e)
+            {
+                throw new NotSupportedException("Error while loading AnyBitmap from Uri", e);
+            }
+        }
+
+        /// <summary>
+        /// Construct a new Bitmap from a Uri
+        /// </summary>
+        /// <param name="uri">The uri of the image.</param>
+        /// <param name="preserveOriginalFormat">Determine whether to load <see cref="SixLabors.ImageSharp.Image"/> as its original pixel format or Rgba32.</param>
+        /// <returns></returns>
+        /// <seealso cref="AnyBitmap"/>
+        /// <seealso cref="FromUriAsync(Uri, bool)"/>
+#if NET6_0_OR_GREATER
+        [Obsolete("FromUri(Uri) is obsolete for net60 or greater because it uses WebClient which is obsolete. Consider using FromUriAsync(Uri) method.")]
+#endif
+        public static AnyBitmap FromUri(Uri uri, bool preserveOriginalFormat)
+        {
+            try
+            {
+                using WebClient client = new();
+                return new AnyBitmap(client.OpenRead(uri), preserveOriginalFormat);
             }
             catch (Exception e)
             {
@@ -828,7 +1015,8 @@ namespace IronSoftware.Drawing
         {
             if (BitsPerPixel == 32)
             {
-                var alpha = new List<byte>(Image.Width * Image.Height);
+                var alpha = new byte[Image.Width * Image.Height];
+                int alphaIndex = 0;
                 using var rgbaImage = Image is Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image
                     ? image
                     : Image.CloneAs<SixLabors.ImageSharp.PixelFormats.Rgba32>();
@@ -836,12 +1024,16 @@ namespace IronSoftware.Drawing
                 {
                     for (int y = 0; y < accessor.Height; y++)
                     {
-                        Span<SixLabors.ImageSharp.PixelFormats.Rgba32> pixelRow = accessor.GetRowSpan(y);
+                        // Get the row as a span of Rgba32.
+                        Span<Rgba32> pixelRow = accessor.GetRowSpan(y);
+                        // Interpret the row as a span of bytes.
+                        Span<byte> rowBytes = MemoryMarshal.AsBytes(pixelRow);
 
-                        for (int x = 0; x < pixelRow.Length; x++)
+                        // Each pixel is 4 bytes: R, G, B, A.
+                        // The alpha channel is the fourth byte (index 3, 7, 11, ...).
+                        for (int i = 3; i < rowBytes.Length; i += 4)
                         {
-                            SixLabors.ImageSharp.PixelFormats.Rgba32 pixel = pixelRow[x];
-                            alpha.Add(pixel.A);
+                            alpha[alphaIndex++] = rowBytes[i];
                         }
                     }
                 });
@@ -2011,17 +2203,56 @@ namespace IronSoftware.Drawing
             Binary = stream.ToArray();
         }
         
-        private void LoadImage(ReadOnlySpan<byte> bytes)
+        private void LoadImage(ReadOnlySpan<byte> bytes, bool preserveOriginalFormat)
         {
             Format = Image.DetectFormat(bytes);
             try
             {
-                if(Format is TiffFormat)
+                if (Format is TiffFormat)
                     OpenTiffToImageSharp(bytes);
                 else
                 {
                     Binary = bytes.ToArray();
-                    Image = Image.Load(bytes);
+
+                    if (preserveOriginalFormat)
+                        Image = Image.Load(bytes);
+                    else
+                    {
+                        PreserveOriginalFormat = preserveOriginalFormat;
+                        Image = Image.Load<Rgba32>(bytes);
+
+                        // .png image pre-processing
+                        if (Format.Name == "PNG")
+                            Image.Mutate(img => img.BackgroundColor(SixLabors.ImageSharp.Color.White));
+                    }
+
+                    // Fix if the input image is auto-rotated; this issue is acknowledged by SixLabors.ImageSharp community
+                    // ref: https://github.com/SixLabors/ImageSharp/discussions/2685
+                    Image.Mutate(x => x.AutoOrient());
+
+                    var resolutionUnit = this.Image.Metadata.ResolutionUnits;
+                    var horizontal = this.Image.Metadata.HorizontalResolution;
+                    var vertical = this.Image.Metadata.VerticalResolution;
+
+                    // Check if image metadata is accurate already
+                    switch (resolutionUnit)
+                    {
+                        case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerMeter:
+                            // Convert metadata of the resolution unit to pixel per inch to match the conversion below of 1 meter = 37.3701 inches
+                            this.Image.Metadata.ResolutionUnits = SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerInch;
+                            this.Image.Metadata.HorizontalResolution = Math.Ceiling(horizontal / 39.3701);
+                            this.Image.Metadata.VerticalResolution = Math.Ceiling(vertical / 39.3701);
+                            break;
+                        case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerCentimeter:
+                            // Convert metadata of the resolution unit to pixel per inch to match the conversion below of 1 inch = 2.54 centimeters
+                            this.Image.Metadata.ResolutionUnits = SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerInch;
+                            this.Image.Metadata.HorizontalResolution = Math.Ceiling(horizontal * 2.54);
+                            this.Image.Metadata.VerticalResolution = Math.Ceiling(vertical * 2.54);
+                            break;
+                        default:
+                            // No changes required due to teh metadata are accurate already
+                            break;
+                    }
                 }
             }
             catch (DllNotFoundException e)
@@ -2036,7 +2267,7 @@ namespace IronSoftware.Drawing
             }
         }
 
-        private void LoadImage(Stream stream)
+        private void LoadImage(Stream stream, bool preserveOriginalFormat)
         {
             byte[] buffer = new byte[16 * 1024];
             using MemoryStream ms = new();
@@ -2046,16 +2277,17 @@ namespace IronSoftware.Drawing
                 ms.Write(buffer, 0, read);
             }
 
-            LoadImage(ms.ToArray());
+            LoadImage(ms.ToArray(), preserveOriginalFormat);
         }
 
-        private static AnyBitmap LoadSVGImage(string file)
+        private static AnyBitmap LoadSVGImage(string file, bool preserveOriginalFormat)
         {
             try
+
             {
                 return new AnyBitmap(
                     DecodeSVG(file).Encode(SKEncodedImageFormat.Png, 100)
-                    .ToArray());
+                    .ToArray(), preserveOriginalFormat);
             }
             catch (DllNotFoundException e)
             {
@@ -2201,16 +2433,36 @@ namespace IronSoftware.Drawing
             }
         }
 
+        /// <summary>
+        /// Disable warning message written to console by BitMiracle.LibTiff.NET.
+        /// </summary>
+        private class DisableErrorHandler : TiffErrorHandler
+        {
+            public override void WarningHandler(Tiff tif, string method, string format, params object[] args)
+            {
+                // do nothing, ie, do not write warnings to console
+            }
+            public override void WarningHandlerExt(Tiff tif, object clientData, string method, string format, params object[] args)
+            {
+                // do nothing ie, do not write warnings to console
+            }
+        }
+
         private void OpenTiffToImageSharp(ReadOnlySpan<byte> bytes)
         {
             try
             {
                 int imageWidth = 0;
                 int imageHeight = 0;
+                double imageXResolution = 0;
+                double imageYResolution = 0;
                 List<Image> images = new();
 
                 // create a memory stream out of them
                 using MemoryStream tiffStream = new(bytes.ToArray());
+
+                // Disable warning messages
+                Tiff.SetErrorHandler(new DisableErrorHandler());
 
                 // open a TIFF stored in the stream
                 using (Tiff tiff = Tiff.ClientOpen("in-memory", "r", tiffStream, new TiffStream()))
@@ -2227,7 +2479,7 @@ namespace IronSoftware.Drawing
                             continue;
                         }
 
-                        var (width, height) = SetWidthHeight(tiff, i, ref imageWidth, ref imageHeight);
+                        var (width, height, horizontalResolution, verticalResolution) = SetWidthHeight(tiff, i, ref imageWidth, ref imageHeight, ref imageXResolution, ref imageYResolution);
 
                         // Read the image into the memory buffer
                         int[] raster = new int[height * width];
@@ -2241,8 +2493,14 @@ namespace IronSoftware.Drawing
                         var bits = PrepareByteArray(bmp, raster, width, height);
 
                         images.Add(Image.LoadPixelData<Rgba32>(bits, bmp.Width, bmp.Height));
+                        
+                        // Update the metadata for image resolutions
+                        images[0].Metadata.HorizontalResolution = horizontalResolution;
+                        images[0].Metadata.VerticalResolution = verticalResolution;
                     }
                 }
+
+
 
                 // find max
                 FindMaxWidthAndHeight(images, out int maxWidth, out int maxHeight);
@@ -2332,27 +2590,42 @@ namespace IronSoftware.Drawing
 
         private ReadOnlySpan<byte> PrepareByteArray(Image<Rgba32> bmp, int[] raster, int width, int height)
         {
-            byte[] bits = new byte[GetStride(bmp) * height];
+            int stride = GetStride(bmp);
+            byte[] bits = new byte[stride * height];
 
-            for (int y = 0; y < height; y++)
+            // If no extra padding exists, copy entire rows at once.
+            if (stride == width * 4 && true)
             {
-                int rasterOffset = y * width;
-                int bitsOffset = (height - y - 1) * GetStride(bmp);
-
-                for (int x = 0; x < width; x++)
+                int bytesPerRow = stride;
+                for (int y = 0; y < height; y++)
                 {
-                    int rgba = raster[rasterOffset++];
-                    bits[bitsOffset++] = (byte)(rgba & 0xff); // R
-                    bits[bitsOffset++] = (byte)((rgba >> 8) & 0xff); // G
-                    bits[bitsOffset++] = (byte)((rgba >> 16) & 0xff); // B
-                    bits[bitsOffset++] = (byte)((rgba >> 24) & 0xff); // A
+                    int srcByteIndex = y * bytesPerRow;
+                    int destByteIndex = (height - y - 1) * bytesPerRow;
+                    Buffer.BlockCopy(raster, srcByteIndex, bits, destByteIndex, bytesPerRow);
+                }
+            }
+            else
+            {
+                // Fallback to per-pixel processing if stride includes padding.
+                for (int y = 0; y < height; y++)
+                {
+                    int rasterOffset = y * width;
+                    int bitsOffset = (height - y - 1) * stride;
+                    for (int x = 0; x < width; x++)
+                    {
+                        int rgba = raster[rasterOffset++];
+                        bits[bitsOffset++] = (byte)(rgba & 0xff); // R
+                        bits[bitsOffset++] = (byte)((rgba >> 8) & 0xff); // G
+                        bits[bitsOffset++] = (byte)((rgba >> 16) & 0xff); // B
+                        bits[bitsOffset++] = (byte)((rgba >> 24) & 0xff); // A
+                    }
                 }
             }
 
             return bits;
         }
 
-        private (int width, int height) SetWidthHeight(Tiff tiff, short index, ref int imageWidth, ref int imageHeight)
+        private (int width, int height, double horizontalResolution, double verticalResolution) SetWidthHeight(Tiff tiff, short index, ref int imageWidth, ref int imageHeight, ref double imageXResolution, ref double imageYResolution)
         {
             // Find the width and height of the image
             FieldValue[] value = tiff.GetField(TiffTag.IMAGEWIDTH);
@@ -2360,6 +2633,13 @@ namespace IronSoftware.Drawing
 
             value = tiff.GetField(TiffTag.IMAGELENGTH);
             int height = value[0].ToInt();
+
+            // If resolutions are null due to damaged files, return the default value of 96
+            value = tiff.GetField(TiffTag.XRESOLUTION);
+            double horizontalResolution = Math.Floor(value?.FirstOrDefault().ToDouble() ?? 96);
+
+            value = tiff.GetField(TiffTag.YRESOLUTION);
+            double verticalResolution = Math.Floor(value?.FirstOrDefault().ToDouble() ?? 96);
 
             if (index == 0)
             {
@@ -2385,7 +2665,7 @@ namespace IronSoftware.Drawing
                 }
             }
 
-            return (width, height);
+            return (width, height, horizontalResolution, verticalResolution);
         }
 
         private static List<AnyBitmap> CreateAnyBitmaps(IEnumerable<string> imagePaths)
