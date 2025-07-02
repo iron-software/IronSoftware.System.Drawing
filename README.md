@@ -82,7 +82,7 @@
 | `SkiaSharp.SKPointI`              |               ✅              |                ✅               |                              |                                |
 
 ### IronSoftware.Drawing has cross platform support compatibility with:
-- .NET 8, .NET 7, .NET 6, .NET 5, .NET Core, Standard, and Framework
+- .NET 9, .NET 8, .NET 7, .NET 6, .NET 5, .NET Core, Standard, and Framework
 - Windows, macOS, Linux, Docker, Azure, and AWS
 
 ## Using IronSoftware.Drawing

@@ -30,6 +30,7 @@ Key library features include:
 IronSoftware.Drawing can be used within C#, VB.NET, F#, ASP.NET projects, MVC, Web Services, Console &amp; Desktop Applications.
 
 Supports:
+* .NET 9
 * .NET 8
 * .NET 7
 * .NET 6
