@@ -26,7 +26,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             string imagePath = GetRelativeFilePath("Mona-Lisa-oil-wood-panel-Leonardo-da.webp");
 
             var bitmap = AnyBitmap.FromFile(imagePath);
+            bitmap.IsImageLoaded().Should().BeFalse();
+
             bitmap.SaveAs("result.bmp");
+
+            bitmap.IsImageLoaded().Should().BeTrue();
+            //should still be the original bytes
+            bitmap.Length.Should().Be((int)new FileInfo(imagePath).Length);
+
             Assert.Equal(671, bitmap.Width);
             Assert.Equal(1000, bitmap.Height);
             Assert.Equal(74684, bitmap.Length);
@@ -47,7 +54,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             byte[] bytes = File.ReadAllBytes(imagePath);
 
             var bitmap = AnyBitmap.FromBytes(bytes);
+            bitmap.IsImageLoaded().Should().BeFalse();
+
             _ = bitmap.TrySaveAs("result.bmp");
+
+            bitmap.IsImageLoaded().Should().BeTrue();
+            //should still be the original bytes
+            bitmap.Length.Should().Be(bytes.Length);
+
             AssertImageAreEqual(imagePath, "result.bmp");
 
             bitmap = new AnyBitmap(bytes);
@@ -63,7 +77,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Stream ms = new MemoryStream(bytes);
 
             var bitmap = AnyBitmap.FromStream(ms);
+            bitmap.IsImageLoaded().Should().BeFalse();
+
             _ = bitmap.TrySaveAs("result.bmp");
+
+            bitmap.IsImageLoaded().Should().BeTrue();
+            //should still be the original bytes
+            bitmap.Length.Should().Be(bytes.Length);
+
             AssertImageAreEqual(imagePath, "result.bmp");
 
             ms.Position = 0;
@@ -80,12 +101,21 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             var ms = new MemoryStream(bytes);
 
             var bitmap = AnyBitmap.FromStream(ms);
+            bitmap.IsImageLoaded().Should().BeFalse();
+           
             _ = bitmap.TrySaveAs("result.bmp");
+
+            bitmap.IsImageLoaded().Should().BeTrue();
+            //should still be the original bytes
+            bitmap.Length.Should().Be(bytes.Length);
+
             AssertImageAreEqual(imagePath, "result.bmp");
 
             bitmap = new AnyBitmap(ms);
             bitmap.SaveAs("result.bmp");
             AssertImageAreEqual(imagePath, "result.bmp");
+
+
         }
 
         [FactWithAutomaticDisplayName]
@@ -245,6 +275,16 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
                 // Check the pixel color has changed
                 Assert.Equal(bitmap.GetPixel(0, 0), Color.Black);
+
+#if NETFRAMEWORK
+                //windows only
+                // SetPixel makes the image dirty so it should update AnyBitmap.Binary value
+
+                System.Drawing.Bitmap temp1 = bitmap;
+                AnyBitmap temp2 = (AnyBitmap)temp1;
+                Assert.Equal(temp1.GetPixel(0, 0).ToArgb(), System.Drawing.Color.Black.ToArgb());
+                Assert.Equal(temp2.GetPixel(0, 0), Color.Black);
+#endif
             }
         }
 
