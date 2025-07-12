@@ -1046,5 +1046,22 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             File.Delete(outputImagePath);
         }
 
+        [Theory]
+        [InlineData("DW-26 MultiPageTif120Input.tiff")]
+        [InlineData("google_large_1500dpi.bmp")]
+        public void DW_34_ShouldNotThrowOutOfMemory(string filename)
+        {
+            string imagePath = GetRelativeFilePath(filename);
+
+            List<AnyBitmap> images = new List<AnyBitmap>();
+            for (int i = 0; i < 50; i++)
+            {
+                var bitmap = new AnyBitmap(imagePath);
+                images.Add(bitmap);
+                bitmap.IsImageLoaded().Should().BeFalse();
+            }
+
+            images.ForEach(bitmap => bitmap.Dispose());
+        }
     }
 }
