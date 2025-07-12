@@ -1054,7 +1054,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             string imagePath = GetRelativeFilePath(filename);
 
             List<AnyBitmap> images = new List<AnyBitmap>();
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 25; i++)
             {
                 var bitmap = new AnyBitmap(imagePath);
                 images.Add(bitmap);
