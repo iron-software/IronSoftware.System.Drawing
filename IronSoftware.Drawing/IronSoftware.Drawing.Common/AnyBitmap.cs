@@ -2547,11 +2547,27 @@ namespace IronSoftware.Drawing
                                 throw new NotSupportedException("Could not read image");
                             }
 
-                            using Image<Rgba32> bmp = new(width, height);
+                            var image = new Image<Rgba32>(width, height);
+                            image.ProcessPixelRows(accessor =>
+                            {
+                                for (int y = 0; y < height; y++)
+                                {
+                                    var pixelRow = accessor.GetRowSpan(y);
+                                    int tiffRow = height - 1 - y; // flip Y
 
-                            var bits = PrepareByteArray(bmp, raster, width, height);
+                                    for (int x = 0; x < width; x++)
+                                    {
+                                        int pixel = raster[tiffRow * width + x];
 
-                            var image = Image.LoadPixelData<Rgba32>(bits, bmp.Width, bmp.Height);
+                                        byte a = (byte)((pixel >> 24) & 0xFF);
+                                        byte b = (byte)((pixel >> 16) & 0xFF);
+                                        byte g = (byte)((pixel >> 8) & 0xFF);
+                                        byte r = (byte)(pixel & 0xFF);
+
+                                        pixelRow[x] = new Rgba32(r, g, b, a);
+                                    }
+                                }
+                            });
                             image.Metadata.HorizontalResolution = horizontalResolution;
                             image.Metadata.VerticalResolution = verticalResolution;
                             images.Add(image);
