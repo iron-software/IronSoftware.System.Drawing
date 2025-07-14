@@ -73,7 +73,7 @@ namespace IronSoftware.Drawing
                     var _ = _lazyImage?.Value; //force load              
                 }
 
-                if (IsDirty == true)
+                if (IsDirty == true || _binary == null)
                 {
                     //Which mean we need to update _binary to sync with the image
                     using var stream = new MemoryStream();
@@ -779,9 +779,6 @@ namespace IronSoftware.Drawing
             _lazyImage = new Lazy<List<Image>>(() =>
             {
                 var image = Image.LoadPixelData<Rgb24>(buffer, width, height);
-                using var memoryStream = new MemoryStream();
-                image.Save(memoryStream, GetDefaultImageImportEncoder(image.Width, image.Height));
-                Binary = memoryStream.ToArray();
                 return [image];
             });
         }
@@ -804,11 +801,6 @@ namespace IronSoftware.Drawing
             {
                 return images.Select(image =>
                 {
-                    using var memoryStream = new MemoryStream();
-
-                    image.Save(memoryStream, GetDefaultImageImportEncoder(image.Width, image.Height));
-
-                    Binary = memoryStream.ToArray();
                     return image;
                 }).ToList();
 
@@ -1254,7 +1246,7 @@ namespace IronSoftware.Drawing
             using var image = Image.Load(bitmap.ExportBytes());
 
             image.Mutate(x => x.RotateFlip(rotateModeImgSharp, flipModeImgSharp));
-            image.Save(memoryStream, GetDefaultImageImportEncoder(image.Width, image.Height));
+            image.Save(memoryStream, GetDefaultImageEncoder(image.Width, image.Height));
 
             return new AnyBitmap(memoryStream.ToArray(), [image]);
         }
@@ -1294,7 +1286,7 @@ namespace IronSoftware.Drawing
             Rectangle rectangle = Rectangle;
             var brush = new SolidBrush(color);
             image.Mutate(ctx => ctx.Fill(brush, rectangle));
-            image.Save(memoryStream, GetDefaultImageImportEncoder(image.Width, image.Height));
+            image.Save(memoryStream, GetDefaultImageEncoder(image.Width, image.Height));
 
             return new AnyBitmap(memoryStream.ToArray(), [image]);
         }
@@ -2947,7 +2939,7 @@ namespace IronSoftware.Drawing
 
                 //update Binary
                 using var memoryStream = new MemoryStream();
-                image.Save(memoryStream, GetDefaultImageImportEncoder(image.Width, image.Height));
+                image.Save(memoryStream, GetDefaultImageEncoder(image.Width, image.Height));
                 Binary = memoryStream.ToArray();
 
                 return [image];
@@ -2978,11 +2970,7 @@ namespace IronSoftware.Drawing
                     Compression = TiffCompression
 
                 },
-                _ => new BmpEncoder()
-                {
-                    BitsPerPixel = BmpBitsPerPixel.Pixel32,
-                    SupportTransparency = true
-                },
+                _ => GetDefaultImageEncoder(Width, Height)
             };
         }
 
@@ -3040,11 +3028,11 @@ namespace IronSoftware.Drawing
         /// <param name="imageWidth"></param>
         /// <param name="imageHeight"></param>
         /// <returns></returns>
-        private static IImageEncoder GetDefaultImageImportEncoder(int imageWidth, int imageHeight)
+        private static IImageEncoder GetDefaultImageEncoder(int imageWidth, int imageHeight)
         {
-
             int threshold = 1920 * 1080; //FHD
-#if NET6_0_OR_GREATER
+
+#if NET5_0_OR_GREATER
             long totalBytes = GC.GetGCMemoryInfo().TotalAvailableMemoryBytes;
             long totalGB = totalBytes / (1024L * 1024 * 1024);
 
