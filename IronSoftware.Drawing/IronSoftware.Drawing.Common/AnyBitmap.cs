@@ -1459,7 +1459,7 @@ namespace IronSoftware.Drawing
                             Span<Rgba32> pixelRow = accessor.GetRowSpan(y);
                             for (int x = 0; x < width; x++)
                             {
-                                Color pixel = pixelRow[x];
+                                Rgba32 pixel = pixelRow[x];
                                 int index = (y * width + x) * 3;
 
                                 rgbBuffer[index] = pixel.R;
@@ -1477,7 +1477,7 @@ namespace IronSoftware.Drawing
                             Span<Rgb24> pixelRow = accessor.GetRowSpan(y);
                             for (int x = 0; x < width; x++)
                             {
-                                Color pixel = pixelRow[x];
+                                Rgb24 pixel = pixelRow[x];
                                 int index = (y * width + x) * 3;
 
                                 rgbBuffer[index] = pixel.R;
@@ -1495,7 +1495,7 @@ namespace IronSoftware.Drawing
                             Span<Abgr32> pixelRow = accessor.GetRowSpan(y);
                             for (int x = 0; x < width; x++)
                             {
-                                Color pixel = pixelRow[x];
+                                Abgr32 pixel = pixelRow[x];
                                 int index = (y * width + x) * 3;
 
                                 rgbBuffer[index] = pixel.R;
@@ -1513,7 +1513,7 @@ namespace IronSoftware.Drawing
                             Span<Argb32> pixelRow = accessor.GetRowSpan(y);
                             for (int x = 0; x < width; x++)
                             {
-                                Color pixel = pixelRow[x];
+                                Argb32 pixel = pixelRow[x];
                                 int index = (y * width + x) * 3;
 
                                 rgbBuffer[index] = pixel.R;
@@ -1531,7 +1531,7 @@ namespace IronSoftware.Drawing
                             Span<Bgr24> pixelRow = accessor.GetRowSpan(y);
                             for (int x = 0; x < width; x++)
                             {
-                                Color pixel = pixelRow[x];
+                                Bgr24 pixel = pixelRow[x];
                                 int index = (y * width + x) * 3;
 
                                 rgbBuffer[index] = pixel.R;
@@ -1549,7 +1549,7 @@ namespace IronSoftware.Drawing
                             Span<Bgra32> pixelRow = accessor.GetRowSpan(y);
                             for (int x = 0; x < width; x++)
                             {
-                                Color pixel = pixelRow[x];
+                                Bgra32 pixel = pixelRow[x];
                                 int index = (y * width + x) * 3;
 
                                 rgbBuffer[index] = pixel.R;
@@ -1567,7 +1567,8 @@ namespace IronSoftware.Drawing
                             Span<Rgb48> pixelRow = accessor.GetRowSpan(y);
                             for (int x = 0; x < width; x++)
                             {
-                                Color pixel = pixelRow[x];
+                                //required casting in 16bit color
+                                Color pixel = (Color)pixelRow[x];
                                 int index = (y * width + x) * 3;
 
                                 rgbBuffer[index] = pixel.R;
@@ -1585,7 +1586,8 @@ namespace IronSoftware.Drawing
                             Span<Rgba64> pixelRow = accessor.GetRowSpan(y);
                             for (int x = 0; x < width; x++)
                             {
-                                Color pixel = pixelRow[x];
+                                //required casting in 16bit color
+                                Color pixel = (Color)pixelRow[x];
                                 int index = (y * width + x) * 3;
 
                                 rgbBuffer[index] = pixel.R;
@@ -1604,7 +1606,7 @@ namespace IronSoftware.Drawing
                             Span<Rgb24> pixelRow = accessor.GetRowSpan(y);
                             for (int x = 0; x < width; x++)
                             {
-                                Color pixel = pixelRow[x];
+                                Rgb24 pixel = pixelRow[x];
                                 int index = (y * width + x) * 3;
 
                                 rgbBuffer[index] = pixel.R;
