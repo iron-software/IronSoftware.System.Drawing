@@ -1613,6 +1613,202 @@ namespace IronSoftware.Drawing
             return rgbBuffer;
         }
 
+        /// <summary>
+        /// Retrieves the RGBA buffer from the image at the specified path.
+        /// </summary>
+        /// <returns>An array of bytes representing the RGBA buffer of the image.</returns>
+        /// <remarks>
+        /// Each pixel is represented by four bytes in the order: red, green, blue, alpha.
+        /// The pixels are read from the image row by row, from top to bottom and left to right within each row.
+        /// </remarks>
+        public byte[] GetRGBABuffer()
+        {
+            var image = _lazyImage.Value.First();
+            int width = image.Width;
+            int height = image.Height;
+            byte[] rgbBuffer = new byte[width * height * 3]; // 3 bytes per pixel (RGB)
+            switch (image)
+            {
+                case Image<Rgba32> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Rgba32> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                Rgba32 pixel = pixelRow[x];
+                                int index = (y * width + x) * 4;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                                rgbBuffer[index + 3] = pixel.A;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Rgb24> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Rgb24> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                Rgb24 pixel = pixelRow[x];
+                                int index = (y * width + x) * 4;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                                rgbBuffer[index + 3] = byte.MaxValue;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Abgr32> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Abgr32> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                Abgr32 pixel = pixelRow[x];
+                                int index = (y * width + x) * 4;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                                rgbBuffer[index + 3] = pixel.A;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Argb32> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Argb32> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                Argb32 pixel = pixelRow[x];
+                                int index = (y * width + x) * 4;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                                rgbBuffer[index + 3] = pixel.A;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Bgr24> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Bgr24> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                Bgr24 pixel = pixelRow[x];
+                                int index = (y * width + x) * 4;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                                rgbBuffer[index + 3] = byte.MaxValue;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Bgra32> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Bgra32> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                Bgra32 pixel = pixelRow[x];
+                                int index = (y * width + x) * 4;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                                rgbBuffer[index + 3] = pixel.A;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Rgb48> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Rgb48> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                //required casting in 16bit color
+                                Color pixel = (Color)pixelRow[x];
+                                int index = (y * width + x) * 4;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                                rgbBuffer[index + 3] = pixel.A;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Rgba64> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Rgba64> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                //required casting in 16bit color
+                                Color pixel = (Color)pixelRow[x];
+                                int index = (y * width + x) * 4;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                                rgbBuffer[index + 3] = pixel.A;
+                            }
+                        }
+                    });
+                    break;
+                default:
+                    using (var clonedImage = image.CloneAs<Rgba32>())
+                    {
+                        clonedImage.ProcessPixelRows(accessor =>
+                        {
+                            for (int y = 0; y < accessor.Height; y++)
+                            {
+                                Span<Rgba32> pixelRow = accessor.GetRowSpan(y);
+                                for (int x = 0; x < width; x++)
+                                {
+                                    Rgba32 pixel = pixelRow[x];
+                                    int index = (y * width + x) * 4;
+
+                                    rgbBuffer[index] = pixel.R;
+                                    rgbBuffer[index + 1] = pixel.G;
+                                    rgbBuffer[index + 2] = pixel.B;
+                                    rgbBuffer[index + 3] = pixel.A;
+                                }
+                            }
+                        });
+                    }
+                    break;
+            }
+            return rgbBuffer;
+        }
+
         #region Implicit Casting
 
         /// <summary>
