@@ -1241,13 +1241,11 @@ namespace IronSoftware.Drawing
                 _ => throw new NotImplementedException()
             };
 
-            using var memoryStream = new MemoryStream();
-            using var image = Image.Load(bitmap.ExportBytes());
+            Image image = Image.Load(bitmap.Binary);
 
             image.Mutate(x => x.RotateFlip(rotateModeImgSharp, flipModeImgSharp));
-            image.Save(memoryStream, GetDefaultImageEncoder(image.Width, image.Height));
 
-            return new AnyBitmap(memoryStream.ToArray(), [image]);
+            return new AnyBitmap(image);
         }
 
         /// <summary>
@@ -1279,15 +1277,12 @@ namespace IronSoftware.Drawing
         {
 
             //this casting will crate new object
-            Image image = (Image)bitmap;
-
-            using var memoryStream = new MemoryStream();
+            Image image = Image.Load(bitmap.Binary);
             Rectangle rectangle = Rectangle;
             var brush = new SolidBrush(color);
             image.Mutate(ctx => ctx.Fill(brush, rectangle));
-            image.Save(memoryStream, GetDefaultImageEncoder(image.Width, image.Height));
-
-            return new AnyBitmap(memoryStream.ToArray(), [image]);
+       
+            return new AnyBitmap(image);
         }
 
         /// <summary>
@@ -2512,10 +2507,6 @@ namespace IronSoftware.Drawing
             {
                 _lazyImage = OpenTiffToImageSharp();
             }
-            else if (Format is GifFormat)
-            {
-                _lazyImage = OpenGifToImageSharp();
-            }
             else
             {
                 _lazyImage = OpenImageToImageSharp(preserveOriginalFormat);
@@ -2784,26 +2775,6 @@ namespace IronSoftware.Drawing
             }
         }
 
-        private Lazy<IEnumerable<Image>> OpenGifToImageSharp()
-        {
-            return new Lazy<IEnumerable<Image>>(() =>
-            {
-                try
-                {
-                    var img = Image.Load(Binary);
-                    return [img];
-                }
-                catch (DllNotFoundException e)
-                {
-                    throw new DllNotFoundException("Please install BitMiracle.LibTiff.NET from NuGet.", e);
-                }
-                catch (Exception e)
-                {
-                    throw new NotSupportedException("Error while reading TIFF image format.", e);
-                }
-            });
-        }
-
         private Lazy<IEnumerable<Image>> OpenImageToImageSharp(bool preserveOriginalFormat)
         {
             return new Lazy<IEnumerable<Image>>(() =>
@@ -2823,33 +2794,7 @@ namespace IronSoftware.Drawing
                             img.Mutate(img => img.BackgroundColor(SixLabors.ImageSharp.Color.White));
                     }
 
-                    // Fix if the input image is auto-rotated; this issue is acknowledged by SixLabors.ImageSharp community
-                    // ref: https://github.com/SixLabors/ImageSharp/discussions/2685
-                    img.Mutate(x => x.AutoOrient());
-
-                    var resolutionUnit = img.Metadata.ResolutionUnits;
-                    var horizontal = img.Metadata.HorizontalResolution;
-                    var vertical = img.Metadata.VerticalResolution;
-
-                    // Check if image metadata is accurate already
-                    switch (resolutionUnit)
-                    {
-                        case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerMeter:
-                            // Convert metadata of the resolution unit to pixel per inch to match the conversion below of 1 meter = 37.3701 inches
-                            img.Metadata.ResolutionUnits = SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerInch;
-                            img.Metadata.HorizontalResolution = Math.Ceiling(horizontal / 39.3701);
-                            img.Metadata.VerticalResolution = Math.Ceiling(vertical / 39.3701);
-                            break;
-                        case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerCentimeter:
-                            // Convert metadata of the resolution unit to pixel per inch to match the conversion below of 1 inch = 2.54 centimeters
-                            img.Metadata.ResolutionUnits = SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerInch;
-                            img.Metadata.HorizontalResolution = Math.Ceiling(horizontal * 2.54);
-                            img.Metadata.VerticalResolution = Math.Ceiling(vertical * 2.54);
-                            break;
-                        default:
-                            // No changes required due to teh metadata are accurate already
-                            break;
-                    }
+                    CorrectImageSharp(img);
 
                     return [img];
                 }
@@ -2864,6 +2809,38 @@ namespace IronSoftware.Drawing
                         "Image could not be loaded. File format is not supported.", e);
                 }
             });
+        }
+
+        private void CorrectImageSharp(Image img)
+        {
+
+            // Fix if the input image is auto-rotated; this issue is acknowledged by SixLabors.ImageSharp community
+            // ref: https://github.com/SixLabors/ImageSharp/discussions/2685
+            img.Mutate(x => x.AutoOrient());
+
+            var resolutionUnit = img.Metadata.ResolutionUnits;
+            var horizontal = img.Metadata.HorizontalResolution;
+            var vertical = img.Metadata.VerticalResolution;
+
+            // Check if image metadata is accurate already
+            switch (resolutionUnit)
+            {
+                case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerMeter:
+                    // Convert metadata of the resolution unit to pixel per inch to match the conversion below of 1 meter = 37.3701 inches
+                    img.Metadata.ResolutionUnits = SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerInch;
+                    img.Metadata.HorizontalResolution = Math.Ceiling(horizontal / 39.3701);
+                    img.Metadata.VerticalResolution = Math.Ceiling(vertical / 39.3701);
+                    break;
+                case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerCentimeter:
+                    // Convert metadata of the resolution unit to pixel per inch to match the conversion below of 1 inch = 2.54 centimeters
+                    img.Metadata.ResolutionUnits = SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerInch;
+                    img.Metadata.HorizontalResolution = Math.Ceiling(horizontal * 2.54);
+                    img.Metadata.VerticalResolution = Math.Ceiling(vertical * 2.54);
+                    break;
+                default:
+                    // No changes required due to teh metadata are accurate already
+                    break;
+            }
         }
 
         private void SetTiffCompression(Tiff tiff)
