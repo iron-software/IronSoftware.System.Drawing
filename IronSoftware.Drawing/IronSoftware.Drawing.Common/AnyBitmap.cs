@@ -1625,7 +1625,7 @@ namespace IronSoftware.Drawing
             var image = _lazyImage.Value.First();
             int width = image.Width;
             int height = image.Height;
-            byte[] rgbBuffer = new byte[width * height * 3]; // 3 bytes per pixel (RGB)
+            byte[] rgbBuffer = new byte[width * height * 4]; // 3 bytes per pixel (RGB)
             switch (image)
             {
                 case Image<Rgba32> imageAsFormat:

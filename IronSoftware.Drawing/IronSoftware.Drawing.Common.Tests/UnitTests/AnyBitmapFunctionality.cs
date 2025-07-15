@@ -799,6 +799,25 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void TestGetRGBABuffer()
+        {
+            string imagePath = GetRelativeFilePath("checkmark.jpg");
+            using var bitmap = new AnyBitmap(imagePath);
+            var expectedSize = bitmap.Width * bitmap.Height * 4; // 3 bytes per pixel (RGB)
+
+            byte[] buffer = bitmap.GetRGBABuffer();
+
+            Assert.Equal(expectedSize, buffer.Length);
+
+            // Verify the first pixel's RGB values
+            var firstPixel = bitmap.GetPixel(0, 0);
+            Assert.Equal(firstPixel.R, buffer[0]);
+            Assert.Equal(firstPixel.G, buffer[1]);
+            Assert.Equal(firstPixel.B, buffer[2]);
+            Assert.Equal(firstPixel.A, buffer[3]);
+        }
+
+        [FactWithAutomaticDisplayName]
         public void Test_LoadFromRGBBuffer()
         {
             // Arrange
