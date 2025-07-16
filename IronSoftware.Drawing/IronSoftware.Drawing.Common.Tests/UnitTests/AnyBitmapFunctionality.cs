@@ -803,7 +803,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
             string imagePath = GetRelativeFilePath("checkmark.jpg");
             using var bitmap = new AnyBitmap(imagePath);
-            var expectedSize = bitmap.Width * bitmap.Height * 4; // 3 bytes per pixel (RGB)
+            var expectedSize = bitmap.Width * bitmap.Height * 4; // 4 bytes per pixel (RGB)
 
             byte[] buffer = bitmap.GetRGBABuffer();
 
@@ -881,10 +881,11 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
             string imagePath = GetRelativeFilePath(fileName);
             var bitmap = AnyBitmap.FromFile(imagePath);
+            var frames = bitmap.GetAllFrames;
             for (int i = 0; i < bitmap.FrameCount; i++)
             {
-                Assert.Equal(expectedHorizontalResolution, bitmap.GetAllFrames.ElementAt(i).HorizontalResolution);
-                Assert.Equal(expectedVerticalResolution, bitmap.GetAllFrames.ElementAt(i).VerticalResolution);
+                Assert.Equal(expectedHorizontalResolution, frames.ElementAt(i).HorizontalResolution);
+                Assert.Equal(expectedVerticalResolution, frames.ElementAt(i).VerticalResolution);
             }
         }
 

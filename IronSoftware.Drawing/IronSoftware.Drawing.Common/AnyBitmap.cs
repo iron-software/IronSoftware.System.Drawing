@@ -2721,7 +2721,7 @@ namespace IronSoftware.Drawing
 
             // Disable warning messages
             Tiff.SetErrorHandler(new DisableErrorHandler());
-
+            List<Image> images = new();
             // open a TIFF stored in the stream
             using (Tiff tiff = Tiff.ClientOpen("in-memory", "r", tiffStream, new TiffStream()))
             {
@@ -2746,33 +2746,20 @@ namespace IronSoftware.Drawing
                         throw new NotSupportedException("Could not read image");
                     }
 
-                    var image = new Image<Rgba32>(width, height);
-                    image.ProcessPixelRows(accessor =>
-                    {
-                        for (int y = 0; y < height; y++)
-                        {
-                            var pixelRow = accessor.GetRowSpan(y);
-                            int tiffRow = height - 1 - y; // flip Y
+                    var bits = PrepareByteArray(raster, width, height, 32);
+                    
+                   var image = Image.LoadPixelData<Rgba32>(bits, width, height);
 
-                            for (int x = 0; x < width; x++)
-                            {
-                                int pixel = raster[tiffRow * width + x];
-
-                                byte a = (byte)((pixel >> 24) & 0xFF);
-                                byte b = (byte)((pixel >> 16) & 0xFF);
-                                byte g = (byte)((pixel >> 8) & 0xFF);
-                                byte r = (byte)(pixel & 0xFF);
-
-                                pixelRow[x] = new Rgba32(r, g, b, a);
-                            }
-                        }
-                    });
                     image.Metadata.HorizontalResolution = horizontalResolution;
                     image.Metadata.VerticalResolution = verticalResolution;
-                    yield return image;
-                    //Note: it might be some case that the bytes of current Image is smaller/bigger than the original tiff
+                    images.Add(image);
+
+                    //Note1: it might be some case that the bytes of current Image is smaller/bigger than the original tiff
+                    //Note2: 'yield return' make it super slow
                 }
+
             }
+            return images;
         }
 
         private Lazy<IEnumerable<Image>> OpenImageToImageSharp(bool preserveOriginalFormat)
@@ -2880,9 +2867,10 @@ namespace IronSoftware.Drawing
                 && (FileType)subFileTypeFieldValue[0].Value == FileType.REDUCEDIMAGE;
         }
 
-        private ReadOnlySpan<byte> PrepareByteArray(Image<Rgba32> bmp, int[] raster, int width, int height)
+        private ReadOnlySpan<byte> PrepareByteArray(int[] raster, int width, int height,int bitsPerPixel)
         {
-            int stride = GetStride(bmp);
+            int stride = 4 * ((width * bitsPerPixel + 31) / 32);
+
             byte[] bits = new byte[stride * height];
 
             // If no extra padding exists, copy entire rows at once.
