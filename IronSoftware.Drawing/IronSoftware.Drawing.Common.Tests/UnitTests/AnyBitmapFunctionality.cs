@@ -1083,5 +1083,30 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             images.ForEach(bitmap => bitmap.Dispose());
         }
+
+        [FactWithAutomaticDisplayName]
+        public void AnyBitmap_ExportGif_Should_Works()
+        {
+            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
+            var anyBitmap = AnyBitmap.FromFile(imagePath);
+
+            using var resultExport = new MemoryStream();
+            anyBitmap.ExportStream(resultExport, AnyBitmap.ImageFormat.Gif);
+            resultExport.Length.Should().NotBe(0);
+            Image.DetectFormat(resultExport.ToArray()).Should().Be(SixLabors.ImageSharp.Formats.Gif.GifFormat.Instance);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void AnyBitmap_ExportTiff_Should_Works()
+        {
+            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
+            var anyBitmap = AnyBitmap.FromFile(imagePath);
+
+            using var resultExport = new MemoryStream();
+            anyBitmap.ExportStream(resultExport, AnyBitmap.ImageFormat.Tiff);
+            resultExport.Length.Should().NotBe(0);
+            Image.DetectFormat(resultExport.ToArray()).Should().Be(SixLabors.ImageSharp.Formats.Tiff.TiffFormat.Instance);
+        }
+
     }
 }

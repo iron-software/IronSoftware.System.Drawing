@@ -3321,11 +3321,10 @@ namespace IronSoftware.Drawing
                     // Add the correctly-sized new frame to the master GIF's frame collection.
                     gif.Frames.AddFrame(resizedFrame.Frames.RootFrame);
                 }
-
-                // Save the final result to the provided stream.
-                gif.SaveAsGif(stream);
-                stream.Position = 0;
-            }
+            }         
+            // Save the final result to the provided stream.
+            gif.SaveAsGif(stream);
+            stream.Position = 0;
         }
 
 #endregion
