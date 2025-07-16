@@ -3199,37 +3199,7 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         private static IImageEncoder GetDefaultImageEncoder(int imageWidth, int imageHeight)
         {
-            int threshold = 1920 * 1080; //FHD
-
-#if NET5_0_OR_GREATER
-            long totalBytes = GC.GetGCMemoryInfo().TotalAvailableMemoryBytes;
-            long totalGB = totalBytes / (1024L * 1024 * 1024);
-
-            if (totalGB <= 2)
-                threshold = 1280 * 720; //HD
-            else if (totalGB <= 4)
-                threshold = 1920 * 1080; //FHD
-            else if (totalGB <= 8)
-                threshold = 2560 * 1440; //2K
-            else if (totalGB <= 16)
-                threshold = 4096 * 2160; //4K
-            else if (totalGB <= 32)
-                threshold = 7680 * 4320; //8K
-            else if (totalGB <= 64)
-                threshold = 15360 * 8640; //16K
-#endif
-            if (imageWidth * imageHeight <= threshold)
-            {
-                //small Image
-                //use bmp encoder for faster operation
-                return new BmpEncoder { BitsPerPixel = BmpBitsPerPixel.Pixel32, SupportTransparency = true };
-            }
-            else
-            {
-                //large image
-                //use png encoder for less memory consumption
-                return new PngEncoder();
-            }
+            return new BmpEncoder { BitsPerPixel = BmpBitsPerPixel.Pixel32, SupportTransparency = true };
         }
 
         private static void InternalSaveAsMultiPageTiff(IEnumerable<Image> images, Stream stream)
