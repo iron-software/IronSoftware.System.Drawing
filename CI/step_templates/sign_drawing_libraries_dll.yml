@@ -1,17 +1,47 @@
 steps:
-- task: CmdLine@2
+# Install .NET 8 SDK for AzureSignTool
+- task: UseDotNet@2
+  displayName: INSTALL .NET 8 SDK
+  inputs:
+    packageType: sdk
+    version: 8.x
+- task: DotNetCoreCLI@2
+  displayName: INSTALL AzureSignTool
+  inputs:
+    command: custom
+    custom: tool
+    arguments: install --global AzureSignTool
+- task: PowerShell@2
   displayName: 'Sign IronSoftware.Drawing.Common.dll .NET6'
   inputs:
       workingDirectory: 'bin\$(Configuration)\netstandard2.0'
-      script: >-
-        $(Build.SourcesDirectory)\NuGet\signtool.exe sign
-        /v /d IronDrawing /f $(Agent.TempDirectory)/ironcert.pfx /p $(CertificatePassword)
-        /t http://timestamp.digicert.com /fd SHA256 "IronSoftware.Drawing.Common.dll"
-- task: CmdLine@2
+      targetType: 'inline'
+      script: |
+        azuresigntool sign `
+          --azure-key-vault-url "$(AZURE_KEY_VAULT_URL)" `
+          --azure-key-vault-client-id "$(AZURE_KEY_VAULT_APPLICATION_ID)" `
+          --azure-key-vault-client-secret "$(AZURE_KEY_VAULT_CLIENT_SECRET)" `
+          --azure-key-vault-tenant-id "$(AZURE_KEY_VAULT_TENANT_ID)" `
+          --azure-key-vault-certificate "$(AZURE_KEY_VAULT_CERTIFICATE_NAME)" `
+          --timestamp-rfc3161 "$(TimestampUrl)" `
+          --timestamp-digest sha256 `
+          --file-digest sha256 `
+          --verbose `
+          "IronSoftware.Drawing.Common.dll"
+- task: PowerShell@2
   displayName: 'Sign IronSoftware.Drawing.Common.dll .NET6'
   inputs:
       workingDirectory: 'bin\$(Configuration)\net60'
-      script: >-
-        $(Build.SourcesDirectory)\NuGet\signtool.exe sign
-        /v /d IronDrawing /f $(Agent.TempDirectory)/ironcert.pfx /p $(CertificatePassword)
-        /t http://timestamp.digicert.com /fd SHA256 "IronSoftware.Drawing.Common.dll"
+      targetType: 'inline'
+      script: |
+        azuresigntool sign `
+          --azure-key-vault-url "$(AZURE_KEY_VAULT_URL)" `
+          --azure-key-vault-client-id "$(AZURE_KEY_VAULT_APPLICATION_ID)" `
+          --azure-key-vault-client-secret "$(AZURE_KEY_VAULT_CLIENT_SECRET)" `
+          --azure-key-vault-tenant-id "$(AZURE_KEY_VAULT_TENANT_ID)" `
+          --azure-key-vault-certificate "$(AZURE_KEY_VAULT_CERTIFICATE_NAME)" `
+          --timestamp-rfc3161 "$(TimestampUrl)" `
+          --timestamp-digest sha256 `
+          --file-digest sha256 `
+          --verbose `
+          "IronSoftware.Drawing.Common.dll"

@@ -17,6 +17,13 @@ parameters:
     displayName: NuGet-Version
     type: string
     default: '0'
+
+# Required Pipeline Variables for Code Signing:
+# - AZURE_KEY_VAULT_URL: Azure Key Vault URL (e.g., https://your-vault.vault.azure.net/)
+# - AZURE_KEY_VAULT_APPLICATION_ID: Azure AD Application Client ID
+# - AZURE_KEY_VAULT_CLIENT_SECRET: Azure AD Application Client Secret (Pipeline Secret Variable)
+# - AZURE_KEY_VAULT_TENANT_ID: Azure AD Tenant ID
+# - AZURE_KEY_VAULT_CERTIFICATE_NAME: Name of the certificate in Key Vault
 variables:
   - group: IronDrawingVersions
   
@@ -36,6 +43,9 @@ variables:
         value: ${{ parameters.inputNuGetVersion }}-prerelease
       ${{ if eq(parameters.preRelease, false) }}:
         value: ${{ parameters.inputNuGetVersion }}
+
+  - name: TimestampUrl
+    value: http://timestamp.digicert.com
 # Build Trigger
 trigger:
     branches:
