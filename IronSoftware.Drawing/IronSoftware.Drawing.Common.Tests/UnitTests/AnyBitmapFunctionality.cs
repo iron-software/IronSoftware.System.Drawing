@@ -1111,7 +1111,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
         //this should be faster than previous
         //for manual test only
-        [FactWithAutomaticDisplayName]
+        //[FactWithAutomaticDisplayName]
         public void LoadTest1()
         {
             for (int i = 0; i < 50; i++)
