@@ -108,6 +108,9 @@ namespace IronSoftware.Drawing
         private TiffCompression TiffCompression { get; set; } = TiffCompression.Lzw;
         private bool PreserveOriginalFormat { get; set; } = true;
 
+        //cache since Image.Width (ImageSharp) is slow
+        private int? _width = null;
+
         /// <summary>
         /// Width of the image.
         /// </summary>
@@ -115,9 +118,16 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                return _lazyImage.Value.First().Width;
+                if (!_width.HasValue)
+                {
+                    _width = _lazyImage.Value.First().Width;
+                }
+                return _width.Value;
             }
         }
+
+        //cache since Image.Height (ImageSharp) is slow
+        private int? _height = null;
 
         /// <summary>
         /// Height of the image.
@@ -126,7 +136,11 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                return _lazyImage.Value.First().Height;
+                if (!_height.HasValue)
+                {
+                    _height = _lazyImage.Value.First().Height;
+                }
+                return _height.Value;
             }
         }
 
@@ -960,6 +974,8 @@ namespace IronSoftware.Drawing
             return new AnyBitmap(buffer, width, height);
         }
 
+        //cache
+        private int? _bitsPerPixel = null;
         /// <summary>
         /// Gets colors depth, in number of bits per pixel.
         /// <br/><para><b>Further Documentation:</b><br/>
@@ -970,7 +986,11 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                return _lazyImage.Value.First().PixelType.BitsPerPixel;
+                if (!_bitsPerPixel.HasValue)
+                {
+                    _bitsPerPixel = _lazyImage.Value.First().PixelType.BitsPerPixel;
+                }
+                return _bitsPerPixel.Value;
             }
         }
 
@@ -1103,7 +1123,7 @@ namespace IronSoftware.Drawing
         public byte[] ExtractAlphaData()
         {
 
-            var alpha = new byte[_lazyImage.Value.First().Width * _lazyImage.Value.First().Height];
+            var alpha = new byte[Width * Height];
 
             switch (_lazyImage.Value.First())
             {
@@ -2976,7 +2996,7 @@ namespace IronSoftware.Drawing
         {
             if (source == null)
             {
-                return 4 * (((_lazyImage.Value.First().Width * _lazyImage.Value.First().PixelType.BitsPerPixel) + 31) / 32);
+                return 4 * (((Width * BitsPerPixel) + 31) / 32);
             }
             else
             {
