@@ -7,7 +7,7 @@
 If you would like to contribute to this open-source project, please visit the public GitHub and open a branch [here](https://github.com/iron-software/IronSoftware.System.Drawing/).
 
 ## Cross platform support compatibility with:
-- .NET 8, .NET 7, .NET 6, .NET 5, .NET Core, Standard, and Framework
+- .NET 9, .NET 8, .NET 7, .NET 6, .NET 5, .NET Core, Standard, and Framework
 - Windows, macOS, Linux, Docker, Azure, and AWS
 
 ## IronSoftware.Drawing Features:
