@@ -147,40 +147,41 @@ namespace IronSoftware.Drawing
 			0xFFDDA0DD,	/* 138 - Plum */
 			0xFFB0E0E6,	/* 139 - PowderBlue */
 			0xFF800080,	/* 140 - Purple */
-			0xFFFF0000,	/* 141 - Red */
-			0xFFBC8F8F,	/* 142 - RosyBrown */
-			0xFF4169E1,	/* 143 - RoyalBlue */
-			0xFF8B4513,	/* 144 - SaddleBrown */
-			0xFFFA8072,	/* 145 - Salmon */
-			0xFFF4A460,	/* 146 - SandyBrown */
-			0xFF2E8B57,	/* 147 - SeaGreen */
-			0xFFFFF5EE,	/* 148 - SeaShell */
-			0xFFA0522D,	/* 149 - Sienna */
-			0xFFC0C0C0,	/* 150 - Silver */
-			0xFF87CEEB,	/* 151 - SkyBlue */
-			0xFF6A5ACD,	/* 152 - SlateBlue */
-			0xFF708090,	/* 153 - SlateGray */
-			0xFFFFFAFA,	/* 154 - Snow */
-			0xFF00FF7F,	/* 155 - SpringGreen */
-			0xFF4682B4,	/* 156 - SteelBlue */
-			0xFFD2B48C,	/* 157 - Tan */
-			0xFF008080,	/* 158 - Teal */
-			0xFFD8BFD8,	/* 159 - Thistle */
-			0xFFFF6347,	/* 160 - Tomato */
-			0xFF40E0D0,	/* 161 - Turquoise */
-			0xFFEE82EE,	/* 162 - Violet */
-			0xFFF5DEB3,	/* 163 - Wheat */
-			0xFFFFFFFF,	/* 164 - White */
-			0xFFF5F5F5,	/* 165 - WhiteSmoke */
-			0xFFFFFF00,	/* 166 - Yellow */
-			0xFF9ACD32,	/* 167 - YellowGreen */
-			0xFFECE9D8,	/* 168 - ButtonFace */
-			0xFFFFFFFF,	/* 169 - ButtonHighlight */
-			0xFFACA899,	/* 170 - ButtonShadow */
-			0xFF3D95FF,	/* 171 - GradientActiveCaption */
-			0xFF9DB9EB,	/* 172 - GradientInactiveCaption */
-			0xFFECE9D8,	/* 173 - MenuBar */
-			0xFF316AC5,	/* 174 - MenuHighlight */
+			0xFF663399,	/* 141 - RebeccaPurple */
+			0xFFFF0000,	/* 142 - Red */
+			0xFFBC8F8F,	/* 143 - RosyBrown */
+			0xFF4169E1,	/* 144 - RoyalBlue */
+			0xFF8B4513,	/* 145 - SaddleBrown */
+			0xFFFA8072,	/* 146 - Salmon */
+			0xFFF4A460,	/* 147 - SandyBrown */
+			0xFF2E8B57,	/* 148 - SeaGreen */
+			0xFFFFF5EE,	/* 149 - SeaShell */
+			0xFFA0522D,	/* 150 - Sienna */
+			0xFFC0C0C0,	/* 151 - Silver */
+			0xFF87CEEB,	/* 152 - SkyBlue */
+			0xFF6A5ACD,	/* 153 - SlateBlue */
+			0xFF708090,	/* 154 - SlateGray */
+			0xFFFFFAFA,	/* 155 - Snow */
+			0xFF00FF7F,	/* 156 - SpringGreen */
+			0xFF4682B4,	/* 157 - SteelBlue */
+			0xFFD2B48C,	/* 158 - Tan */
+			0xFF008080,	/* 159 - Teal */
+			0xFFD8BFD8,	/* 160 - Thistle */
+			0xFFFF6347,	/* 161 - Tomato */
+			0xFF40E0D0,	/* 162 - Turquoise */
+			0xFFEE82EE,	/* 163 - Violet */
+			0xFFF5DEB3,	/* 164 - Wheat */
+			0xFFFFFFFF,	/* 165 - White */
+			0xFFF5F5F5,	/* 166 - WhiteSmoke */
+			0xFFFFFF00,	/* 167 - Yellow */
+			0xFF9ACD32,	/* 168 - YellowGreen */
+			0xFFECE9D8,	/* 169 - ButtonFace */
+			0xFFFFFFFF,	/* 170 - ButtonHighlight */
+			0xFFACA899,	/* 171 - ButtonShadow */
+			0xFF3D95FF,	/* 172 - GradientActiveCaption */
+			0xFF9DB9EB,	/* 173 - GradientInactiveCaption */
+			0xFFECE9D8,	/* 174 - MenuBar */
+			0xFF316AC5,	/* 175 - MenuHighlight */
 		};
 
         internal static string[] Names = {
@@ -325,6 +326,7 @@ namespace IronSoftware.Drawing
             "Plum",
             "PowderBlue",
             "Purple",
+            "RebeccaPurple",
             "Red",
             "RosyBrown",
             "RoyalBlue",
@@ -404,10 +406,12 @@ namespace IronSoftware.Drawing
             if ((n <= 0) || (n >= ArgbValues.Length))
             {
                 c = Color.FromArgb(0);
+                c.IsKnownColor = false;
             }
             else
             {
                 c = Color.FromArgb((int)ArgbValues[n]);
+                c.IsKnownColor = true;
             }
 
             return c;
