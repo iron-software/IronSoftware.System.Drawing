@@ -116,6 +116,10 @@ ipch/
 # Visual Studio Trace Files
 *.e2e
 
+# JetBrains IDE settings (e.g., IntelliJ, Rider, PyCharm)
+.idea/
+
+
 # TFS 2012 Local Workspace
 $tf/
 

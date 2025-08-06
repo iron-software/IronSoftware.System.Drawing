@@ -525,46 +525,69 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             _ = color.R.Should().Be(255);
             _ = color.G.Should().Be(0);
             _ = color.B.Should().Be(0);
+            _ = color.IsKnownColor.Should().BeTrue();
 
             color = Color.FromName("green");
             _ = color.R.Should().Be(0);
             _ = color.G.Should().Be(128);
             _ = color.B.Should().Be(0);
+            _ = color.IsKnownColor.Should().BeTrue();
 
             color = Color.FromName("blue");
             _ = color.R.Should().Be(0);
             _ = color.G.Should().Be(0);
             _ = color.B.Should().Be(255);
+            _ = color.IsKnownColor.Should().BeTrue();
 
             color = Color.FromName("yellow");
             _ = color.R.Should().Be(255);
             _ = color.G.Should().Be(255);
             _ = color.B.Should().Be(0);
+            _ = color.IsKnownColor.Should().BeTrue();
 
             color = Color.FromName("pink");
             _ = color.R.Should().Be(255);
             _ = color.G.Should().Be(192);
             _ = color.B.Should().Be(203);
+            _ = color.IsKnownColor.Should().BeTrue();
 
             color = Color.FromName("brown");
             _ = color.R.Should().Be(165);
             _ = color.G.Should().Be(42);
             _ = color.B.Should().Be(42);
+            _ = color.IsKnownColor.Should().BeTrue();
 
             color = Color.FromName("gray");
             _ = color.R.Should().Be(128);
             _ = color.G.Should().Be(128);
             _ = color.B.Should().Be(128);
+            _ = color.IsKnownColor.Should().BeTrue();
 
             color = Color.FromName("black");
             _ = color.R.Should().Be(0);
             _ = color.G.Should().Be(0);
             _ = color.B.Should().Be(0);
+            _ = color.IsKnownColor.Should().BeTrue();
 
             color = Color.FromName("orange");
             _ = color.R.Should().Be(255);
             _ = color.G.Should().Be(165);
             _ = color.B.Should().Be(0);
+            _ = color.IsKnownColor.Should().BeTrue();
+            
+            color = Color.FromName("RebeccaPurple");
+            _ = color.A.Should().Be(255);
+            _ = color.R.Should().Be(102);
+            _ = color.G.Should().Be(51);
+            _ = color.B.Should().Be(153);
+            _ = color.IsKnownColor.Should().BeTrue();
+            
+            color = Color.FromName("NotAColor");
+            _ = color.A.Should().Be(0);
+            _ = color.R.Should().Be(0);
+            _ = color.G.Should().Be(0);
+            _ = color.B.Should().Be(0);
+            _ = color.IsKnownColor.Should().BeFalse();
         }
 
         [FactWithAutomaticDisplayName]

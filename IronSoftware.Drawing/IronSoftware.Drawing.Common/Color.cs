@@ -35,6 +35,12 @@ namespace IronSoftware.Drawing
         /// </summary>
         /// <return>The red component value of this <see cref="Color"/>.</return>
         public byte R { get; internal set; }
+        
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="Color"/> structure is a predefined color.
+        /// </summary>
+        /// <value><see langword="true"/> if this <see cref="Color"/> was created from a predefined color; otherwise, <see langword="false"/>.</value>
+        public bool IsKnownColor { get; internal set; }
 
         /// <summary>
         /// Construct a new <see cref="Color"/>.
@@ -889,21 +895,31 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Creates a <see cref="Color"/> structure from the specified name of a predefined color.
+        /// Creates a <see cref="Color"/> structure from the name of a color. If the name is a predefined color, a known Color is returned. If the name is not a known color, a new Color with ARGB values of 0 is returned.
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns><see cref="Color"/></returns>
+        /// <param name="name">A string that is the name of a color. The comparison is case-insensitive.</param>
+        /// <returns>
+        /// The <see cref="Color"/> that this method creates. If the color name is found, the corresponding known Color is returned; otherwise, a Color representing transparent black (A=0, R=0, G=0, B=0) is returned.
+        /// </returns>
+        /// <remarks>
+        /// The returned <see cref="Color"/> will have its <see cref="IsKnownColor"/> property set to <see langword="true"/> if the name was found in the list of known colors, and <see langword="false"/> otherwise.
+        /// </remarks>
         public static Color FromName(string name)
         {
             if (!string.IsNullOrEmpty(name))
             {
                 if (KnownColors.ArgbByName.TryGetValue(name.ToLower(), out uint argb))
                 {
-                    return FromArgb((int)argb);
+                    Color knownColor = FromArgb((int)argb);
+                    knownColor.IsKnownColor = true;
+                    return knownColor;
                 }
             }
-
-            throw new InvalidOperationException($"{name} is unable to convert to {typeof(Color)} because it requires a suitable name.");
+            
+            // If name is not found, return a color with ARGB values of 0, and IsKnownColor set to false.
+            Color newColor = new Color(0, 0, 0, 0);
+            newColor.IsKnownColor = false;
+            return newColor;
         }
 
         /// <summary>
