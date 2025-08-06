@@ -1863,6 +1863,132 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
+        /// Since we store ImageSharp object internal AnyBitmap (lazy) so this casting will return the same ImageSharp object if it loaded.
+        /// But if it is gif/tiff we need to make resize all frame to have the same size before we load to ImageSharp object;
+        /// </summary>
+        private static Image CastToImageSharp(AnyBitmap bitmap)
+        {
+            try
+            {
+                if (!bitmap.IsImageLoaded())
+                {
+                    var format = bitmap.Format;
+                    if (format is not TiffFormat && format is not GifFormat)
+                    {
+                        return Image.Load(bitmap.Binary);
+                    }
+                }
+
+                //if it is loaded or gif/tiff
+                var images = bitmap._lazyImage.Value;
+                if (images.Count() == 1)
+                {
+                    //not gif/tiff
+                    return images.First();
+                }
+                else
+                {
+                    //for gif/tiff we need to resize all frame
+                    //Tiff can have different frame size but ImageSharp does not support
+                    var resultImage = images.First().Clone((_) => { });
+
+                    foreach (var frame in images.Skip(1))
+                    {
+                        var newFrame = frame.Clone(x =>
+                        {
+                            x.Resize(new ResizeOptions
+                            {
+                                Size = new Size(resultImage.Width, resultImage.Height),
+                                Mode = ResizeMode.BoxPad, // Pad to fit the target dimensions
+                                PadColor = Color.Transparent, // Use transparent padding
+                                Position = AnchorPositionMode.Center // Center the image within the frame
+                            });
+                        });
+
+                        resultImage.Frames.AddFrame(newFrame.Frames.RootFrame);
+                    }
+
+                    return resultImage;
+                }
+            }
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException(
+                    "Please install SixLabors.ImageSharp from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new NotSupportedException(
+                    "Error while casting AnyBitmap to SixLabors.ImageSharp.Image", e);
+            }
+        }
+
+        /// <summary>
+        /// Since we store ImageSharp object internal AnyBitmap (lazy) so this casting will return the same ImageSharp object if it loaded.
+        /// But if it is gif/tiff we need to make resize all frame to have the same size before we load to ImageSharp object;
+        /// </summary>
+        private static Image<T> CastToImageSharp<T>(AnyBitmap bitmap) where T :unmanaged, SixLabors.ImageSharp.PixelFormats.IPixel<T>
+        {
+            try
+            {
+                if (!bitmap.IsImageLoaded())
+                {
+                    var format = bitmap.Format;
+                    if (format is not TiffFormat && format is not GifFormat)
+                    {
+                        return Image.Load<T>(bitmap.Binary);
+                    }
+                   
+                }
+              
+                var images = bitmap._lazyImage.Value;
+                if (images.Count() == 1)
+                {
+                    if (images.First() is Image<T> correctType)
+                    {
+                        return correctType;
+                    }
+                    else
+                    {
+                        return images.First().CloneAs<T>();
+                    }
+                }
+                else
+                {
+                    var resultImage = images.First().CloneAs<T>();
+
+                    //for gif/tiff we need to resize all frame
+                    //Tiff can have different frame size but ImageSharp does not support
+                    foreach (var frame in images.Skip(1))
+                    {
+                        var newFrame = frame.CloneAs<T>();
+
+                        newFrame.Mutate(x => x.Resize(new ResizeOptions
+                        {
+                            Size = new Size(resultImage.Width, resultImage.Height),
+                            Mode = ResizeMode.BoxPad, // Pad to fit the target dimensions
+                            PadColor = Color.Transparent, // Use transparent padding
+                            Position = AnchorPositionMode.Center // Center the image within the frame
+                        }));
+                        resultImage.Frames.AddFrame(newFrame.Frames.RootFrame);
+                    }
+
+                    return resultImage;
+                }
+            }
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException(
+                    "Please install SixLabors.ImageSharp from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new NotSupportedException(
+                    "Error while casting AnyBitmap to SixLabors.ImageSharp.Image", e);
+            }
+        }
+
+        /// <summary>
         /// Implicitly casts to SixLabors.ImageSharp.Image objects from 
         /// <see cref="AnyBitmap"/>.
         /// <para>When your .NET Class methods use <see cref="AnyBitmap"/> 
@@ -1876,20 +2002,7 @@ namespace IronSoftware.Drawing
         /// a SixLabors.ImageSharp.Image.</param>
         public static implicit operator Image<Rgb24>(AnyBitmap bitmap)
         {
-            try
-            {
-                return Image.Load<Rgb24>(bitmap.Binary);
-            }
-            catch (DllNotFoundException e)
-            {
-                throw new DllNotFoundException(
-                    "Please install SixLabors.ImageSharp from NuGet.", e);
-            }
-            catch (Exception e)
-            {
-                throw new NotSupportedException(
-                    "Error while casting AnyBitmap to SixLabors.ImageSharp.Image", e);
-            }
+            return CastToImageSharp<Rgb24>(bitmap);
         }
 
         /// <summary>
@@ -1938,7 +2051,7 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                return Image.Load<Rgba32>(bitmap.Binary);
+                return CastToImageSharp<Rgba32>(bitmap);
             }
             catch (DllNotFoundException e)
             {
@@ -1998,7 +2111,7 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                return Image.Load(bitmap.Binary);
+                return CastToImageSharp(bitmap);
             }
             catch (DllNotFoundException e)
             {

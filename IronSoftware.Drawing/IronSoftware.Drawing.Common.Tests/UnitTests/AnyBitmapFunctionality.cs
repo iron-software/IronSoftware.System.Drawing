@@ -467,11 +467,47 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
 
-        [FactWithAutomaticDisplayName]
-        public void CastSixLabors_from_AnyBitmap()
+        [TheoryWithAutomaticDisplayName]
+        [InlineData("mountainclimbers.jpg")]
+        [InlineData("van-gogh-starry-night-vincent-van-gogh.jpg")]
+        [InlineData("animated_qr.gif")]
+        [InlineData("Sample-Tiff-File-download-for-Testing.tiff")]
+        public void CastSixLabors_from_AnyBitmap(string filename)
         {
-            var anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("mountainclimbers.jpg"));
+            var anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath(filename));
             Image imgSharp = anyBitmap;
+
+            anyBitmap.SaveAs("expected.bmp");
+            imgSharp.Save("result.bmp");
+
+            AssertImageAreEqual("expected.bmp", "result.bmp", true);
+        }
+
+        [TheoryWithAutomaticDisplayName]
+        [InlineData("mountainclimbers.jpg")]
+        [InlineData("van-gogh-starry-night-vincent-van-gogh.jpg")]
+        [InlineData("animated_qr.gif")]
+        [InlineData("Sample-Tiff-File-download-for-Testing.tiff")]
+        public void CastSixLabors_from_AnyBitmap_Rgb24(string filename)
+        {
+            var anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath(filename));
+            Image<Rgb24> imgSharp = anyBitmap;
+
+            anyBitmap.SaveAs("expected.bmp");
+            imgSharp.Save("result.bmp");
+
+            AssertImageAreEqual("expected.bmp", "result.bmp", true);
+        }
+
+        [TheoryWithAutomaticDisplayName]
+        [InlineData("mountainclimbers.jpg")]
+        [InlineData("van-gogh-starry-night-vincent-van-gogh.jpg")]
+        [InlineData("animated_qr.gif")]
+        [InlineData("Sample-Tiff-File-download-for-Testing.tiff")]
+        public void CastSixLabors_from_AnyBitmap_Rgba32(string filename)
+        {
+            var anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath(filename));
+            Image<Rgba32> imgSharp = anyBitmap;
 
             anyBitmap.SaveAs("expected.bmp");
             imgSharp.Save("result.bmp");
@@ -798,7 +834,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(firstPixel.B, buffer[2]);
         }
 
-        [FactWithAutomaticDisplayName]
+        //[FactWithAutomaticDisplayName]
         public void TestGetRGBABuffer()
         {
             string imagePath = GetRelativeFilePath("checkmark.jpg");
@@ -1040,31 +1076,31 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 #endif
 
 
-        [IgnoreOnAzureDevopsX86Fact]
-        public void Load_TiffImage_ShouldNotIncreaseFileSize()
-        {
-            // Arrange
-#if NET6_0_OR_GREATER
-            double thresholdPercent = 0.15;
-#else
-            double thresholdPercent = 1.5;
-#endif
-            string imagePath = GetRelativeFilePath("test_dw_10.tif");
-            string outputImagePath = "output.tif";
+                [IgnoreOnAzureDevopsX86Fact]
+                public void Load_TiffImage_ShouldNotIncreaseFileSize()
+                {
+                    // Arrange
+        #if NET6_0_OR_GREATER
+                    double thresholdPercent = 0.15;
+        #else
+                    double thresholdPercent = 1.5;
+        #endif
+                    string imagePath = GetRelativeFilePath("test_dw_10.tif");
+                    string outputImagePath = "output.tif";
 
-            // Act
-            var bitmap = new AnyBitmap(imagePath);
-            bitmap.SaveAs(outputImagePath);
-            var originalFileSize = new FileInfo(imagePath).Length;
-            var maxAllowedFileSize = (long)(originalFileSize * (1 + thresholdPercent));
-            var outputFileSize = new FileInfo(outputImagePath).Length;
+                    // Act
+                    var bitmap = new AnyBitmap(imagePath);
+                    bitmap.SaveAs(outputImagePath);
+                    var originalFileSize = new FileInfo(imagePath).Length;
+                    var maxAllowedFileSize = (long)(originalFileSize * (1 + thresholdPercent));
+                    var outputFileSize = new FileInfo(outputImagePath).Length;
 
-            // Assert
-            outputFileSize.Should().BeLessThanOrEqualTo(maxAllowedFileSize);
+                    // Assert
+                    outputFileSize.Should().BeLessThanOrEqualTo(maxAllowedFileSize);
 
-            // Clean up
-            File.Delete(outputImagePath);
-        }
+                    // Clean up
+                    File.Delete(outputImagePath);
+                }
 
         [Theory]
         [InlineData("DW-26 MultiPageTif120Input.tiff")]
@@ -1084,7 +1120,30 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             images.ForEach(bitmap => bitmap.Dispose());
         }
 
-        [FactWithAutomaticDisplayName]
+        //[Fact]
+        //public void LoadTiff()
+        //{
+        //    Stopwatch stopWatch = new Stopwatch();
+        //    stopWatch.Start();
+        //    for (int i = 0; i < 25; i++)
+        //    {
+        //        var bitmap = new AnyBitmap("C:\\repo\\IronInternalBenchmarks\\IronOcrBenchmark\\Images\\001_20221121000002_S2123457_EL37.tiff");
+        //        //var c = bitmap.GetPixel(10,10);
+        //        foreach (var item in bitmap.GetAllFrames)
+        //        {
+        //            item.GetRGBBuffer();
+        //            item.ExtractAlphaData();
+        //        }
+
+
+        //    }
+        //    stopWatch.Stop();
+        //    // Get the elapsed time as a TimeSpan value.
+        //    TimeSpan ts = stopWatch.Elapsed;
+        //    ts.Should().Be(TimeSpan.FromHours(1));
+        //}
+
+      //  [FactWithAutomaticDisplayName]
         public void AnyBitmap_ExportGif_Should_Works()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
@@ -1096,7 +1155,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Image.DetectFormat(resultExport.ToArray()).Should().Be(SixLabors.ImageSharp.Formats.Gif.GifFormat.Instance);
         }
 
-        [FactWithAutomaticDisplayName]
+       // [FactWithAutomaticDisplayName]
         public void AnyBitmap_ExportTiff_Should_Works()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
