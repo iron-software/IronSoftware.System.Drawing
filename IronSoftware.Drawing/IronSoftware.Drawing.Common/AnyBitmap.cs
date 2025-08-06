@@ -994,6 +994,8 @@ namespace IronSoftware.Drawing
             }
         }
 
+        //cache
+        private int? _frameCount = null;
         /// <summary>
         /// Returns the number of frames in our loaded Image.  Each “frame” is
         /// a page of an image such as  Tiff or Gif.  All other image formats 
@@ -1007,15 +1009,19 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                if (_lazyImage.Value.Count() == 1)
+                if (!_frameCount.HasValue)
                 {
-                    return _lazyImage.Value.First().Frames.Count;
-                }
-                else
-                {
-                    return _lazyImage.Value.Count();
+                    if (_lazyImage.Value.Count() == 1)
+                    {
+                        _frameCount = _lazyImage.Value.First().Frames.Count;
+                    }
+                    else
+                    {
+                        _frameCount = _lazyImage.Value.Count();
+                    }
                 }
 
+                return _frameCount.Value;
             }
         }
 
