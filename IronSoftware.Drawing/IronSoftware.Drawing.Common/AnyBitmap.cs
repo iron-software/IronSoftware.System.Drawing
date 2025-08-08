@@ -55,7 +55,22 @@ namespace IronSoftware.Drawing
         /// We use Lazy because in some case we can skip Image.Load (which use a lot of memory). 
         /// e.g. open jpg file and save it to jpg file without changing anything so we don't need to load the image.
         /// </summary>
-        private Lazy<IEnumerable<Image>> _lazyImage { get; set; }
+        private Lazy<IReadOnlyList<Image>> _lazyImage;
+
+        private IReadOnlyList<Image> GetInternalImages()
+        {
+            return _lazyImage?.Value ?? throw new Exception("No image data available");
+        }
+
+        private Image GetFirstInternalImage()
+        {
+            return (_lazyImage?.Value?[0]) ?? throw new Exception("No image data available");
+        }
+
+        private void ForceLoadLazyImage()
+        {
+            var _ = _lazyImage?.Value;
+        }
 
         private readonly object _binaryLock = new object();
         private byte[] _binary;
@@ -70,8 +85,8 @@ namespace IronSoftware.Drawing
 
                 if (_binary == null)
                 {
-                    ///In case like <see cref="AnyBitmap(Image)"/> Binary will be assign once the image is loaded
-                    var _ = _lazyImage?.Value; //force load but _binary can still be null depended on how _lazyImage was loaded              
+                    //In case like <see cref="AnyBitmap(Image)"/> Binary will be assign once the image is loaded
+                    ForceLoadLazyImage(); //force load but _binary can still be null depended on how _lazyImage was loaded              
                 }
 
                 if (_binary == null || IsDirty)
@@ -84,7 +99,7 @@ namespace IronSoftware.Drawing
                             using var stream = new MemoryStream();
                             IImageEncoder enc = GetDefaultImageExportEncoder();
 
-                            _lazyImage?.Value.First().Save(stream, enc);
+                            GetFirstInternalImage().Save(stream, enc);
                             _binary = stream.ToArray();
                             IsDirty = false;
                         }
@@ -107,7 +122,7 @@ namespace IronSoftware.Drawing
         private bool IsDirty
         {
             // use Interlocked to make sure that it always updated and thread safe.
-            get => Interlocked.CompareExchange(ref _isDirty, 0, 0) == 1;
+            get => Thread.VolatileRead(ref _isDirty) == 1;
             set => Interlocked.Exchange(ref _isDirty, value ? 1 : 0);
         }
 
@@ -121,17 +136,7 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Width of the image.
         /// </summary>
-        public int Width
-        {
-            get
-            {
-                if (!_width.HasValue)
-                {
-                    _width = _lazyImage?.Value.First().Width;
-                }
-                return _width.Value;
-            }
-        }
+        public int Width => _width ??= GetFirstInternalImage().Width;
 
         //cache since Image.Height (ImageSharp) is slow
         private int? _height = null;
@@ -139,17 +144,7 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Height of the image.
         /// </summary>
-        public int Height
-        {
-            get
-            {
-                if (!_height.HasValue)
-                {
-                    _height = _lazyImage?.Value.First().Height;
-                }
-                return _height.Value;
-            }
-        }
+        public int Height => _height ??= GetFirstInternalImage().Height;
 
         /// <summary>
         /// Number of raw image bytes stored
@@ -228,7 +223,7 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         public AnyBitmap Clone(Rectangle rectangle)
         {
-            var cloned = _lazyImage?.Value.Select(img => img.Clone(x => x.Crop(rectangle)));
+            var cloned = GetInternalImages().Select(img => img.Clone(x => x.Crop(rectangle)));
             return new AnyBitmap(Binary, cloned);
         }
 
@@ -374,7 +369,7 @@ namespace IronSoftware.Drawing
                 }
                 else
                 {
-                    _lazyImage?.Value.First().Save(stream, enc);
+                    GetFirstInternalImage().Save(stream, enc);
                 }
 
             }
@@ -564,7 +559,7 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Create a new Bitmap from a <see cref="Stream"/> (bytes).
         /// </summary>
-        /// <param name="stream">A <see cref="Stream"/> of image data in any common format.</param>
+        /// <param name="stream">A <see cref="Stream"/> of image data in any common format.
         /// Default is true. Set to false to load as Rgba32.</param>
         /// <seealso cref="FromStream(Stream, bool)"/>
         /// <seealso cref="AnyBitmap"/>
@@ -780,7 +775,16 @@ namespace IronSoftware.Drawing
         /// <param name="backgroundColor">Background color of new AnyBitmap</param>
         public AnyBitmap(int width, int height, Color backgroundColor = null)
         {
-            CreateNewImageInstance(width, height, backgroundColor);
+            _lazyImage = new Lazy<IReadOnlyList<Image>>(() =>
+            {
+                var image = new Image<Rgba32>(width, height);
+                if (backgroundColor != null)
+                {
+                    image.Mutate(context => context.Fill(backgroundColor));
+                }
+                return [image];
+            });
+            ForceLoadLazyImage();
         }
 
         /// <summary>
@@ -792,11 +796,7 @@ namespace IronSoftware.Drawing
         /// <returns>An AnyBitmap object that represents the image defined by the provided pixel data, width, and height.</returns>
         internal AnyBitmap(byte[] buffer, int width, int height)
         {
-            foreach (var x in _lazyImage?.Value ?? [])
-            {
-                x.Dispose();
-            }
-            _lazyImage = new Lazy<IEnumerable<Image>>(() =>
+            _lazyImage = new Lazy<IReadOnlyList<Image>>(() =>
             {
                 var image = Image.LoadPixelData<Rgb24>(buffer, width, height);
                 return [image];
@@ -814,16 +814,12 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Note: This only use for Casting It won't create new object Image
         /// </summary>
-        /// <param name="image"></param>
+        /// <param name="images"></param>
         internal AnyBitmap(IEnumerable<Image> images)
         {
-            _lazyImage = new Lazy<IEnumerable<Image>>(() =>
+            _lazyImage = new Lazy<IReadOnlyList<Image>>(() =>
             {
-                return images.Select(image =>
-                {
-                    return image;
-                });
-
+                return [.. images];
             });
         }
 
@@ -835,9 +831,9 @@ namespace IronSoftware.Drawing
         internal AnyBitmap(byte[] bytes, IEnumerable<Image> images)
         {
             Binary = bytes;
-            _lazyImage = new Lazy<IEnumerable<Image>>(() =>
+            _lazyImage = new Lazy<IReadOnlyList<Image>>(() =>
             {
-                return images;
+                return [.. images];
             });
         }
 
@@ -989,17 +985,7 @@ namespace IronSoftware.Drawing
         /// <a href="https://ironsoftware.com/open-source/csharp/drawing/examples/get-color-depth/">
         /// Code Example</a></para>
         /// </summary>
-        public int BitsPerPixel
-        {
-            get
-            {
-                if (!_bitsPerPixel.HasValue)
-                {
-                    _bitsPerPixel = _lazyImage?.Value.First().PixelType.BitsPerPixel;
-                }
-                return _bitsPerPixel.Value;
-            }
-        }
+        public int BitsPerPixel => _bitsPerPixel ??= GetFirstInternalImage().PixelType.BitsPerPixel;
 
         //cache
         private int? _frameCount = null;
@@ -1012,25 +998,9 @@ namespace IronSoftware.Drawing
         /// Code Example</a></para>
         /// </summary>
         /// <seealso cref="GetAllFrames" />
-        public int FrameCount
-        {
-            get
-            {
-                if (!_frameCount.HasValue)
-                {
-                    if (_lazyImage?.Value.Count() == 1)
-                    {
-                        _frameCount = _lazyImage?.Value.First().Frames.Count;
-                    }
-                    else
-                    {
-                        _frameCount = _lazyImage?.Value.Count();
-                    }
-                }
-
-                return _frameCount.Value;
-            }
-        }
+        public int FrameCount => _frameCount ??= GetInternalImages() is var images && images.Count == 1
+            ? images[0].Frames.Count
+            : images.Count;
 
         /// <summary>
         /// Returns all of the frames in our loaded Image. Each "frame" 
@@ -1046,13 +1016,14 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                if (_lazyImage?.Value.Count() == 1)
+                var images = GetInternalImages();
+                if (images.Count == 1)
                 {
-                    return ImageFrameCollectionToImages(_lazyImage?.Value.First().Frames).Select(x => (AnyBitmap)x);
+                    return ImageFrameCollectionToImages(images[0].Frames).Select(x => (AnyBitmap)x);
                 }
                 else
                 {
-                    return _lazyImage?.Value.Select(x => (AnyBitmap)x);
+                    return images.Select(x => (AnyBitmap)x);
                 }
             }
         }
@@ -1138,7 +1109,7 @@ namespace IronSoftware.Drawing
 
             var alpha = new byte[Width * Height];
 
-            switch (_lazyImage?.Value.First())
+            switch (GetFirstInternalImage())
             {
                 case Image<Rgba32> imageAsFormat:
                     imageAsFormat.ProcessPixelRows(accessor =>
@@ -1387,7 +1358,7 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                return _lazyImage?.Value.First().Metadata.HorizontalResolution ?? null;
+                return GetFirstInternalImage().Metadata.HorizontalResolution;
             }
         }
 
@@ -1399,7 +1370,7 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                return _lazyImage?.Value.First().Metadata.VerticalResolution ?? null;
+                return GetFirstInternalImage().Metadata.VerticalResolution;
             }
         }
 
@@ -1464,7 +1435,7 @@ namespace IronSoftware.Drawing
         /// </remarks>
         public byte[] GetRGBBuffer()
         {
-            var image = _lazyImage?.Value.First();
+            var image = GetFirstInternalImage();
             int width = image.Width;
             int height = image.Height;
             byte[] rgbBuffer = new byte[width * height * 3]; // 3 bytes per pixel (RGB)
@@ -1650,7 +1621,7 @@ namespace IronSoftware.Drawing
         /// </remarks>
         public byte[] GetRGBABuffer()
         {
-            var image = _lazyImage?.Value.First();
+            var image = GetFirstInternalImage();
             int width = image.Width;
             int height = image.Height;
             byte[] rgbBuffer = new byte[width * height * 4]; // 3 bytes per pixel (RGB)
@@ -1887,17 +1858,17 @@ namespace IronSoftware.Drawing
                 }
 
                 //if it is loaded or gif/tiff
-                var images = bitmap._lazyImage?.Value;
-                if (images.Count() == 1)
+                var images = bitmap.GetInternalImages();
+                if (images.Count == 1)
                 {
                     //not gif/tiff
-                    return images.First();
+                    return images[0];
                 }
                 else
                 {
                     //for gif/tiff we need to resize all frame
                     //Tiff can have different frame size but ImageSharp does not support
-                    var resultImage = images.First().Clone((_) => { });
+                    var resultImage = images[0].Clone((_) => { });
 
                     foreach (var frame in images.Skip(1))
                     {
@@ -1948,21 +1919,21 @@ namespace IronSoftware.Drawing
                    
                 }
               
-                var images = bitmap._lazyImage?.Value;
-                if (images.Count() == 1)
+                var images = bitmap.GetInternalImages();
+                if (images.Count == 1)
                 {
-                    if (images.First() is Image<T> correctType)
+                    if (images[0] is Image<T> correctType)
                     {
                         return correctType;
                     }
                     else
                     {
-                        return images.First().CloneAs<T>();
+                        return images[0].CloneAs<T>();
                     }
                 }
                 else
                 {
-                    var resultImage = images.First().CloneAs<T>();
+                    var resultImage = images[0].CloneAs<T>();
 
                     //for gif/tiff we need to resize all frame
                     //Tiff can have different frame size but ImageSharp does not support
@@ -2570,7 +2541,7 @@ namespace IronSoftware.Drawing
                     return;
                 }
 
-                foreach (var x in _lazyImage?.Value ?? [])
+                foreach (var x in GetInternalImages() ?? [])
                 {
                     x.Dispose();
                 }
@@ -2581,24 +2552,6 @@ namespace IronSoftware.Drawing
         }
 
         #region Private Method
-
-        private void CreateNewImageInstance(int width, int height, Color backgroundColor)
-        {
-            foreach (var x in _lazyImage?.Value ?? [])
-            {
-                x.Dispose();
-            }
-            _lazyImage = new Lazy<IEnumerable<Image>>(() =>
-            {
-                var image = new Image<Rgba32>(width, height);
-                if (backgroundColor != null)
-                {
-                    image.Mutate(context => context.Fill(backgroundColor));
-                }
-                return [image];
-            });
-            var _ = _lazyImage?.Value; // force load image
-        }
 
         private void LoadImage(Stream stream, bool preserveOriginalFormat)
         {
@@ -2645,15 +2598,25 @@ namespace IronSoftware.Drawing
         private void LoadImage(ReadOnlySpan<byte> span, bool preserveOriginalFormat)
         {
             Binary = span.ToArray();
-            foreach (var x in _lazyImage?.Value ?? [])
+            if (Format is TiffFormat) 
             {
-                x.Dispose();
+                if(GetTiffFrameCountFast() > 1)
+                {
+                    _lazyImage = OpenTiffToImageSharp();
+                }
+                else
+                {
+
+                    try {
+                        _lazyImage = OpenImageToImageSharp(preserveOriginalFormat);
+                     
+                    } catch (Exception e) {
+                        _lazyImage = OpenTiffToImageSharp();
+                    }
+                }
+              
             }
-            if (Format is TiffFormat)
-            {
-                _lazyImage = OpenTiffToImageSharp();
-            }
-            else
+            else // ImageSharp can load Single frame tiff without any issues
             {
                 _lazyImage = OpenImageToImageSharp(preserveOriginalFormat);
             }
@@ -2835,9 +2798,42 @@ namespace IronSoftware.Drawing
             }
         }
 
-        private Lazy<IEnumerable<Image>> OpenTiffToImageSharp()
+        private int GetTiffFrameCountFast()
         {
-            return new Lazy<IEnumerable<Image>>(() =>
+            try
+            {
+                using var tiffStream = new MemoryStream(Binary);
+
+                // Disable error messages for fast check
+                Tiff.SetErrorHandler(new DisableErrorHandler());
+
+                using var tiff = Tiff.ClientOpen("in-memory", "r", tiffStream, new TiffStream());
+                if (tiff == null) return 1; // Default to single frame if can't read
+
+                short frameCount = tiff.NumberOfDirectories();
+
+                // Filter out thumbnails like in InternalLoadTiff
+                short actualFrames = 0;
+                for (short i = 0; i < frameCount; i++)
+                {
+                    tiff.SetDirectory(i);
+                    if (!IsThumbnail(tiff))
+                    {
+                        actualFrames++;
+                    }
+                }
+
+                return actualFrames > 0 ? actualFrames : 1;
+            }
+            catch
+            {
+                return 1; // Default to single frame on any error
+            }
+        }
+
+        private Lazy<IReadOnlyList<Image>> OpenTiffToImageSharp()
+        {
+            return new Lazy<IReadOnlyList<Image>>(() =>
             {
                 try
                 {
@@ -2854,7 +2850,7 @@ namespace IronSoftware.Drawing
             });
         }
 
-        private IEnumerable<Image> InternalLoadTiff()
+        private IReadOnlyList<Image> InternalLoadTiff()
         {
             int imageWidth = 0;
             int imageHeight = 0;
@@ -2908,9 +2904,9 @@ namespace IronSoftware.Drawing
             return images;
         }
 
-        private Lazy<IEnumerable<Image>> OpenImageToImageSharp(bool preserveOriginalFormat)
+        private Lazy<IReadOnlyList<Image>> OpenImageToImageSharp(bool preserveOriginalFormat, Func<Lazy<IReadOnlyList<Image>>> backup = null)
         {
-            return new Lazy<IEnumerable<Image>>(() =>
+            return new Lazy<IReadOnlyList<Image>>(() =>
             {
                 try
                 {
@@ -2938,8 +2934,14 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e)
                 {
-                    throw new NotSupportedException(
-                        "Image could not be loaded. File format is not supported.", e);
+                    try
+                    {
+                        return backup.Invoke();
+                    }
+                    catch (Exception) {
+                        throw new NotSupportedException(
+                       "Image could not be loaded. File format is not supported.", e);
+                    }
                 }
             });
         }
@@ -3132,7 +3134,7 @@ namespace IronSoftware.Drawing
 
         private IntPtr GetFirstPixelData()
         {
-            var image = _lazyImage?.Value.First();
+            var image = GetFirstInternalImage();
 
             if(image is not Image<Rgba32>)
             {
@@ -3169,7 +3171,7 @@ namespace IronSoftware.Drawing
 
         private Color GetPixelColor(int x, int y)
         {
-            switch (_lazyImage?.Value.First())
+            switch (GetFirstInternalImage())
             {
                 case Image<Rgba32> imageAsFormat:
                     return imageAsFormat[x, y];
@@ -3195,7 +3197,7 @@ namespace IronSoftware.Drawing
 
                     //CloneAs() is expensive!
                     //Can throw out of memory exception, when this fucntion get called too much
-                    using (Image<Rgb24> converted = _lazyImage?.Value.First().CloneAs<Rgb24>())
+                    using (Image<Rgb24> converted = GetFirstInternalImage().CloneAs<Rgb24>())
                     {
                         return converted[x, y];
                     }
@@ -3204,7 +3206,7 @@ namespace IronSoftware.Drawing
 
         private void SetPixelColor(int x, int y, Color color)
         {
-            switch (_lazyImage?.Value.First())
+            switch (GetFirstInternalImage())
             {
                 case Image<Rgba32> imageAsFormat:
                     imageAsFormat[x, y] = color;
@@ -3231,7 +3233,7 @@ namespace IronSoftware.Drawing
                     imageAsFormat[x, y] = color;
                     break;
                 default:
-                    (_lazyImage?.Value.First() as Image<Rgba32>)[x, y] = color;
+                    (GetFirstInternalImage() as Image<Rgba32>)[x, y] = color;
                     break;
             }
             IsDirty = true;
@@ -3239,14 +3241,10 @@ namespace IronSoftware.Drawing
 
         private void LoadAndResizeImage(AnyBitmap original, int width, int height)
         {
-            foreach (var x in _lazyImage?.Value ?? [])
-            {
-                x.Dispose();
-            }
             //this prevent case when original is changed before Lazy is loaded
             Binary = original.Binary;
 
-            _lazyImage = new Lazy<IEnumerable<Image>>(() =>
+            _lazyImage = new Lazy<IReadOnlyList<Image>>(() =>
             {
 
                 using var image = Image.Load<Rgba32>(Binary);
@@ -3260,8 +3258,7 @@ namespace IronSoftware.Drawing
                 return [image];
             });
 
-            //force _lazyImage to load in this case
-            var _ = _lazyImage?.Value;
+            ForceLoadLazyImage();
         }
 
         private IImageEncoder GetDefaultImageExportEncoder(ImageFormat format = ImageFormat.Default, int lossy = 100)
@@ -3475,16 +3472,23 @@ namespace IronSoftware.Drawing
 
 #endregion
 
-        [Browsable(false)]
-        [Bindable(false)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
         /// <summary>
         /// Check if image is loaded (decoded) 
         /// </summary>
         /// <returns>true if images is loaded (decoded) into the memory</returns>
+        [Browsable(false)]
+        [Bindable(false)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public bool IsImageLoaded()
         {
-            return _lazyImage?.IsValueCreated;
+            if(_lazyImage == null)
+            {
+                return false;
+            }
+            else
+            {
+                return _lazyImage.IsValueCreated;
+            }
         }
     }
 }

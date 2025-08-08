@@ -920,8 +920,8 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             var frames = bitmap.GetAllFrames;
             for (int i = 0; i < bitmap.FrameCount; i++)
             {
-                Assert.Equal(expectedHorizontalResolution, frames.ElementAt(i).HorizontalResolution);
-                Assert.Equal(expectedVerticalResolution, frames.ElementAt(i).VerticalResolution);
+                Assert.Equal(expectedHorizontalResolution, frames.ElementAt(i).HorizontalResolution.Value, 1d);
+                Assert.Equal(expectedVerticalResolution, frames.ElementAt(i).VerticalResolution.Value, 1d);
             }
         }
 
