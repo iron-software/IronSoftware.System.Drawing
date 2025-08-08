@@ -57,6 +57,7 @@ namespace IronSoftware.Drawing
         /// </summary>
         private Lazy<IEnumerable<Image>> _lazyImage { get; set; }
 
+        private readonly object _binaryLock = new object();
         private byte[] _binary;
 
         /// <summary>
@@ -70,18 +71,24 @@ namespace IronSoftware.Drawing
                 if (_binary == null)
                 {
                     ///In case like <see cref="AnyBitmap(Image)"/> Binary will be assign once the image is loaded
-                    var _ = _lazyImage?.Value; //force load              
+                    var _ = _lazyImage?.Value; //force load but _binary can still be null depended on how _lazyImage was loaded              
                 }
 
-                if (IsDirty == true || _binary == null)
+                if (_binary == null || IsDirty)
                 {
-                    //Which mean we need to update _binary to sync with the image
-                    using var stream = new MemoryStream();
-                    IImageEncoder enc = GetDefaultImageExportEncoder();
+                    lock (_binaryLock)
+                    {
+                        if (_binary == null || IsDirty)
+                        {
+                            //Which mean we need to update _binary to sync with the image
+                            using var stream = new MemoryStream();
+                            IImageEncoder enc = GetDefaultImageExportEncoder();
 
-                    _lazyImage.Value.First().Save(stream, enc);
-                    _binary = stream.ToArray();
-                    IsDirty = false;
+                            _lazyImage.Value.First().Save(stream, enc);
+                            _binary = stream.ToArray();
+                            IsDirty = false;
+                        }
+                    }  
                 }
 
                 return _binary;
