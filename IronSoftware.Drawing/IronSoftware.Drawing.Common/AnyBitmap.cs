@@ -84,7 +84,7 @@ namespace IronSoftware.Drawing
                             using var stream = new MemoryStream();
                             IImageEncoder enc = GetDefaultImageExportEncoder();
 
-                            _lazyImage.Value.First().Save(stream, enc);
+                            _lazyImage?.Value.First().Save(stream, enc);
                             _binary = stream.ToArray();
                             IsDirty = false;
                         }
@@ -127,7 +127,7 @@ namespace IronSoftware.Drawing
             {
                 if (!_width.HasValue)
                 {
-                    _width = _lazyImage.Value.First().Width;
+                    _width = _lazyImage?.Value.First().Width;
                 }
                 return _width.Value;
             }
@@ -145,7 +145,7 @@ namespace IronSoftware.Drawing
             {
                 if (!_height.HasValue)
                 {
-                    _height = _lazyImage.Value.First().Height;
+                    _height = _lazyImage?.Value.First().Height;
                 }
                 return _height.Value;
             }
@@ -365,16 +365,16 @@ namespace IronSoftware.Drawing
                 IImageEncoder enc = GetDefaultImageExportEncoder(format, lossy);
                 if (enc is TiffEncoder)
                 {
-                    InternalSaveAsMultiPageTiff(_lazyImage.Value, stream);
+                    InternalSaveAsMultiPageTiff(_lazyImage?.Value, stream);
                 }
                 else if (enc is GifEncoder)
                 {
-                    InternalSaveAsMultiPageGif(_lazyImage.Value, stream);
+                    InternalSaveAsMultiPageGif(_lazyImage?.Value, stream);
 
                 }
                 else
                 {
-                    _lazyImage.Value.First().Save(stream, enc);
+                    _lazyImage?.Value.First().Save(stream, enc);
                 }
 
             }
@@ -995,7 +995,7 @@ namespace IronSoftware.Drawing
             {
                 if (!_bitsPerPixel.HasValue)
                 {
-                    _bitsPerPixel = _lazyImage.Value.First().PixelType.BitsPerPixel;
+                    _bitsPerPixel = _lazyImage?.Value.First().PixelType.BitsPerPixel;
                 }
                 return _bitsPerPixel.Value;
             }
@@ -1018,13 +1018,13 @@ namespace IronSoftware.Drawing
             {
                 if (!_frameCount.HasValue)
                 {
-                    if (_lazyImage.Value.Count() == 1)
+                    if (_lazyImage?.Value.Count() == 1)
                     {
-                        _frameCount = _lazyImage.Value.First().Frames.Count;
+                        _frameCount = _lazyImage?.Value.First().Frames.Count;
                     }
                     else
                     {
-                        _frameCount = _lazyImage.Value.Count();
+                        _frameCount = _lazyImage?.Value.Count();
                     }
                 }
 
@@ -1046,13 +1046,13 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                if (_lazyImage.Value.Count() == 1)
+                if (_lazyImage?.Value.Count() == 1)
                 {
-                    return ImageFrameCollectionToImages(_lazyImage.Value.First().Frames).Select(x => (AnyBitmap)x);
+                    return ImageFrameCollectionToImages(_lazyImage?.Value.First().Frames).Select(x => (AnyBitmap)x);
                 }
                 else
                 {
-                    return _lazyImage.Value.Select(x => (AnyBitmap)x);
+                    return _lazyImage?.Value.Select(x => (AnyBitmap)x);
                 }
             }
         }
@@ -1138,7 +1138,7 @@ namespace IronSoftware.Drawing
 
             var alpha = new byte[Width * Height];
 
-            switch (_lazyImage.Value.First())
+            switch (_lazyImage?.Value.First())
             {
                 case Image<Rgba32> imageAsFormat:
                     imageAsFormat.ProcessPixelRows(accessor =>
@@ -1464,7 +1464,7 @@ namespace IronSoftware.Drawing
         /// </remarks>
         public byte[] GetRGBBuffer()
         {
-            var image = _lazyImage.Value.First();
+            var image = _lazyImage?.Value.First();
             int width = image.Width;
             int height = image.Height;
             byte[] rgbBuffer = new byte[width * height * 3]; // 3 bytes per pixel (RGB)
@@ -1650,7 +1650,7 @@ namespace IronSoftware.Drawing
         /// </remarks>
         public byte[] GetRGBABuffer()
         {
-            var image = _lazyImage.Value.First();
+            var image = _lazyImage?.Value.First();
             int width = image.Width;
             int height = image.Height;
             byte[] rgbBuffer = new byte[width * height * 4]; // 3 bytes per pixel (RGB)
@@ -1887,7 +1887,7 @@ namespace IronSoftware.Drawing
                 }
 
                 //if it is loaded or gif/tiff
-                var images = bitmap._lazyImage.Value;
+                var images = bitmap._lazyImage?.Value;
                 if (images.Count() == 1)
                 {
                     //not gif/tiff
@@ -1948,7 +1948,7 @@ namespace IronSoftware.Drawing
                    
                 }
               
-                var images = bitmap._lazyImage.Value;
+                var images = bitmap._lazyImage?.Value;
                 if (images.Count() == 1)
                 {
                     if (images.First() is Image<T> correctType)
@@ -2597,7 +2597,7 @@ namespace IronSoftware.Drawing
                 }
                 return [image];
             });
-            var _ = _lazyImage.Value; // force load image
+            var _ = _lazyImage?.Value; // force load image
         }
 
         private void LoadImage(Stream stream, bool preserveOriginalFormat)
@@ -3132,7 +3132,7 @@ namespace IronSoftware.Drawing
 
         private IntPtr GetFirstPixelData()
         {
-            var image = _lazyImage.Value.First();
+            var image = _lazyImage?.Value.First();
 
             if(image is not Image<Rgba32>)
             {
@@ -3169,7 +3169,7 @@ namespace IronSoftware.Drawing
 
         private Color GetPixelColor(int x, int y)
         {
-            switch (_lazyImage.Value.First())
+            switch (_lazyImage?.Value.First())
             {
                 case Image<Rgba32> imageAsFormat:
                     return imageAsFormat[x, y];
@@ -3195,7 +3195,7 @@ namespace IronSoftware.Drawing
 
                     //CloneAs() is expensive!
                     //Can throw out of memory exception, when this fucntion get called too much
-                    using (Image<Rgb24> converted = _lazyImage.Value.First().CloneAs<Rgb24>())
+                    using (Image<Rgb24> converted = _lazyImage?.Value.First().CloneAs<Rgb24>())
                     {
                         return converted[x, y];
                     }
@@ -3204,7 +3204,7 @@ namespace IronSoftware.Drawing
 
         private void SetPixelColor(int x, int y, Color color)
         {
-            switch (_lazyImage.Value.First())
+            switch (_lazyImage?.Value.First())
             {
                 case Image<Rgba32> imageAsFormat:
                     imageAsFormat[x, y] = color;
@@ -3231,7 +3231,7 @@ namespace IronSoftware.Drawing
                     imageAsFormat[x, y] = color;
                     break;
                 default:
-                    (_lazyImage.Value.First() as Image<Rgba32>)[x, y] = color;
+                    (_lazyImage?.Value.First() as Image<Rgba32>)[x, y] = color;
                     break;
             }
             IsDirty = true;
@@ -3261,7 +3261,7 @@ namespace IronSoftware.Drawing
             });
 
             //force _lazyImage to load in this case
-            var _ = _lazyImage.Value;
+            var _ = _lazyImage?.Value;
         }
 
         private IImageEncoder GetDefaultImageExportEncoder(ImageFormat format = ImageFormat.Default, int lossy = 100)
@@ -3484,7 +3484,7 @@ namespace IronSoftware.Drawing
         /// <returns>true if images is loaded (decoded) into the memory</returns>
         public bool IsImageLoaded()
         {
-            return _lazyImage.IsValueCreated;
+            return _lazyImage?.IsValueCreated;
         }
     }
 }
