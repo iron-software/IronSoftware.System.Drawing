@@ -1167,48 +1167,5 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Image.DetectFormat(resultExport.ToArray()).Should().Be(SixLabors.ImageSharp.Formats.Tiff.TiffFormat.Instance);
         }
 
-
-        //this should be faster than previous
-        //for manual test only
-        //[FactWithAutomaticDisplayName]
-        public void LoadTest1()
-        {
-            for (int i = 0; i < 50; i++)
-            {
-                string imagePath = GetRelativeFilePath("google_large_1500dpi.bmp");
-                var anyBitmap = AnyBitmap.FromFile(imagePath);
-                var imgFormat = anyBitmap.GetImageFormat();
-                var pixDepth = anyBitmap.BitsPerPixel;
-                if (pixDepth != 32)
-                {
-                    anyBitmap = AnyBitmap.FromBytes(anyBitmap.GetBytes(), false);
-                    pixDepth = anyBitmap.BitsPerPixel;
-                }
-
-                //var w = anyBitmap.Width;
-                //var h = anyBitmap.Height;
-
-                var rgba = anyBitmap.GetRGBABuffer();
-
-
-                for (int y = 0; y < anyBitmap.Height; y++) //calling anyBitmap.Height in the loop make it slower
-                {
-                    for (int x = 0; x < anyBitmap.Width; x++)
-                    {
-                        int rgbaIndex = ((y * anyBitmap.Width) + x) * 4;
-                        EncodeAsRGBA(rgba[rgbaIndex],
-                        rgba[rgbaIndex + 1], rgba[rgbaIndex + 2], rgba[rgbaIndex + 3]);
-                    }
-                }
-            }
-
-            uint EncodeAsRGBA(byte red, byte green, byte blue, byte alpha)
-            {
-                return (uint)((red << 24) |
-                    (green << 16) |
-                    (blue << 8) |
-                    alpha);
-            }
-        }
     }
 }
