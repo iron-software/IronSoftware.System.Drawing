@@ -2606,17 +2606,12 @@ namespace IronSoftware.Drawing
                 }
                 else
                 {
-
-                    try {
-                        _lazyImage = OpenImageToImageSharp(preserveOriginalFormat);
-                     
-                    } catch (Exception e) {
-                        _lazyImage = OpenTiffToImageSharp();
-                    }
+                    // ImageSharp can load some single frame tiff, if failed we try again with LibTiff
+                    _lazyImage = OpenImageToImageSharp(preserveOriginalFormat, tryWithLibTiff : true);
                 }
               
             }
-            else // ImageSharp can load Single frame tiff without any issues
+            else
             {
                 _lazyImage = OpenImageToImageSharp(preserveOriginalFormat);
             }
@@ -2891,7 +2886,7 @@ namespace IronSoftware.Drawing
             return images;
         }
 
-        private Lazy<IReadOnlyList<Image>> OpenImageToImageSharp(bool preserveOriginalFormat, Func<Lazy<IReadOnlyList<Image>>> backup = null)
+        private Lazy<IReadOnlyList<Image>> OpenImageToImageSharp(bool preserveOriginalFormat, bool tryWithLibTiff = false)
         {
             return new Lazy<IReadOnlyList<Image>>(() =>
             {
@@ -2921,8 +2916,10 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e)
                 {
-                    throw new NotSupportedException(
-                       "Image could not be loaded. File format is not supported.", e);
+                    return tryWithLibTiff
+                        ? InternalLoadTiff()
+                        : throw new NotSupportedException(
+                           "Image could not be loaded. File format is not supported.", e);
                 }
             });
         }
