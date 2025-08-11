@@ -59,12 +59,12 @@ namespace IronSoftware.Drawing
 
         private IReadOnlyList<Image> GetInternalImages()
         {
-            return _lazyImage?.Value ?? throw new Exception("No image data available");
+            return _lazyImage?.Value ?? throw new InvalidOperationException("No image data available");
         }
 
         private Image GetFirstInternalImage()
         {
-            return (_lazyImage?.Value?[0]) ?? throw new Exception("No image data available");
+            return (_lazyImage?.Value?[0]) ?? throw new InvalidOperationException("No image data available");
         }
 
         private void ForceLoadLazyImage()
@@ -998,9 +998,18 @@ namespace IronSoftware.Drawing
         /// Code Example</a></para>
         /// </summary>
         /// <seealso cref="GetAllFrames" />
-        public int FrameCount => _frameCount ??= GetInternalImages() is var images && images.Count == 1
-            ? images[0].Frames.Count
-            : images.Count;
+        public int FrameCount
+        {
+            get
+            {
+                if (!_frameCount.HasValue)
+                {
+                    var images = GetInternalImages();
+                    _frameCount = images.Count == 1 ? images[0].Frames.Count : images.Count;
+                }
+                return _frameCount.Value;
+            }
+        }
 
         /// <summary>
         /// Returns all of the frames in our loaded Image. Each "frame" 
