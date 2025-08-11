@@ -2810,20 +2810,7 @@ namespace IronSoftware.Drawing
                 using var tiff = Tiff.ClientOpen("in-memory", "r", tiffStream, new TiffStream());
                 if (tiff == null) return 1; // Default to single frame if can't read
 
-                short frameCount = tiff.NumberOfDirectories();
-
-                // Filter out thumbnails like in InternalLoadTiff
-                short actualFrames = 0;
-                for (short i = 0; i < frameCount; i++)
-                {
-                    tiff.SetDirectory(i);
-                    if (!IsThumbnail(tiff))
-                    {
-                        actualFrames++;
-                    }
-                }
-
-                return actualFrames > 0 ? actualFrames : 1;
+                return tiff.NumberOfDirectories();
             }
             catch
             {
@@ -2934,14 +2921,8 @@ namespace IronSoftware.Drawing
                 }
                 catch (Exception e)
                 {
-                    try
-                    {
-                        return backup.Invoke();
-                    }
-                    catch (Exception) {
-                        throw new NotSupportedException(
+                    throw new NotSupportedException(
                        "Image could not be loaded. File format is not supported.", e);
-                    }
                 }
             });
         }
