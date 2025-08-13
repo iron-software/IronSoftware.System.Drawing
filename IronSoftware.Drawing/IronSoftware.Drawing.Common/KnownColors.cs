@@ -364,6 +364,7 @@ namespace IronSoftware.Drawing
         };
         private static Dictionary<string, uint> _argbByName = null;
         private static Dictionary<uint, string> _nameByArgb = null;
+        private static Dictionary<string, KnownColor> _knownColorByName = null;
 
         internal static Dictionary<string, uint> ArgbByName
         {
@@ -399,22 +400,34 @@ namespace IronSoftware.Drawing
             }
         }
 
+        internal static Dictionary<string, KnownColor> KnownColorByName
+        {
+            get
+            {
+                if (_knownColorByName == null)
+                {
+                    _knownColorByName = new Dictionary<string, KnownColor>();
+                    for (int i = 0; i < Names.Length; ++i)
+                    {
+                        // The key is the lowercased name for case-insensitive matching
+                        _knownColorByName[Names[i].ToLower()] = (KnownColor)i;
+                    }
+                }
+                return _knownColorByName;
+            }
+        }
+
         public static Color FromKnownColor(KnownColor kc)
         {
-            Color c;
             short n = (short)kc;
             if ((n <= 0) || (n >= ArgbValues.Length))
             {
-                c = Color.FromArgb(0);
-                c.IsKnownColor = false;
-            }
-            else
-            {
-                c = Color.FromArgb((int)ArgbValues[n]);
-                c.IsKnownColor = true;
+                // For invalid KnownColor enum values, return transparent black, which is not a "known" color.
+                return new Color(0, 0, 0, 0);
             }
 
-            return c;
+            // Create a color and set its immutable IsKnownColor flag to true.
+            return new Color((int)ArgbValues[n], true);
         }
 
         public static string GetName(short kc)

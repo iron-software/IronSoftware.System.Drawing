@@ -19,18 +19,21 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(25, color.R);
             Assert.Equal(25, color.G);
             Assert.Equal(25, color.B);
+            Assert.False(color.IsKnownColor);
 
             color = new Color("#800080");
             Assert.Equal(255, color.A);
             Assert.Equal(128, color.R);
             Assert.Equal(0, color.G);
             Assert.Equal(128, color.B);
+            Assert.False(color.IsKnownColor);
 
             color = new Color("#F0F");
             Assert.Equal(255, color.A);
             Assert.Equal(255, color.R);
             Assert.Equal(0, color.G);
             Assert.Equal(255, color.B);
+            Assert.False(color.IsKnownColor);
 
             InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() => color = new Color("#F"));
             Assert.Equal($"#F is unable to convert to {typeof(Color)} because it requires a suitable length of string.", ex.Message);
@@ -40,12 +43,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(255, color.R);
             Assert.Equal(0, color.G);
             Assert.Equal(255, color.B);
+            Assert.False(color.IsKnownColor);
 
             color = new Color(255, 0, 255);
             Assert.Equal(255, color.A);
             Assert.Equal(255, color.R);
             Assert.Equal(0, color.G);
             Assert.Equal(255, color.B);
+            Assert.False(color.IsKnownColor);
         }
 
         [FactWithAutomaticDisplayName]
@@ -55,21 +60,25 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(154, Color.YellowGreen.R);
             Assert.Equal(205, Color.YellowGreen.G);
             Assert.Equal(50, Color.YellowGreen.B);
+            Assert.True(Color.YellowGreen.IsKnownColor);
 
             Assert.Equal(255, Color.Violet.A);
             Assert.Equal(238, Color.Violet.R);
             Assert.Equal(130, Color.Violet.G);
             Assert.Equal(238, Color.Violet.B);
+            Assert.True(Color.Violet.IsKnownColor);
 
             Assert.Equal(0, Color.Transparent.A);
             Assert.Equal(255, Color.Transparent.R);
             Assert.Equal(255, Color.Transparent.G);
             Assert.Equal(255, Color.Transparent.B);
+            Assert.True(Color.Transparent.IsKnownColor);
 
             Assert.Equal(255, Color.Azure.A);
             Assert.Equal(240, Color.Azure.R);
             Assert.Equal(255, Color.Azure.G);
             Assert.Equal(255, Color.Azure.B);
+            Assert.True(Color.Azure.IsKnownColor);
         }
 
         [FactWithAutomaticDisplayName]
@@ -82,6 +91,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(244, color.G);
             Assert.Equal(208, color.B);
             Assert.Equal("#FF40F4D0", color.ToString());
+            Assert.False(color.IsKnownColor);
 
             color = Color.FromArgb(0, 64, 244, 208);
 
@@ -90,7 +100,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(244, color.G);
             Assert.Equal(208, color.B);
             Assert.Equal("#0040F4D0", color.ToString());
-
+            Assert.False(color.IsKnownColor);
         }
 
         [FactWithAutomaticDisplayName]
@@ -103,12 +113,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(244, color.G);
             Assert.Equal(208, color.B);
             Assert.Equal("#6440F4D0", color.ToString());
+            Assert.False(color.IsKnownColor);
 
             var color1 = Color.FromArgb(50, color);
             Assert.Equal(50, color1.A);
             Assert.Equal(64, color1.R);
             Assert.Equal(244, color1.G);
             Assert.Equal(208, color1.B);
+            Assert.False(color.IsKnownColor);
         }
 
         [FactWithAutomaticDisplayName]
@@ -116,12 +128,15 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
             Color color = Color.Black;
             Assert.Equal(0, color.GetLuminance());
+            Assert.True(color.IsKnownColor);
 
             color = Color.Gray;
             Assert.Equal(50, color.GetLuminance());
+            Assert.True(color.IsKnownColor);
 
             color = Color.White;
             Assert.Equal(100, color.GetLuminance());
+            Assert.True(color.IsKnownColor);
         }
 
         [FactWithAutomaticDisplayName]
@@ -133,6 +148,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(255, red.R);
             Assert.Equal(0, red.G);
             Assert.Equal(0, red.B);
+            Assert.False(red.IsKnownColor);
 
             drawingColor = System.Drawing.Color.FromArgb(255, 0, 255, 0);
             Color green = drawingColor;
@@ -140,6 +156,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(0, green.R);
             Assert.Equal(255, green.G);
             Assert.Equal(0, green.B);
+            Assert.False(green.IsKnownColor);
 
             drawingColor = System.Drawing.Color.FromArgb(0, 0, 255);
             Color blue = drawingColor;
@@ -147,6 +164,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(0, blue.R);
             Assert.Equal(0, blue.G);
             Assert.Equal(255, blue.B);
+            Assert.False(blue.IsKnownColor);
 
             int iColorCode = Convert.ToInt32("1e81b0", 16);
             drawingColor = System.Drawing.Color.FromArgb(iColorCode);
@@ -155,6 +173,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(30, color.R);
             Assert.Equal(129, color.G);
             Assert.Equal(176, color.B);
+            Assert.False(color.IsKnownColor);
         }
 
         [FactWithAutomaticDisplayName]
