@@ -47,15 +47,15 @@ For general support and technical inquiries, please email us at: support@ironsof
 		<dependencies>
 			<group targetFramework="netstandard2.0">
 				<dependency id="IronSoftware.Drawing.Abstractions" version="2025.4.2" />
-				<dependency id="SixLabors.ImageSharp" version="2.1.10" />
+				<dependency id="SixLabors.ImageSharp" version="2.1.11" />
 				<dependency id="SixLabors.ImageSharp.Drawing" version="1.0.0" />
 				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
 				<dependency id="System.Memory" version="4.5.5" />
 			</group>
 			<group targetFramework="net60">
 				<dependency id="IronSoftware.Drawing.Abstractions" version="2025.4.2" />
-				<dependency id="SixLabors.ImageSharp" version="3.1.8" />
-				<dependency id="SixLabors.ImageSharp.Drawing" version="2.1.6" />
+				<dependency id="SixLabors.ImageSharp" version="3.1.11" />
+				<dependency id="SixLabors.ImageSharp.Drawing" version="2.1.7" />
 				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
 				<dependency id="System.Memory" version="4.5.5" />
 			</group>
