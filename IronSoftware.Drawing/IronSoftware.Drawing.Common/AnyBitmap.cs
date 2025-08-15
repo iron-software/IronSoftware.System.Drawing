@@ -2549,10 +2549,12 @@ namespace IronSoftware.Drawing
                 {
                     return;
                 }
-
-                foreach (var x in GetInternalImages() ?? [])
+                if (IsImageLoaded())
                 {
-                    x.Dispose();
+                    foreach (var x in GetInternalImages() ?? [])
+                    {
+                        x.Dispose();
+                    }
                 }
                 _lazyImage = null;
                 Binary = null;
