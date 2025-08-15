@@ -15,13 +15,16 @@ using SixLabors.ImageSharp.Processing;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace IronSoftware.Drawing
@@ -48,33 +51,100 @@ namespace IronSoftware.Drawing
     {
         private bool _disposed = false;
 
-        private Image Image { get; set; }
-        private byte[] Binary { get; set; }
-        private IImageFormat Format { get; set; }
+        /// <summary>
+        /// We use Lazy because in some case we can skip Image.Load (which use a lot of memory). 
+        /// e.g. open jpg file and save it to jpg file without changing anything so we don't need to load the image.
+        /// </summary>
+        private Lazy<IReadOnlyList<Image>> _lazyImage;
+
+        private IReadOnlyList<Image> GetInternalImages()
+        {
+            return _lazyImage?.Value ?? throw new InvalidOperationException("No image data available");
+        }
+
+        private Image GetFirstInternalImage()
+        {
+            return (_lazyImage?.Value?[0]) ?? throw new InvalidOperationException("No image data available");
+        }
+
+        private void ForceLoadLazyImage()
+        {
+            var _ = _lazyImage?.Value;
+        }
+
+        private readonly object _binaryLock = new object();
+        private byte[] _binary;
+
+        /// <summary>
+        /// This value save the original bytes, we need to update it each time that Image object (inside _lazyImage) is changed <see cref="IsDirty"/>
+        /// </summary>
+        private byte[] Binary
+        {
+            get
+            {
+
+                if (_binary == null)
+                {
+                    //In case like <see cref="AnyBitmap(Image)"/> Binary will be assign once the image is loaded
+                    ForceLoadLazyImage(); //force load but _binary can still be null depended on how _lazyImage was loaded              
+                }
+
+                if (_binary == null || IsDirty)
+                {
+                    lock (_binaryLock)
+                    {
+                        if (_binary == null || IsDirty)
+                        {
+                            //Which mean we need to update _binary to sync with the image
+                            using var stream = new MemoryStream();
+                            IImageEncoder enc = GetDefaultImageExportEncoder();
+
+                            GetFirstInternalImage().Save(stream, enc);
+                            _binary = stream.ToArray();
+                            IsDirty = false;
+                        }
+                    }  
+                }
+
+                return _binary;
+            }
+            set
+            {
+                _binary = value;
+            }
+        }
+
+        private int _isDirty;
+
+        /// <summary>
+        /// If IsDirty = true means we need to update Binary. Since  Image object (inside _lazyImage) is changed
+        /// </summary>
+        private bool IsDirty
+        {
+            // use Interlocked to make sure that it always updated and thread safe.
+            get => Thread.VolatileRead(ref _isDirty) == 1;
+            set => Interlocked.Exchange(ref _isDirty, value ? 1 : 0);
+        }
+
+        private IImageFormat Format => Image.DetectFormat(Binary);
         private TiffCompression TiffCompression { get; set; } = TiffCompression.Lzw;
         private bool PreserveOriginalFormat { get; set; } = true;
+
+        //cache since Image.Width (ImageSharp) is slow
+        private int? _width = null;
 
         /// <summary>
         /// Width of the image.
         /// </summary>
-        public int Width
-        {
-            get
-            {
-                return Image.Width;
-            }
-        }
+        public int Width => _width ??= GetFirstInternalImage().Width;
+
+        //cache since Image.Height (ImageSharp) is slow
+        private int? _height = null;
 
         /// <summary>
         /// Height of the image.
         /// </summary>
-        public int Height
-        {
-            get
-            {
-                return Image.Height;
-            }
-        }
+        public int Height => _height ??= GetFirstInternalImage().Height;
 
         /// <summary>
         /// Number of raw image bytes stored
@@ -153,14 +223,8 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         public AnyBitmap Clone(Rectangle rectangle)
         {
-            using Image image = Image.Clone(img => img.Crop(rectangle));
-            using var memoryStream = new MemoryStream();
-            image.Save(memoryStream, new BmpEncoder()
-            {
-                BitsPerPixel = BmpBitsPerPixel.Pixel32,
-                SupportTransparency = true
-            });
-            return new AnyBitmap(memoryStream.ToArray());
+            var cloned = GetInternalImages().Select(img => img.Clone(x => x.Crop(rectangle)));
+            return new AnyBitmap(Binary, cloned);
         }
 
         /// <summary>
@@ -273,46 +337,41 @@ namespace IronSoftware.Drawing
             ImageFormat format = ImageFormat.Default,
             int lossy = 100)
         {
-            if (format is ImageFormat.Default or ImageFormat.RawFormat)
-            {
-                var writer = new BinaryWriter(stream);
-                writer.Write(Binary);
-                return;
-            }
 
             if (lossy is < 0 or > 100)
             {
                 lossy = 100;
             }
 
+            //this Check if _lazyImage is not loaded which mean we didn't touch anything and the output format is the same then we should just return the original data
+
+            var isSameFormat = (format is ImageFormat.Default or ImageFormat.RawFormat) || (GetImageFormat() == format);
+            var isCompressNeeded = (format is ImageFormat.Default or ImageFormat.Webp or ImageFormat.Jpeg) && lossy != 100;
+
+            if (!IsDirty && isSameFormat && !isCompressNeeded)
+            {
+                var writer = new BinaryWriter(stream);
+                writer.Write(Binary);
+                return;
+            }
+
             try
             {
-                IImageEncoder enc = format switch
+                IImageEncoder enc = GetDefaultImageExportEncoder(format, lossy);
+                if (enc is TiffEncoder)
                 {
-                    ImageFormat.Jpeg => new JpegEncoder()
-                    {
-                        Quality = lossy,
-#if NET6_0_OR_GREATER
-                        ColorType = JpegEncodingColor.Rgb
-#else
-                        ColorType = JpegColorType.Rgb
-#endif
-                    },
-                    ImageFormat.Gif => new GifEncoder(),
-                    ImageFormat.Png => new PngEncoder(),
-                    ImageFormat.Webp => new WebpEncoder() { Quality = lossy },
-                    ImageFormat.Tiff => new TiffEncoder()
-                    {
-                        Compression = TiffCompression
-                    },
-                    _ => new BmpEncoder()
-                    {
-                        BitsPerPixel = BmpBitsPerPixel.Pixel32,
-                        SupportTransparency = true
-                    },
-                };
+                    InternalSaveAsMultiPageTiff(_lazyImage?.Value, stream);
+                }
+                else if (enc is GifEncoder)
+                {
+                    InternalSaveAsMultiPageGif(_lazyImage?.Value, stream);
 
-                Image.Save(stream, enc);
+                }
+                else
+                {
+                    GetFirstInternalImage().Save(stream, enc);
+                }
+
             }
             catch (DllNotFoundException e)
             {
@@ -500,7 +559,7 @@ namespace IronSoftware.Drawing
         /// <summary>
         /// Create a new Bitmap from a <see cref="Stream"/> (bytes).
         /// </summary>
-        /// <param name="stream">A <see cref="Stream"/> of image data in any common format.</param>
+        /// <param name="stream">A <see cref="Stream"/> of image data in any common format.
         /// Default is true. Set to false to load as Rgba32.</param>
         /// <seealso cref="FromStream(Stream, bool)"/>
         /// <seealso cref="AnyBitmap"/>
@@ -716,8 +775,68 @@ namespace IronSoftware.Drawing
         /// <param name="backgroundColor">Background color of new AnyBitmap</param>
         public AnyBitmap(int width, int height, Color backgroundColor = null)
         {
-            CreateNewImageInstance(width, height, backgroundColor);
+            _lazyImage = new Lazy<IReadOnlyList<Image>>(() =>
+            {
+                var image = new Image<Rgba32>(width, height);
+                if (backgroundColor != null)
+                {
+                    image.Mutate(context => context.Fill(backgroundColor));
+                }
+                return [image];
+            });
+            ForceLoadLazyImage();
         }
+
+        /// <summary>
+        /// Construct an AnyBitmap object from a buffer of RGB pixel data.
+        /// </summary>
+        /// <param name="buffer">An array of bytes representing the RGB pixel data. This should contain 3 bytes (one each for red, green, and blue) for each pixel in the image.</param>
+        /// <param name="width">The width of the image, in pixels.</param>
+        /// <param name="height">The height of the image, in pixels.</param>
+        /// <returns>An AnyBitmap object that represents the image defined by the provided pixel data, width, and height.</returns>
+        internal AnyBitmap(byte[] buffer, int width, int height)
+        {
+            _lazyImage = new Lazy<IReadOnlyList<Image>>(() =>
+            {
+                var image = Image.LoadPixelData<Rgb24>(buffer, width, height);
+                return [image];
+            });
+        }
+
+        /// <summary>
+        /// Note: This only use for Casting It won't create new object Image
+        /// </summary>
+        /// <param name="image"></param>
+        internal AnyBitmap(Image image) : this([image])
+        {
+        }
+
+        /// <summary>
+        /// Note: This only use for Casting It won't create new object Image
+        /// </summary>
+        /// <param name="images"></param>
+        internal AnyBitmap(IEnumerable<Image> images)
+        {
+            _lazyImage = new Lazy<IReadOnlyList<Image>>(() =>
+            {
+                return [.. images];
+            });
+        }
+
+        /// <summary>
+        /// Fastest AnyBitmap ctor
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <param name="images"></param>
+        internal AnyBitmap(byte[] bytes, IEnumerable<Image> images)
+        {
+            Binary = bytes;
+            _lazyImage = new Lazy<IReadOnlyList<Image>>(() =>
+            {
+                return [.. images];
+            });
+        }
+
 
         /// <summary>
         /// Create a new Bitmap from a file.
@@ -855,29 +974,21 @@ namespace IronSoftware.Drawing
         /// <returns>An AnyBitmap object that represents the image defined by the provided pixel data, width, and height.</returns>
         public static AnyBitmap LoadAnyBitmapFromRGBBuffer(byte[] buffer, int width, int height)
         {
-            using var memoryStream = new MemoryStream();
-            using var image = Image.LoadPixelData<Rgb24>(buffer, width, height);
-            image.Save(memoryStream, new BmpEncoder()
-            {
-                BitsPerPixel = BmpBitsPerPixel.Pixel24
-            });
-            return new AnyBitmap(memoryStream.ToArray());
+            return new AnyBitmap(buffer, width, height);
         }
 
+        //cache
+        private int? _bitsPerPixel = null;
         /// <summary>
         /// Gets colors depth, in number of bits per pixel.
         /// <br/><para><b>Further Documentation:</b><br/>
         /// <a href="https://ironsoftware.com/open-source/csharp/drawing/examples/get-color-depth/">
         /// Code Example</a></para>
         /// </summary>
-        public int BitsPerPixel
-        {
-            get
-            {
-                return Image.PixelType.BitsPerPixel;
-            }
-        }
+        public int BitsPerPixel => _bitsPerPixel ??= GetFirstInternalImage().PixelType.BitsPerPixel;
 
+        //cache
+        private int? _frameCount = null;
         /// <summary>
         /// Returns the number of frames in our loaded Image.  Each “frame” is
         /// a page of an image such as  Tiff or Gif.  All other image formats 
@@ -891,12 +1002,17 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                return Image.Frames.Count;
+                if (!_frameCount.HasValue)
+                {
+                    var images = GetInternalImages();
+                    _frameCount = images.Count == 1 ? images[0].Frames.Count : images.Count;
+                }
+                return _frameCount.Value;
             }
         }
 
         /// <summary>
-        /// Returns all of the cloned frames in our loaded Image. Each "frame" 
+        /// Returns all of the frames in our loaded Image. Each "frame" 
         /// is a page of an image such as Tiff or Gif. All other image formats 
         /// return an IEnumerable of length 1.
         /// <br/><para><b>Further Documentation:</b><br/>
@@ -909,20 +1025,14 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                if (FrameCount > 1)
+                var images = GetInternalImages();
+                if (images.Count == 1)
                 {
-                    List<AnyBitmap> images = new();
-
-                    for (int currFrameIndex = 0; currFrameIndex < FrameCount; currFrameIndex++)
-                    {
-                        images.Add(Image.Frames.CloneFrame(currFrameIndex));
-                    }
-
-                    return images;
+                    return ImageFrameCollectionToImages(images[0].Frames).Select(x => (AnyBitmap)x);
                 }
                 else
                 {
-                    return new List<AnyBitmap>() { Clone() };
+                    return images.Select(x => (AnyBitmap)x);
                 }
             }
         }
@@ -939,10 +1049,8 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         public static AnyBitmap CreateMultiFrameTiff(IEnumerable<string> imagePaths)
         {
-            using MemoryStream stream =
-                CreateMultiFrameImage(CreateAnyBitmaps(imagePaths))
-                ?? throw new NotSupportedException("Image could not be loaded. File format is not supported.");
-            _ = stream.Seek(0, SeekOrigin.Begin);
+            using var stream = new MemoryStream();
+            InternalSaveAsMultiPageTiff(imagePaths.Select(Image.Load), stream);
             return FromStream(stream);
         }
 
@@ -959,10 +1067,8 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         public static AnyBitmap CreateMultiFrameTiff(IEnumerable<AnyBitmap> images)
         {
-            using MemoryStream stream =
-                CreateMultiFrameImage(images)
-                ?? throw new NotSupportedException("Image could not be loaded. File format is not supported.");
-            _ = stream.Seek(0, SeekOrigin.Begin);
+            using var stream = new MemoryStream();
+            InternalSaveAsMultiPageTiff(images.Select(x => (Image)x), stream);
             return FromStream(stream);
         }
 
@@ -979,10 +1085,8 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         public static AnyBitmap CreateMultiFrameGif(IEnumerable<string> imagePaths)
         {
-            using MemoryStream stream =
-                CreateMultiFrameImage(CreateAnyBitmaps(imagePaths), ImageFormat.Gif)
-                ?? throw new NotSupportedException("Image could not be loaded. File format is not supported.");
-            _ = stream.Seek(0, SeekOrigin.Begin);
+            using var stream = new MemoryStream();
+            InternalSaveAsMultiPageGif(imagePaths.Select(Image.Load), stream);
             return FromStream(stream);
         }
 
@@ -999,10 +1103,8 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         public static AnyBitmap CreateMultiFrameGif(IEnumerable<AnyBitmap> images)
         {
-            using MemoryStream stream =
-                CreateMultiFrameImage(images, ImageFormat.Gif)
-                ?? throw new NotSupportedException("Image could not be loaded. File format is not supported.");
-            _ = stream.Seek(0, SeekOrigin.Begin);
+            using var stream = new MemoryStream();
+            InternalSaveAsMultiPageGif(images.Select(x => (Image)x), stream);
             return FromStream(stream);
         }
 
@@ -1013,37 +1115,81 @@ namespace IronSoftware.Drawing
         /// <exception cref="NotSupportedException">Thrown when the image's bit depth is not 32 bpp.</exception>
         public byte[] ExtractAlphaData()
         {
-            if (BitsPerPixel == 32)
+
+            var alpha = new byte[Width * Height];
+
+            switch (GetFirstInternalImage())
             {
-                var alpha = new byte[Image.Width * Image.Height];
-                int alphaIndex = 0;
-                using var rgbaImage = Image is Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image
-                    ? image
-                    : Image.CloneAs<SixLabors.ImageSharp.PixelFormats.Rgba32>();
-                rgbaImage.ProcessPixelRows(accessor =>
-                {
-                    for (int y = 0; y < accessor.Height; y++)
+                case Image<Rgba32> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
                     {
-                        // Get the row as a span of Rgba32.
-                        Span<Rgba32> pixelRow = accessor.GetRowSpan(y);
-                        // Interpret the row as a span of bytes.
-                        Span<byte> rowBytes = MemoryMarshal.AsBytes(pixelRow);
-
-                        // Each pixel is 4 bytes: R, G, B, A.
-                        // The alpha channel is the fourth byte (index 3, 7, 11, ...).
-                        for (int i = 3; i < rowBytes.Length; i += 4)
+                        for (int y = 0; y < accessor.Height; y++)
                         {
-                            alpha[alphaIndex++] = rowBytes[i];
+                            Span<Rgba32> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < accessor.Width; x++)
+                            {
+                                alpha[y * accessor.Width + x] = pixelRow[x].A;
+                            }
                         }
-                    }
-                });
+                    });
+                    break;
+                case Image<Abgr32> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Abgr32> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < accessor.Width; x++)
+                            {
+                                alpha[y * accessor.Width + x] = pixelRow[x].A;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Argb32> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Argb32> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < accessor.Width; x++)
+                            {
+                                alpha[y * accessor.Width + x] = pixelRow[x].A;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Bgra32> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Bgra32> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < accessor.Width; x++)
+                            {
+                                alpha[y * accessor.Width + x] = pixelRow[x].A;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Rgba64> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Rgba64> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < accessor.Width; x++)
+                            {
+                                alpha[y * accessor.Width + x] = pixelRow[x].ToRgba32().A;
+                            }
+                        }
+                    });
+                    break;
+                default:
+                    throw new NotSupportedException($"Extracting alpha data is not supported for {BitsPerPixel} bpp images.");
+            }
 
-                return alpha.ToArray();
-            }
-            else
-            {
-                throw new NotSupportedException($"Extracting alpha data is not supported for {BitsPerPixel} bpp images.");
-            }
+            return alpha.ToArray();
         }
 
         /// <summary>
@@ -1108,17 +1254,11 @@ namespace IronSoftware.Drawing
                 _ => throw new NotImplementedException()
             };
 
-            using var memoryStream = new MemoryStream();
-            using var image = Image.Load(bitmap.ExportBytes());
+            Image image = Image.Load(bitmap.Binary);
 
             image.Mutate(x => x.RotateFlip(rotateModeImgSharp, flipModeImgSharp));
-            image.Save(memoryStream, new BmpEncoder()
-            {
-                BitsPerPixel = BmpBitsPerPixel.Pixel32,
-                SupportTransparency = true
-            });
 
-            return new AnyBitmap(memoryStream.ToArray());
+            return new AnyBitmap(image);
         }
 
         /// <summary>
@@ -1148,18 +1288,14 @@ namespace IronSoftware.Drawing
             Rectangle Rectangle,
             Color color)
         {
-            using var memoryStream = new MemoryStream();
-            using var image = Image.Load(bitmap.ExportBytes());
+
+            //this casting will crate new object
+            Image image = Image.Load(bitmap.Binary);
             Rectangle rectangle = Rectangle;
             var brush = new SolidBrush(color);
             image.Mutate(ctx => ctx.Fill(brush, rectangle));
-            image.Save(memoryStream, new BmpEncoder()
-            {
-                BitsPerPixel = BmpBitsPerPixel.Pixel32,
-                SupportTransparency = true
-            });
-
-            return new AnyBitmap(memoryStream.ToArray());
+       
+            return new AnyBitmap(image);
         }
 
         /// <summary>
@@ -1231,7 +1367,7 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                return Image?.Metadata.HorizontalResolution ?? null;
+                return GetFirstInternalImage().Metadata.HorizontalResolution;
             }
         }
 
@@ -1243,7 +1379,7 @@ namespace IronSoftware.Drawing
         {
             get
             {
-                return Image?.Metadata.VerticalResolution ?? null;
+                return GetFirstInternalImage().Metadata.VerticalResolution;
             }
         }
 
@@ -1274,8 +1410,8 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Sets the <see cref="Color"/> of the specified pixel in this 
-        /// <see cref="AnyBitmap"/>
+        /// Sets the <see cref="Color"/> of the specified pixel in this <see cref="AnyBitmap"/>
+        /// <para>Performs an operation that modifies the current object. (mutable)</para>
         /// <para>Set in Rgb24 color format.</para>
         /// </summary>
         /// <param name="x">The x-coordinate of the pixel to retrieve.</param>
@@ -1295,7 +1431,6 @@ namespace IronSoftware.Drawing
                 throw new ArgumentOutOfRangeException(nameof(y),
                     "y is less than 0, or greater than or equal to Height.");
             }
-
             SetPixelColor(x, y, color);
         }
 
@@ -1309,31 +1444,375 @@ namespace IronSoftware.Drawing
         /// </remarks>
         public byte[] GetRGBBuffer()
         {
-            using Image<Rgb24> image = Image.CloneAs<Rgb24>();
-
+            var image = GetFirstInternalImage();
             int width = image.Width;
             int height = image.Height;
-
             byte[] rgbBuffer = new byte[width * height * 3]; // 3 bytes per pixel (RGB)
-
-            image.ProcessPixelRows(accessor =>
+            switch (image)
             {
-                for (int y = 0; y < accessor.Height; y++)
-                {
-                    Span<Rgb24> pixelRow = accessor.GetRowSpan(y);
-
-                    for (int x = 0; x < accessor.Width; x++)
+                case Image<Rgba32> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
                     {
-                        ref Rgb24 pixel = ref pixelRow[x];
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Rgba32> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                Rgba32 pixel = pixelRow[x];
+                                int index = (y * width + x) * 3;
 
-                        int bufferIndex = (y * width + x) * 3;
-                        rgbBuffer[bufferIndex] = pixel.R;
-                        rgbBuffer[bufferIndex + 1] = pixel.G;
-                        rgbBuffer[bufferIndex + 2] = pixel.B;
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Rgb24> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Rgb24> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                Rgb24 pixel = pixelRow[x];
+                                int index = (y * width + x) * 3;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Abgr32> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Abgr32> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                Abgr32 pixel = pixelRow[x];
+                                int index = (y * width + x) * 3;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Argb32> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Argb32> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                Argb32 pixel = pixelRow[x];
+                                int index = (y * width + x) * 3;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Bgr24> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Bgr24> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                Bgr24 pixel = pixelRow[x];
+                                int index = (y * width + x) * 3;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Bgra32> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Bgra32> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                Bgra32 pixel = pixelRow[x];
+                                int index = (y * width + x) * 3;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Rgb48> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Rgb48> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                //required casting in 16bit color
+                                Color pixel = (Color)pixelRow[x];
+                                int index = (y * width + x) * 3;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Rgba64> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Rgba64> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                //required casting in 16bit color
+                                Color pixel = (Color)pixelRow[x];
+                                int index = (y * width + x) * 3;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                            }
+                        }
+                    });
+                    break;
+                default:
+                    var clonedImage = image.CloneAs<Rgb24>();
+                    clonedImage.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Rgb24> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                Rgb24 pixel = pixelRow[x];
+                                int index = (y * width + x) * 3;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                            }
+                        }
+                    });
+                    clonedImage.Dispose();
+                    break;
+            }
+            return rgbBuffer;
+        }
+
+        /// <summary>
+        /// Retrieves the RGBA buffer from the image at the specified path.
+        /// </summary>
+        /// <returns>An array of bytes representing the RGBA buffer of the image.</returns>
+        /// <remarks>
+        /// Each pixel is represented by four bytes in the order: red, green, blue, alpha.
+        /// The pixels are read from the image row by row, from top to bottom and left to right within each row.
+        /// </remarks>
+        public byte[] GetRGBABuffer()
+        {
+            var image = GetFirstInternalImage();
+            int width = image.Width;
+            int height = image.Height;
+            byte[] rgbBuffer = new byte[width * height * 4]; // 3 bytes per pixel (RGB)
+            switch (image)
+            {
+                case Image<Rgba32> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Rgba32> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                Rgba32 pixel = pixelRow[x];
+                                int index = (y * width + x) * 4;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                                rgbBuffer[index + 3] = pixel.A;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Rgb24> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Rgb24> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                Rgb24 pixel = pixelRow[x];
+                                int index = (y * width + x) * 4;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                                rgbBuffer[index + 3] = byte.MaxValue;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Abgr32> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Abgr32> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                Abgr32 pixel = pixelRow[x];
+                                int index = (y * width + x) * 4;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                                rgbBuffer[index + 3] = pixel.A;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Argb32> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Argb32> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                Argb32 pixel = pixelRow[x];
+                                int index = (y * width + x) * 4;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                                rgbBuffer[index + 3] = pixel.A;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Bgr24> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Bgr24> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                Bgr24 pixel = pixelRow[x];
+                                int index = (y * width + x) * 4;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                                rgbBuffer[index + 3] = byte.MaxValue;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Bgra32> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Bgra32> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                Bgra32 pixel = pixelRow[x];
+                                int index = (y * width + x) * 4;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                                rgbBuffer[index + 3] = pixel.A;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Rgb48> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Rgb48> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                //required casting in 16bit color
+                                Color pixel = (Color)pixelRow[x];
+                                int index = (y * width + x) * 4;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                                rgbBuffer[index + 3] = pixel.A;
+                            }
+                        }
+                    });
+                    break;
+                case Image<Rgba64> imageAsFormat:
+                    imageAsFormat.ProcessPixelRows(accessor =>
+                    {
+                        for (int y = 0; y < accessor.Height; y++)
+                        {
+                            Span<Rgba64> pixelRow = accessor.GetRowSpan(y);
+                            for (int x = 0; x < width; x++)
+                            {
+                                //required casting in 16bit color
+                                Color pixel = (Color)pixelRow[x];
+                                int index = (y * width + x) * 4;
+
+                                rgbBuffer[index] = pixel.R;
+                                rgbBuffer[index + 1] = pixel.G;
+                                rgbBuffer[index + 2] = pixel.B;
+                                rgbBuffer[index + 3] = pixel.A;
+                            }
+                        }
+                    });
+                    break;
+                default:
+                    using (var clonedImage = image.CloneAs<Rgba32>())
+                    {
+                        clonedImage.ProcessPixelRows(accessor =>
+                        {
+                            for (int y = 0; y < accessor.Height; y++)
+                            {
+                                Span<Rgba32> pixelRow = accessor.GetRowSpan(y);
+                                for (int x = 0; x < width; x++)
+                                {
+                                    Rgba32 pixel = pixelRow[x];
+                                    int index = (y * width + x) * 4;
+
+                                    rgbBuffer[index] = pixel.R;
+                                    rgbBuffer[index + 1] = pixel.G;
+                                    rgbBuffer[index + 2] = pixel.B;
+                                    rgbBuffer[index + 3] = pixel.A;
+                                }
+                            }
+                        });
                     }
-                }
-            });
-
+                    break;
+            }
             return rgbBuffer;
         }
 
@@ -1355,12 +1834,7 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                using var memoryStream = new MemoryStream();
-                image.Save(memoryStream, new BmpEncoder()
-                {
-                    BitsPerPixel = BmpBitsPerPixel.Pixel24
-                });
-                return new AnyBitmap(memoryStream.ToArray());
+                return new AnyBitmap(image);
 
             }
             catch (DllNotFoundException e)
@@ -1372,6 +1846,132 @@ namespace IronSoftware.Drawing
             {
                 throw new NotSupportedException(
                     "Error while casting AnyBitmap from SixLabors.ImageSharp.Image", e);
+            }
+        }
+
+        /// <summary>
+        /// Since we store ImageSharp object internal AnyBitmap (lazy) so this casting will return the same ImageSharp object if it loaded.
+        /// But if it is gif/tiff we need to make resize all frame to have the same size before we load to ImageSharp object;
+        /// </summary>
+        private static Image CastToImageSharp(AnyBitmap bitmap)
+        {
+            try
+            {
+                if (!bitmap.IsImageLoaded())
+                {
+                    var format = bitmap.Format;
+                    if (format is not TiffFormat && format is not GifFormat)
+                    {
+                        return Image.Load(bitmap.Binary);
+                    }
+                }
+
+                //if it is loaded or gif/tiff
+                var images = bitmap.GetInternalImages();
+                if (images.Count == 1)
+                {
+                    //not gif/tiff
+                    return images[0];
+                }
+                else
+                {
+                    //for gif/tiff we need to resize all frame
+                    //Tiff can have different frame size but ImageSharp does not support
+                    var resultImage = images[0].Clone((_) => { });
+
+                    foreach (var frame in images.Skip(1))
+                    {
+                        var newFrame = frame.Clone(x =>
+                        {
+                            x.Resize(new ResizeOptions
+                            {
+                                Size = new Size(resultImage.Width, resultImage.Height),
+                                Mode = ResizeMode.BoxPad, // Pad to fit the target dimensions
+                                PadColor = Color.Transparent, // Use transparent padding
+                                Position = AnchorPositionMode.Center // Center the image within the frame
+                            });
+                        });
+
+                        resultImage.Frames.AddFrame(newFrame.Frames.RootFrame);
+                    }
+
+                    return resultImage;
+                }
+            }
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException(
+                    "Please install SixLabors.ImageSharp from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new NotSupportedException(
+                    "Error while casting AnyBitmap to SixLabors.ImageSharp.Image", e);
+            }
+        }
+
+        /// <summary>
+        /// Since we store ImageSharp object internal AnyBitmap (lazy) so this casting will return the same ImageSharp object if it loaded.
+        /// But if it is gif/tiff we need to make resize all frame to have the same size before we load to ImageSharp object;
+        /// </summary>
+        private static Image<T> CastToImageSharp<T>(AnyBitmap bitmap) where T :unmanaged, SixLabors.ImageSharp.PixelFormats.IPixel<T>
+        {
+            try
+            {
+                if (!bitmap.IsImageLoaded())
+                {
+                    var format = bitmap.Format;
+                    if (format is not TiffFormat && format is not GifFormat)
+                    {
+                        return Image.Load<T>(bitmap.Binary);
+                    }
+                   
+                }
+              
+                var images = bitmap.GetInternalImages();
+                if (images.Count == 1)
+                {
+                    if (images[0] is Image<T> correctType)
+                    {
+                        return correctType;
+                    }
+                    else
+                    {
+                        return images[0].CloneAs<T>();
+                    }
+                }
+                else
+                {
+                    var resultImage = images[0].CloneAs<T>();
+
+                    //for gif/tiff we need to resize all frame
+                    //Tiff can have different frame size but ImageSharp does not support
+                    foreach (var frame in images.Skip(1))
+                    {
+                        var newFrame = frame.CloneAs<T>();
+
+                        newFrame.Mutate(x => x.Resize(new ResizeOptions
+                        {
+                            Size = new Size(resultImage.Width, resultImage.Height),
+                            Mode = ResizeMode.BoxPad, // Pad to fit the target dimensions
+                            PadColor = Color.Transparent, // Use transparent padding
+                            Position = AnchorPositionMode.Center // Center the image within the frame
+                        }));
+                        resultImage.Frames.AddFrame(newFrame.Frames.RootFrame);
+                    }
+
+                    return resultImage;
+                }
+            }
+            catch (DllNotFoundException e)
+            {
+                throw new DllNotFoundException(
+                    "Please install SixLabors.ImageSharp from NuGet.", e);
+            }
+            catch (Exception e)
+            {
+                throw new NotSupportedException(
+                    "Error while casting AnyBitmap to SixLabors.ImageSharp.Image", e);
             }
         }
 
@@ -1389,20 +1989,7 @@ namespace IronSoftware.Drawing
         /// a SixLabors.ImageSharp.Image.</param>
         public static implicit operator Image<Rgb24>(AnyBitmap bitmap)
         {
-            try
-            {
-                return Image.Load<Rgb24>(bitmap.Binary);
-            }
-            catch (DllNotFoundException e)
-            {
-                throw new DllNotFoundException(
-                    "Please install SixLabors.ImageSharp from NuGet.", e);
-            }
-            catch (Exception e)
-            {
-                throw new NotSupportedException(
-                    "Error while casting AnyBitmap to SixLabors.ImageSharp.Image", e);
-            }
+            return CastToImageSharp<Rgb24>(bitmap);
         }
 
         /// <summary>
@@ -1421,13 +2008,7 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                using var memoryStream = new MemoryStream();
-                image.Save(memoryStream, new BmpEncoder()
-                {
-                    BitsPerPixel = BmpBitsPerPixel.Pixel32,
-                    SupportTransparency = true
-                });
-                return new AnyBitmap(memoryStream.ToArray());
+                return new AnyBitmap(image);
             }
             catch (DllNotFoundException e)
             {
@@ -1457,7 +2038,7 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                return Image.Load<Rgba32>(bitmap.Binary);
+                return CastToImageSharp<Rgba32>(bitmap);
             }
             catch (DllNotFoundException e)
             {
@@ -1487,13 +2068,7 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                using var memoryStream = new MemoryStream();
-                image.Save(memoryStream, new BmpEncoder()
-                {
-                    BitsPerPixel = BmpBitsPerPixel.Pixel32,
-                    SupportTransparency = true
-                });
-                return new AnyBitmap(memoryStream.ToArray());
+                return new AnyBitmap(image);
             }
             catch (DllNotFoundException e)
             {
@@ -1523,7 +2098,7 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                return Image.Load(bitmap.Binary);
+                return CastToImageSharp(bitmap);
             }
             catch (DllNotFoundException e)
             {
@@ -1825,7 +2400,7 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                return (System.Drawing.Bitmap)System.Drawing.Image.FromStream(new MemoryStream(bitmap.Binary));
+                return (System.Drawing.Bitmap)System.Drawing.Image.FromStream(bitmap.GetStream());
             }
             catch (DllNotFoundException e)
             {
@@ -1922,7 +2497,7 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                return System.Drawing.Image.FromStream(new MemoryStream(bitmap.Binary));
+                return System.Drawing.Image.FromStream(bitmap.GetStream());
             }
             catch (DllNotFoundException e)
             {
@@ -1943,214 +2518,7 @@ namespace IronSoftware.Drawing
                 throw new Exception(e.Message, e);
             }
         }
-        #endregion
 
-        #region Enum Classes
-
-        /// <summary>
-        /// Popular image formats which <see cref="AnyBitmap"/> can read and export.
-        /// </summary>
-        /// <seealso cref="ExportFile(string, ImageFormat, int)"/>
-        /// <seealso cref="ExportStream(Stream, ImageFormat, int)"/>
-        /// <seealso cref="ExportBytes(ImageFormat, int)"/>
-        public enum ImageFormat
-        {
-            /// <summary> The Bitmap image format.</summary>
-            Bmp = 0,
-
-            /// <summary> The Gif image format.</summary>
-            Gif = 1,
-
-            /// <summary> The Tiff image format.</summary>
-            Tiff = 2,
-
-            /// <summary> The Jpeg image format.</summary>
-            Jpeg = 3,
-
-            /// <summary> The PNG image format.</summary>
-            Png = 4,
-
-            /// <summary> The WBMP image format. Will default to BMP if not 
-            /// supported on the runtime platform.</summary>
-            Wbmp = 5,
-
-            /// <summary> The new WebP image format.</summary>
-            Webp = 6,
-
-            /// <summary> The Icon image format.</summary>
-            Icon = 7,
-
-            /// <summary> The Wmf image format.</summary>
-            Wmf = 8,
-
-            /// <summary> The Raw image format.</summary>
-            RawFormat = 9,
-
-            /// <summary> The existing raw image format.</summary>
-            Default = -1
-
-        }
-# pragma warning disable CS0618
-        /// <summary>
-        /// Converts the legacy <see cref="RotateFlipType"/> to <see cref="RotateMode"/> and <see cref="FlipMode"/>
-        /// </summary>
-        [Obsolete("RotateFlipType is legacy support from System.Drawing. " +
-            "Please use RotateMode and FlipMode instead.")]
-        internal static (RotateMode, FlipMode) ParseRotateFlipType(RotateFlipType rotateFlipType)
-        {
-            return rotateFlipType switch
-            {
-                RotateFlipType.RotateNoneFlipNone or RotateFlipType.Rotate180FlipXY => (RotateMode.None, FlipMode.None),
-                RotateFlipType.Rotate90FlipNone or RotateFlipType.Rotate270FlipXY => (RotateMode.Rotate90, FlipMode.None),
-                RotateFlipType.RotateNoneFlipXY or RotateFlipType.Rotate180FlipNone => (RotateMode.Rotate180, FlipMode.None),
-                RotateFlipType.Rotate90FlipXY or RotateFlipType.Rotate270FlipNone => (RotateMode.Rotate270, FlipMode.None),
-                RotateFlipType.RotateNoneFlipX or RotateFlipType.Rotate180FlipY => (RotateMode.None, FlipMode.Horizontal),
-                RotateFlipType.Rotate90FlipX or RotateFlipType.Rotate270FlipY => (RotateMode.Rotate90, FlipMode.Horizontal),
-                RotateFlipType.RotateNoneFlipY or RotateFlipType.Rotate180FlipX => (RotateMode.None, FlipMode.Vertical),
-                RotateFlipType.Rotate90FlipY or RotateFlipType.Rotate270FlipX => (RotateMode.Rotate90, FlipMode.Vertical),
-                _ => throw new ArgumentOutOfRangeException(nameof(rotateFlipType), rotateFlipType, null),
-            };
-        }
-# pragma warning restore CS0618
-
-        /// <summary>
-        /// Provides enumeration over how the image should be rotated.
-        /// </summary>
-        public enum RotateMode
-        {
-            /// <summary>
-            /// Do not rotate the image.
-            /// </summary>
-            None,
-
-            /// <summary>
-            /// Rotate the image by 90 degrees clockwise.
-            /// </summary>
-            Rotate90 = 90,
-
-            /// <summary>
-            /// Rotate the image by 180 degrees clockwise.
-            /// </summary>
-            Rotate180 = 180,
-
-            /// <summary>
-            /// Rotate the image by 270 degrees clockwise.
-            /// </summary>
-            Rotate270 = 270
-        }
-
-        /// <summary>
-        /// Provides enumeration over how a image should be flipped.
-        /// </summary>
-        public enum FlipMode
-        {
-            /// <summary>
-            /// Don't flip the image.
-            /// </summary>
-            None,
-
-            /// <summary>
-            /// Flip the image horizontally.
-            /// </summary>
-            Horizontal,
-
-            /// <summary>
-            /// Flip the image vertically.
-            /// </summary>
-            Vertical
-        }
-
-        /// <summary>
-        /// Specifies how much an image is rotated and the axis used to flip 
-        /// the image. This follows the legacy System.Drawing.RotateFlipType 
-        /// notation.
-        /// </summary>
-        [Obsolete("RotateFlipType is legacy support from System.Drawing. " +
-            "Please use RotateMode and FlipMode instead.")]
-        public enum RotateFlipType
-        {
-            /// <summary>
-            /// Specifies no clockwise rotation and no flipping.
-            /// </summary>
-            RotateNoneFlipNone,
-            /// <summary>
-            /// Specifies a 180-degree clockwise rotation followed by a 
-            /// horizontal and vertical flip.
-            /// </summary>
-            Rotate180FlipXY,
-
-            /// <summary>
-            /// Specifies a 90-degree clockwise rotation without flipping.
-            /// </summary>
-            Rotate90FlipNone,
-            /// <summary>
-            /// Specifies a 270-degree clockwise rotation followed by a 
-            /// horizontal and vertical flip.
-            /// </summary>
-            Rotate270FlipXY,
-
-            /// <summary>
-            /// Specifies no clockwise rotation followed by a horizontal and 
-            /// vertical flip.
-            /// </summary>
-            RotateNoneFlipXY,
-            /// <summary>
-            /// Specifies a 180-degree clockwise rotation without flipping.
-            /// </summary>
-            Rotate180FlipNone,
-
-            /// <summary>
-            /// Specifies a 90-degree clockwise rotation followed by a 
-            /// horizontal and vertical flip.
-            /// </summary>
-            Rotate90FlipXY,
-            /// <summary>
-            /// Specifies a 270-degree clockwise rotation without flipping.
-            /// </summary>
-            Rotate270FlipNone,
-
-            /// <summary>
-            /// Specifies no clockwise rotation followed by a horizontal flip.
-            /// </summary>
-            RotateNoneFlipX,
-            /// <summary>
-            /// Specifies a 180-degree clockwise rotation followed by a 
-            /// vertical flip.
-            /// </summary>
-            Rotate180FlipY,
-
-            /// <summary>
-            /// Specifies a 90-degree clockwise rotation followed by a 
-            /// horizontal flip.
-            /// </summary>
-            Rotate90FlipX,
-            /// <summary>
-            /// Specifies a 270-degree clockwise rotation followed by a 
-            /// vertical flip.
-            /// </summary>
-            Rotate270FlipY,
-
-            /// <summary>
-            /// Specifies no clockwise rotation followed by a vertical flip.
-            /// </summary>
-            RotateNoneFlipY,
-            /// <summary>
-            /// Specifies a 180-degree clockwise rotation followed by a 
-            /// horizontal flip.
-            /// </summary>
-            Rotate180FlipX,
-
-            /// <summary>
-            /// Specifies a 90-degree clockwise rotation followed by a 
-            /// vertical flip.
-            /// </summary>
-            Rotate90FlipY,
-            /// <summary>
-            /// Specifies a 270-degree clockwise rotation followed by a 
-            /// horizontal flip.
-            /// </summary>
-            Rotate270FlipX
-        }
         #endregion
 
         /// <summary>
@@ -2181,9 +2549,14 @@ namespace IronSoftware.Drawing
                 {
                     return;
                 }
-
-                Image?.Dispose();
-                Image = null;
+                if (IsImageLoaded())
+                {
+                    foreach (var x in GetInternalImages() ?? [])
+                    {
+                        x.Dispose();
+                    }
+                }
+                _lazyImage = null;
                 Binary = null;
                 _disposed = true;
             }
@@ -2191,93 +2564,76 @@ namespace IronSoftware.Drawing
 
         #region Private Method
 
-        private void CreateNewImageInstance(int width, int height, Color backgroundColor)
-        {
-            Image = new Image<Rgba32>(width, height);
-            if (backgroundColor != null)
-            {
-                Image.Mutate(context => context.Fill(backgroundColor));
-            }
-            using var stream = new MemoryStream();
-            Image.SaveAsBmp(stream);
-            Binary = stream.ToArray();
-        }
-        
-        private void LoadImage(ReadOnlySpan<byte> bytes, bool preserveOriginalFormat)
-        {
-            Format = Image.DetectFormat(bytes);
-            try
-            {
-                if (Format is TiffFormat)
-                    OpenTiffToImageSharp(bytes);
-                else
-                {
-                    Binary = bytes.ToArray();
-
-                    if (preserveOriginalFormat)
-                        Image = Image.Load(bytes);
-                    else
-                    {
-                        PreserveOriginalFormat = preserveOriginalFormat;
-                        Image = Image.Load<Rgba32>(bytes);
-
-                        // .png image pre-processing
-                        if (Format.Name == "PNG")
-                            Image.Mutate(img => img.BackgroundColor(SixLabors.ImageSharp.Color.White));
-                    }
-
-                    // Fix if the input image is auto-rotated; this issue is acknowledged by SixLabors.ImageSharp community
-                    // ref: https://github.com/SixLabors/ImageSharp/discussions/2685
-                    Image.Mutate(x => x.AutoOrient());
-
-                    var resolutionUnit = this.Image.Metadata.ResolutionUnits;
-                    var horizontal = this.Image.Metadata.HorizontalResolution;
-                    var vertical = this.Image.Metadata.VerticalResolution;
-
-                    // Check if image metadata is accurate already
-                    switch (resolutionUnit)
-                    {
-                        case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerMeter:
-                            // Convert metadata of the resolution unit to pixel per inch to match the conversion below of 1 meter = 37.3701 inches
-                            this.Image.Metadata.ResolutionUnits = SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerInch;
-                            this.Image.Metadata.HorizontalResolution = Math.Ceiling(horizontal / 39.3701);
-                            this.Image.Metadata.VerticalResolution = Math.Ceiling(vertical / 39.3701);
-                            break;
-                        case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerCentimeter:
-                            // Convert metadata of the resolution unit to pixel per inch to match the conversion below of 1 inch = 2.54 centimeters
-                            this.Image.Metadata.ResolutionUnits = SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerInch;
-                            this.Image.Metadata.HorizontalResolution = Math.Ceiling(horizontal * 2.54);
-                            this.Image.Metadata.VerticalResolution = Math.Ceiling(vertical * 2.54);
-                            break;
-                        default:
-                            // No changes required due to teh metadata are accurate already
-                            break;
-                    }
-                }
-            }
-            catch (DllNotFoundException e)
-            {
-                throw new DllNotFoundException(
-                    "Please install SixLabors.ImageSharp from NuGet.", e);
-            }
-            catch (Exception e)
-            {
-                throw new NotSupportedException(
-                    "Image could not be loaded. File format is not supported.", e);
-            }
-        }
-
         private void LoadImage(Stream stream, bool preserveOriginalFormat)
         {
-            byte[] buffer = new byte[16 * 1024];
-            using MemoryStream ms = new();
-            int read;
-            while ((read = stream.Read(buffer, 0, buffer.Length)) > 0)
+            // Optimization 1: If the stream is already a MemoryStream, we can get its
+            // underlying array directly, avoiding a full copy cycle.
+            if (stream is MemoryStream memoryStream)
             {
-                ms.Write(buffer, 0, read);
+                LoadImage(memoryStream.ToArray(), preserveOriginalFormat);
+                return;
             }
 
-            LoadImage(ms.ToArray(), preserveOriginalFormat);
+            // Optimization 2: If the stream can report its length (like a FileStream),
+            // we can create a MemoryStream with the exact capacity needed. This avoids
+            // multiple buffer re-allocations as the MemoryStream grows.
+            if (stream.CanSeek)
+            {
+                // Ensure we read from the beginning of the stream.
+                stream.Position = 0;
+                using (var ms = new MemoryStream((int)stream.Length))
+                {
+                    stream.CopyTo(ms, 16 * 1024);
+                    LoadImage(ms.ToArray(), preserveOriginalFormat);
+                    return;
+                }
+            }
+
+            // Fallback for non-seekable streams (e.g., a network stream).
+            // This is the most memory-intensive path, but necessary for this stream type.
+            // We use CopyTo for a cleaner implementation of the original logic.
+            using (var ms = new MemoryStream())
+            {
+                stream.CopyTo(ms, 16 * 1024);
+                LoadImage(ms.ToArray(), preserveOriginalFormat);
+            }
+
+
+        }
+
+        /// <summary>
+        /// Master LoadImage method
+        /// </summary>
+        /// <param name="span"></param>
+        /// <param name="preserveOriginalFormat"></param>
+        private void LoadImage(ReadOnlySpan<byte> span, bool preserveOriginalFormat)
+        {
+            Binary = span.ToArray();
+            if (Format is TiffFormat) 
+            {
+                if(GetTiffFrameCountFast() > 1)
+                {
+                    _lazyImage = OpenTiffToImageSharp();
+                }
+                else
+                {
+                    // ImageSharp can load some single frame tiff, if failed we try again with LibTiff
+                    _lazyImage = OpenImageToImageSharp(preserveOriginalFormat, tryWithLibTiff : true);
+                }
+              
+            }
+            else
+            {
+                _lazyImage = OpenImageToImageSharp(preserveOriginalFormat);
+            }
+        }
+
+        private IEnumerable<Image> ImageFrameCollectionToImages(ImageFrameCollection imageFrames)
+        {
+            for (int i = 0; i < imageFrames.Count; i++)
+            {
+                yield return imageFrames.CloneFrame(i);
+            }
         }
 
         private static AnyBitmap LoadSVGImage(string file, bool preserveOriginalFormat)
@@ -2448,112 +2804,172 @@ namespace IronSoftware.Drawing
             }
         }
 
-        private void OpenTiffToImageSharp(ReadOnlySpan<byte> bytes)
+        private int GetTiffFrameCountFast()
         {
             try
             {
-                int imageWidth = 0;
-                int imageHeight = 0;
-                double imageXResolution = 0;
-                double imageYResolution = 0;
-                List<Image> images = new();
+                using var tiffStream = new MemoryStream(Binary);
 
-                // create a memory stream out of them
-                using MemoryStream tiffStream = new(bytes.ToArray());
-
-                // Disable warning messages
+                // Disable error messages for fast check
                 Tiff.SetErrorHandler(new DisableErrorHandler());
 
-                // open a TIFF stored in the stream
-                using (Tiff tiff = Tiff.ClientOpen("in-memory", "r", tiffStream, new TiffStream()))
+                using var tiff = Tiff.ClientOpen("in-memory", "r", tiffStream, new TiffStream());
+                if (tiff == null) return 1; // Default to single frame if can't read
+
+                return tiff.NumberOfDirectories();
+            }
+            catch
+            {
+                return 1; // Default to single frame on any error
+            }
+        }
+
+        private Lazy<IReadOnlyList<Image>> OpenTiffToImageSharp()
+        {
+            return new Lazy<IReadOnlyList<Image>>(() =>
+            {
+                try
                 {
-                    SetTiffCompression(tiff);
+                    return InternalLoadTiff();
+                }
+                catch (DllNotFoundException e)
+                {
+                    throw new DllNotFoundException("Please install BitMiracle.LibTiff.NET from NuGet.", e);
+                }
+                catch (Exception e)
+                {
+                    throw new NotSupportedException("Error while reading TIFF image format.", e);
+                }
+            });
+        }
 
-                    short num = tiff.NumberOfDirectories();
-                    for (short i = 0; i < num; i++)
+        private IReadOnlyList<Image> InternalLoadTiff()
+        {
+            int imageWidth = 0;
+            int imageHeight = 0;
+            double imageXResolution = 0;
+            double imageYResolution = 0;
+            //IEnumerable<Image> images = new();
+
+            // create a memory stream out of them
+            using MemoryStream tiffStream = new(Binary);
+
+            // Disable warning messages
+            Tiff.SetErrorHandler(new DisableErrorHandler());
+            List<Image> images = new();
+            // open a TIFF stored in the stream
+            using (Tiff tiff = Tiff.ClientOpen("in-memory", "r", tiffStream, new TiffStream()))
+            {
+                SetTiffCompression(tiff);
+
+                short num = tiff.NumberOfDirectories();
+                for (short i = 0; i < num; i++)
+                {
+                    _ = tiff.SetDirectory(i);
+
+                    if (IsThumbnail(tiff))
                     {
-                        _ = tiff.SetDirectory(i);
-
-                        if (IsThumbnail(tiff))
-                        {
-                            continue;
-                        }
-
-                        var (width, height, horizontalResolution, verticalResolution) = SetWidthHeight(tiff, i, ref imageWidth, ref imageHeight, ref imageXResolution, ref imageYResolution);
-
-                        // Read the image into the memory buffer
-                        int[] raster = new int[height * width];
-                        if (!tiff.ReadRGBAImage(width, height, raster))
-                        {
-                            throw new NotSupportedException("Could not read image");
-                        }
-
-                        using Image<Rgba32> bmp = new(width, height);
-
-                        var bits = PrepareByteArray(bmp, raster, width, height);
-
-                        images.Add(Image.LoadPixelData<Rgba32>(bits, bmp.Width, bmp.Height));
-                        
-                        // Update the metadata for image resolutions
-                        images[0].Metadata.HorizontalResolution = horizontalResolution;
-                        images[0].Metadata.VerticalResolution = verticalResolution;
+                        continue;
                     }
+
+                    var (width, height, horizontalResolution, verticalResolution) = SetWidthHeight(tiff, i, ref imageWidth, ref imageHeight, ref imageXResolution, ref imageYResolution);
+
+                    // Read the image into the memory buffer
+                    int[] raster = new int[height * width];
+                    if (!tiff.ReadRGBAImage(width, height, raster))
+                    {
+                        throw new NotSupportedException("Could not read image");
+                    }
+
+                    var bits = PrepareByteArray(raster, width, height, 32);
+                    
+                   var image = Image.LoadPixelData<Rgba32>(bits, width, height);
+
+                    image.Metadata.HorizontalResolution = horizontalResolution;
+                    image.Metadata.VerticalResolution = verticalResolution;
+                    images.Add(image);
+
+                    //Note1: it might be some case that the bytes of current Image is smaller/bigger than the original tiff
+                    //Note2: 'yield return' make it super slow
                 }
 
+            }
+            return images;
+        }
 
-
-                // find max
-                FindMaxWidthAndHeight(images, out int maxWidth, out int maxHeight);
-
-                // mute first image
-                images[0].Mutate(img => img.Resize(new ResizeOptions
+        private Lazy<IReadOnlyList<Image>> OpenImageToImageSharp(bool preserveOriginalFormat, bool tryWithLibTiff = false)
+        {
+            return new Lazy<IReadOnlyList<Image>>(() =>
+            {
+                try
                 {
-                    Size = new Size(maxWidth, maxHeight),
-                    Mode = ResizeMode.BoxPad,
-                    PadColor = SixLabors.ImageSharp.Color.Transparent
-                }));
-
-                // iterate through images past the first
-                for (int i = 1; i < images.Count; i++)
-                {
-                    // mute image
-                    images[i].Mutate(img => img.Resize(new ResizeOptions
+                    Image img;
+                    if (preserveOriginalFormat)
                     {
-                        Size = new Size(maxWidth, maxHeight),
-                        Mode = ResizeMode.BoxPad,
-                        PadColor = SixLabors.ImageSharp.Color.Transparent
-                    }));
+                        img = Image.Load(Binary);
+                    }
+                    else
+                    {
+                        PreserveOriginalFormat = preserveOriginalFormat;
+                        img = Image.Load<Rgba32>(Binary);
+                        if (Format.Name == "PNG")
+                            img.Mutate(img => img.BackgroundColor(SixLabors.ImageSharp.Color.White));
+                    }
 
-                    // add frames to first image
-                    _ = images[0].Frames.AddFrame(images[i].Frames.RootFrame);
+                    CorrectImageSharp(img);
 
-                    // dispose images past the first
-                    images[i].Dispose();
-                }                
+                    return [img];
+                }
+                catch (DllNotFoundException e)
+                {
+                    throw new DllNotFoundException(
+                        "Please install SixLabors.ImageSharp from NuGet.", e);
+                }
+                catch (Exception e)
+                {
+                    return tryWithLibTiff
+                        ? InternalLoadTiff()
+                        : throw new NotSupportedException(
+                           "Image could not be loaded. File format is not supported.", e);
+                }
+            });
+        }
 
-                // get raw binary
-                using var memoryStream = new MemoryStream();
-                images[0].Save(memoryStream, new TiffEncoder());
-                memoryStream.Seek(0, SeekOrigin.Begin);
+        private void CorrectImageSharp(Image img)
+        {
 
-                // store result
-                Binary = memoryStream.ToArray();
-                Image?.Dispose();
-                Image = images[0];
-            }
-            catch (DllNotFoundException e)
+            // Fix if the input image is auto-rotated; this issue is acknowledged by SixLabors.ImageSharp community
+            // ref: https://github.com/SixLabors/ImageSharp/discussions/2685
+            img.Mutate(x => x.AutoOrient());
+
+            var resolutionUnit = img.Metadata.ResolutionUnits;
+            var horizontal = img.Metadata.HorizontalResolution;
+            var vertical = img.Metadata.VerticalResolution;
+
+            // Check if image metadata is accurate already
+            switch (resolutionUnit)
             {
-                throw new DllNotFoundException("Please install BitMiracle.LibTiff.NET from NuGet.", e);
-            }
-            catch (Exception e)
-            {
-                throw new NotSupportedException("Error while reading TIFF image format.", e);
+                case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerMeter:
+                    // Convert metadata of the resolution unit to pixel per inch to match the conversion below of 1 meter = 37.3701 inches
+                    img.Metadata.ResolutionUnits = SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerInch;
+                    img.Metadata.HorizontalResolution = Math.Ceiling(horizontal / 39.3701);
+                    img.Metadata.VerticalResolution = Math.Ceiling(vertical / 39.3701);
+                    break;
+                case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerCentimeter:
+                    // Convert metadata of the resolution unit to pixel per inch to match the conversion below of 1 inch = 2.54 centimeters
+                    img.Metadata.ResolutionUnits = SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerInch;
+                    img.Metadata.HorizontalResolution = Math.Ceiling(horizontal * 2.54);
+                    img.Metadata.VerticalResolution = Math.Ceiling(vertical * 2.54);
+                    break;
+                default:
+                    // No changes required due to teh metadata are accurate already
+                    break;
             }
         }
 
         private void SetTiffCompression(Tiff tiff)
         {
-            Compression tiffCompression  = tiff.GetField(TiffTag.COMPRESSION) != null && tiff.GetField(TiffTag.COMPRESSION).Length > 0
+            Compression tiffCompression = tiff.GetField(TiffTag.COMPRESSION) != null && tiff.GetField(TiffTag.COMPRESSION).Length > 0
                                                         ? (Compression)tiff.GetField(TiffTag.COMPRESSION)[0].ToInt()
                                                         : Compression.NONE;
 
@@ -2584,13 +3000,14 @@ namespace IronSoftware.Drawing
             // Current thumbnail identification relies on the SUBFILETYPE tag with a value of FileType.REDUCEDIMAGE.
             // This may need refinement in the future to include additional checks
             // (e.g., FileType.COMPRESSION is NONE, Image Dimensions).
-            return subFileTypeFieldValue != null && subFileTypeFieldValue.Length > 0 
+            return subFileTypeFieldValue != null && subFileTypeFieldValue.Length > 0
                 && (FileType)subFileTypeFieldValue[0].Value == FileType.REDUCEDIMAGE;
         }
 
-        private ReadOnlySpan<byte> PrepareByteArray(Image<Rgba32> bmp, int[] raster, int width, int height)
+        private ReadOnlySpan<byte> PrepareByteArray(int[] raster, int width, int height,int bitsPerPixel)
         {
-            int stride = GetStride(bmp);
+            int stride = 4 * ((width * bitsPerPixel + 31) / 32);
+
             byte[] bits = new byte[stride * height];
 
             // If no extra padding exists, copy entire rows at once.
@@ -2679,50 +3096,6 @@ namespace IronSoftware.Drawing
             return bitmaps;
         }
 
-        private static MemoryStream CreateMultiFrameImage(IEnumerable<AnyBitmap> images, ImageFormat imageFormat = ImageFormat.Tiff)
-        {
-            FindMaxWidthAndHeight(images, out int maxWidth, out int maxHeight);
-
-            Image<Rgba32> result = null;
-            for (int i = 0; i < images.Count(); i++)
-            {
-                if (i == 0)
-                {
-                    result = LoadAndResizeImageSharp(images.ElementAt(i).GetBytes(), maxWidth, maxHeight, i);
-                }
-                else
-                {
-                    if (result == null)
-                    {
-                        result = LoadAndResizeImageSharp(images.ElementAt(i).GetBytes(), maxWidth, maxHeight, i);
-                    }
-                    else
-                    {
-                        Image<Rgba32> image =
-                            LoadAndResizeImageSharp(images.ElementAt(i).GetBytes(), maxWidth, maxHeight, i);
-                        _ = result.Frames.AddFrame(image.Frames.RootFrame);
-                    }
-                }
-            }
-
-            MemoryStream resultStream = null;
-            if (result != null)
-            {
-                resultStream = new MemoryStream();
-                if (imageFormat == ImageFormat.Gif)
-                {
-                    result.SaveAsGif(resultStream);
-                }
-                else
-                {
-                    result.SaveAsTiff(resultStream);
-                }
-            }
-
-            result?.Dispose();
-
-            return resultStream;
-        }
 
         private static void FindMaxWidthAndHeight(IEnumerable<Image> images, out int maxWidth, out int maxHeight)
         {
@@ -2736,57 +3109,11 @@ namespace IronSoftware.Drawing
             maxHeight = images.Select(img => img.Height).Max();
         }
 
-        private static Image<Rgba32> CloneAndResizeImageSharp(
-            Image source, int maxWidth, int maxHeight)
-        {
-            using Image<Rgba32> image =
-                source.CloneAs<Rgba32>();
-            // Keep Image dimension the same
-            return ResizeWithPadToPng(image, maxWidth, maxHeight);
-        }
-
-        private static Image<Rgba32> LoadAndResizeImageSharp(byte[] bytes,
-            int maxWidth, int maxHeight, int index)
-        {
-            try
-            {
-                using var result =
-                    Image.Load<Rgba32>(bytes);
-                // Keep Image dimension the same
-                return ResizeWithPadToPng(result, maxWidth, maxHeight);
-            }
-            catch (Exception e)
-            {
-                throw new NotSupportedException($"Image index {index} cannot " +
-                    $"be loaded. File format doesn't supported.", e);
-            }
-        }
-
-        private static Image<Rgba32> ResizeWithPadToPng(
-            Image<Rgba32> result, int maxWidth, int maxHeight)
-        {
-            result.Mutate(img => img.Resize(new ResizeOptions
-            {
-                Size = new Size(maxWidth, maxHeight),
-                Mode = ResizeMode.BoxPad,
-                PadColor = SixLabors.ImageSharp.Color.Transparent
-            }));
-
-            using var memoryStream = new MemoryStream();
-            result.Save(memoryStream, new PngEncoder
-            {
-                TransparentColorMode = PngTransparentColorMode.Preserve
-            });
-            _ = memoryStream.Seek(0, SeekOrigin.Begin);
-
-            return Image.Load<Rgba32>(memoryStream);
-        }
-
         private int GetStride(Image source = null)
         {
             if (source == null)
             {
-                return 4 * (((Image.Width * Image.PixelType.BitsPerPixel) + 31) / 32);
+                return 4 * (((Width * BitsPerPixel) + 31) / 32);
             }
             else
             {
@@ -2796,10 +3123,18 @@ namespace IronSoftware.Drawing
 
         private IntPtr GetFirstPixelData()
         {
-            byte[] pixelBytes = new byte[Image.Width * Image.Height * Unsafe.SizeOf<Rgba32>()];
-            Image<Rgba32> clonedImage = Image.CloneAs<Rgba32>();
-            clonedImage.CopyPixelDataTo(pixelBytes);
-            ConvertRGBAtoBGRA(pixelBytes, clonedImage.Width, clonedImage.Height);
+            var image = GetFirstInternalImage();
+
+            if(image is not Image<Rgba32>)
+            {
+                image = image.CloneAs<Rgba32>();
+            }
+
+            Image<Rgba32> rgbaImage = (Image<Rgba32>)image;
+            byte[] pixelBytes = new byte[rgbaImage.Width * rgbaImage.Height * Unsafe.SizeOf<Rgba32>()];
+
+            rgbaImage.CopyPixelDataTo(pixelBytes);
+            ConvertRGBAtoBGRA(pixelBytes, rgbaImage.Width, rgbaImage.Height);
 
             IntPtr result = Marshal.AllocHGlobal(pixelBytes.Length);
             Marshal.Copy(pixelBytes, 0, result, pixelBytes.Length);
@@ -2825,7 +3160,7 @@ namespace IronSoftware.Drawing
 
         private Color GetPixelColor(int x, int y)
         {
-            switch (Image)
+            switch (GetFirstInternalImage())
             {
                 case Image<Rgba32> imageAsFormat:
                     return imageAsFormat[x, y];
@@ -2851,7 +3186,7 @@ namespace IronSoftware.Drawing
 
                     //CloneAs() is expensive!
                     //Can throw out of memory exception, when this fucntion get called too much
-                    using (Image<Rgb24> converted = Image.CloneAs<Rgb24>())
+                    using (Image<Rgb24> converted = GetFirstInternalImage().CloneAs<Rgb24>())
                     {
                         return converted[x, y];
                     }
@@ -2860,8 +3195,11 @@ namespace IronSoftware.Drawing
 
         private void SetPixelColor(int x, int y, Color color)
         {
-            switch (Image)
+            switch (GetFirstInternalImage())
             {
+                case Image<Rgba32> imageAsFormat:
+                    imageAsFormat[x, y] = color;
+                    break;
                 case Image<Rgb24> imageAsFormat:
                     imageAsFormat[x, y] = color;
                     break;
@@ -2877,27 +3215,64 @@ namespace IronSoftware.Drawing
                 case Image<Bgra32> imageAsFormat:
                     imageAsFormat[x, y] = color;
                     break;
+                case Image<Rgb48> imageAsFormat:
+                    imageAsFormat[x, y] = color;
+                    break;
+                case Image<Rgba64> imageAsFormat:
+                    imageAsFormat[x, y] = color;
+                    break;
                 default:
-                    (Image as Image<Rgba32>)[x, y] = color;
+                    (GetFirstInternalImage() as Image<Rgba32>)[x, y] = color;
                     break;
             }
+            IsDirty = true;
         }
 
         private void LoadAndResizeImage(AnyBitmap original, int width, int height)
         {
-#if NET6_0_OR_GREATER
-            using var image = Image.Load<Rgba32>(original.Binary);
-            IImageFormat format = image.Metadata.DecodedImageFormat;
-#else
-            using var image = Image.Load<Rgba32>(original.Binary, out IImageFormat format);
-#endif
-            image.Mutate(img => img.Resize(width, height));
-            byte[] pixelBytes = new byte[image.Width * image.Height * Unsafe.SizeOf<Rgba32>()];
-            image.CopyPixelDataTo(pixelBytes);
+            //this prevent case when original is changed before Lazy is loaded
+            Binary = original.Binary;
 
-            Image = image.Clone();
-            Binary = pixelBytes;
-            Format = format;
+            _lazyImage = new Lazy<IReadOnlyList<Image>>(() =>
+            {
+
+                using var image = Image.Load<Rgba32>(Binary);
+                image.Mutate(img => img.Resize(width, height));
+
+                //update Binary
+                using var memoryStream = new MemoryStream();
+                image.Save(memoryStream, GetDefaultImageEncoder(image.Width, image.Height));
+                Binary = memoryStream.ToArray();
+
+                return [image];
+            });
+
+            ForceLoadLazyImage();
+        }
+
+        private IImageEncoder GetDefaultImageExportEncoder(ImageFormat format = ImageFormat.Default, int lossy = 100)
+        {
+            return format switch
+            {
+                ImageFormat.Jpeg => new JpegEncoder()
+                {
+                    Quality = lossy,
+#if NET6_0_OR_GREATER
+                    ColorType = JpegEncodingColor.Rgb
+#else
+                    ColorType = JpegColorType.Rgb
+#endif
+                },
+                ImageFormat.Gif => new GifEncoder(),
+                ImageFormat.Png => new PngEncoder(),
+                ImageFormat.Webp => new WebpEncoder() { Quality = lossy },
+                ImageFormat.Tiff => new TiffEncoder()
+                {
+                    Compression = TiffCompression
+
+                },
+                _ => GetDefaultImageEncoder(Width, Height)
+            };
         }
 
         private static ImageFormat GetImageFormat(string filename)
@@ -2948,6 +3323,161 @@ namespace IronSoftware.Drawing
             return this.Clone();
         }
 
-        #endregion
+        /// <summary>
+        /// return BmpEncoder for small image and PngEncoder for large image
+        /// </summary>
+        /// <param name="imageWidth"></param>
+        /// <param name="imageHeight"></param>
+        /// <returns></returns>
+        private static IImageEncoder GetDefaultImageEncoder(int imageWidth, int imageHeight)
+        {
+            return new BmpEncoder { BitsPerPixel = BmpBitsPerPixel.Pixel32, SupportTransparency = true };
+        }
+
+        private static void InternalSaveAsMultiPageTiff(IEnumerable<Image> images, Stream stream)
+        {
+            using (Tiff output = Tiff.ClientOpen("in-memory", "w", null, new NonClosingTiffStream(stream)))
+            {
+                foreach (var image in images)
+                {
+                    int width = image.Width;
+                    int height = image.Height;
+                    int stride = width * 4; // RGBA => 4 bytes per pixel
+
+                    // Convert to byte[] in BGRA format as required by LibTiff
+                    byte[] buffer = new byte[height * stride];
+
+                    switch (image)
+                    {
+                        case Image<Rgb24> imageAsFormat:
+                            imageAsFormat.CopyPixelDataTo(buffer);
+                            break;
+                        case Image<Abgr32> imageAsFormat:
+                            imageAsFormat.CopyPixelDataTo(buffer);
+                            break;
+                        case Image<Argb32> imageAsFormat:
+                            imageAsFormat.CopyPixelDataTo(buffer);
+                            break;
+                        case Image<Bgr24> imageAsFormat:
+                            imageAsFormat.CopyPixelDataTo(buffer);
+                            break;
+                        case Image<Bgra32> imageAsFormat:
+                            imageAsFormat.CopyPixelDataTo(buffer);
+                            break;
+                        default:
+                            (image as Image<Rgba32>).CopyPixelDataTo(buffer);
+                            break;
+                    }
+
+
+                    //Note: TiffMetadata in current ImageSharp 3.1.8 is not good enough. but in the main branch of ImageSharp it looks good.
+                    //TODO: revisit this TiffMetadata once release version of ImageSharp include new TiffMetadata implementation.
+                    //TiffMetadata metadata = image.Metadata.GetTiffMetadata();
+
+                    switch (image.Metadata.ResolutionUnits)
+                    {
+                        case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.AspectRatio:
+                            output.SetField(TiffTag.XRESOLUTION, image.Metadata.HorizontalResolution);
+                            output.SetField(TiffTag.YRESOLUTION, image.Metadata.VerticalResolution);
+                            output.SetField(TiffTag.RESOLUTIONUNIT, ResUnit.NONE);
+                            break;
+                        case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerInch:
+                            output.SetField(TiffTag.XRESOLUTION, image.Metadata.HorizontalResolution);
+                            output.SetField(TiffTag.YRESOLUTION, image.Metadata.VerticalResolution);
+                            output.SetField(TiffTag.RESOLUTIONUNIT, ResUnit.INCH);
+                            break;
+                        case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerCentimeter:
+                            output.SetField(TiffTag.XRESOLUTION, image.Metadata.HorizontalResolution);
+                            output.SetField(TiffTag.YRESOLUTION, image.Metadata.VerticalResolution);
+                            output.SetField(TiffTag.RESOLUTIONUNIT, ResUnit.CENTIMETER);
+                            break;
+                        case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerMeter:
+                            output.SetField(TiffTag.XRESOLUTION, image.Metadata.HorizontalResolution * 100);
+                            output.SetField(TiffTag.YRESOLUTION, image.Metadata.VerticalResolution * 100);
+                            output.SetField(TiffTag.RESOLUTIONUNIT, ResUnit.CENTIMETER);
+                            break;
+                    }
+
+
+                    output.SetField(TiffTag.IMAGEWIDTH, width);
+                    output.SetField(TiffTag.IMAGELENGTH, height);
+                    output.SetField(TiffTag.SAMPLESPERPIXEL, 4);
+                    output.SetField(TiffTag.BITSPERSAMPLE, 8, 8, 8, 8);
+                    output.SetField(TiffTag.ORIENTATION, Orientation.TOPLEFT);
+                    output.SetField(TiffTag.ROWSPERSTRIP, height);
+                    output.SetField(TiffTag.PLANARCONFIG, PlanarConfig.CONTIG);
+                    output.SetField(TiffTag.PHOTOMETRIC, Photometric.RGB);
+                    output.SetField(TiffTag.COMPRESSION, Compression.LZW); // optional
+                    output.SetField(TiffTag.EXTRASAMPLES, 1, new short[] { (short)ExtraSample.ASSOCALPHA });
+
+                    // Write each scanline
+                    for (int row = 0; row < height; row++)
+                    {
+                        int offset = row * stride;
+                        output.WriteScanline(buffer, offset, row, 0);
+                    }
+
+                    output.WriteDirectory(); // Next page
+                }
+            }
+            stream.Position = 0;
+        }
+        private static void InternalSaveAsMultiPageGif(IEnumerable<Image> images, Stream stream)
+        {
+            // Find the maximum dimensions to create a logical screen that can fit all frames.
+            int maxWidth = images.Max(f => f.Width);
+            int maxHeight = images.Max(f => f.Height);
+
+            using var gif = images.First().Clone(ctx => ctx.Resize(new ResizeOptions
+            {
+                Size = new Size(maxWidth, maxHeight),
+                Mode = ResizeMode.BoxPad, // Pad to fit the target dimensions
+                PadColor = Color.Transparent, // Use transparent padding
+                Position = AnchorPositionMode.Center // Center the image within the frame
+            }));
+
+
+            foreach (var sourceImage in images.Skip(1))
+            {
+                // Clone the source image and apply the more efficient Resize operation.
+                // This resizes the image to fit, pads the rest with a transparent color,
+                // and centers it, all in one step.
+                using (var resizedFrame = sourceImage.Clone(ctx => ctx.Resize(new ResizeOptions
+                {
+                    Size = new Size(maxWidth, maxHeight),
+                    Mode = ResizeMode.BoxPad, // Pad to fit the target dimensions
+                    PadColor = Color.Transparent, // Use transparent padding
+                    Position = AnchorPositionMode.Center // Center the image within the frame
+                })))
+                {
+                    // Add the correctly-sized new frame to the master GIF's frame collection.
+                    gif.Frames.AddFrame(resizedFrame.Frames.RootFrame);
+                }
+            }         
+            // Save the final result to the provided stream.
+            gif.SaveAsGif(stream);
+            stream.Position = 0;
+        }
+
+#endregion
+
+        /// <summary>
+        /// Check if image is loaded (decoded) 
+        /// </summary>
+        /// <returns>true if images is loaded (decoded) into the memory</returns>
+        [Browsable(false)]
+        [Bindable(false)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public bool IsImageLoaded()
+        {
+            if(_lazyImage == null)
+            {
+                return false;
+            }
+            else
+            {
+                return _lazyImage.IsValueCreated;
+            }
+        }
     }
 }
