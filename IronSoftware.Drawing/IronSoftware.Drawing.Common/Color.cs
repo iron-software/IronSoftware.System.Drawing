@@ -1097,7 +1097,7 @@ namespace IronSoftware.Drawing
         /// <param name="color"><see cref="SixLabors.ImageSharp.PixelFormats.Bgra32"/> will automatically be casted to <see cref="Color"/> </param>
         public static implicit operator Color(SixLabors.ImageSharp.PixelFormats.Bgra32 color)
         {
-            return new Color(color.R, color.G, color.B, color.A);
+            return new Color(color.A, color.R, color.G, color.B);
         }
 
         /// <summary>
@@ -1127,7 +1127,7 @@ namespace IronSoftware.Drawing
         /// <param name="color"><see cref="Color"/> is explicitly cast to a <see cref="SixLabors.ImageSharp.PixelFormats.Rgb24"/> </param>
         public static implicit operator SixLabors.ImageSharp.PixelFormats.Rgb24(Color color)
         {
-            return SixLabors.ImageSharp.Color.FromRgb(color.R, color.G, color.B);
+            return SixLabors.ImageSharp.Color.FromRgba(color.R, color.G, color.B, color.A);
         }
 
         /// <summary>
@@ -1157,7 +1157,7 @@ namespace IronSoftware.Drawing
         /// <param name="color"><see cref="SixLabors.ImageSharp.PixelFormats.Rgb48"/> will automatically be casted to <see cref="Color"/> </param>
         public static implicit operator Color(SixLabors.ImageSharp.PixelFormats.Rgb48 color)
         {
-            return new Color(color.R, color.G, color.B);
+            return (Color)SixLabors.ImageSharp.Color.FromRgb((byte)(color.R >> 8), (byte)(color.G >> 8), (byte)(color.B >> 8));
         }
 
         /// <summary>
@@ -1167,7 +1167,9 @@ namespace IronSoftware.Drawing
         /// <param name="color"><see cref="Color"/> is explicitly cast to a <see cref="SixLabors.ImageSharp.PixelFormats.Rgb48"/> </param>
         public static implicit operator SixLabors.ImageSharp.PixelFormats.Rgb48(Color color)
         {
-            return new SixLabors.ImageSharp.PixelFormats.Rgb48(color.R, color.G, color.B);
+            var result = new SixLabors.ImageSharp.PixelFormats.Rgb48();
+            result.FromRgba64((SixLabors.ImageSharp.PixelFormats.Rgba64)color);
+            return result;
         }
 
         /// <summary>
@@ -1207,7 +1209,7 @@ namespace IronSoftware.Drawing
         /// <param name="color"><see cref="Color"/> is explicitly cast to a <see cref="SixLabors.ImageSharp.PixelFormats.Abgr32"/> </param>
         public static implicit operator SixLabors.ImageSharp.PixelFormats.Abgr32(Color color)
         {
-            return new SixLabors.ImageSharp.PixelFormats.Abgr32(color.R, color.G, color.B, color.A);
+            return SixLabors.ImageSharp.Color.FromRgba(color.R, color.G, color.B, color.A);
         }
 
         /// <summary>
@@ -1227,7 +1229,7 @@ namespace IronSoftware.Drawing
         /// <param name="color"><see cref="Color"/> is explicitly cast to a <see cref="SixLabors.ImageSharp.PixelFormats.Argb32"/> </param>
         public static implicit operator SixLabors.ImageSharp.PixelFormats.Argb32(Color color)
         {
-            return new SixLabors.ImageSharp.PixelFormats.Argb32(color.R, color.G, color.B, color.A);
+            return SixLabors.ImageSharp.Color.FromRgba(color.R, color.G, color.B, color.A);
         }
 
         /// <summary>
