@@ -3236,7 +3236,7 @@ namespace IronSoftware.Drawing
             _lazyImage = new Lazy<IReadOnlyList<Image>>(() =>
             {
 
-                using var image = Image.Load<Rgba32>(Binary);
+                var image = Image.Load<Rgba32>(Binary);
                 image.Mutate(img => img.Resize(width, height));
 
                 //update Binary
