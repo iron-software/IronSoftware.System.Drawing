@@ -389,6 +389,22 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void Clone_Crop_AnyBitmap()
+        {
+            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
+            var anyBitmap = AnyBitmap.FromFile(imagePath);
+            AnyBitmap clonedAnyBitmap = anyBitmap.Clone(new Rectangle(100,100,100,100));
+
+            clonedAnyBitmap.Width.Should().Be(100);
+            clonedAnyBitmap.Height.Should().Be(100);
+
+            var recheckClonedAnyBitmap = AnyBitmap.FromBytes(clonedAnyBitmap.GetBytes());
+
+            recheckClonedAnyBitmap.Width.Should().Be(100);
+            recheckClonedAnyBitmap.Width.Should().Be(100);
+        }
+
+        [FactWithAutomaticDisplayName]
         public void CastSKBitmap_to_AnyBitmap()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");

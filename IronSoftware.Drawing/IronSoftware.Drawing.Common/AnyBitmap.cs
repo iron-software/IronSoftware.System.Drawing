@@ -224,7 +224,7 @@ namespace IronSoftware.Drawing
         public AnyBitmap Clone(Rectangle rectangle)
         {
             var cloned = GetInternalImages().Select(img => img.Clone(x => x.Crop(rectangle)));
-            return new AnyBitmap(Binary, cloned);
+            return new AnyBitmap(cloned);
         }
 
         /// <summary>
