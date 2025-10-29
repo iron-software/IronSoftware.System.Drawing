@@ -26,7 +26,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             string imagePath = GetRelativeFilePath("Mona-Lisa-oil-wood-panel-Leonardo-da.webp");
 
             var bitmap = AnyBitmap.FromFile(imagePath);
+            bitmap.IsImageLoaded().Should().BeFalse();
+
             bitmap.SaveAs("result.bmp");
+
+            bitmap.IsImageLoaded().Should().BeTrue();
+            //should still be the original bytes
+            bitmap.Length.Should().Be((int)new FileInfo(imagePath).Length);
+
             Assert.Equal(671, bitmap.Width);
             Assert.Equal(1000, bitmap.Height);
             Assert.Equal(74684, bitmap.Length);
@@ -47,7 +54,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             byte[] bytes = File.ReadAllBytes(imagePath);
 
             var bitmap = AnyBitmap.FromBytes(bytes);
+            bitmap.IsImageLoaded().Should().BeFalse();
+
             _ = bitmap.TrySaveAs("result.bmp");
+
+            bitmap.IsImageLoaded().Should().BeTrue();
+            //should still be the original bytes
+            bitmap.Length.Should().Be(bytes.Length);
+
             AssertImageAreEqual(imagePath, "result.bmp");
 
             bitmap = new AnyBitmap(bytes);
@@ -63,7 +77,14 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Stream ms = new MemoryStream(bytes);
 
             var bitmap = AnyBitmap.FromStream(ms);
+            bitmap.IsImageLoaded().Should().BeFalse();
+
             _ = bitmap.TrySaveAs("result.bmp");
+
+            bitmap.IsImageLoaded().Should().BeTrue();
+            //should still be the original bytes
+            bitmap.Length.Should().Be(bytes.Length);
+
             AssertImageAreEqual(imagePath, "result.bmp");
 
             ms.Position = 0;
@@ -80,12 +101,21 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             var ms = new MemoryStream(bytes);
 
             var bitmap = AnyBitmap.FromStream(ms);
+            bitmap.IsImageLoaded().Should().BeFalse();
+           
             _ = bitmap.TrySaveAs("result.bmp");
+
+            bitmap.IsImageLoaded().Should().BeTrue();
+            //should still be the original bytes
+            bitmap.Length.Should().Be(bytes.Length);
+
             AssertImageAreEqual(imagePath, "result.bmp");
 
             bitmap = new AnyBitmap(ms);
             bitmap.SaveAs("result.bmp");
             AssertImageAreEqual(imagePath, "result.bmp");
+
+
         }
 
         [FactWithAutomaticDisplayName]
@@ -162,7 +192,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             bitmap.Save("expected.bmp");
             anyBitmap.SaveAs("result.bmp");
-
+            anyBitmap.GetPixel(0, 0); //should not throw error
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
 
@@ -187,7 +217,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             bitmap.Save("expected.bmp");
             anyBitmap.SaveAs("result.bmp");
-
+            anyBitmap.GetPixel(0, 0); //should not throw error
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
 
@@ -245,6 +275,16 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
                 // Check the pixel color has changed
                 Assert.Equal(bitmap.GetPixel(0, 0), Color.Black);
+
+#if NETFRAMEWORK
+                //windows only
+                // SetPixel makes the image dirty so it should update AnyBitmap.Binary value
+
+                System.Drawing.Bitmap temp1 = bitmap;
+                AnyBitmap temp2 = (AnyBitmap)temp1;
+                Assert.Equal(temp1.GetPixel(0, 0).ToArgb(), System.Drawing.Color.Black.ToArgb());
+                Assert.Equal(temp2.GetPixel(0, 0), Color.Black);
+#endif
             }
         }
 
@@ -349,6 +389,22 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void Clone_Crop_AnyBitmap()
+        {
+            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
+            var anyBitmap = AnyBitmap.FromFile(imagePath);
+            AnyBitmap clonedAnyBitmap = anyBitmap.Clone(new Rectangle(100,100,100,100));
+
+            clonedAnyBitmap.Width.Should().Be(100);
+            clonedAnyBitmap.Height.Should().Be(100);
+
+            var recheckClonedAnyBitmap = AnyBitmap.FromBytes(clonedAnyBitmap.GetBytes());
+
+            recheckClonedAnyBitmap.Width.Should().Be(100);
+            recheckClonedAnyBitmap.Width.Should().Be(100);
+        }
+
+        [FactWithAutomaticDisplayName]
         public void CastSKBitmap_to_AnyBitmap()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
@@ -357,7 +413,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             SaveSkiaBitmap(skBitmap, "expected.png");
             anyBitmap.SaveAs("result.png");
-
+            anyBitmap.GetPixel(0, 0); //should not throw error
             AssertImageAreEqual("expected.png", "result.png", true);
         }
 
@@ -390,7 +446,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             SaveSkiaImage(skImage, "expected.png");
             anyBitmap.SaveAs("result.png");
-
+            anyBitmap.GetPixel(0, 0); //should not throw error
             AssertImageAreEqual("expected.png", "result.png", true);
         }
 
@@ -423,15 +479,51 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             imgSharp.Save("expected.bmp");
             anyBitmap.SaveAs("result.bmp");
+            anyBitmap.GetPixel(0, 0); //should not throw error
+            AssertImageAreEqual("expected.bmp", "result.bmp", true);
+        }
+
+        [TheoryWithAutomaticDisplayName]
+        [InlineData("mountainclimbers.jpg")]
+        [InlineData("van-gogh-starry-night-vincent-van-gogh.jpg")]
+        [InlineData("animated_qr.gif")]
+        [InlineData("Sample-Tiff-File-download-for-Testing.tiff")]
+        public void CastSixLabors_from_AnyBitmap(string filename)
+        {
+            var anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath(filename));
+            Image imgSharp = anyBitmap;
+
+            anyBitmap.SaveAs("expected.bmp");
+            imgSharp.Save("result.bmp");
 
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
 
-        [FactWithAutomaticDisplayName]
-        public void CastSixLabors_from_AnyBitmap()
+        [TheoryWithAutomaticDisplayName]
+        [InlineData("mountainclimbers.jpg")]
+        [InlineData("van-gogh-starry-night-vincent-van-gogh.jpg")]
+        [InlineData("animated_qr.gif")]
+        [InlineData("Sample-Tiff-File-download-for-Testing.tiff")]
+        public void CastSixLabors_from_AnyBitmap_Rgb24(string filename)
         {
-            var anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath("mountainclimbers.jpg"));
-            Image imgSharp = anyBitmap;
+            var anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath(filename));
+            Image<Rgb24> imgSharp = anyBitmap;
+
+            anyBitmap.SaveAs("expected.bmp");
+            imgSharp.Save("result.bmp");
+
+            AssertImageAreEqual("expected.bmp", "result.bmp", true);
+        }
+
+        [TheoryWithAutomaticDisplayName]
+        [InlineData("mountainclimbers.jpg")]
+        [InlineData("van-gogh-starry-night-vincent-van-gogh.jpg")]
+        [InlineData("animated_qr.gif")]
+        [InlineData("Sample-Tiff-File-download-for-Testing.tiff")]
+        public void CastSixLabors_from_AnyBitmap_Rgba32(string filename)
+        {
+            var anyBitmap = AnyBitmap.FromFile(GetRelativeFilePath(filename));
+            Image<Rgba32> imgSharp = anyBitmap;
 
             anyBitmap.SaveAs("expected.bmp");
             imgSharp.Save("result.bmp");
@@ -448,7 +540,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             bitmap.Save("expected.png");
             anyBitmap.SaveAs("result.png");
-
+            anyBitmap.GetPixel(0, 0); //should not throw error
             AssertImageAreEqual("expected.png", "result.png", true);
         }
 
@@ -679,6 +771,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             var resizeAnyBitmap = new AnyBitmap(anyBitmap, width, height);
             _ = resizeAnyBitmap.Width.Should().Be(width);
             _ = resizeAnyBitmap.Height.Should().Be(height);
+            resizeAnyBitmap.GetPixel(0, 0); //should not throw error
         }
 
         [FactWithAutomaticDisplayName]
@@ -758,6 +851,25 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(firstPixel.B, buffer[2]);
         }
 
+        //[FactWithAutomaticDisplayName]
+        public void TestGetRGBABuffer()
+        {
+            string imagePath = GetRelativeFilePath("checkmark.jpg");
+            using var bitmap = new AnyBitmap(imagePath);
+            var expectedSize = bitmap.Width * bitmap.Height * 4; // 4 bytes per pixel (RGB)
+
+            byte[] buffer = bitmap.GetRGBABuffer();
+
+            Assert.Equal(expectedSize, buffer.Length);
+
+            // Verify the first pixel's RGB values
+            var firstPixel = bitmap.GetPixel(0, 0);
+            Assert.Equal(firstPixel.R, buffer[0]);
+            Assert.Equal(firstPixel.G, buffer[1]);
+            Assert.Equal(firstPixel.B, buffer[2]);
+            Assert.Equal(firstPixel.A, buffer[3]);
+        }
+
         [FactWithAutomaticDisplayName]
         public void Test_LoadFromRGBBuffer()
         {
@@ -822,10 +934,11 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         {
             string imagePath = GetRelativeFilePath(fileName);
             var bitmap = AnyBitmap.FromFile(imagePath);
+            var frames = bitmap.GetAllFrames;
             for (int i = 0; i < bitmap.FrameCount; i++)
             {
-                Assert.Equal(expectedHorizontalResolution, bitmap.GetAllFrames.ElementAt(i).HorizontalResolution);
-                Assert.Equal(expectedVerticalResolution, bitmap.GetAllFrames.ElementAt(i).VerticalResolution);
+                Assert.Equal(expectedHorizontalResolution, frames.ElementAt(i).HorizontalResolution.Value, 1d);
+                Assert.Equal(expectedVerticalResolution, frames.ElementAt(i).VerticalResolution.Value, 1d);
             }
         }
 
@@ -840,7 +953,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             SaveMauiImages(image, "expected.bmp");
             anyBitmap.SaveAs("result.bmp");
-
+            anyBitmap.GetPixel(0, 0); //should not throw error
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
 
@@ -852,7 +965,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             anyBitmap.SaveAs("expected.bmp");
             SaveMauiImages(image, "result.bmp");
-
+            anyBitmap.GetPixel(0, 0); //should not throw error
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
 #endif
@@ -876,6 +989,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             blankBitmap.Width.Should().Be(8);
             blankBitmap.Height.Should().Be(8);
+            blankBitmap.GetPixel(0, 0); //should not throw error
         }
 
         [FactWithAutomaticDisplayName]
@@ -974,36 +1088,101 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             image.Save("expected.bmp");
             anyBitmap.SaveAs("result.bmp");
-
+            anyBitmap.GetPixel(0, 0); //should not throw error
             AssertLargeImageAreEqual("expected.bmp", "result.bmp", true);
         }
 #endif
 
 
-        [IgnoreOnAzureDevopsX86Fact]
-        public void Load_TiffImage_ShouldNotIncreaseFileSize()
+                [IgnoreOnAzureDevopsX86Fact]
+                public void Load_TiffImage_ShouldNotIncreaseFileSize()
+                {
+                    // Arrange
+        #if NET6_0_OR_GREATER
+                    double thresholdPercent = 0.15;
+        #else
+                    double thresholdPercent = 1.5;
+        #endif
+                    string imagePath = GetRelativeFilePath("test_dw_10.tif");
+                    string outputImagePath = "output.tif";
+
+                    // Act
+                    var bitmap = new AnyBitmap(imagePath);
+                    bitmap.SaveAs(outputImagePath);
+                    var originalFileSize = new FileInfo(imagePath).Length;
+                    var maxAllowedFileSize = (long)(originalFileSize * (1 + thresholdPercent));
+                    var outputFileSize = new FileInfo(outputImagePath).Length;
+
+                    // Assert
+                    outputFileSize.Should().BeLessThanOrEqualTo(maxAllowedFileSize);
+
+                    // Clean up
+                    File.Delete(outputImagePath);
+                }
+
+        [Theory]
+        [InlineData("DW-26 MultiPageTif120Input.tiff")]
+        [InlineData("google_large_1500dpi.bmp")]
+        public void DW_34_ShouldNotThrowOutOfMemory(string filename)
         {
-            // Arrange
-#if NET6_0_OR_GREATER
-            double thresholdPercent = 0.15;
-#else
-            double thresholdPercent = 1.5;
-#endif
-            string imagePath = GetRelativeFilePath("test_dw_10.tif");
-            string outputImagePath = "output.tif";
+            string imagePath = GetRelativeFilePath(filename);
 
-            // Act
-            var bitmap = new AnyBitmap(imagePath);
-            bitmap.SaveAs(outputImagePath);
-            var originalFileSize = new FileInfo(imagePath).Length;
-            var maxAllowedFileSize = (long)(originalFileSize * (1 + thresholdPercent));
-            var outputFileSize = new FileInfo(outputImagePath).Length;
+            List<AnyBitmap> images = new List<AnyBitmap>();
+            for (int i = 0; i < 25; i++)
+            {
+                var bitmap = new AnyBitmap(imagePath);
+                images.Add(bitmap);
+                bitmap.IsImageLoaded().Should().BeFalse();
+            }
 
-            // Assert
-            outputFileSize.Should().BeLessThanOrEqualTo(maxAllowedFileSize);
+            images.ForEach(bitmap => bitmap.Dispose());
+        }
 
-            // Clean up
-            File.Delete(outputImagePath);
+        //[Fact]
+        //public void LoadTiff()
+        //{
+        //    Stopwatch stopWatch = new Stopwatch();
+        //    stopWatch.Start();
+        //    for (int i = 0; i < 25; i++)
+        //    {
+        //        var bitmap = new AnyBitmap("C:\\repo\\IronInternalBenchmarks\\IronOcrBenchmark\\Images\\001_20221121000002_S2123457_EL37.tiff");
+        //        //var c = bitmap.GetPixel(10,10);
+        //        foreach (var item in bitmap.GetAllFrames)
+        //        {
+        //            item.GetRGBBuffer();
+        //            item.ExtractAlphaData();
+        //        }
+
+
+        //    }
+        //    stopWatch.Stop();
+        //    // Get the elapsed time as a TimeSpan value.
+        //    TimeSpan ts = stopWatch.Elapsed;
+        //    ts.Should().Be(TimeSpan.FromHours(1));
+        //}
+
+      //  [FactWithAutomaticDisplayName]
+        public void AnyBitmap_ExportGif_Should_Works()
+        {
+            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
+            var anyBitmap = AnyBitmap.FromFile(imagePath);
+
+            using var resultExport = new MemoryStream();
+            anyBitmap.ExportStream(resultExport, AnyBitmap.ImageFormat.Gif);
+            resultExport.Length.Should().NotBe(0);
+            Image.DetectFormat(resultExport.ToArray()).Should().Be(SixLabors.ImageSharp.Formats.Gif.GifFormat.Instance);
+        }
+
+       // [FactWithAutomaticDisplayName]
+        public void AnyBitmap_ExportTiff_Should_Works()
+        {
+            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
+            var anyBitmap = AnyBitmap.FromFile(imagePath);
+
+            using var resultExport = new MemoryStream();
+            anyBitmap.ExportStream(resultExport, AnyBitmap.ImageFormat.Tiff);
+            resultExport.Length.Should().NotBe(0);
+            Image.DetectFormat(resultExport.ToArray()).Should().Be(SixLabors.ImageSharp.Formats.Tiff.TiffFormat.Instance);
         }
 
     }
