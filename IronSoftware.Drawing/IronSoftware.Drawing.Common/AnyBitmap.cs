@@ -225,7 +225,7 @@ namespace IronSoftware.Drawing
         public AnyBitmap Clone(Rectangle rectangle)
         {
             var cloned = GetInternalImages().Select(img => img.Clone(x => x.Crop(rectangle)));
-            return new AnyBitmap(Binary, cloned);
+            return new AnyBitmap(cloned);
         }
 
         /// <summary>
@@ -3237,7 +3237,7 @@ namespace IronSoftware.Drawing
             _lazyImage = new Lazy<IReadOnlyList<Image>>(() =>
             {
 
-                using var image = Image.Load<Rgba32>(Binary);
+                var image = Image.Load<Rgba32>(Binary);
                 image.Mutate(img => img.Resize(width, height));
 
                 //update Binary

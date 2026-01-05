@@ -192,7 +192,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             bitmap.Save("expected.bmp");
             anyBitmap.SaveAs("result.bmp");
-
+            anyBitmap.GetPixel(0, 0); //should not throw error
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
 
@@ -217,7 +217,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             bitmap.Save("expected.bmp");
             anyBitmap.SaveAs("result.bmp");
-
+            anyBitmap.GetPixel(0, 0); //should not throw error
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
 
@@ -389,6 +389,22 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void Clone_Crop_AnyBitmap()
+        {
+            string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
+            var anyBitmap = AnyBitmap.FromFile(imagePath);
+            AnyBitmap clonedAnyBitmap = anyBitmap.Clone(new Rectangle(100,100,100,100));
+
+            clonedAnyBitmap.Width.Should().Be(100);
+            clonedAnyBitmap.Height.Should().Be(100);
+
+            var recheckClonedAnyBitmap = AnyBitmap.FromBytes(clonedAnyBitmap.GetBytes());
+
+            recheckClonedAnyBitmap.Width.Should().Be(100);
+            recheckClonedAnyBitmap.Width.Should().Be(100);
+        }
+
+        [FactWithAutomaticDisplayName]
         public void CastSKBitmap_to_AnyBitmap()
         {
             string imagePath = GetRelativeFilePath("van-gogh-starry-night-vincent-van-gogh.jpg");
@@ -397,7 +413,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             SaveSkiaBitmap(skBitmap, "expected.png");
             anyBitmap.SaveAs("result.png");
-
+            anyBitmap.GetPixel(0, 0); //should not throw error
             AssertImageAreEqual("expected.png", "result.png", true);
         }
 
@@ -430,7 +446,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             SaveSkiaImage(skImage, "expected.png");
             anyBitmap.SaveAs("result.png");
-
+            anyBitmap.GetPixel(0, 0); //should not throw error
             AssertImageAreEqual("expected.png", "result.png", true);
         }
 
@@ -463,7 +479,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             imgSharp.Save("expected.bmp");
             anyBitmap.SaveAs("result.bmp");
-
+            anyBitmap.GetPixel(0, 0); //should not throw error
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
 
@@ -524,7 +540,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             bitmap.Save("expected.png");
             anyBitmap.SaveAs("result.png");
-
+            anyBitmap.GetPixel(0, 0); //should not throw error
             AssertImageAreEqual("expected.png", "result.png", true);
         }
 
@@ -755,6 +771,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             var resizeAnyBitmap = new AnyBitmap(anyBitmap, width, height);
             _ = resizeAnyBitmap.Width.Should().Be(width);
             _ = resizeAnyBitmap.Height.Should().Be(height);
+            resizeAnyBitmap.GetPixel(0, 0); //should not throw error
         }
 
         [FactWithAutomaticDisplayName]
@@ -936,7 +953,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             SaveMauiImages(image, "expected.bmp");
             anyBitmap.SaveAs("result.bmp");
-
+            anyBitmap.GetPixel(0, 0); //should not throw error
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
 
@@ -948,7 +965,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             anyBitmap.SaveAs("expected.bmp");
             SaveMauiImages(image, "result.bmp");
-
+            anyBitmap.GetPixel(0, 0); //should not throw error
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
 #endif
@@ -972,6 +989,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             blankBitmap.Width.Should().Be(8);
             blankBitmap.Height.Should().Be(8);
+            blankBitmap.GetPixel(0, 0); //should not throw error
         }
 
         [FactWithAutomaticDisplayName]
@@ -1070,7 +1088,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             image.Save("expected.bmp");
             anyBitmap.SaveAs("result.bmp");
-
+            anyBitmap.GetPixel(0, 0); //should not throw error
             AssertLargeImageAreEqual("expected.bmp", "result.bmp", true);
         }
 #endif
