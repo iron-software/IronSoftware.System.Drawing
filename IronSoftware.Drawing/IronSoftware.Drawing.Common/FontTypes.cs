@@ -146,7 +146,7 @@ namespace IronSoftware.Drawing
                 "TimesNewRoman-BoldItalic" => TimesNewRomanBoldItalic,
                 "TimesNewRoman-Italic" => TimesNewRomanItalic,
                 "ZapfDingbats" => ZapfDingbats,
-                _ => throw new System.InvalidCastException($"You have set a non PDF standatd FontType: {fontName}, Please select one from IronSoftware.Drawing.FontTypes.")
+                _ => throw new System.InvalidCastException($"You have set a non-PDF standard FontType: {fontName}, Please select one from IronSoftware.Drawing.FontTypes.")
             };
         }
     }
