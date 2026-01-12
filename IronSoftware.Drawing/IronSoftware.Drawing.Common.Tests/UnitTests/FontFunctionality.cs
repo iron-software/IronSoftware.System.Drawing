@@ -371,7 +371,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
                 _ => fontName.Replace(" ", "")
             };
 
-            Assert.Contains($"You have set a non PDF standatd FontType: {expectedFontName}, Please select one from IronSoftware.Drawing.FontTypes.", ex.Message);
+            Assert.Contains($"You have set a non PDF standard FontType: {expectedFontName}, Please select one from IronSoftware.Drawing.FontTypes.", ex.Message);
         }
 
 #if !NETFRAMEWORK
