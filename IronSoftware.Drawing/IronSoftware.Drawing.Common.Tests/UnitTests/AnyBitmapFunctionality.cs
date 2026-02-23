@@ -121,7 +121,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public async void Create_AnyBitmap_by_Uri_Async()
         {
-            var uri = new Uri("https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1200px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg");
+            var uri = new Uri("https://ironsoftware.com/img/ironsoftware_hero_section/bg-hero-part.png");
 
             AnyBitmap bitmap = await AnyBitmap.FromUriAsync(uri);
             _ = bitmap.TrySaveAs("result.bmp");
