@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<AssemblyOriginatorKeyFile>IronSoftware.Drawing.Common.snk</AssemblyOriginatorKeyFile>
@@ -28,7 +28,6 @@
         <PackageReference Include="IronSoftware.Drawing.Abstractions" Version="2026.1.2" />
         <PackageReference Include="SkiaSharp.Svg" Version="1.60.0" />
         <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
-        <PackageReference Include="System.Memory" Version="4.5.5" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
 	</ItemGroup>
 

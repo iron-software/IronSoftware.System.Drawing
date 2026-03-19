@@ -40,8 +40,7 @@ Supports:
 
 For general support and technical inquiries, please email us at: support@ironsoftware.com</description>
 		<summary>IronSoftware.System.Drawing is an open-source solution for .NET developers to replace System.Drawing.Common with a universal and flexible library.</summary>
-		<releaseNotes>- Updates IronSoftware.Drawing.Abstractions to 2026.1.2.
-- Updates SixLabors.ImageSharp to 2.1.13 (netstandard2.0) and 3.1.12 (net6.0).</releaseNotes>
+		<releaseNotes>- Removed explicit System.Memory dependency to resolve .NET Framework assembly version conflict.</releaseNotes>
 		<copyright>Copyright © Iron Software 2022-2026</copyright>
 		<tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, TIFF, TIF, GIF, JPEG, PNG, Color, Rectangle, Drawing, C#, VB.NET, ASPX, create, render, generate, standard, netstandard2.0, core, netcore</tags>
 		<repository type="git" url="https://github.com/iron-software/IronSoftware.Drawing.Common" commit="$commit$" />
@@ -51,14 +50,12 @@ For general support and technical inquiries, please email us at: support@ironsof
 				<dependency id="SixLabors.ImageSharp" version="2.1.13" />
 				<dependency id="SixLabors.ImageSharp.Drawing" version="1.0.0" />
 				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
-				<dependency id="System.Memory" version="4.5.5" />
 			</group>
 			<group targetFramework="net60">
 				<dependency id="IronSoftware.Drawing.Abstractions" version="2026.1.2" />
 				<dependency id="SixLabors.ImageSharp" version="3.1.12" />
 				<dependency id="SixLabors.ImageSharp.Drawing" version="2.1.7" />
 				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
-				<dependency id="System.Memory" version="4.5.5" />
 			</group>
 		</dependencies>
 	</metadata>
