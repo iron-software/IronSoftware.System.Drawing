@@ -2662,7 +2662,7 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                SkiaSharp.Extended.Svg.SKSvg svg = new();
+                Svg.Skia.SKSvg svg = new();
                 _ = svg.Load(strInput);
 
                 SKBitmap toBitmap = new(
