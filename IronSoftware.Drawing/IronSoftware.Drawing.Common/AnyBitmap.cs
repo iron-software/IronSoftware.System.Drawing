@@ -980,13 +980,56 @@ namespace IronSoftware.Drawing
 
         //cache
         private int? _bitsPerPixel = null;
+
+        /// <summary>
+        /// The color depth (bits per pixel) of the original source image when it can be
+        /// determined from the source metadata (e.g. TIFF). SixLabors.ImageSharp has no
+        /// pixel format below 8bpp, so indexed/bilevel sources would otherwise misreport
+        /// their depth once decoded into memory (e.g. a 1bpp black &amp; white TIFF that is
+        /// decoded to a 32bpp Rgba32 image). When set, this is reported by <see cref="BitsPerPixel"/>.
+        /// </summary>
+        private int? _originalBitsPerPixel = null;
+
+        //cache of the bits per pixel of the in-memory (decoded) image
+        private int InMemoryBitsPerPixel => _bitsPerPixel ??= GetFirstInternalImage().PixelType.BitsPerPixel;
+
         /// <summary>
         /// Gets colors depth, in number of bits per pixel.
+        /// <para>When the image is loaded preserving its original format, this reports the
+        /// bits per pixel of the original source image (for example, 1 for a black &amp; white
+        /// image) rather than the bits per pixel of the in-memory decoded representation.</para>
         /// <br/><para><b>Further Documentation:</b><br/>
         /// <a href="https://ironsoftware.com/open-source/csharp/drawing/examples/get-color-depth/">
         /// Code Example</a></para>
         /// </summary>
-        public int BitsPerPixel => _bitsPerPixel ??= GetFirstInternalImage().PixelType.BitsPerPixel;
+        public int BitsPerPixel => _originalBitsPerPixel ?? InMemoryBitsPerPixel;
+
+        /// <summary>
+        /// Creates a new <see cref="AnyBitmap"/> with the pixel data converted to the requested
+        /// color depth, in number of bits per pixel. This is analogous to changing the
+        /// <c>PixelFormat</c> of a <see cref="System.Drawing.Bitmap"/>.
+        /// </summary>
+        /// <param name="bitsPerPixel">The target color depth. Supported values are
+        /// <c>8</c> (grayscale), <c>24</c> (RGB) and <c>32</c> (RGBA).</param>
+        /// <returns>A new <see cref="AnyBitmap"/> whose <see cref="BitsPerPixel"/> equals
+        /// <paramref name="bitsPerPixel"/>.</returns>
+        /// <exception cref="NotSupportedException">Thrown when <paramref name="bitsPerPixel"/>
+        /// is not one of the supported values.</exception>
+        public AnyBitmap ChangeBitsPerPixel(int bitsPerPixel)
+        {
+            Image source = GetFirstInternalImage();
+            Image converted = bitsPerPixel switch
+            {
+                8 => source.CloneAs<L8>(),
+                24 => source.CloneAs<Rgb24>(),
+                32 => source.CloneAs<Rgba32>(),
+                _ => throw new NotSupportedException(
+                    $"Changing bits per pixel to {bitsPerPixel} is not supported. " +
+                    $"Supported values are 8, 24 and 32.")
+            };
+
+            return new AnyBitmap(converted);
+        }
 
         //cache
         private int? _frameCount = null;
@@ -2610,8 +2653,17 @@ namespace IronSoftware.Drawing
         private void LoadImage(ReadOnlySpan<byte> span, bool preserveOriginalFormat)
         {
             Binary = span.ToArray();
-            if (Format is TiffFormat) 
+            if (Format is TiffFormat)
             {
+                // TIFFs are decoded into a 32bpp Rgba32 image (via LibTiff or ImageSharp), which
+                // loses the original color depth. When preserving the original format, capture the
+                // source bits per pixel from the TIFF metadata so BitsPerPixel reports it faithfully
+                // (e.g. 1 for a black & white image) instead of the decoded 32bpp value.
+                if (preserveOriginalFormat)
+                {
+                    _originalBitsPerPixel = GetTiffBitsPerPixelFast();
+                }
+
                 if(GetTiffFrameCountFast() > 1)
                 {
                     _lazyImage = OpenTiffToImageSharp();
@@ -2822,6 +2874,39 @@ namespace IronSoftware.Drawing
             catch
             {
                 return 1; // Default to single frame on any error
+            }
+        }
+
+        /// <summary>
+        /// Reads the original bits per pixel of the first frame of the loaded TIFF directly from
+        /// its metadata (BitsPerSample x SamplesPerPixel), without fully decoding the image.
+        /// </summary>
+        /// <returns>The original bits per pixel, or <c>null</c> if it cannot be determined.</returns>
+        private int? GetTiffBitsPerPixelFast()
+        {
+            try
+            {
+                using var tiffStream = new MemoryStream(Binary);
+
+                // Disable error messages for fast check
+                Tiff.SetErrorHandler(new DisableErrorHandler());
+
+                using var tiff = Tiff.ClientOpen("in-memory", "r", tiffStream, new TiffStream());
+                if (tiff == null) return null;
+
+                FieldValue[] bitsPerSampleField = tiff.GetField(TiffTag.BITSPERSAMPLE);
+                FieldValue[] samplesPerPixelField = tiff.GetField(TiffTag.SAMPLESPERPIXEL);
+
+                // BitsPerSample defaults to 1 and SamplesPerPixel defaults to 1 per the TIFF spec.
+                int bitsPerSample = bitsPerSampleField != null ? bitsPerSampleField[0].ToInt() : 1;
+                int samplesPerPixel = samplesPerPixelField != null ? samplesPerPixelField[0].ToInt() : 1;
+
+                int bitsPerPixel = bitsPerSample * samplesPerPixel;
+                return bitsPerPixel > 0 ? bitsPerPixel : (int?)null;
+            }
+            catch
+            {
+                return null; // Fall back to the in-memory pixel depth on any error
             }
         }
 
@@ -3114,7 +3199,9 @@ namespace IronSoftware.Drawing
         {
             if (source == null)
             {
-                return 4 * (((Width * BitsPerPixel) + 31) / 32);
+                // Use the in-memory pixel depth (not the reported original BitsPerPixel) so the
+                // stride stays consistent with the decoded pixel data exposed by GetFirstPixelData.
+                return 4 * (((Width * InMemoryBitsPerPixel) + 31) / 32);
             }
             else
             {

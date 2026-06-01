@@ -700,6 +700,71 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(32, bitmap.BitsPerPixel);
         }
 
+        [TheoryWithAutomaticDisplayName]
+        [InlineData("ScanDev_BW.tif", 1)]
+        [InlineData("ScanDev_Gray.tif", 8)]
+        [InlineData("ScanDev_Color.tif", 24)]
+        public void DW_9_LoadImage_ShouldReturnOriginalBitsPerPixel(string fileName, int expectedBitsPerPixel)
+        {
+            string imagePath = GetRelativeFilePath(fileName);
+
+            var bitmap = AnyBitmap.FromFile(imagePath);
+
+            Assert.Equal(expectedBitsPerPixel, bitmap.BitsPerPixel);
+        }
+
+        [IgnoreOnUnixFact]
+        public void DW_9_LoadBlackAndWhiteTiff_ShouldReturnOriginalBitsPerPixel_AndAllowChangingBpp()
+        {
+            string imagePath = GetRelativeFilePath("tifimg.tif");
+
+            var bitmap = AnyBitmap.FromFile(imagePath);
+
+            Assert.Equal(1, bitmap.BitsPerPixel);
+            Assert.Equal(PixelFormat.Format1bppIndexed, new Bitmap(imagePath).PixelFormat);
+
+            var converted = bitmap.ChangeBitsPerPixel(24);
+
+            Assert.Equal(24, converted.BitsPerPixel);
+            Assert.Equal(bitmap.Width, converted.Width);
+            Assert.Equal(bitmap.Height, converted.Height);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void DW_9_LoadImage_NotPreservingOriginalFormat_ShouldReturn32BitsPerPixel()
+        {
+            string imagePath = GetRelativeFilePath("ScanDev_BW.tif");
+
+            var bitmap = AnyBitmap.FromFile(imagePath, preserveOriginalFormat: false);
+
+            Assert.Equal(32, bitmap.BitsPerPixel);
+        }
+
+        [TheoryWithAutomaticDisplayName]
+        [InlineData(8)]
+        [InlineData(24)]
+        [InlineData(32)]
+        public void DW_9_ChangeBitsPerPixel_ShouldReturnRequestedColorDepth(int targetBitsPerPixel)
+        {
+            string imagePath = GetRelativeFilePath("ScanDev_BW.tif");
+            var bitmap = AnyBitmap.FromFile(imagePath);
+
+            var converted = bitmap.ChangeBitsPerPixel(targetBitsPerPixel);
+
+            Assert.Equal(targetBitsPerPixel, converted.BitsPerPixel);
+            Assert.Equal(bitmap.Width, converted.Width);
+            Assert.Equal(bitmap.Height, converted.Height);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void DW_9_ChangeBitsPerPixel_WithUnsupportedDepth_ShouldThrow()
+        {
+            string imagePath = GetRelativeFilePath("ScanDev_BW.tif");
+            var bitmap = AnyBitmap.FromFile(imagePath);
+
+            Assert.Throws<NotSupportedException>(() => bitmap.ChangeBitsPerPixel(16));
+        }
+
         [TheoryWithAutomaticDisplayName()]
         [InlineData("mountainclimbers.jpg", "image/jpeg", AnyBitmap.ImageFormat.Jpeg)]
         [InlineData("watermark.deployment.png", "image/png", AnyBitmap.ImageFormat.Png)]
