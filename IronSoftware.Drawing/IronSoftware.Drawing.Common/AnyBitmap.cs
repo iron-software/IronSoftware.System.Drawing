@@ -3409,7 +3409,15 @@ namespace IronSoftware.Drawing
                     switch (image)
                     {
                         case Image<Rgb24> imageAsFormat:
-                            imageAsFormat.CopyPixelDataTo(buffer);
+                            {
+                                // Rgb24 is 3 bytes/pixel, but the buffer/stride above and the
+                                // TIFF tags below are 4 samples/pixel (RGBA). Copying the 3-bpp
+                                // data directly would leave each row short by 'width' bytes,
+                                // shifting every subsequent row and corrupting the page. Convert
+                                // to Rgba32 so the bytes line up with the 4-bpp layout.
+                                using var rgba = imageAsFormat.CloneAs<Rgba32>();
+                                rgba.CopyPixelDataTo(buffer);
+                            }
                             break;
                         case Image<Abgr32> imageAsFormat:
                             imageAsFormat.CopyPixelDataTo(buffer);
@@ -3418,7 +3426,13 @@ namespace IronSoftware.Drawing
                             imageAsFormat.CopyPixelDataTo(buffer);
                             break;
                         case Image<Bgr24> imageAsFormat:
-                            imageAsFormat.CopyPixelDataTo(buffer);
+                            {
+                                // Bgr24 is likewise 3 bytes/pixel; convert to Rgba32 for the
+                                // same reason as Rgb24 above (this also yields the correct
+                                // R,G,B sample order under PHOTOMETRIC.RGB).
+                                using var rgba = imageAsFormat.CloneAs<Rgba32>();
+                                rgba.CopyPixelDataTo(buffer);
+                            }
                             break;
                         case Image<Bgra32> imageAsFormat:
                             imageAsFormat.CopyPixelDataTo(buffer);

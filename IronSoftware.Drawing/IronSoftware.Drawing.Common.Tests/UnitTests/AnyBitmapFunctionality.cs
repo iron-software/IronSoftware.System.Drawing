@@ -676,6 +676,37 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             act.Should().Throw<ArgumentException>();
         }
 
+        [FactWithAutomaticDisplayName]
+        public void CreateMultiFrameTiff_Preserves_Rgb24_Pixels()
+        {
+            string jpgPath = GetRelativeFilePath("mountainclimbers.jpg");
+            using var expected = SixLabors.ImageSharp.Image.Load<Rgb24>(jpgPath);
+
+            using var result = AnyBitmap.CreateMultiFrameTiff(new List<string> { jpgPath });
+
+            result.Width.Should().Be(expected.Width);
+            result.Height.Should().Be(expected.Height);
+
+            var points = new[]
+            {
+                (1, 0),
+                (expected.Width - 1, 0),
+                (expected.Width / 3, expected.Height / 2),
+                (expected.Width / 2, expected.Height / 3),
+                (0, expected.Height - 1),
+                (expected.Width - 1, expected.Height - 1)
+            };
+
+            foreach (var (x, y) in points)
+            {
+                Rgb24 e = expected[x, y];
+                var a = result.GetPixel(x, y);
+                a.R.Should().Be(e.R, $"red channel at ({x},{y})");
+                a.G.Should().Be(e.G, $"green channel at ({x},{y})");
+                a.B.Should().Be(e.B, $"blue channel at ({x},{y})");
+            }
+        }
+
         private static AnyBitmap CreateSolidBitmap(int width, int height, Rgb24 color, int dpi)
         {
             var image = new SixLabors.ImageSharp.Image<Rgb24>(width, height, color);
