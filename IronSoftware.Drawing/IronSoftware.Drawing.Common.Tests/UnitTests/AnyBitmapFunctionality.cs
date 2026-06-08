@@ -1,5 +1,7 @@
+using BitMiracle.LibTiff.Classic;
 using FluentAssertions;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Metadata;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;
@@ -622,6 +624,83 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             outputFileSize.Should().BeLessThanOrEqualTo(maxInputFileSize, $"Output file size ({outputFileSize}) exceeds the maximum input file size ({maxInputFileSize}).");
 
             File.Delete(outputImagePath);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CreateMultiFrameTiffStream_Preserves_Mixed_Orientation()
+        {
+            // A multi-page TIFF must keep each page's native dimensions.
+            // Pages of differing orientation must not be scaled to a common size.
+            using var portrait = CreateSolidBitmap(120, 200, new Rgb24(220, 30, 30), 150);
+            using var landscape = CreateSolidBitmap(200, 120, new Rgb24(30, 30, 220), 150);
+
+            using var stream = AnyBitmap.CreateMultiFrameTiffStream(new[] { portrait, landscape });
+            var pages = ReadTiffDirectories(stream.ToArray());
+
+            pages.Should().HaveCount(2, "each source image becomes one TIFF page");
+            pages[0].Width.Should().Be(120);
+            pages[0].Height.Should().Be(200);
+            pages[1].Width.Should().Be(200);
+            pages[1].Height.Should().Be(120);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CreateMultiFrameTiffBytes_Preserves_Per_Page_Dimensions_And_Resolution()
+        {
+            using var first = CreateSolidBitmap(300, 400, new Rgb24(10, 200, 10), 150);
+            using var second = CreateSolidBitmap(640, 360, new Rgb24(200, 200, 10), 150);
+            using var third = CreateSolidBitmap(200, 200, new Rgb24(10, 10, 200), 150);
+
+            byte[] tiff = AnyBitmap.CreateMultiFrameTiffBytes(new[] { first, second, third });
+            var pages = ReadTiffDirectories(tiff);
+
+            pages.Should().HaveCount(3);
+            pages[0].Width.Should().Be(300);
+            pages[0].Height.Should().Be(400);
+            pages[1].Width.Should().Be(640);
+            pages[1].Height.Should().Be(360);
+            pages[2].Width.Should().Be(200);
+            pages[2].Height.Should().Be(200);
+
+            // A resolution tag is written for every page and is consistent across pages.
+            pages.Should().OnlyContain(p => p.XResolution > 0f);
+            pages.Select(p => p.XResolution).Distinct().Should().ContainSingle();
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CreateMultiFrameTiffStream_Empty_Sequence_Throws()
+        {
+            Action act = () => AnyBitmap.CreateMultiFrameTiffStream(new List<AnyBitmap>());
+            act.Should().Throw<ArgumentException>();
+        }
+
+        private static AnyBitmap CreateSolidBitmap(int width, int height, Rgb24 color, int dpi)
+        {
+            var image = new SixLabors.ImageSharp.Image<Rgb24>(width, height, color);
+            image.Metadata.HorizontalResolution = dpi;
+            image.Metadata.VerticalResolution = dpi;
+            image.Metadata.ResolutionUnits = PixelResolutionUnit.PixelsPerInch;
+            return image;
+        }
+
+        private static List<(int Width, int Height, float XResolution)> ReadTiffDirectories(byte[] tiffData)
+        {
+            var result = new List<(int, int, float)>();
+            using var ms = new MemoryStream(tiffData);
+            using var tiff = Tiff.ClientOpen("in-memory", "r", ms, new TiffStream());
+            tiff.Should().NotBeNull("the produced bytes should be a valid TIFF");
+
+            short directoryCount = tiff.NumberOfDirectories();
+            for (short i = 0; i < directoryCount; i++)
+            {
+                tiff.SetDirectory(i);
+                int width = tiff.GetField(TiffTag.IMAGEWIDTH)[0].ToInt();
+                int height = tiff.GetField(TiffTag.IMAGELENGTH)[0].ToInt();
+                FieldValue[] xres = tiff.GetField(TiffTag.XRESOLUTION);
+                result.Add((width, height, xres != null ? xres[0].ToFloat() : 0f));
+            }
+
+            return result;
         }
 
         [FactWithAutomaticDisplayName]

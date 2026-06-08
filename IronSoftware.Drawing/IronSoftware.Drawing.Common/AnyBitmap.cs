@@ -1074,6 +1074,64 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
+        /// Combines multiple images into a multi-page TIFF and returns the raw TIFF
+        /// as a <see cref="MemoryStream"/>.
+        /// <para>Unlike <see cref="CreateMultiFrameTiff(IEnumerable{AnyBitmap})"/>, each
+        /// page keeps its own dimensions, orientation and resolution. Pages are not
+        /// scaled to a common size. This makes it suitable for mixed-orientation
+        /// documents (for example portrait + landscape pages).</para>
+        /// <para>The result is the encoded TIFF itself, not an <see cref="AnyBitmap"/>,
+        /// so it avoids the lossy round-trip through a single ImageSharp image (which
+        /// cannot represent frames of differing sizes).</para>
+        /// </summary>
+        /// <param name="images">Images to combine, one per TIFF page.</param>
+        /// <returns>A <see cref="MemoryStream"/> positioned at 0 containing the multi-page TIFF.</returns>
+        public static MemoryStream CreateMultiFrameTiffStream(IEnumerable<AnyBitmap> images)
+        {
+            if (images == null)
+                throw new ArgumentNullException(nameof(images));
+
+            var frames = new List<Image>();
+            try
+            {
+                foreach (var image in images)
+                {
+                    if (image == null)
+                        throw new ArgumentException("The image sequence contains a null element.", nameof(images));
+
+                    frames.Add(((Image)image).CloneAs<Rgba32>());
+                }
+
+                if (frames.Count == 0)
+                    throw new ArgumentException("No images provided to create multi-frame TIFF.", nameof(images));
+
+                var stream = new MemoryStream();
+                InternalSaveAsMultiPageTiff(frames, stream); // already resets stream.Position to 0
+                return stream;
+            }
+            finally
+            {
+                foreach (var frame in frames)
+                {
+                    frame.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Combines multiple images into a multi-page TIFF and returns the raw TIFF bytes.
+        /// <para>Each page keeps its own dimensions, orientation and resolution. Pages are
+        /// not scaled to a common size, making it suitable for mixed-orientation documents.</para>
+        /// </summary>
+        /// <param name="images">Images to combine, one per TIFF page.</param>
+        /// <returns>A byte array containing the multi-page TIFF.</returns>
+        public static byte[] CreateMultiFrameTiffBytes(IEnumerable<AnyBitmap> images)
+        {
+            using var stream = CreateMultiFrameTiffStream(images);
+            return stream.ToArray();
+        }
+
+        /// <summary>
         /// Creates a multi-frame GIF image from multiple AnyBitmaps.
         /// <para>All images should have the same dimension.</para>
         /// <para>If not dimension will be scaling to the largest width and 
