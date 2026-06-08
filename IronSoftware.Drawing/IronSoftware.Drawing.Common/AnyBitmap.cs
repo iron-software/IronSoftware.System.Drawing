@@ -3451,8 +3451,8 @@ namespace IronSoftware.Drawing
                             output.SetField(TiffTag.RESOLUTIONUNIT, ResUnit.CENTIMETER);
                             break;
                         case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerMeter:
-                            output.SetField(TiffTag.XRESOLUTION, image.Metadata.HorizontalResolution * 100);
-                            output.SetField(TiffTag.YRESOLUTION, image.Metadata.VerticalResolution * 100);
+                            output.SetField(TiffTag.XRESOLUTION, image.Metadata.HorizontalResolution / 100);
+                            output.SetField(TiffTag.YRESOLUTION, image.Metadata.VerticalResolution / 100);
                             output.SetField(TiffTag.RESOLUTIONUNIT, ResUnit.CENTIMETER);
                             break;
                     }

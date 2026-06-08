@@ -662,9 +662,11 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             pages[2].Width.Should().Be(200);
             pages[2].Height.Should().Be(200);
 
-            // A resolution tag is written for every page and is consistent across pages.
-            pages.Should().OnlyContain(p => p.XResolution > 0f);
-            pages.Select(p => p.XResolution).Distinct().Should().ContainSingle();
+            foreach (var page in pages)
+            {
+                ToDotsPerInch(page.XResolution, page.ResolutionUnit)
+                    .Should().BeApproximately(150d, 2d);
+            }
         }
 
         [FactWithAutomaticDisplayName]
@@ -683,9 +685,9 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             return image;
         }
 
-        private static List<(int Width, int Height, float XResolution)> ReadTiffDirectories(byte[] tiffData)
+        private static List<(int Width, int Height, float XResolution, ResUnit ResolutionUnit)> ReadTiffDirectories(byte[] tiffData)
         {
-            var result = new List<(int, int, float)>();
+            var result = new List<(int, int, float, ResUnit)>();
             using var ms = new MemoryStream(tiffData);
             using var tiff = Tiff.ClientOpen("in-memory", "r", ms, new TiffStream());
             tiff.Should().NotBeNull("the produced bytes should be a valid TIFF");
@@ -697,10 +699,29 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
                 int width = tiff.GetField(TiffTag.IMAGEWIDTH)[0].ToInt();
                 int height = tiff.GetField(TiffTag.IMAGELENGTH)[0].ToInt();
                 FieldValue[] xres = tiff.GetField(TiffTag.XRESOLUTION);
-                result.Add((width, height, xres != null ? xres[0].ToFloat() : 0f));
+                FieldValue[] unit = tiff.GetField(TiffTag.RESOLUTIONUNIT);
+                result.Add((
+                    width,
+                    height,
+                    xres != null ? xres[0].ToFloat() : 0f,
+                    unit != null ? (ResUnit)unit[0].ToInt() : ResUnit.NONE));
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Normalises a TIFF page's resolution back to dots-per-inch, regardless of the
+        /// unit the value was stored in.
+        /// </summary>
+        private static double ToDotsPerInch(float xResolution, ResUnit unit)
+        {
+            return unit switch
+            {
+                ResUnit.INCH => xResolution,
+                ResUnit.CENTIMETER => xResolution * 2.54,
+                _ => xResolution
+            };
         }
 
         [FactWithAutomaticDisplayName]
