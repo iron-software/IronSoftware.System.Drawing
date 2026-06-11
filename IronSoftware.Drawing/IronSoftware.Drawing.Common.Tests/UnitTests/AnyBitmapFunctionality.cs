@@ -677,6 +677,23 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void CreateMultiFrameTiffBytes_PreservesResolution_FromPixelsPerMeterSource()
+        {
+            const double dpi = 300d;
+            double pixelsPerMetre = dpi / 0.0254d; // 300 DPI expressed in pixels per metre
+
+            using var page = MakeBitmapWithResolution(220, 300, new Rgb24(40, 90, 160),
+                pixelsPerMetre, PixelResolutionUnit.PixelsPerMeter);
+
+            byte[] tiff = AnyBitmap.CreateMultiFrameTiffBytes(new[] { page });
+            var pages = ReadTiffDirectories(tiff);
+
+            pages.Should().ContainSingle();
+            ToDotsPerInch(pages[0].XResolution, pages[0].ResolutionUnit)
+                .Should().BeApproximately(dpi, 2d);
+        }
+
+        [FactWithAutomaticDisplayName]
         public void CreateMultiFrameTiff_Preserves_Rgb24_Pixels()
         {
             string jpgPath = GetRelativeFilePath("mountainclimbers.jpg");
@@ -707,12 +724,68 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             }
         }
 
+        [TheoryWithAutomaticDisplayName]
+        [InlineData("Rgb24")]
+        [InlineData("Bgr24")]
+        [InlineData("Rgba32")]
+        [InlineData("Bgra32")]
+        [InlineData("Abgr32")]
+        [InlineData("Argb32")]
+        public void CreateMultiFrameTiff_PreservesColors_ForAllPixelFormats(string pixelFormat)
+        {
+            const byte r = 10, g = 120, b = 240;
+            using var bmp = MakeSolidBitmapOfFormat(pixelFormat, 64, 48, r, g, b);
+
+            using var result = AnyBitmap.CreateMultiFrameTiff(new[] { bmp });
+
+            result.Width.Should().Be(64);
+            result.Height.Should().Be(48);
+
+            foreach (var (x, y) in new[] { (0, 0), (63, 0), (0, 47), (32, 24), (63, 47) })
+            {
+                var px = result.GetPixel(x, y);
+                px.R.Should().Be(r, $"R at ({x},{y}) for {pixelFormat}");
+                px.G.Should().Be(g, $"G at ({x},{y}) for {pixelFormat}");
+                px.B.Should().Be(b, $"B at ({x},{y}) for {pixelFormat}");
+            }
+        }
+
+        /// <summary>
+        /// Builds a solid <see cref="AnyBitmap"/> whose backing image uses the requested
+        /// ImageSharp pixel format. The colour is given in logical R,G,B order regardless of
+        /// the format's in-memory byte layout. The image is force-loaded so the original
+        /// pixel format (not a re-encoded copy) reaches the TIFF writer.
+        /// </summary>
+        private static AnyBitmap MakeSolidBitmapOfFormat(string format, int width, int height, byte r, byte g, byte b)
+        {
+            Image image = format switch
+            {
+                "Rgb24" => new Image<Rgb24>(width, height, new Rgb24(r, g, b)),
+                "Bgr24" => new Image<Bgr24>(width, height, new Bgr24(r, g, b)),
+                "Rgba32" => new Image<Rgba32>(width, height, new Rgba32(r, g, b, 255)),
+                "Bgra32" => new Image<Bgra32>(width, height, new Bgra32(r, g, b, 255)),
+                "Abgr32" => new Image<Abgr32>(width, height, new Abgr32(r, g, b, 255)),
+                "Argb32" => new Image<Argb32>(width, height, new Argb32(r, g, b, 255)),
+                _ => throw new ArgumentOutOfRangeException(nameof(format), format, "Unsupported pixel format")
+            };
+
+            var bitmap = (AnyBitmap)image;
+            _ = bitmap.Width; // materialise so the original pixel format reaches the writer
+            return bitmap;
+        }
+
         private static AnyBitmap CreateSolidBitmap(int width, int height, Rgb24 color, int dpi)
         {
+            return MakeBitmapWithResolution(width, height, color, dpi, PixelResolutionUnit.PixelsPerInch);
+        }
+
+        private static AnyBitmap MakeBitmapWithResolution(int width, int height, Rgb24 color,
+            double resolution, PixelResolutionUnit unit)
+        {
             var image = new SixLabors.ImageSharp.Image<Rgb24>(width, height, color);
-            image.Metadata.HorizontalResolution = dpi;
-            image.Metadata.VerticalResolution = dpi;
-            image.Metadata.ResolutionUnits = PixelResolutionUnit.PixelsPerInch;
+            image.Metadata.HorizontalResolution = resolution;
+            image.Metadata.VerticalResolution = resolution;
+            image.Metadata.ResolutionUnits = unit;
             return image;
         }
 

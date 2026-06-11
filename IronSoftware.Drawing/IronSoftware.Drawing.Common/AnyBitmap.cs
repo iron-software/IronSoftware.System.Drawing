@@ -3420,10 +3420,20 @@ namespace IronSoftware.Drawing
                             }
                             break;
                         case Image<Abgr32> imageAsFormat:
-                            imageAsFormat.CopyPixelDataTo(buffer);
+                            {
+                                // 4 bytes/pixel, but the bytes are A,B,G,R. The wrong sample
+                                // order for PHOTOMETRIC.RGB (which expects R,G,B,A). Convert to
+                                // Rgba32 so the channels are not written swapped.
+                                using var rgba = imageAsFormat.CloneAs<Rgba32>();
+                                rgba.CopyPixelDataTo(buffer);
+                            }
                             break;
                         case Image<Argb32> imageAsFormat:
-                            imageAsFormat.CopyPixelDataTo(buffer);
+                            {
+                                // Bytes are A,R,G,B; convert to Rgba32 for correct channel order.
+                                using var rgba = imageAsFormat.CloneAs<Rgba32>();
+                                rgba.CopyPixelDataTo(buffer);
+                            }
                             break;
                         case Image<Bgr24> imageAsFormat:
                             {
@@ -3435,7 +3445,12 @@ namespace IronSoftware.Drawing
                             }
                             break;
                         case Image<Bgra32> imageAsFormat:
-                            imageAsFormat.CopyPixelDataTo(buffer);
+                            {
+                                // Bytes are B,G,R,A; convert to Rgba32 so they are not written
+                                // channel-swapped under PHOTOMETRIC.RGB.
+                                using var rgba = imageAsFormat.CloneAs<Rgba32>();
+                                rgba.CopyPixelDataTo(buffer);
+                            }
                             break;
                         default:
                             (image as Image<Rgba32>).CopyPixelDataTo(buffer);
