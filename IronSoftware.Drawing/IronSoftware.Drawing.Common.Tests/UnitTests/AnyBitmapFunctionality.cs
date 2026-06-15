@@ -580,6 +580,48 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void FromTiffFile_StreamsMultiPageTiff_MatchesFromFile()
+        {
+            string tiffPath = GetRelativeFilePath("IRON-274-39065.tif");
+
+            // Baseline: the standard in-memory loader.
+            var expected = AnyBitmap.FromFile(tiffPath);
+
+            // Streaming loader: the path used automatically for TIFF files > ~2 GB.
+            var streamed = AnyBitmap.FromTiffFile(tiffPath);
+
+            streamed.FrameCount.Should().Be(expected.FrameCount);
+
+            var expectedFrames = expected.GetAllFrames.ToList();
+            var streamedFrames = streamed.GetAllFrames.ToList();
+            streamedFrames.Count.Should().Be(expectedFrames.Count);
+            for (int i = 0; i < expectedFrames.Count; i++)
+            {
+                streamedFrames[i].Width.Should().Be(expectedFrames[i].Width);
+                streamedFrames[i].Height.Should().Be(expectedFrames[i].Height);
+            }
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void FromTiffFile_StreamsEveryPage_OfMultiPageTiff()
+        {
+            string tiffPath = GetRelativeFilePath("test_dw_10.tif");
+
+            var expected = AnyBitmap.FromFile(tiffPath);
+            var streamed = AnyBitmap.FromTiffFile(tiffPath);
+
+            streamed.FrameCount.Should().Be(expected.FrameCount);
+            streamed.FrameCount.Should().BeGreaterThan(1);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void FromTiffFile_MissingFile_ThrowsFileNotFound()
+        {
+            Action act = () => AnyBitmap.FromTiffFile(GetRelativeFilePath("does-not-exist-DW39.tiff"));
+            act.Should().Throw<FileNotFoundException>();
+        }
+
+        [FactWithAutomaticDisplayName]
         public void Create_Multi_page_Tiff()
         {
             var bitmaps = new List<AnyBitmap>()
