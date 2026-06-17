@@ -998,6 +998,13 @@ namespace IronSoftware.Drawing
         /// <para>When the image is loaded preserving its original format, this reports the
         /// bits per pixel of the original source image (for example, 1 for a black &amp; white
         /// image) rather than the bits per pixel of the in-memory decoded representation.</para>
+        /// <para><b>Important:</b> this value is intentionally decoupled from <see cref="Stride"/>
+        /// and <see cref="Scan0"/>. SixLabors.ImageSharp has no pixel format below 8bpp, so a
+        /// source with a lower color depth (e.g. a 1bpp black &amp; white TIFF) is always decoded
+        /// into a 32bpp buffer in memory. <see cref="BitsPerPixel"/> reports the <i>original</i>
+        /// depth, whereas <see cref="Stride"/> and <see cref="Scan0"/> describe the <i>decoded</i>
+        /// 32bpp BGRA buffer. Do not size a <see cref="Scan0"/> buffer using
+        /// <c>Width * Height * BitsPerPixel / 8</c>; use <see cref="Stride"/> instead.</para>
         /// <br/><para><b>Further Documentation:</b><br/>
         /// <a href="https://ironsoftware.com/open-source/csharp/drawing/examples/get-color-depth/">
         /// Code Example</a></para>
@@ -1008,6 +1015,13 @@ namespace IronSoftware.Drawing
         /// Creates a new <see cref="AnyBitmap"/> with the pixel data converted to the requested
         /// color depth, in number of bits per pixel. This is analogous to changing the
         /// <c>PixelFormat</c> of a <see cref="System.Drawing.Bitmap"/>.
+        /// <para><b>Single frame:</b> only the first frame is converted. For a multi-page TIFF or
+        /// animated GIF the additional frames are not carried over to the returned image.</para>
+        /// <para><b>Durability:</b> the conversion changes the in-memory pixel representation.
+        /// Whether the new depth survives a save depends on the target encoder: formats that honor
+        /// the pixel type (e.g. PNG) preserve it, whereas saving without an explicit format or
+        /// calling <see cref="GetBytes()"/> re-encodes via the default 32bpp BMP encoder and the
+        /// reduced depth is lost.</para>
         /// </summary>
         /// <param name="bitsPerPixel">The target color depth. Supported values are
         /// <c>8</c> (grayscale), <c>24</c> (RGB) and <c>32</c> (RGBA).</param>
@@ -1017,6 +1031,7 @@ namespace IronSoftware.Drawing
         /// is not one of the supported values.</exception>
         public AnyBitmap ChangeBitsPerPixel(int bitsPerPixel)
         {
+            // Note: GetFirstInternalImage() only exposes frame 0, so this converts the first frame only.
             Image source = GetFirstInternalImage();
             Image converted = bitsPerPixel switch
             {
@@ -1343,8 +1358,11 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Gets the stride width (also called scan width) of the 
+        /// Gets the stride width (also called scan width) of the
         /// <see cref="AnyBitmap"/> object.
+        /// <para>This describes the in-memory decoded 32bpp BGRA buffer (see <see cref="Scan0"/>)
+        /// and is therefore independent of <see cref="BitsPerPixel"/>, which may report the lower
+        /// original color depth of the source image.</para>
         /// </summary>
         public int Stride
         {
@@ -1355,11 +1373,15 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// Gets the address of the first pixel data in the 
-        /// <see cref="AnyBitmap"/>. This can also be thought of as the first 
+        /// Gets the address of the first pixel data in the
+        /// <see cref="AnyBitmap"/>. This can also be thought of as the first
         /// scan line in the <see cref="AnyBitmap"/>.
+        /// <para>The pixel data is always the in-memory 32bpp BGRA representation, regardless of
+        /// the value reported by <see cref="BitsPerPixel"/> (which may be the lower original
+        /// color depth of the source image). Pair this with <see cref="Stride"/>, not
+        /// <see cref="BitsPerPixel"/>, when computing buffer sizes.</para>
         /// </summary>
-        /// <returns>The address of the first 32bpp BGRA pixel data in the 
+        /// <returns>The address of the first 32bpp BGRA pixel data in the
         /// <see cref="AnyBitmap"/>.</returns>
         public IntPtr Scan0
         {
@@ -2655,16 +2677,19 @@ namespace IronSoftware.Drawing
             Binary = span.ToArray();
             if (Format is TiffFormat)
             {
+                // Read frame count and original bits per pixel in a single metadata pass.
+                var (frameCount, originalBitsPerPixel) = ReadTiffMetadataFast();
+
                 // TIFFs are decoded into a 32bpp Rgba32 image (via LibTiff or ImageSharp), which
                 // loses the original color depth. When preserving the original format, capture the
                 // source bits per pixel from the TIFF metadata so BitsPerPixel reports it faithfully
                 // (e.g. 1 for a black & white image) instead of the decoded 32bpp value.
                 if (preserveOriginalFormat)
                 {
-                    _originalBitsPerPixel = GetTiffBitsPerPixelFast();
+                    _originalBitsPerPixel = originalBitsPerPixel;
                 }
 
-                if(GetTiffFrameCountFast() > 1)
+                if (frameCount > 1)
                 {
                     _lazyImage = OpenTiffToImageSharp();
                 }
@@ -2673,7 +2698,7 @@ namespace IronSoftware.Drawing
                     // ImageSharp can load some single frame tiff, if failed we try again with LibTiff
                     _lazyImage = OpenImageToImageSharp(preserveOriginalFormat, tryWithLibTiff : true);
                 }
-              
+
             }
             else
             {
@@ -2857,32 +2882,14 @@ namespace IronSoftware.Drawing
             }
         }
 
-        private int GetTiffFrameCountFast()
-        {
-            try
-            {
-                using var tiffStream = new MemoryStream(Binary);
-
-                // Disable error messages for fast check
-                Tiff.SetErrorHandler(new DisableErrorHandler());
-
-                using var tiff = Tiff.ClientOpen("in-memory", "r", tiffStream, new TiffStream());
-                if (tiff == null) return 1; // Default to single frame if can't read
-
-                return tiff.NumberOfDirectories();
-            }
-            catch
-            {
-                return 1; // Default to single frame on any error
-            }
-        }
-
         /// <summary>
-        /// Reads the original bits per pixel of the first frame of the loaded TIFF directly from
-        /// its metadata (BitsPerSample x SamplesPerPixel), without fully decoding the image.
+        /// Reads lightweight TIFF metadata, i.e. the number of frames (directories) and the original
+        /// bits per pixel of the first frame (BitsPerSample x SamplesPerPixel), in a single pass,
+        /// without fully decoding the image.
         /// </summary>
-        /// <returns>The original bits per pixel, or <c>null</c> if it cannot be determined.</returns>
-        private int? GetTiffBitsPerPixelFast()
+        /// <returns>A tuple of the frame count (defaults to 1 if it cannot be read) and the original
+        /// bits per pixel of the first frame (<c>null</c> if it cannot be determined).</returns>
+        private (int FrameCount, int? BitsPerPixel) ReadTiffMetadataFast()
         {
             try
             {
@@ -2892,21 +2899,24 @@ namespace IronSoftware.Drawing
                 Tiff.SetErrorHandler(new DisableErrorHandler());
 
                 using var tiff = Tiff.ClientOpen("in-memory", "r", tiffStream, new TiffStream());
-                if (tiff == null) return null;
+                if (tiff == null) return (1, null); // Default to single frame if can't read
 
+                // Read frame-0 fields before NumberOfDirectories(), which may move the active directory.
                 FieldValue[] bitsPerSampleField = tiff.GetField(TiffTag.BITSPERSAMPLE);
                 FieldValue[] samplesPerPixelField = tiff.GetField(TiffTag.SAMPLESPERPIXEL);
 
                 // BitsPerSample defaults to 1 and SamplesPerPixel defaults to 1 per the TIFF spec.
                 int bitsPerSample = bitsPerSampleField != null ? bitsPerSampleField[0].ToInt() : 1;
                 int samplesPerPixel = samplesPerPixelField != null ? samplesPerPixelField[0].ToInt() : 1;
-
                 int bitsPerPixel = bitsPerSample * samplesPerPixel;
-                return bitsPerPixel > 0 ? bitsPerPixel : (int?)null;
+
+                int frameCount = tiff.NumberOfDirectories();
+
+                return (frameCount, bitsPerPixel > 0 ? bitsPerPixel : (int?)null);
             }
             catch
             {
-                return null; // Fall back to the in-memory pixel depth on any error
+                return (1, null); // Default to single frame / unknown depth on any error
             }
         }
 

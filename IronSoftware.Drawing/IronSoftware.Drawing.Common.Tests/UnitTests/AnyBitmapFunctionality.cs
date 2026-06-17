@@ -765,6 +765,47 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Throws<NotSupportedException>(() => bitmap.ChangeBitsPerPixel(16));
         }
 
+        [FactWithAutomaticDisplayName]
+        public void DW_9_BitsPerPixel_IsIntentionallyDecoupledFromStrideAndScan0()
+        {
+            // A 1bpp source is decoded into a 32bpp buffer in memory. BitsPerPixel reports the
+            // original depth (1), but Stride and Scan0 must describe the decoded 32bpp buffer.
+            // This locks that intentional decoupling against future re-coupling.
+            string imagePath = GetRelativeFilePath("ScanDev_BW.tif");
+            var bitmap = AnyBitmap.FromFile(imagePath);
+
+            Assert.Equal(1, bitmap.BitsPerPixel);
+
+            int strideFor32Bpp = 4 * (((bitmap.Width * 32) + 31) / 32);
+            int strideForReportedBpp = 4 * (((bitmap.Width * bitmap.BitsPerPixel) + 31) / 32);
+
+            // Stride follows the in-memory 32bpp buffer, not the reported BitsPerPixel.
+            Assert.Equal(strideFor32Bpp, bitmap.Stride);
+            Assert.NotEqual(strideForReportedBpp, bitmap.Stride);
+            Assert.NotEqual(IntPtr.Zero, bitmap.Scan0);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void DW_9_ChangeBitsPerPixel_DurabilityDependsOnEncoder()
+        {
+            string imagePath = GetRelativeFilePath("ScanDev_BW.tif");
+            var converted = AnyBitmap.FromFile(imagePath).ChangeBitsPerPixel(8);
+
+            // In-memory the conversion is honored.
+            Assert.Equal(8, converted.BitsPerPixel);
+
+            // PNG preserves the 8bpp depth.
+            converted.SaveAs("dw9_roundtrip.png", AnyBitmap.ImageFormat.Png);
+            Assert.Equal(8, AnyBitmap.FromFile("dw9_roundtrip.png").BitsPerPixel);
+
+            converted.SaveAs("dw9_roundtrip.bmp");
+            Assert.Equal(32, AnyBitmap.FromFile("dw9_roundtrip.bmp").BitsPerPixel);
+            Assert.Equal(32, AnyBitmap.FromBytes(converted.GetBytes()).BitsPerPixel);
+
+            CleanResultFile("dw9_roundtrip.png");
+            CleanResultFile("dw9_roundtrip.bmp");
+        }
+
         [TheoryWithAutomaticDisplayName()]
         [InlineData("mountainclimbers.jpg", "image/jpeg", AnyBitmap.ImageFormat.Jpeg)]
         [InlineData("watermark.deployment.png", "image/png", AnyBitmap.ImageFormat.Png)]
