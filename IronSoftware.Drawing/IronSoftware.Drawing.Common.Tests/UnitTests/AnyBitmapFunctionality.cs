@@ -1,5 +1,7 @@
+using BitMiracle.LibTiff.Classic;
 using FluentAssertions;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Metadata;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;
@@ -622,6 +624,208 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             outputFileSize.Should().BeLessThanOrEqualTo(maxInputFileSize, $"Output file size ({outputFileSize}) exceeds the maximum input file size ({maxInputFileSize}).");
 
             File.Delete(outputImagePath);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CreateMultiFrameTiffStream_Preserves_Mixed_Orientation()
+        {
+            // A multi-page TIFF must keep each page's native dimensions.
+            // Pages of differing orientation must not be scaled to a common size.
+            using var portrait = CreateSolidBitmap(120, 200, new Rgb24(220, 30, 30), 150);
+            using var landscape = CreateSolidBitmap(200, 120, new Rgb24(30, 30, 220), 150);
+
+            using var stream = AnyBitmap.CreateMultiFrameTiffStream(new[] { portrait, landscape });
+            var pages = ReadTiffDirectories(stream.ToArray());
+
+            pages.Should().HaveCount(2, "each source image becomes one TIFF page");
+            pages[0].Width.Should().Be(120);
+            pages[0].Height.Should().Be(200);
+            pages[1].Width.Should().Be(200);
+            pages[1].Height.Should().Be(120);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CreateMultiFrameTiffBytes_Preserves_Per_Page_Dimensions_And_Resolution()
+        {
+            using var first = CreateSolidBitmap(300, 400, new Rgb24(10, 200, 10), 150);
+            using var second = CreateSolidBitmap(640, 360, new Rgb24(200, 200, 10), 150);
+            using var third = CreateSolidBitmap(200, 200, new Rgb24(10, 10, 200), 150);
+
+            byte[] tiff = AnyBitmap.CreateMultiFrameTiffBytes(new[] { first, second, third });
+            var pages = ReadTiffDirectories(tiff);
+
+            pages.Should().HaveCount(3);
+            pages[0].Width.Should().Be(300);
+            pages[0].Height.Should().Be(400);
+            pages[1].Width.Should().Be(640);
+            pages[1].Height.Should().Be(360);
+            pages[2].Width.Should().Be(200);
+            pages[2].Height.Should().Be(200);
+
+            foreach (var page in pages)
+            {
+                ToDotsPerInch(page.XResolution, page.ResolutionUnit)
+                    .Should().BeApproximately(150d, 2d);
+            }
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CreateMultiFrameTiffStream_Empty_Sequence_Throws()
+        {
+            Action act = () => AnyBitmap.CreateMultiFrameTiffStream(new List<AnyBitmap>());
+            act.Should().Throw<ArgumentException>();
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CreateMultiFrameTiffBytes_PreservesResolution_FromPixelsPerMeterSource()
+        {
+            const double dpi = 300d;
+            double pixelsPerMetre = dpi / 0.0254d; // 300 DPI expressed in pixels per metre
+
+            using var page = MakeBitmapWithResolution(220, 300, new Rgb24(40, 90, 160),
+                pixelsPerMetre, PixelResolutionUnit.PixelsPerMeter);
+
+            byte[] tiff = AnyBitmap.CreateMultiFrameTiffBytes(new[] { page });
+            var pages = ReadTiffDirectories(tiff);
+
+            pages.Should().ContainSingle();
+            ToDotsPerInch(pages[0].XResolution, pages[0].ResolutionUnit)
+                .Should().BeApproximately(dpi, 2d);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CreateMultiFrameTiff_Preserves_Rgb24_Pixels()
+        {
+            string jpgPath = GetRelativeFilePath("mountainclimbers.jpg");
+            using var expected = SixLabors.ImageSharp.Image.Load<Rgb24>(jpgPath);
+
+            using var result = AnyBitmap.CreateMultiFrameTiff(new List<string> { jpgPath });
+
+            result.Width.Should().Be(expected.Width);
+            result.Height.Should().Be(expected.Height);
+
+            var points = new[]
+            {
+                (1, 0),
+                (expected.Width - 1, 0),
+                (expected.Width / 3, expected.Height / 2),
+                (expected.Width / 2, expected.Height / 3),
+                (0, expected.Height - 1),
+                (expected.Width - 1, expected.Height - 1)
+            };
+
+            foreach (var (x, y) in points)
+            {
+                Rgb24 e = expected[x, y];
+                var a = result.GetPixel(x, y);
+                a.R.Should().Be(e.R, $"red channel at ({x},{y})");
+                a.G.Should().Be(e.G, $"green channel at ({x},{y})");
+                a.B.Should().Be(e.B, $"blue channel at ({x},{y})");
+            }
+        }
+
+        [TheoryWithAutomaticDisplayName]
+        [InlineData("Rgb24")]
+        [InlineData("Bgr24")]
+        [InlineData("Rgba32")]
+        [InlineData("Bgra32")]
+        [InlineData("Abgr32")]
+        [InlineData("Argb32")]
+        public void CreateMultiFrameTiff_PreservesColors_ForAllPixelFormats(string pixelFormat)
+        {
+            const byte r = 10, g = 120, b = 240;
+            using var bmp = MakeSolidBitmapOfFormat(pixelFormat, 64, 48, r, g, b);
+
+            using var result = AnyBitmap.CreateMultiFrameTiff(new[] { bmp });
+
+            result.Width.Should().Be(64);
+            result.Height.Should().Be(48);
+
+            foreach (var (x, y) in new[] { (0, 0), (63, 0), (0, 47), (32, 24), (63, 47) })
+            {
+                var px = result.GetPixel(x, y);
+                px.R.Should().Be(r, $"R at ({x},{y}) for {pixelFormat}");
+                px.G.Should().Be(g, $"G at ({x},{y}) for {pixelFormat}");
+                px.B.Should().Be(b, $"B at ({x},{y}) for {pixelFormat}");
+            }
+        }
+
+        /// <summary>
+        /// Builds a solid <see cref="AnyBitmap"/> whose backing image uses the requested
+        /// ImageSharp pixel format. The colour is given in logical R,G,B order regardless of
+        /// the format's in-memory byte layout. The image is force-loaded so the original
+        /// pixel format (not a re-encoded copy) reaches the TIFF writer.
+        /// </summary>
+        private static AnyBitmap MakeSolidBitmapOfFormat(string format, int width, int height, byte r, byte g, byte b)
+        {
+            Image image = format switch
+            {
+                "Rgb24" => new Image<Rgb24>(width, height, new Rgb24(r, g, b)),
+                "Bgr24" => new Image<Bgr24>(width, height, new Bgr24(r, g, b)),
+                "Rgba32" => new Image<Rgba32>(width, height, new Rgba32(r, g, b, 255)),
+                "Bgra32" => new Image<Bgra32>(width, height, new Bgra32(r, g, b, 255)),
+                "Abgr32" => new Image<Abgr32>(width, height, new Abgr32(r, g, b, 255)),
+                "Argb32" => new Image<Argb32>(width, height, new Argb32(r, g, b, 255)),
+                _ => throw new ArgumentOutOfRangeException(nameof(format), format, "Unsupported pixel format")
+            };
+
+            var bitmap = (AnyBitmap)image;
+            _ = bitmap.Width; // materialise so the original pixel format reaches the writer
+            return bitmap;
+        }
+
+        private static AnyBitmap CreateSolidBitmap(int width, int height, Rgb24 color, int dpi)
+        {
+            return MakeBitmapWithResolution(width, height, color, dpi, PixelResolutionUnit.PixelsPerInch);
+        }
+
+        private static AnyBitmap MakeBitmapWithResolution(int width, int height, Rgb24 color,
+            double resolution, PixelResolutionUnit unit)
+        {
+            var image = new SixLabors.ImageSharp.Image<Rgb24>(width, height, color);
+            image.Metadata.HorizontalResolution = resolution;
+            image.Metadata.VerticalResolution = resolution;
+            image.Metadata.ResolutionUnits = unit;
+            return image;
+        }
+
+        private static List<(int Width, int Height, float XResolution, ResUnit ResolutionUnit)> ReadTiffDirectories(byte[] tiffData)
+        {
+            var result = new List<(int, int, float, ResUnit)>();
+            using var ms = new MemoryStream(tiffData);
+            using var tiff = Tiff.ClientOpen("in-memory", "r", ms, new TiffStream());
+            tiff.Should().NotBeNull("the produced bytes should be a valid TIFF");
+
+            short directoryCount = tiff.NumberOfDirectories();
+            for (short i = 0; i < directoryCount; i++)
+            {
+                tiff.SetDirectory(i);
+                int width = tiff.GetField(TiffTag.IMAGEWIDTH)[0].ToInt();
+                int height = tiff.GetField(TiffTag.IMAGELENGTH)[0].ToInt();
+                FieldValue[] xres = tiff.GetField(TiffTag.XRESOLUTION);
+                FieldValue[] unit = tiff.GetField(TiffTag.RESOLUTIONUNIT);
+                result.Add((
+                    width,
+                    height,
+                    xres != null ? xres[0].ToFloat() : 0f,
+                    unit != null ? (ResUnit)unit[0].ToInt() : ResUnit.NONE));
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Normalises a TIFF page's resolution back to dots-per-inch, regardless of the
+        /// unit the value was stored in.
+        /// </summary>
+        private static double ToDotsPerInch(float xResolution, ResUnit unit)
+        {
+            return unit switch
+            {
+                ResUnit.INCH => xResolution,
+                ResUnit.CENTIMETER => xResolution * 2.54,
+                _ => xResolution
+            };
         }
 
         [FactWithAutomaticDisplayName]
