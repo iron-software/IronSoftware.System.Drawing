@@ -600,6 +600,33 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
                 streamedFrames[i].Width.Should().Be(expectedFrames[i].Width);
                 streamedFrames[i].Height.Should().Be(expectedFrames[i].Height);
             }
+
+            // Content equivalence, not just dimensions: the decoded pixels of each
+            // page must match the in-memory loader.
+            for (int i = 0; i < expectedFrames.Count; i++)
+            {
+                expectedFrames[i].SaveAs($"expected-frame{i}.png");
+                streamedFrames[i].SaveAs($"streamed-frame{i}.png");
+                AssertImageAreEqual($"expected-frame{i}.png", $"streamed-frame{i}.png");
+            }
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void FromTiffFile_RawBytesAndFormat_ReportTiff()
+        {
+            string tiffPath = GetRelativeFilePath("IRON-274-39065.tif");
+
+            var streamed = AnyBitmap.FromTiffFile(tiffPath);
+
+            // The streamed bitmap keeps no original byte[]; the raw-byte accessors and
+            // GetImageFormat must re-encode the pages as a multi-page TIFF (matching
+            // FromFile) rather than reporting a single-page BMP.
+            streamed.GetImageFormat().Should().Be(AnyBitmap.ImageFormat.Tiff);
+
+            byte[] bytes = streamed.GetBytes();
+            var roundTrip = AnyBitmap.FromBytes(bytes);
+            roundTrip.GetImageFormat().Should().Be(AnyBitmap.ImageFormat.Tiff);
+            roundTrip.FrameCount.Should().Be(streamed.FrameCount);
         }
 
         [FactWithAutomaticDisplayName]

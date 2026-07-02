@@ -77,6 +77,14 @@ namespace IronSoftware.Drawing
         private byte[] _binary;
 
         /// <summary>
+        /// True when this bitmap was produced by streaming a TIFF from disk
+        /// (<see cref="LoadLargeTiffFromFile"/>), in which case no original byte[] was
+        /// retained and the raw-byte accessors must re-encode the pages as a multi-page
+        /// TIFF rather than the default single-frame encoder.
+        /// </summary>
+        private bool _streamedFromTiff;
+
+        /// <summary>
         /// This value save the original bytes, we need to update it each time that Image object (inside _lazyImage) is changed <see cref="IsDirty"/>
         /// </summary>
         private byte[] Binary
@@ -98,9 +106,17 @@ namespace IronSoftware.Drawing
                         {
                             //Which mean we need to update _binary to sync with the image
                             using var stream = new MemoryStream();
-                            IImageEncoder enc = GetDefaultImageExportEncoder();
 
-                            GetFirstInternalImage().Save(stream, enc);
+                            if (_streamedFromTiff)
+                            {
+                                InternalSaveAsMultiPageTiff(_lazyImage?.Value, stream);
+                            }
+                            else
+                            {
+                                IImageEncoder enc = GetDefaultImageExportEncoder();
+                                GetFirstInternalImage().Save(stream, enc);
+                            }
+
                             _binary = stream.ToArray();
                             IsDirty = false;
                         }
@@ -898,6 +914,19 @@ namespace IronSoftware.Drawing
         /// automatically falls back to this loader when a TIFF file exceeds the
         /// in-memory size limit, so calling it explicitly is only required when you
         /// want to force page-by-page streaming regardless of file size.
+        /// <para>
+        /// Two behaviours differ from the in-memory path and are worth noting.
+        /// First, pages are decoded one at a time but are all retained together, so
+        /// the resident memory of the returned bitmap scales with page count
+        /// multiplied by decoded page size. Second, no original byte[] is kept: the
+        /// raw-byte accessors (<see cref="GetBytes"/>, <see cref="GetStream"/>,
+        /// <see cref="Length"/>) and <see cref="GetImageFormat"/> re-encode the pages
+        /// as a multi-page TIFF on demand, so they report TIFF (as with
+        /// <see cref="FromFile(string)"/>) rather than the original file bytes. For a
+        /// document whose re-encoded form would exceed ~2 GB, requesting the raw bytes
+        /// throws the .NET single-array limit; use <see cref="SaveAs(string)"/> to
+        /// persist all pages to disk instead.
+        /// </para>
         /// </remarks>
         /// <seealso cref="FromFile(string)"/>
         public static AnyBitmap FromTiffFile(string file)
@@ -2904,11 +2933,14 @@ namespace IronSoftware.Drawing
         /// </summary>
         /// <remarks>
         /// The supplied <paramref name="tiff"/> may be backed by any stream - an
-        /// in-memory buffer or a <see cref="FileStream"/>. When it is backed by a
-        /// file, LibTiff seeks to each directory on demand, so the whole file is
-        /// never buffered. This is what allows multi-page TIFF files larger than
-        /// 2 GB to be loaded: total file size is unbounded, only an individual
-        /// page must fit within a single decode buffer.
+        /// in-memory buffer or a <see cref="FileStream"/>. Decoding is performed one
+        /// page at a time, and when the source is a file LibTiff seeks to each
+        /// directory on demand, so the whole file is never read into a single buffer.
+        /// This is what allows multi-page TIFF files larger than 2 GB to be loaded:
+        /// the total file size is unbounded and only an individual page must fit
+        /// within a single decode buffer. Note that the decoded pages are all
+        /// retained together in the returned list, so the resident memory of the
+        /// result still scales with page count multiplied by decoded page size.
         /// </remarks>
         private List<Image> ReadTiffFrames(Tiff tiff)
         {
@@ -2920,56 +2952,61 @@ namespace IronSoftware.Drawing
             SetTiffCompression(tiff);
 
             List<Image> images = new();
-            short num = tiff.NumberOfDirectories();
-            for (short i = 0; i < num; i++)
+
+            int index = 0;
+            do
             {
-                _ = tiff.SetDirectory(i);
-
-                if (IsThumbnail(tiff))
+                if (!IsThumbnail(tiff))
                 {
-                    continue;
+                    var (width, height, horizontalResolution, verticalResolution) = SetWidthHeight(tiff, index, ref imageWidth, ref imageHeight, ref imageXResolution, ref imageYResolution);
+
+                    // A single page is still decoded into one RGBA buffer, so its pixel
+                    // count is bounded by the .NET single-array index limit. Multi-page
+                    // files of any total size are fine as long as each page fits.
+                    long pixelCount = (long)width * height;
+                    if (pixelCount > MaxSingleFrameRasterPixels)
+                    {
+                        throw new NotSupportedException(
+                            $"TIFF page {index} is {width}x{height} ({pixelCount:N0} pixels), which exceeds the maximum of " +
+                            $"{MaxSingleFrameRasterPixels:N0} pixels that can be decoded into a single buffer. " +
+                            "Split this page into smaller images before loading.");
+                    }
+
+                    // Read the image into the memory buffer
+                    int[] raster = new int[height * width];
+                    if (!tiff.ReadRGBAImage(width, height, raster))
+                    {
+                        throw new NotSupportedException("Could not read image");
+                    }
+
+                    var bits = PrepareByteArray(raster, width, height, 32);
+
+                    var image = Image.LoadPixelData<Rgba32>(bits, width, height);
+
+                    image.Metadata.HorizontalResolution = horizontalResolution;
+                    image.Metadata.VerticalResolution = verticalResolution;
+                    images.Add(image);
+
+                    //Note1: it might be some case that the bytes of current Image is smaller/bigger than the original tiff
+                    //Note2: 'yield return' make it super slow
                 }
 
-                var (width, height, horizontalResolution, verticalResolution) = SetWidthHeight(tiff, i, ref imageWidth, ref imageHeight, ref imageXResolution, ref imageYResolution);
-
-                // A single page is still decoded into one RGBA buffer, so its pixel
-                // count is bounded by the .NET single-array index limit. Multi-page
-                // files of any total size are fine as long as each page fits.
-                long pixelCount = (long)width * height;
-                if (pixelCount > MaxSingleFrameRasterPixels)
-                {
-                    throw new NotSupportedException(
-                        $"TIFF page {i} is {width}x{height} ({pixelCount:N0} pixels), which exceeds the maximum of " +
-                        $"{MaxSingleFrameRasterPixels:N0} pixels that can be decoded into a single buffer. " +
-                        "Split this page into smaller images before loading.");
-                }
-
-                // Read the image into the memory buffer
-                int[] raster = new int[height * width];
-                if (!tiff.ReadRGBAImage(width, height, raster))
-                {
-                    throw new NotSupportedException("Could not read image");
-                }
-
-                var bits = PrepareByteArray(raster, width, height, 32);
-
-                var image = Image.LoadPixelData<Rgba32>(bits, width, height);
-
-                image.Metadata.HorizontalResolution = horizontalResolution;
-                image.Metadata.VerticalResolution = verticalResolution;
-                images.Add(image);
-
-                //Note1: it might be some case that the bytes of current Image is smaller/bigger than the original tiff
-                //Note2: 'yield return' make it super slow
+                index++;
             }
+            while (tiff.ReadDirectory());
 
             return images;
         }
 
-        // .NET indexes arrays with a 32-bit integer, so a single byte[] (and
-        // therefore File.ReadAllBytes) cannot exceed ~2 GB. Files above this
-        // threshold are routed to a streaming loader for TIFF, or rejected with a
-        // clear message for formats that have no page-based streaming decoder.
+        // .NET indexes arrays with a 32-bit integer, so a single byte[] (and therefore
+        // File.ReadAllBytes) cannot exceed Array.MaxLength (~2,147,483,591 bytes). Files
+        // above the threshold below are routed to a streaming loader for TIFF, or
+        // rejected with a clear message for formats that have no page-based streaming
+        // decoder. The threshold is deliberately set a little below Array.MaxLength as a
+        // safety margin: allocating a byte[] right at the limit is fragile (large object
+        // heap pressure and borderline OutOfMemoryException). The narrow band between
+        // this value and Array.MaxLength means a non-TIFF file in that range is now
+        // rejected rather than loaded; that is an intentional, conservative trade-off.
         private const long MaxInMemoryFileBytes = 2_000_000_000L;
 
         // An Rgba32 page is decoded into one byte[] of width*height*4 bytes; a
@@ -2983,6 +3020,12 @@ namespace IronSoftware.Drawing
         /// are streamed page-by-page from disk; other oversized formats raise a
         /// clear, actionable exception instead of the opaque .NET array-size error.
         /// </summary>
+        /// <remarks>
+        /// <paramref name="preserveOriginalFormat"/> only applies to the normal
+        /// in-memory route. On the streaming route (a TIFF above the in-memory size
+        /// limit) pages are always decoded to Rgba32 by LibTiff, so the flag has no
+        /// effect there.
+        /// </remarks>
         private void LoadImageFromFile(string file, bool preserveOriginalFormat)
         {
             long length;
@@ -3077,8 +3120,11 @@ namespace IronSoftware.Drawing
             }
 
             // Hold the decoded pages directly. Binary is deliberately NOT set: the
-            // source file is larger than a single byte[] can hold, so it is
-            // re-encoded on demand if the raw bytes are ever requested.
+            // source file may be larger than a single byte[] can hold. The
+            // _streamedFromTiff flag tells the Binary getter to re-encode the pages as
+            // a multi-page TIFF on demand (so GetImageFormat/GetBytes report TIFF like
+            // FromFile), rather than the default single-frame encoder.
+            _streamedFromTiff = true;
             _lazyImage = new Lazy<IReadOnlyList<Image>>(() => frames);
             ForceLoadLazyImage();
         }
@@ -3228,7 +3274,7 @@ namespace IronSoftware.Drawing
             return bits;
         }
 
-        private (int width, int height, double horizontalResolution, double verticalResolution) SetWidthHeight(Tiff tiff, short index, ref int imageWidth, ref int imageHeight, ref double imageXResolution, ref double imageYResolution)
+        private (int width, int height, double horizontalResolution, double verticalResolution) SetWidthHeight(Tiff tiff, int index, ref int imageWidth, ref int imageHeight, ref double imageXResolution, ref double imageYResolution)
         {
             // Find the width and height of the image
             FieldValue[] value = tiff.GetField(TiffTag.IMAGEWIDTH);
