@@ -1079,6 +1079,80 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             CleanResultFile("dw9_roundtrip.bmp");
         }
 
+        [FactWithAutomaticDisplayName]
+        public void DW_40_GetAllFrames_ShouldReturnOriginalBitsPerPixelPerFrame()
+        {
+            var singleFrame = AnyBitmap.FromFile(GetRelativeFilePath("ScanDev_BW.tif")).GetAllFrames.ToList();
+            Assert.Single(singleFrame);
+            Assert.Equal(1, singleFrame[0].BitsPerPixel);
+
+            // Multi-page TIFF whose pages differ in depth: each frame reports its own source depth.
+            var frames = AnyBitmap.FromFile(GetRelativeFilePath("DW-40 MixedDepthMultiPage.tif")).GetAllFrames.ToList();
+            Assert.Equal(new[] { 1, 8, 24 }, frames.Select(f => f.BitsPerPixel));
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void DW_40_CloneRectangle_ShouldPreserveOriginalBitsPerPixel()
+        {
+            var bitmap = AnyBitmap.FromFile(GetRelativeFilePath("ScanDev_BW.tif"));
+
+            var cropped = bitmap.Clone(new Rectangle(0, 0, 100, 100));
+
+            Assert.Equal(1, cropped.BitsPerPixel);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void DW_40_RotateFlip_ShouldPreserveOriginalBitsPerPixel()
+        {
+            var bitmap = AnyBitmap.FromFile(GetRelativeFilePath("ScanDev_BW.tif"));
+
+            var rotated = bitmap.RotateFlip(AnyBitmap.RotateMode.Rotate90, AnyBitmap.FlipMode.None);
+
+            Assert.Equal(1, rotated.BitsPerPixel);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void DW_40_Redact_ShouldPreserveOriginalBitsPerPixel()
+        {
+            var bitmap = AnyBitmap.FromFile(GetRelativeFilePath("ScanDev_BW.tif"));
+
+            var redacted = bitmap.Redact(new Rectangle(0, 0, 10, 10), Color.Black);
+
+            Assert.Equal(1, redacted.BitsPerPixel);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void DW_40_Resize_ShouldReportHonestDepthForSubEightBppSource()
+        {
+            var bitmap = AnyBitmap.FromFile(GetRelativeFilePath("ScanDev_BW.tif"));
+            Assert.Equal(1, bitmap.BitsPerPixel);
+
+            var resized = new AnyBitmap(bitmap, 50, 50);
+
+            Assert.Equal(32, resized.BitsPerPixel);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void DW_40_Resize_ShouldPreserveDepthForRepresentableFormats()
+        {
+            var rgb24 = AnyBitmap.FromFile(GetRelativeFilePath("24_bit.png"));
+            Assert.Equal(24, rgb24.BitsPerPixel);
+            Assert.Equal(24, new AnyBitmap(rgb24, 20, 20).BitsPerPixel);
+
+            string path64 = "dw40_tmp64.png";
+            using (var img64 = new Image<Rgba64>(30, 30)) { img64.SaveAsPng(path64); }
+            try
+            {
+                var rgba64 = AnyBitmap.FromFile(path64);
+                Assert.Equal(64, rgba64.BitsPerPixel);
+                Assert.Equal(64, new AnyBitmap(rgba64, 15, 15).BitsPerPixel);
+            }
+            finally
+            {
+                CleanResultFile(path64);
+            }
+        }
+
         [TheoryWithAutomaticDisplayName()]
         [InlineData("mountainclimbers.jpg", "image/jpeg", AnyBitmap.ImageFormat.Jpeg)]
         [InlineData("watermark.deployment.png", "image/png", AnyBitmap.ImageFormat.Png)]

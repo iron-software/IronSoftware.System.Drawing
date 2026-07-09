@@ -241,7 +241,11 @@ namespace IronSoftware.Drawing
         public AnyBitmap Clone(Rectangle rectangle)
         {
             var cloned = GetInternalImages().Select(img => img.Clone(x => x.Crop(rectangle)));
-            return new AnyBitmap(cloned);
+            var result = new AnyBitmap(cloned);
+            // Cropping preserves the source color depth, so carry the original depth over (otherwise
+            // it would fall back to the decoded 32bpp value).
+            result._originalBitsPerPixel = _originalBitsPerPixel;
+            return result;
         }
 
         /// <summary>
@@ -711,9 +715,15 @@ namespace IronSoftware.Drawing
         }
 
         /// <summary>
-        /// 
+        /// Creates a new <see cref="AnyBitmap"/> by resizing <paramref name="original"/> to the
+        /// given dimensions.
+        /// <para><b>Color depth:</b> resizing resamples (blends) pixels, so <see cref="BitsPerPixel"/>
+        /// of the result reflects the resized image and may differ from the source. In particular a
+        /// source whose original depth is below 8bpp (e.g. a 1bpp black &amp; white image) cannot exist
+        /// below 8bpp in memory, so the resized result reports its actual decoded depth rather than the
+        /// original low depth. The depth of 8/24/32/64bpp sources is otherwise preserved.</para>
         /// </summary>
-        /// <param name="original">The <see cref="AnyBitmap"/> from which to 
+        /// <param name="original">The <see cref="AnyBitmap"/> from which to
         /// create the new <see cref="AnyBitmap"/>.</param>
         /// <param name="width">The width of the new AnyBitmap.</param>
         /// <param name="height">The height of the new AnyBitmap.</param>
@@ -1055,6 +1065,14 @@ namespace IronSoftware.Drawing
         /// </summary>
         private int? _originalBitsPerPixel = null;
 
+        /// <summary>
+        /// The original color depth (bits per pixel) of each frame of a multi-page TIFF, in the same
+        /// order as the decoded frames. Populated while decoding the TIFF so that <see cref="GetAllFrames"/>
+        /// can report each frame's true source depth (pages of a TIFF may differ in depth). Remains
+        /// <c>null</c> for non-TIFF sources.
+        /// </summary>
+        private IReadOnlyList<int?> _framesOriginalBitsPerPixel = null;
+
         //cache of the bits per pixel of the in-memory (decoded) image
         private int InMemoryBitsPerPixel => _bitsPerPixel ??= GetFirstInternalImage().PixelType.BitsPerPixel;
 
@@ -1150,14 +1168,26 @@ namespace IronSoftware.Drawing
             get
             {
                 var images = GetInternalImages();
-                if (images.Count == 1)
+                IEnumerable<AnyBitmap> frames = images.Count == 1
+                    ? ImageFrameCollectionToImages(images[0].Frames).Select(x => (AnyBitmap)x)
+                    : images.Select(x => (AnyBitmap)x);
+
+                // Each frame is a freshly-cast AnyBitmap. Carry the captured original source depth
+                // onto each frame. Only do this when this object captured an original depth (i.e. a
+                // TIFF loaded preserving its original format); otherwise leave frames as-is.
+                if (_originalBitsPerPixel == null)
                 {
-                    return ImageFrameCollectionToImages(images[0].Frames).Select(x => (AnyBitmap)x);
+                    return frames;
                 }
-                else
+
+                IReadOnlyList<int?> perFrame = _framesOriginalBitsPerPixel;
+                return frames.Select((frame, index) =>
                 {
-                    return images.Select(x => (AnyBitmap)x);
-                }
+                    frame._originalBitsPerPixel = perFrame != null && index < perFrame.Count
+                        ? perFrame[index]
+                        : _originalBitsPerPixel;
+                    return frame;
+                });
             }
         }
 
@@ -1440,7 +1470,11 @@ namespace IronSoftware.Drawing
 
             image.Mutate(x => x.RotateFlip(rotateModeImgSharp, flipModeImgSharp));
 
-            return new AnyBitmap(image);
+            var result = new AnyBitmap(image);
+            // Rotating/flipping preserves the source color depth, so carry the original depth over
+            // (otherwise it would fall back to the decoded 32bpp value).
+            result._originalBitsPerPixel = bitmap._originalBitsPerPixel;
+            return result;
         }
 
         /// <summary>
@@ -1476,8 +1510,12 @@ namespace IronSoftware.Drawing
             Rectangle rectangle = Rectangle;
             var brush = new SolidBrush(color);
             image.Mutate(ctx => ctx.Fill(brush, rectangle));
-       
-            return new AnyBitmap(image);
+
+            var result = new AnyBitmap(image);
+            // Redacting a region preserves the source color depth, so carry the original depth over
+            // (otherwise it would fall back to the decoded 32bpp value).
+            result._originalBitsPerPixel = bitmap._originalBitsPerPixel;
+            return result;
         }
 
         /// <summary>
@@ -3024,23 +3062,35 @@ namespace IronSoftware.Drawing
                 using var tiff = Tiff.ClientOpen("in-memory", "r", tiffStream, new TiffStream());
                 if (tiff == null) return (1, null); // Default to single frame if can't read
 
-                // Read frame-0 fields before NumberOfDirectories(), which may move the active directory.
-                FieldValue[] bitsPerSampleField = tiff.GetField(TiffTag.BITSPERSAMPLE);
-                FieldValue[] samplesPerPixelField = tiff.GetField(TiffTag.SAMPLESPERPIXEL);
-
-                // BitsPerSample defaults to 1 and SamplesPerPixel defaults to 1 per the TIFF spec.
-                int bitsPerSample = bitsPerSampleField != null ? bitsPerSampleField[0].ToInt() : 1;
-                int samplesPerPixel = samplesPerPixelField != null ? samplesPerPixelField[0].ToInt() : 1;
-                int bitsPerPixel = bitsPerSample * samplesPerPixel;
+                // Read frame-0 depth before NumberOfDirectories(), which may move the active directory.
+                int? bitsPerPixel = ReadDirectoryBitsPerPixel(tiff);
 
                 int frameCount = tiff.NumberOfDirectories();
 
-                return (frameCount, bitsPerPixel > 0 ? bitsPerPixel : (int?)null);
+                return (frameCount, bitsPerPixel);
             }
             catch
             {
                 return (1, null); // Default to single frame / unknown depth on any error
             }
+        }
+
+        /// <summary>
+        /// Reads the original bits per pixel (BitsPerSample x SamplesPerPixel) of the TIFF directory
+        /// that is currently active on <paramref name="tiff"/>.
+        /// </summary>
+        /// <returns>The bits per pixel, or <c>null</c> if it cannot be determined.</returns>
+        private static int? ReadDirectoryBitsPerPixel(Tiff tiff)
+        {
+            FieldValue[] bitsPerSampleField = tiff.GetField(TiffTag.BITSPERSAMPLE);
+            FieldValue[] samplesPerPixelField = tiff.GetField(TiffTag.SAMPLESPERPIXEL);
+
+            // BitsPerSample defaults to 1 and SamplesPerPixel defaults to 1 per the TIFF spec.
+            int bitsPerSample = bitsPerSampleField != null ? bitsPerSampleField[0].ToInt() : 1;
+            int samplesPerPixel = samplesPerPixelField != null ? samplesPerPixelField[0].ToInt() : 1;
+            int bitsPerPixel = bitsPerSample * samplesPerPixel;
+
+            return bitsPerPixel > 0 ? bitsPerPixel : (int?)null;
         }
 
         private Lazy<IReadOnlyList<Image>> OpenTiffToImageSharp()
@@ -3105,6 +3155,9 @@ namespace IronSoftware.Drawing
             SetTiffCompression(tiff);
 
             List<Image> images = new();
+            // Original source depth per decoded frame, kept in the same order as 'images' (thumbnails
+            // are skipped in both) so GetAllFrames can report each frame's true source depth.
+            List<int?> framesBitsPerPixel = new();
 
             int index = 0;
             do
@@ -3125,6 +3178,9 @@ namespace IronSoftware.Drawing
                             "Split this page into smaller images before loading.");
                     }
 
+                    // Capture this page's original depth before ReadRGBAImage decodes it to 32bpp.
+                    int? frameBitsPerPixel = ReadDirectoryBitsPerPixel(tiff);
+
                     // Read the image into the memory buffer
                     int[] raster = new int[height * width];
                     if (!tiff.ReadRGBAImage(width, height, raster))
@@ -3139,6 +3195,7 @@ namespace IronSoftware.Drawing
                     image.Metadata.HorizontalResolution = horizontalResolution;
                     image.Metadata.VerticalResolution = verticalResolution;
                     images.Add(image);
+                    framesBitsPerPixel.Add(frameBitsPerPixel);
 
                     //Note1: it might be some case that the bytes of current Image is smaller/bigger than the original tiff
                     //Note2: 'yield return' make it super slow
@@ -3148,6 +3205,7 @@ namespace IronSoftware.Drawing
             }
             while (tiff.ReadDirectory());
 
+            _framesOriginalBitsPerPixel = framesBitsPerPixel;
             return images;
         }
 
@@ -3617,14 +3675,14 @@ namespace IronSoftware.Drawing
 
         private void LoadAndResizeImage(AnyBitmap original, int width, int height)
         {
-            //this prevent case when original is changed before Lazy is loaded
-            Binary = original.Binary;
+            // Capture the source's decoded image up front so we are independent of the original's lifetime.
+            Image sourceImage = original.GetFirstInternalImage();
 
             _lazyImage = new Lazy<IReadOnlyList<Image>>(() =>
             {
-
-                var image = Image.Load<Rgba32>(Binary);
-                image.Mutate(img => img.Resize(width, height));
+                // Resize a clone of the already-decoded image so its pixel type (and therefore its
+                // color depth) is preserved.
+                var image = sourceImage.Clone(img => img.Resize(width, height));
 
                 //update Binary
                 using var memoryStream = new MemoryStream();
