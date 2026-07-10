@@ -582,6 +582,75 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
+        public void FromTiffFile_StreamsMultiPageTiff_MatchesFromFile()
+        {
+            string tiffPath = GetRelativeFilePath("IRON-274-39065.tif");
+
+            // Baseline: the standard in-memory loader.
+            var expected = AnyBitmap.FromFile(tiffPath);
+
+            // Streaming loader: the path used automatically for TIFF files > ~2 GB.
+            var streamed = AnyBitmap.FromTiffFile(tiffPath);
+
+            streamed.FrameCount.Should().Be(expected.FrameCount);
+
+            var expectedFrames = expected.GetAllFrames.ToList();
+            var streamedFrames = streamed.GetAllFrames.ToList();
+            streamedFrames.Count.Should().Be(expectedFrames.Count);
+            for (int i = 0; i < expectedFrames.Count; i++)
+            {
+                streamedFrames[i].Width.Should().Be(expectedFrames[i].Width);
+                streamedFrames[i].Height.Should().Be(expectedFrames[i].Height);
+            }
+
+            // Content equivalence, not just dimensions: the decoded pixels of each
+            // page must match the in-memory loader.
+            for (int i = 0; i < expectedFrames.Count; i++)
+            {
+                expectedFrames[i].SaveAs($"expected-frame{i}.png");
+                streamedFrames[i].SaveAs($"streamed-frame{i}.png");
+                AssertImageAreEqual($"expected-frame{i}.png", $"streamed-frame{i}.png");
+            }
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void FromTiffFile_RawBytesAndFormat_ReportTiff()
+        {
+            string tiffPath = GetRelativeFilePath("IRON-274-39065.tif");
+
+            var streamed = AnyBitmap.FromTiffFile(tiffPath);
+
+            // The streamed bitmap keeps no original byte[]; the raw-byte accessors and
+            // GetImageFormat must re-encode the pages as a multi-page TIFF (matching
+            // FromFile) rather than reporting a single-page BMP.
+            streamed.GetImageFormat().Should().Be(AnyBitmap.ImageFormat.Tiff);
+
+            byte[] bytes = streamed.GetBytes();
+            var roundTrip = AnyBitmap.FromBytes(bytes);
+            roundTrip.GetImageFormat().Should().Be(AnyBitmap.ImageFormat.Tiff);
+            roundTrip.FrameCount.Should().Be(streamed.FrameCount);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void FromTiffFile_StreamsEveryPage_OfMultiPageTiff()
+        {
+            string tiffPath = GetRelativeFilePath("test_dw_10.tif");
+
+            var expected = AnyBitmap.FromFile(tiffPath);
+            var streamed = AnyBitmap.FromTiffFile(tiffPath);
+
+            streamed.FrameCount.Should().Be(expected.FrameCount);
+            streamed.FrameCount.Should().BeGreaterThan(1);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void FromTiffFile_MissingFile_ThrowsFileNotFound()
+        {
+            Action act = () => AnyBitmap.FromTiffFile(GetRelativeFilePath("does-not-exist-DW39.tiff"));
+            act.Should().Throw<FileNotFoundException>();
+        }
+
+        [FactWithAutomaticDisplayName]
         public void Create_Multi_page_Tiff()
         {
             var bitmaps = new List<AnyBitmap>()
