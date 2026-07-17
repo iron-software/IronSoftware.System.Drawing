@@ -977,7 +977,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [InlineData("ScanDev_BW.tif", 1)]
         [InlineData("ScanDev_Gray.tif", 8)]
         [InlineData("ScanDev_Color.tif", 24)]
-        public void DW_9_LoadImage_ShouldReturnOriginalBitsPerPixel(string fileName, int expectedBitsPerPixel)
+        public void LoadImage_ShouldReturnOriginalBitsPerPixel(string fileName, int expectedBitsPerPixel)
         {
             string imagePath = GetRelativeFilePath(fileName);
 
@@ -987,7 +987,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [IgnoreOnUnixFact]
-        public void DW_9_LoadBlackAndWhiteTiff_ShouldReturnOriginalBitsPerPixel_AndAllowChangingBpp()
+        public void LoadBlackAndWhiteTiff_ShouldReturnOriginalBitsPerPixel_AndAllowChangingBpp()
         {
             string imagePath = GetRelativeFilePath("tifimg.tif");
 
@@ -1004,7 +1004,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
-        public void DW_9_LoadImage_NotPreservingOriginalFormat_ShouldReturn32BitsPerPixel()
+        public void LoadImage_NotPreservingOriginalFormat_ShouldReturn32BitsPerPixel()
         {
             string imagePath = GetRelativeFilePath("ScanDev_BW.tif");
 
@@ -1017,7 +1017,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [InlineData(8)]
         [InlineData(24)]
         [InlineData(32)]
-        public void DW_9_ChangeBitsPerPixel_ShouldReturnRequestedColorDepth(int targetBitsPerPixel)
+        public void ChangeBitsPerPixel_ShouldReturnRequestedColorDepth(int targetBitsPerPixel)
         {
             string imagePath = GetRelativeFilePath("ScanDev_BW.tif");
             var bitmap = AnyBitmap.FromFile(imagePath);
@@ -1030,7 +1030,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
-        public void DW_9_ChangeBitsPerPixel_WithUnsupportedDepth_ShouldThrow()
+        public void ChangeBitsPerPixel_WithUnsupportedDepth_ShouldThrow()
         {
             string imagePath = GetRelativeFilePath("ScanDev_BW.tif");
             var bitmap = AnyBitmap.FromFile(imagePath);
@@ -1039,7 +1039,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
-        public void DW_9_BitsPerPixel_IsIntentionallyDecoupledFromStrideAndScan0()
+        public void BitsPerPixel_IsIntentionallyDecoupledFromStrideAndScan0()
         {
             // A 1bpp source is decoded into a 32bpp buffer in memory. BitsPerPixel reports the
             // original depth (1), but Stride and Scan0 must describe the decoded 32bpp buffer.
@@ -1059,7 +1059,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
         [FactWithAutomaticDisplayName]
-        public void DW_9_ChangeBitsPerPixel_DurabilityDependsOnEncoder()
+        public void ChangeBitsPerPixel_DurabilityDependsOnEncoder()
         {
             string imagePath = GetRelativeFilePath("ScanDev_BW.tif");
             var converted = AnyBitmap.FromFile(imagePath).ChangeBitsPerPixel(8);
@@ -1077,6 +1077,104 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             CleanResultFile("dw9_roundtrip.png");
             CleanResultFile("dw9_roundtrip.bmp");
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void GetAllFrames_ShouldReturnOriginalBitsPerPixelPerFrame()
+        {
+            var singleFrame = AnyBitmap.FromFile(GetRelativeFilePath("ScanDev_BW.tif")).GetAllFrames.ToList();
+            Assert.Single(singleFrame);
+            Assert.Equal(1, singleFrame[0].BitsPerPixel);
+
+            // Multi-page TIFF whose pages differ in depth: each frame reports its own source depth.
+            var frames = AnyBitmap.FromFile(GetRelativeFilePath("DW-40 MixedDepthMultiPage.tif")).GetAllFrames.ToList();
+            Assert.Equal(new[] { 1, 8, 24 }, frames.Select(f => f.BitsPerPixel));
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CloneRectangle_ShouldPreserveOriginalBitsPerPixel()
+        {
+            var bitmap = AnyBitmap.FromFile(GetRelativeFilePath("ScanDev_BW.tif"));
+
+            var cropped = bitmap.Clone(new Rectangle(0, 0, 100, 100));
+
+            Assert.Equal(1, cropped.BitsPerPixel);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void RotateFlip_ShouldPreserveOriginalBitsPerPixel()
+        {
+            var bitmap = AnyBitmap.FromFile(GetRelativeFilePath("ScanDev_BW.tif"));
+
+            var rotated = bitmap.RotateFlip(AnyBitmap.RotateMode.Rotate90, AnyBitmap.FlipMode.None);
+
+            Assert.Equal(1, rotated.BitsPerPixel);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Redact_ShouldPreserveOriginalBitsPerPixel()
+        {
+            var bitmap = AnyBitmap.FromFile(GetRelativeFilePath("ScanDev_BW.tif"));
+
+            var redacted = bitmap.Redact(new Rectangle(0, 0, 10, 10), Color.Black);
+
+            Assert.Equal(1, redacted.BitsPerPixel);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Resize_ShouldReportHonestDepthForSubEightBppSource()
+        {
+            var bitmap = AnyBitmap.FromFile(GetRelativeFilePath("ScanDev_BW.tif"));
+            Assert.Equal(1, bitmap.BitsPerPixel);
+
+            var resized = new AnyBitmap(bitmap, 50, 50);
+
+            Assert.Equal(32, resized.BitsPerPixel);
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Resize_ShouldPreserveDepthForRepresentableFormats()
+        {
+            var rgb24 = AnyBitmap.FromFile(GetRelativeFilePath("24_bit.png"));
+            Assert.Equal(24, rgb24.BitsPerPixel);
+            Assert.Equal(24, new AnyBitmap(rgb24, 20, 20).BitsPerPixel);
+
+            string path64 = "dw40_tmp64.png";
+            using (var img64 = new Image<Rgba64>(30, 30)) { img64.SaveAsPng(path64); }
+            try
+            {
+                var rgba64 = AnyBitmap.FromFile(path64);
+                Assert.Equal(64, rgba64.BitsPerPixel);
+                Assert.Equal(64, new AnyBitmap(rgba64, 15, 15).BitsPerPixel);
+            }
+            finally
+            {
+                CleanResultFile(path64);
+            }
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void Resize_ShouldPreserveFrameCountForMultiPageTiff()
+        {
+            // Resizing a multi-page TIFF resizes every page, so the frame count is preserved.
+            var multiPage = AnyBitmap.FromFile(GetRelativeFilePath("DW-40 MixedDepthMultiPage.tif"));
+            Assert.Equal(3, multiPage.FrameCount);
+
+            var resized = new AnyBitmap(multiPage, 8, 8);
+
+            Assert.Equal(3, resized.FrameCount);
+            Assert.Equal(3, resized.GetAllFrames.Count());
+        }
+
+        [FactWithAutomaticDisplayName]
+        public void CloneRectangle_ShouldPreservePerFrameDepthForMultiPageTiff()
+        {
+            // Cropping keeps frames 1:1, so each cropped frame still reports its own source depth.
+            var multiPage = AnyBitmap.FromFile(GetRelativeFilePath("DW-40 MixedDepthMultiPage.tif"));
+
+            var cropped = multiPage.Clone(new Rectangle(0, 0, 10, 10));
+
+            Assert.Equal(new[] { 1, 8, 24 }, cropped.GetAllFrames.Select(f => f.BitsPerPixel));
         }
 
         [TheoryWithAutomaticDisplayName()]
