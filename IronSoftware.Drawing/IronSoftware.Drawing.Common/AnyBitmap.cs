@@ -242,9 +242,10 @@ namespace IronSoftware.Drawing
         {
             var cloned = GetInternalImages().Select(img => img.Clone(x => x.Crop(rectangle)));
             var result = new AnyBitmap(cloned);
-            // Cropping preserves the source color depth, so carry the original depth over (otherwise
-            // it would fall back to the decoded 32bpp value).
+            // Cropping is lossless (it only removes pixels) and keeps frames 1:1 with GetInternalImages,
+            // so carry both the scalar and the per-frame source depths over.
             result._originalBitsPerPixel = _originalBitsPerPixel;
+            result._framesOriginalBitsPerPixel = _framesOriginalBitsPerPixel;
             return result;
         }
 
@@ -722,6 +723,8 @@ namespace IronSoftware.Drawing
         /// source whose original depth is below 8bpp (e.g. a 1bpp black &amp; white image) cannot exist
         /// below 8bpp in memory, so the resized result reports its actual decoded depth rather than the
         /// original low depth. The depth of 8/24/32/64bpp sources is otherwise preserved.</para>
+        /// <para><b>Multi-page sources:</b> every page/frame is resized, so a multi-page TIFF keeps its
+        /// frame count.</para>
         /// </summary>
         /// <param name="original">The <see cref="AnyBitmap"/> from which to
         /// create the new <see cref="AnyBitmap"/>.</param>
@@ -844,6 +847,19 @@ namespace IronSoftware.Drawing
         /// <param name="image"></param>
         internal AnyBitmap(Image image) : this([image])
         {
+        }
+
+        /// <summary>
+        /// Wraps an already-decoded image while carrying over the original source color depth.
+        /// Used by derived operations (RotateFlip, Redact) so the cast operator <see cref="AnyBitmap(Image)"/>
+        /// stays free of any assumed original depth.
+        /// </summary>
+        /// <param name="image">The decoded image to wrap.</param>
+        /// <param name="originalBitsPerPixel">The original source color depth to report from
+        /// <see cref="BitsPerPixel"/>, or <c>null</c> to report the in-memory decoded depth.</param>
+        private AnyBitmap(Image image, int? originalBitsPerPixel) : this(image)
+        {
+            _originalBitsPerPixel = originalBitsPerPixel;
         }
 
         /// <summary>
@@ -1470,11 +1486,9 @@ namespace IronSoftware.Drawing
 
             image.Mutate(x => x.RotateFlip(rotateModeImgSharp, flipModeImgSharp));
 
-            var result = new AnyBitmap(image);
-            // Rotating/flipping preserves the source color depth, so carry the original depth over
-            // (otherwise it would fall back to the decoded 32bpp value).
-            result._originalBitsPerPixel = bitmap._originalBitsPerPixel;
-            return result;
+            // Rotating/flipping is lossless (it only moves pixels), so the source color depth is
+            // carried over.
+            return new AnyBitmap(image, bitmap._originalBitsPerPixel);
         }
 
         /// <summary>
@@ -1511,11 +1525,12 @@ namespace IronSoftware.Drawing
             var brush = new SolidBrush(color);
             image.Mutate(ctx => ctx.Fill(brush, rectangle));
 
-            var result = new AnyBitmap(image);
-            // Redacting a region preserves the source color depth, so carry the original depth over
-            // (otherwise it would fall back to the decoded 32bpp value).
-            result._originalBitsPerPixel = bitmap._originalBitsPerPixel;
-            return result;
+            // Redact fills a region but leaves the rest of the image untouched, so it carries the
+            // source's declared color depth as the (decoupled, in-memory) BitsPerPixel label,
+            // consistent with the loaded image. This is a label only: if the redaction color cannot
+            // exist at that depth it is not literally representable, and the label is dropped on
+            // re-encode. (Unlike resize, which resamples the whole image and is reported honestly.)
+            return new AnyBitmap(image, bitmap._originalBitsPerPixel);
         }
 
         /// <summary>
@@ -3675,21 +3690,25 @@ namespace IronSoftware.Drawing
 
         private void LoadAndResizeImage(AnyBitmap original, int width, int height)
         {
-            // Capture the source's decoded image up front so we are independent of the original's lifetime.
-            Image sourceImage = original.GetFirstInternalImage();
+            // Capture the source's decoded images up front so we are independent of the original's
+            // lifetime. Every page/frame is resized so multi-page TIFFs keep their frame count.
+            IReadOnlyList<Image> sourceImages = original.GetInternalImages();
 
             _lazyImage = new Lazy<IReadOnlyList<Image>>(() =>
             {
-                // Resize a clone of the already-decoded image so its pixel type (and therefore its
+                // Resize a clone of each page/frame so the source pixel type (and therefore its
                 // color depth) is preserved.
-                var image = sourceImage.Clone(img => img.Resize(width, height));
+                var resized = sourceImages
+                    .Select(img => img.Clone(c => c.Resize(width, height)))
+                    .ToList();
 
-                //update Binary
-                using var memoryStream = new MemoryStream();
-                image.Save(memoryStream, GetDefaultImageEncoder(image.Width, image.Height));
-                Binary = memoryStream.ToArray();
+                using (var memoryStream = new MemoryStream())
+                {
+                    resized[0].Save(memoryStream, GetDefaultImageEncoder(resized[0].Width, resized[0].Height));
+                    Binary = memoryStream.ToArray();
+                }
 
-                return [image];
+                return resized;
             });
 
             ForceLoadLazyImage();
