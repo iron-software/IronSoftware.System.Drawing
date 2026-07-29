@@ -963,7 +963,8 @@ namespace IronSoftware.Drawing
             }
 
             AnyBitmap bitmap = new();
-            bitmap.LoadLargeTiffFromFile(file);
+            // Preserve the source color depth so BitsPerPixel reports it, matching FromFile.
+            bitmap.LoadLargeTiffFromFile(file, preserveOriginalFormat: true);
             return bitmap;
         }
 
@@ -3270,7 +3271,7 @@ namespace IronSoftware.Drawing
                 if (IsTiffFile(file))
                 {
                     // Stream the TIFF page-by-page; never materialise the whole file.
-                    LoadLargeTiffFromFile(file);
+                    LoadLargeTiffFromFile(file, preserveOriginalFormat);
                     return;
                 }
 
@@ -3315,7 +3316,12 @@ namespace IronSoftware.Drawing
         /// time through the underlying <see cref="FileStream"/>, so the entire file
         /// is never allocated as one array, enabling TIFF files larger than 2 GB.
         /// </summary>
-        private void LoadLargeTiffFromFile(string file)
+        /// <param name="file">A fully qualified path to a TIFF file.</param>
+        /// <param name="preserveOriginalFormat">When <c>true</c>, report the source
+        /// color depth from <see cref="BitsPerPixel"/> (as <see cref="FromFile(string)"/>
+        /// does) instead of the decoded 32bpp value. The pixels are always decoded to
+        /// Rgba32 on this path regardless of the flag.</param>
+        private void LoadLargeTiffFromFile(string file, bool preserveOriginalFormat)
         {
             Tiff.SetErrorHandler(new DisableErrorHandler());
 
@@ -3331,6 +3337,7 @@ namespace IronSoftware.Drawing
 
                 try
                 {
+                    // ReadTiffFrames also populates _framesOriginalBitsPerPixel (per-frame source depth).
                     frames = ReadTiffFrames(tiff);
                 }
                 catch (DllNotFoundException e)
@@ -3343,6 +3350,13 @@ namespace IronSoftware.Drawing
             {
                 throw new NotSupportedException(
                     $"The TIFF file '{file}' was opened but contained no decodable image pages.");
+            }
+
+            if (preserveOriginalFormat)
+            {
+                _originalBitsPerPixel = _framesOriginalBitsPerPixel != null && _framesOriginalBitsPerPixel.Count > 0
+                    ? _framesOriginalBitsPerPixel[0]
+                    : null;
             }
 
             // Hold the decoded pages directly. Binary is deliberately NOT set: the
