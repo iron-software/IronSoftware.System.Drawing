@@ -42,12 +42,11 @@ For general support and technical inquiries, please email us at: support@ironsof
 		<summary>IronSoftware.System.Drawing is an open-source solution for .NET developers to replace System.Drawing.Common with a universal and flexible library.</summary>
 		<releaseNotes>
 Features
-- Added support for creating multi-page TIFFs while preserving per-page dimensions, orientation, and resolution
+- Added support for loading TIFF and BigTIFF files larger than 2 GB using a streaming loader, enabling page-by-page decoding without loading the entire file into memory
 Enhancements
-- Added support for converting AnyBitmap images to 8, 24, or 32 bits per pixel
+- AnyBitmap now preserves the original source color depth (BitsPerPixel) across derived operations, including frame extraction, cloning, rotation, redaction, and resizing
 Bug Fixes
-- Fixed an issue where AnyBitmap.BitsPerPixel reported incorrect color depths for TIFF images
-- Fixed issues affecting multi-page TIFF generation, including incorrect resolution metadata and corrupted output for certain RGB image formats
+- Fixed an issue where derived AnyBitmap operations incorrectly reported a decoded 32bpp color depth instead of the original source pixel depth
 		</releaseNotes>
 		<copyright>Copyright © Iron Software 2022-2026</copyright>
 		<tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, TIFF, TIF, GIF, JPEG, PNG, Color, Rectangle, Drawing, C#, VB.NET, ASPX, create, render, generate, standard, netstandard2.0, core, netcore</tags>

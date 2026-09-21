@@ -650,6 +650,21 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             act.Should().Throw<FileNotFoundException>();
         }
 
+        [TheoryWithAutomaticDisplayName]
+        [InlineData("example.tif")]                 // 24 bpp
+        [InlineData("test_dw_10.tif")]              // 1 bpp, multi-page
+        [InlineData("multiframe.tiff")]            // 16 bpp
+        public void FromTiffFile_BitsPerPixel_MatchesFromFile(string fileName)
+        {
+            string tiffPath = GetRelativeFilePath(fileName);
+
+            int expected = AnyBitmap.FromFile(tiffPath).BitsPerPixel;
+            int streamed = AnyBitmap.FromTiffFile(tiffPath).BitsPerPixel;
+
+            streamed.Should().Be(expected,
+                $"FromTiffFile should report the source color depth for '{fileName}', matching FromFile");
+        }
+
         [FactWithAutomaticDisplayName]
         public void Create_Multi_page_Tiff()
         {
