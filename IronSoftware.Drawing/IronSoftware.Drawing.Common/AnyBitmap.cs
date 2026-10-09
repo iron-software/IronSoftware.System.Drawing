@@ -818,7 +818,11 @@ namespace IronSoftware.Drawing
                 var image = new Image<Rgba32>(width, height);
                 if (backgroundColor != null)
                 {
+#if NET8_0_OR_GREATER
+                    image.Mutate(context => context.Paint(canvas => canvas.Fill(new SolidBrush(backgroundColor))));
+#else
                     image.Mutate(context => context.Fill(backgroundColor));
+#endif
                 }
                 return [image];
             });
@@ -1524,7 +1528,11 @@ namespace IronSoftware.Drawing
             Image image = Image.Load(bitmap.Binary);
             Rectangle rectangle = Rectangle;
             var brush = new SolidBrush(color);
+#if NET8_0_OR_GREATER
+            image.Mutate(ctx => ctx.Paint(canvas => canvas.Fill(brush, rectangle)));
+#else
             image.Mutate(ctx => ctx.Fill(brush, rectangle));
+#endif
 
             // Redact fills a region but leaves the rest of the image untouched, so it carries the
             // source's declared color depth as the (decoupled, in-memory) BitsPerPixel label,
@@ -3735,14 +3743,14 @@ namespace IronSoftware.Drawing
                 ImageFormat.Jpeg => new JpegEncoder()
                 {
                     Quality = lossy,
-#if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER && !NET8_0_OR_GREATER
                     ColorType = JpegEncodingColor.Rgb
 #else
                     ColorType = JpegColorType.Rgb
 #endif
                 },
                 ImageFormat.Gif => new GifEncoder(),
-                ImageFormat.Png => new PngEncoder(),
+                ImageFormat.Png => GetDefaultPngEncoder(),
                 ImageFormat.Webp => new WebpEncoder() { Quality = lossy },
                 ImageFormat.Tiff => new TiffEncoder()
                 {
@@ -3751,6 +3759,30 @@ namespace IronSoftware.Drawing
                 },
                 _ => GetDefaultImageEncoder(Width, Height)
             };
+        }
+
+        private PngEncoder GetDefaultPngEncoder()
+        {
+#if NET8_0_OR_GREATER
+            // ImageSharp v4's PngEncoder no longer auto-selects color type/bit depth from the
+            // source pixel format (it defaults to 8-bit RgbWithAlpha). Earlier versions preserved
+            // the image's depth on encode, which the color-depth features rely on. Re-derive the
+            // encoder settings from the in-memory depth so PNGs round-trip their BitsPerPixel.
+            int bpp = InMemoryBitsPerPixel;
+            return new PngEncoder
+            {
+                BitDepth = bpp >= 48 ? PngBitDepth.Bit16 : PngBitDepth.Bit8,
+                ColorType = bpp switch
+                {
+                    8 => PngColorType.Grayscale,
+                    24 => PngColorType.Rgb,
+                    48 => PngColorType.Rgb,
+                    _ => PngColorType.RgbWithAlpha
+                }
+            };
+#else
+            return new PngEncoder();
+#endif
         }
 
         private static ImageFormat GetImageFormat(string filename)
@@ -3809,7 +3841,11 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         private static IImageEncoder GetDefaultImageEncoder(int imageWidth, int imageHeight)
         {
+#if NET8_0_OR_GREATER
+            return new BmpEncoder { BitsPerPixel = BmpBitsPerPixel.Bit32, SupportTransparency = true };
+#else
             return new BmpEncoder { BitsPerPixel = BmpBitsPerPixel.Pixel32, SupportTransparency = true };
+#endif
         }
 
         private static void InternalSaveAsMultiPageTiff(IEnumerable<Image> images, Stream stream)

@@ -64,6 +64,12 @@ Bug Fixes
 				<dependency id="SixLabors.ImageSharp.Drawing" version="2.1.7" />
 				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
 			</group>
+			<group targetFramework="net80">
+				<dependency id="IronSoftware.Drawing.Abstractions" version="2026.1.2" />
+				<dependency id="SixLabors.ImageSharp" version="4.1.2" />
+				<dependency id="SixLabors.ImageSharp.Drawing" version="3.1.2" />
+				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
+			</group>
 		</dependencies>
 	</metadata>
 	<files>
@@ -73,6 +79,7 @@ Bug Fixes
 		<file src=".\README.md" target="docs\" />
 		<file src="..\bin\$configuration$\netstandard2.0\IronSoftware.Drawing.Common.*" target="lib\netstandard2.0" />
 		<file src="..\bin\$configuration$\net60\IronSoftware.Drawing.Common.*" target="lib\net60" />
+		<file src="..\bin\$configuration$\net80\IronSoftware.Drawing.Common.*" target="lib\net80" />
 	</files>
 </package>
 	

@@ -1155,7 +1155,11 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(24, new AnyBitmap(rgb24, 20, 20).BitsPerPixel);
 
             string path64 = "dw40_tmp64.png";
+#if NET8_0_OR_GREATER
+            using (var img64 = new Image<Rgba64>(30, 30)) { img64.Save(path64, new SixLabors.ImageSharp.Formats.Png.PngEncoder { ColorType = SixLabors.ImageSharp.Formats.Png.PngColorType.RgbWithAlpha, BitDepth = SixLabors.ImageSharp.Formats.Png.PngBitDepth.Bit16 }); }
+#else
             using (var img64 = new Image<Rgba64>(30, 30)) { img64.SaveAsPng(path64); }
+#endif
             try
             {
                 var rgba64 = AnyBitmap.FromFile(path64);
@@ -1296,7 +1300,11 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             using var image = new Image<Rgba32>(Configuration.Default, 100, 100, Color.White);
             image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
             {
+#if NET8_0_OR_GREATER
+                BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Bit32,
+#else
                 BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
+#endif
                 SupportTransparency = true
             });
 
