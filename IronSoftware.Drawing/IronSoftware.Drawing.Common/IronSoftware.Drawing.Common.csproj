@@ -12,7 +12,7 @@
 		<NoWarn>CS8002</NoWarn>
 		<Platforms>AnyCPU</Platforms>
 		<SignAssembly>true</SignAssembly>
-		<TargetFrameworks>netstandard2.0;net60</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net60;net80</TargetFrameworks>
 		<TransformOnBuild>true</TransformOnBuild>
 	</PropertyGroup>
 
@@ -32,6 +32,12 @@
 	</ItemGroup>
 
 	<Choose>
+		<When Condition="'$(TargetFramework)' == 'net80'">
+			<ItemGroup>
+				<PackageReference Include="SixLabors.ImageSharp" Version="4.1.2" />
+				<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="3.1.2" />
+			</ItemGroup>
+		</When>
 		<When Condition="'$(TargetFramework)' == 'net60'">
 			<ItemGroup>
 				<PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
