@@ -3764,22 +3764,32 @@ namespace IronSoftware.Drawing
         private PngEncoder GetDefaultPngEncoder()
         {
 #if NET8_0_OR_GREATER
-            // ImageSharp v4's PngEncoder no longer auto-selects color type/bit depth from the
-            // source pixel format (it defaults to 8-bit RgbWithAlpha). Earlier versions preserved
-            // the image's depth on encode, which the color-depth features rely on. Re-derive the
-            // encoder settings from the in-memory depth so PNGs round-trip their BitsPerPixel.
-            int bpp = InMemoryBitsPerPixel;
-            return new PngEncoder
+            // ImageSharp 3 picked the PNG color type/bit depth as: source PngMetadata if the image
+            // came from a PNG, otherwise a suggestion based on the pixel type. ImageSharp 4 still
+            // honors the source PngMetadata, but for any other source it falls back to 8-bit
+            // RgbWithAlpha. Reproduce the ImageSharp 3 behavior so net8 output matches net6.
+            Image image = GetFirstInternalImage();
+            if (image.Metadata.DecodedImageFormat is PngFormat)
             {
-                BitDepth = bpp >= 48 ? PngBitDepth.Bit16 : PngBitDepth.Bit8,
-                ColorType = bpp switch
-                {
-                    8 => PngColorType.Grayscale,
-                    24 => PngColorType.Rgb,
-                    48 => PngColorType.Rgb,
-                    _ => PngColorType.RgbWithAlpha
-                }
+                return new PngEncoder();
+            }
+
+            // Same per-pixel-type table as ImageSharp 3's encoder (anything not listed fell back
+            // to 8-bit RgbWithAlpha there too).
+            (PngColorType colorType, PngBitDepth bitDepth) = image switch
+            {
+                Image<A8> => (PngColorType.GrayscaleWithAlpha, PngBitDepth.Bit8),
+                Image<L8> => (PngColorType.Grayscale, PngBitDepth.Bit8),
+                Image<L16> => (PngColorType.Grayscale, PngBitDepth.Bit16),
+                Image<La16> => (PngColorType.GrayscaleWithAlpha, PngBitDepth.Bit8),
+                Image<La32> => (PngColorType.GrayscaleWithAlpha, PngBitDepth.Bit16),
+                Image<Rgb24> or Image<Bgr24> => (PngColorType.Rgb, PngBitDepth.Bit8),
+                Image<Rgb48> => (PngColorType.Rgb, PngBitDepth.Bit16),
+                Image<Rgba64> or Image<RgbaVector> => (PngColorType.RgbWithAlpha, PngBitDepth.Bit16),
+                _ => (PngColorType.RgbWithAlpha, PngBitDepth.Bit8)
             };
+
+            return new PngEncoder { ColorType = colorType, BitDepth = bitDepth };
 #else
             return new PngEncoder();
 #endif
