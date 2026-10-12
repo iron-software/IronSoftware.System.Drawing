@@ -818,7 +818,11 @@ namespace IronSoftware.Drawing
                 var image = new Image<Rgba32>(width, height);
                 if (backgroundColor != null)
                 {
+#if NET8_0_OR_GREATER
+                    image.Mutate(context => context.Paint(canvas => canvas.Fill(new SolidBrush(backgroundColor))));
+#else
                     image.Mutate(context => context.Fill(backgroundColor));
+#endif
                 }
                 return [image];
             });
@@ -1524,7 +1528,11 @@ namespace IronSoftware.Drawing
             Image image = Image.Load(bitmap.Binary);
             Rectangle rectangle = Rectangle;
             var brush = new SolidBrush(color);
+#if NET8_0_OR_GREATER
+            image.Mutate(ctx => ctx.Paint(canvas => canvas.Fill(brush, rectangle)));
+#else
             image.Mutate(ctx => ctx.Fill(brush, rectangle));
+#endif
 
             // Redact fills a region but leaves the rest of the image untouched, so it carries the
             // source's declared color depth as the (decoupled, in-memory) BitsPerPixel label,
@@ -3735,14 +3743,14 @@ namespace IronSoftware.Drawing
                 ImageFormat.Jpeg => new JpegEncoder()
                 {
                     Quality = lossy,
-#if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER && !NET8_0_OR_GREATER
                     ColorType = JpegEncodingColor.Rgb
 #else
                     ColorType = JpegColorType.Rgb
 #endif
                 },
                 ImageFormat.Gif => new GifEncoder(),
-                ImageFormat.Png => new PngEncoder(),
+                ImageFormat.Png => GetDefaultPngEncoder(),
                 ImageFormat.Webp => new WebpEncoder() { Quality = lossy },
                 ImageFormat.Tiff => new TiffEncoder()
                 {
@@ -3751,6 +3759,40 @@ namespace IronSoftware.Drawing
                 },
                 _ => GetDefaultImageEncoder(Width, Height)
             };
+        }
+
+        private PngEncoder GetDefaultPngEncoder()
+        {
+#if NET8_0_OR_GREATER
+            // ImageSharp 3 picked the PNG color type/bit depth as: source PngMetadata if the image
+            // came from a PNG, otherwise a suggestion based on the pixel type. ImageSharp 4 still
+            // honors the source PngMetadata, but for any other source it falls back to 8-bit
+            // RgbWithAlpha. Reproduce the ImageSharp 3 behavior so net8 output matches net6.
+            Image image = GetFirstInternalImage();
+            if (image.Metadata.DecodedImageFormat is PngFormat)
+            {
+                return new PngEncoder();
+            }
+
+            // Same per-pixel-type table as ImageSharp 3's encoder (anything not listed fell back
+            // to 8-bit RgbWithAlpha there too).
+            (PngColorType colorType, PngBitDepth bitDepth) = image switch
+            {
+                Image<A8> => (PngColorType.GrayscaleWithAlpha, PngBitDepth.Bit8),
+                Image<L8> => (PngColorType.Grayscale, PngBitDepth.Bit8),
+                Image<L16> => (PngColorType.Grayscale, PngBitDepth.Bit16),
+                Image<La16> => (PngColorType.GrayscaleWithAlpha, PngBitDepth.Bit8),
+                Image<La32> => (PngColorType.GrayscaleWithAlpha, PngBitDepth.Bit16),
+                Image<Rgb24> or Image<Bgr24> => (PngColorType.Rgb, PngBitDepth.Bit8),
+                Image<Rgb48> => (PngColorType.Rgb, PngBitDepth.Bit16),
+                Image<Rgba64> or Image<RgbaVector> => (PngColorType.RgbWithAlpha, PngBitDepth.Bit16),
+                _ => (PngColorType.RgbWithAlpha, PngBitDepth.Bit8)
+            };
+
+            return new PngEncoder { ColorType = colorType, BitDepth = bitDepth };
+#else
+            return new PngEncoder();
+#endif
         }
 
         private static ImageFormat GetImageFormat(string filename)
@@ -3809,7 +3851,11 @@ namespace IronSoftware.Drawing
         /// <returns></returns>
         private static IImageEncoder GetDefaultImageEncoder(int imageWidth, int imageHeight)
         {
+#if NET8_0_OR_GREATER
+            return new BmpEncoder { BitsPerPixel = BmpBitsPerPixel.Bit32, SupportTransparency = true };
+#else
             return new BmpEncoder { BitsPerPixel = BmpBitsPerPixel.Pixel32, SupportTransparency = true };
+#endif
         }
 
         private static void InternalSaveAsMultiPageTiff(IEnumerable<Image> images, Stream stream)
