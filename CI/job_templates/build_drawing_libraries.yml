@@ -36,7 +36,7 @@ jobs:
       inputs:
         packageType: 'sdk'
         version: '8.x'
-    # Six Labors license (required by ImageSharp v4 / ImageSharp.Drawing v3 build-time check on the net8.0 target)
+    # Six Labors license (required by the build-time check in ImageSharp 3.2.0 / 4.1.3 and ImageSharp.Drawing 3.x, i.e. the net6.0 and net8.0 targets)
     - task: DownloadSecureFile@1
       name: sixLaborsLicense
       displayName: 'Download Six Labors license file'
