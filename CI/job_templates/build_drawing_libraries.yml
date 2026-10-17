@@ -36,6 +36,12 @@ jobs:
       inputs:
         packageType: 'sdk'
         version: '8.x'
+    # Six Labors license (required by the build-time check in ImageSharp 3.2.0 / 4.1.3 and ImageSharp.Drawing 3.x, i.e. the net6.0 and net8.0 targets)
+    - task: DownloadSecureFile@1
+      name: sixLaborsLicense
+      displayName: 'Download Six Labors license file'
+      inputs:
+        secureFile: 'sixlabors.lic'
     # Build
     - task: DotNetCoreCLI@2
       displayName: Restore Solution NuGet Packages
@@ -58,6 +64,7 @@ jobs:
           --no-restore
           --verbosity normal
           --property:AssemblyVersion=$(finalAssemblyVersion)
+          --property:SixLaborsLicenseFile=$(sixLaborsLicense.secureFilePath)
         versioningScheme: byEnvVar
         versionEnvVar: AssemblyVersion
     # Publish Pipeline Artifacts
