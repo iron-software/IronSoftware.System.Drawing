@@ -1225,7 +1225,7 @@ namespace IronSoftware.Drawing
         public static AnyBitmap CreateMultiFrameTiff(IEnumerable<string> imagePaths)
         {
             using var stream = new MemoryStream();
-            InternalSaveAsMultiPageTiff(imagePaths.Select(Image.Load), stream);
+            InternalSaveAsMultiPageTiff(imagePaths.Select(path => ImageSharpLoader.Load(File.ReadAllBytes(path))), stream);
             return FromStream(stream);
         }
 
@@ -1319,7 +1319,7 @@ namespace IronSoftware.Drawing
         public static AnyBitmap CreateMultiFrameGif(IEnumerable<string> imagePaths)
         {
             using var stream = new MemoryStream();
-            InternalSaveAsMultiPageGif(imagePaths.Select(Image.Load), stream);
+            InternalSaveAsMultiPageGif(imagePaths.Select(path => ImageSharpLoader.Load(File.ReadAllBytes(path))), stream);
             return FromStream(stream);
         }
 
@@ -1487,7 +1487,7 @@ namespace IronSoftware.Drawing
                 _ => throw new NotImplementedException()
             };
 
-            Image image = Image.Load(bitmap.Binary);
+            Image image = ImageSharpLoader.Load(bitmap.Binary);
 
             image.Mutate(x => x.RotateFlip(rotateModeImgSharp, flipModeImgSharp));
 
@@ -1525,7 +1525,7 @@ namespace IronSoftware.Drawing
         {
 
             //this casting will crate new object
-            Image image = Image.Load(bitmap.Binary);
+            Image image = ImageSharpLoader.Load(bitmap.Binary);
             Rectangle rectangle = Rectangle;
             var brush = new SolidBrush(color);
 #if NET8_0_OR_GREATER
@@ -2113,7 +2113,7 @@ namespace IronSoftware.Drawing
                     var format = bitmap.Format;
                     if (format is not TiffFormat && format is not GifFormat)
                     {
-                        return Image.Load(bitmap.Binary);
+                        return ImageSharpLoader.Load(bitmap.Binary);
                     }
                 }
 
@@ -2174,7 +2174,7 @@ namespace IronSoftware.Drawing
                     var format = bitmap.Format;
                     if (format is not TiffFormat && format is not GifFormat)
                     {
-                        return Image.Load<T>(bitmap.Binary);
+                        return ImageSharpLoader.Load<T>(bitmap.Binary);
                     }
                    
                 }
@@ -3386,12 +3386,12 @@ namespace IronSoftware.Drawing
                     Image img;
                     if (preserveOriginalFormat)
                     {
-                        img = Image.Load(Binary);
+                        img = ImageSharpLoader.Load(Binary);
                     }
                     else
                     {
                         PreserveOriginalFormat = preserveOriginalFormat;
-                        img = Image.Load<Rgba32>(Binary);
+                        img = ImageSharpLoader.Load<Rgba32>(Binary);
                         if (Format.Name == "PNG")
                             img.Mutate(img => img.BackgroundColor(SixLabors.ImageSharp.Color.White));
                     }
