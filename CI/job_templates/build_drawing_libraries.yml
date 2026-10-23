@@ -36,6 +36,12 @@ jobs:
       inputs:
         packageType: 'sdk'
         version: '8.x'
+    # Six Labors license (required by the build-time check in ImageSharp 3.2.0 / 4.1.3 and ImageSharp.Drawing 3.x, i.e. the net6.0 and net8.0 targets)
+    - task: DownloadSecureFile@1
+      name: sixLaborsLicense
+      displayName: 'Download Six Labors license file'
+      inputs:
+        secureFile: 'sixlabors.lic'
     # Build
     - task: DotNetCoreCLI@2
       displayName: Restore Solution NuGet Packages
@@ -58,8 +64,20 @@ jobs:
           --no-restore
           --verbosity normal
           --property:AssemblyVersion=$(finalAssemblyVersion)
+          --property:SixLaborsLicenseFile=$(sixLaborsLicense.secureFilePath)
         versioningScheme: byEnvVar
         versionEnvVar: AssemblyVersion
+    # Fail if a shipped DLL references System.Memory / Buffers / Unsafe / Vectors (etc.) at a higher
+    # assembly version than the nuspec dependency guarantees (FileLoadException on .NET Framework, OCR-372).
+    - task: PowerShell@2
+      displayName: Check System.* assembly references against nuspec
+      inputs:
+        targetType: 'filePath'
+        filePath: '$(Build.SourcesDirectory)/CI/scripts/Test-SystemAssemblyReferences.ps1'
+        arguments: >-
+          -NuspecPath '$(Build.SourcesDirectory)/NuGet/IronSoftware.Drawing.nuspec'
+          -BinRoot '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common/bin/${{ parameters.buildConfiguration }}'
+        pwsh: true
     # Publish Pipeline Artifacts
     - task: CopyFiles@2
       displayName: 'Copy tests.runsettings file'
