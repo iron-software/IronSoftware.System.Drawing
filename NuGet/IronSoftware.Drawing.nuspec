@@ -41,6 +41,10 @@ Supports:
 For general support and technical inquiries, please email us at: support@ironsoftware.com</description>
 		<summary>IronSoftware.System.Drawing is an open-source solution for .NET developers to replace System.Drawing.Common with a universal and flexible library.</summary>
 		<releaseNotes>
+Breaking Changes
+- .NET Framework 4.6.2+ now has its own build that no longer depends on SixLabors.ImageSharp (2.x is end-of-life and no longer receives security fixes). Images are decoded, processed and encoded with SkiaSharp 4.153.1 and BitMiracle.LibTiff.NET instead
+- On .NET Framework the implicit conversions between IronSoftware.Drawing types (AnyBitmap, Color, Point, PointF, Rectangle, RectangleF, Size, SizeF, CropRectangle) and SixLabors.ImageSharp types are no longer available. Libraries compiled against an earlier IronSoftware.System.Drawing that use those conversions must be rebuilt for .NET Framework
+- On .NET Framework, SVG loading uses Svg.Skia 5.2.3 instead of SkiaSharp.Svg 1.60 (which does not work with SkiaSharp 4); install Svg.Skia to load SVG files
 Features
 - Added support for loading TIFF and BigTIFF files larger than 2 GB using a streaming loader, enabling page-by-page decoding without loading the entire file into memory
 Enhancements
@@ -48,6 +52,7 @@ Enhancements
 Bug Fixes
 - Fixed an issue where derived AnyBitmap operations incorrectly reported a decoded 32bpp color depth instead of the original source pixel depth
 Dependencies
+- .NET Framework: SkiaSharp 4.153.1 and SixLabors.Fonts 1.0.0 are now declared dependencies; SixLabors.ImageSharp and SixLabors.ImageSharp.Drawing are no longer required
 - .NET Standard 2.0 / .NET Framework: System.Memory 4.6.3, System.Buffers 4.6.1, System.Numerics.Vectors 4.6.1 and System.Runtime.CompilerServices.Unsafe 6.1.2 are now declared dependencies. .NET Framework apps need binding redirects to System.Memory 4.0.5.0, System.Buffers 4.0.5.0, System.Numerics.Vectors 4.1.6.0 and System.Runtime.CompilerServices.Unsafe 6.0.3.0; SDK-style and PackageReference projects generate these automatically
 		</releaseNotes>
 		<copyright>Copyright © Iron Software 2022-2026</copyright>
@@ -58,6 +63,18 @@ Dependencies
 				<dependency id="IronSoftware.Drawing.Abstractions" version="2026.1.2" />
 				<dependency id="SixLabors.ImageSharp" version="2.1.13" />
 				<dependency id="SixLabors.ImageSharp.Drawing" version="1.0.0" />
+				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
+				<!-- Keep in sync with IronSoftware.Drawing/SystemPackages.props (enforced by CI/scripts/Test-SystemAssemblyReferences.ps1) -->
+				<dependency id="System.Memory" version="4.6.3" />
+				<dependency id="System.Buffers" version="4.6.1" />
+				<dependency id="System.Numerics.Vectors" version="4.6.1" />
+				<dependency id="System.Runtime.CompilerServices.Unsafe" version="6.1.2" />
+			</group>
+			<group targetFramework="net462">
+				<!-- .NET Framework: SkiaSharp engine, no SixLabors.ImageSharp (2.x is end-of-life and unpatched). -->
+				<dependency id="IronSoftware.Drawing.Abstractions" version="2026.1.2" />
+				<dependency id="SkiaSharp" version="4.153.1" />
+				<dependency id="SixLabors.Fonts" version="1.0.0" />
 				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
 				<!-- Keep in sync with IronSoftware.Drawing/SystemPackages.props (enforced by CI/scripts/Test-SystemAssemblyReferences.ps1) -->
 				<dependency id="System.Memory" version="4.6.3" />
@@ -79,6 +96,7 @@ Dependencies
 		<file src=".\README.txt" target=".\" />
 		<file src=".\README.md" target="docs\" />
 		<file src="..\bin\$configuration$\netstandard2.0\IronSoftware.Drawing.Common.*" target="lib\netstandard2.0" />
+		<file src="..\bin\$configuration$\net462\IronSoftware.Drawing.Common.*" target="lib\net462" />
 		<file src="..\bin\$configuration$\net60\IronSoftware.Drawing.Common.*" target="lib\net60" />
 	</files>
 </package>

@@ -249,6 +249,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(expected, resultExport);
         }
 
+#if !NET48
         [FactWithAutomaticDisplayName]
         public void AnyBitmap_should_set_Pixel()
         {
@@ -289,6 +290,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 #endif
             }
         }
+#endif
 
         [FactWithAutomaticDisplayName]
         public void AnyBitmap_should_get_Stream()
@@ -338,6 +340,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(expected, result);
         }
 
+#if !NET48
         [FactWithAutomaticDisplayName]
         public void AnyBitmap_GetPixel_should_not_throw_OutOfMemoryException()
         {
@@ -389,6 +392,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             AssertImageAreEqual("expected.png", "result.png", true);
         }
+#endif
 
         [FactWithAutomaticDisplayName]
         public void Clone_Crop_AnyBitmap()
@@ -472,6 +476,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             AssertImageAreEqual("expected.png", "result.png", true);
         }
 
+#if !NET48
         [FactWithAutomaticDisplayName]
         public void CastSixLabors_to_AnyBitmap()
         {
@@ -532,6 +537,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             AssertImageAreEqual("expected.bmp", "result.bmp", true);
         }
+#endif
 
         [FactWithAutomaticDisplayName]
         public void CastBitmap_to_AnyBitmap_using_FromBitmap()
@@ -710,6 +716,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             File.Delete(outputImagePath);
         }
 
+#if !NET48
         [FactWithAutomaticDisplayName]
         public void CreateMultiFrameTiffStream_Preserves_Mixed_Orientation()
         {
@@ -752,6 +759,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
                     .Should().BeApproximately(150d, 2d);
             }
         }
+#endif
 
         [FactWithAutomaticDisplayName]
         public void CreateMultiFrameTiffStream_Empty_Sequence_Throws()
@@ -760,6 +768,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             act.Should().Throw<ArgumentException>();
         }
 
+#if !NET48
         [FactWithAutomaticDisplayName]
         public void CreateMultiFrameTiffBytes_PreservesResolution_FromPixelsPerMeterSource()
         {
@@ -776,12 +785,18 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             ToDotsPerInch(pages[0].XResolution, pages[0].ResolutionUnit)
                 .Should().BeApproximately(dpi, 2d);
         }
+#endif
 
         [FactWithAutomaticDisplayName]
         public void CreateMultiFrameTiff_Preserves_Rgb24_Pixels()
         {
             string jpgPath = GetRelativeFilePath("mountainclimbers.jpg");
+#if NET48
+            // JPEG decoders differ by a few levels; compare against the same engine's decode of the source.
+            using var expected = AnyBitmap.FromFile(jpgPath);
+#else
             using var expected = SixLabors.ImageSharp.Image.Load<Rgb24>(jpgPath);
+#endif
 
             using var result = AnyBitmap.CreateMultiFrameTiff(new List<string> { jpgPath });
 
@@ -800,7 +815,11 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
 
             foreach (var (x, y) in points)
             {
+#if NET48
+                var e = expected.GetPixel(x, y);
+#else
                 Rgb24 e = expected[x, y];
+#endif
                 var a = result.GetPixel(x, y);
                 a.R.Should().Be(e.R, $"red channel at ({x},{y})");
                 a.G.Should().Be(e.G, $"green channel at ({x},{y})");
@@ -808,6 +827,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             }
         }
 
+#if !NET48
         [TheoryWithAutomaticDisplayName]
         [InlineData("Rgb24")]
         [InlineData("Bgr24")]
@@ -872,6 +892,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             image.Metadata.ResolutionUnits = unit;
             return image;
         }
+#endif
 
         private static List<(int Width, int Height, float XResolution, ResUnit ResolutionUnit)> ReadTiffDirectories(byte[] tiffData)
         {
@@ -912,6 +933,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             };
         }
 
+#if !NET48
         [FactWithAutomaticDisplayName]
         public void Create_Multi_page_Gif()
         {
@@ -987,6 +1009,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             bitmap = Image.Load<Rgba32>(GetRelativeFilePath("mountainclimbers.jpg"));
             Assert.Equal(32, bitmap.BitsPerPixel);
         }
+#endif
 
         [TheoryWithAutomaticDisplayName]
         [InlineData("ScanDev_BW.tif", 1)]
@@ -1288,6 +1311,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             AssertImageAreEqual(GetRelativeFilePath("checkmarkFlip.jpg"), "result_flip.bmp");
         }
 
+#if !NET48
         [FactWithAutomaticDisplayName]
         public void Redact_ShouldRedactRegionWithColor()
         {
@@ -1324,6 +1348,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
                 }
             }
         }
+#endif
 
         [FactWithAutomaticDisplayName]
         public void TestGetRGBBuffer()
@@ -1569,6 +1594,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         }
 
 #if !NET7_0
+#if !NET48
         [FactWithAutomaticDisplayName]
         public void CastAnyBitmap_from_SixLabors()
         {
@@ -1583,6 +1609,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             anyBitmap.GetPixel(0, 0); //should not throw error
             AssertLargeImageAreEqual("expected.bmp", "result.bmp", true);
         }
+#endif
 #endif
 
 

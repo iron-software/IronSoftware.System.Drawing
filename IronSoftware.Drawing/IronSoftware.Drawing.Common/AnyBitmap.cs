@@ -1,5 +1,12 @@
 ﻿using BitMiracle.LibTiff.Classic;
 using Microsoft.Maui.Graphics.Platform;
+#if NETFRAMEWORK
+// .NET Framework: SkiaSharp-based engine with the same API surface (ImageSharp 2.x is end-of-life).
+using IronSoftware.Drawing.SkiaEngine;
+using EngineRotateMode = IronSoftware.Drawing.SkiaEngine.RotateMode;
+using EngineFlipMode = IronSoftware.Drawing.SkiaEngine.FlipMode;
+using EnginePixelResolutionUnit = IronSoftware.Drawing.SkiaEngine.PixelResolutionUnit;
+#else
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Formats;
@@ -12,6 +19,10 @@ using SixLabors.ImageSharp.Formats.Tiff.Constants;
 using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using EngineRotateMode = SixLabors.ImageSharp.Processing.RotateMode;
+using EngineFlipMode = SixLabors.ImageSharp.Processing.FlipMode;
+using EnginePixelResolutionUnit = SixLabors.ImageSharp.Metadata.PixelResolutionUnit;
+#endif
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -1186,8 +1197,8 @@ namespace IronSoftware.Drawing
             {
                 var images = GetInternalImages();
                 IEnumerable<AnyBitmap> frames = images.Count == 1
-                    ? ImageFrameCollectionToImages(images[0].Frames).Select(x => (AnyBitmap)x)
-                    : images.Select(x => (AnyBitmap)x);
+                    ? ImageFrameCollectionToImages(images[0].Frames).Select(x => new AnyBitmap(x))
+                    : images.Select(x => new AnyBitmap(x));
 
                 // Each frame is a freshly-cast AnyBitmap. Carry the captured original source depth
                 // onto each frame. Only do this when this object captured an original depth (i.e. a
@@ -1239,7 +1250,7 @@ namespace IronSoftware.Drawing
         public static AnyBitmap CreateMultiFrameTiff(IEnumerable<AnyBitmap> images)
         {
             using var stream = new MemoryStream();
-            InternalSaveAsMultiPageTiff(images.Select(x => (Image)x), stream);
+            InternalSaveAsMultiPageTiff(images.Select(CastToImageSharp), stream);
             return FromStream(stream);
         }
 
@@ -1269,7 +1280,7 @@ namespace IronSoftware.Drawing
                     if (image == null)
                         throw new ArgumentException("The image sequence contains a null element.", nameof(images));
 
-                    frames.Add(((Image)image).CloneAs<Rgba32>());
+                    frames.Add(CastToImageSharp(image).CloneAs<Rgba32>());
                 }
 
                 if (frames.Count == 0)
@@ -1333,7 +1344,7 @@ namespace IronSoftware.Drawing
         public static AnyBitmap CreateMultiFrameGif(IEnumerable<AnyBitmap> images)
         {
             using var stream = new MemoryStream();
-            InternalSaveAsMultiPageGif(images.Select(x => (Image)x), stream);
+            InternalSaveAsMultiPageGif(images.Select(CastToImageSharp), stream);
             return FromStream(stream);
         }
 
@@ -1466,20 +1477,20 @@ namespace IronSoftware.Drawing
             RotateMode rotateMode,
             FlipMode flipMode)
         {
-            SixLabors.ImageSharp.Processing.RotateMode rotateModeImgSharp = rotateMode switch
+            EngineRotateMode rotateModeImgSharp = rotateMode switch
             {
-                RotateMode.None => SixLabors.ImageSharp.Processing.RotateMode.None,
-                RotateMode.Rotate90 => SixLabors.ImageSharp.Processing.RotateMode.Rotate90,
-                RotateMode.Rotate180 => SixLabors.ImageSharp.Processing.RotateMode.Rotate180,
-                RotateMode.Rotate270 => SixLabors.ImageSharp.Processing.RotateMode.Rotate270,
+                RotateMode.None => EngineRotateMode.None,
+                RotateMode.Rotate90 => EngineRotateMode.Rotate90,
+                RotateMode.Rotate180 => EngineRotateMode.Rotate180,
+                RotateMode.Rotate270 => EngineRotateMode.Rotate270,
                 _ => throw new NotImplementedException()
             };
 
-            SixLabors.ImageSharp.Processing.FlipMode flipModeImgSharp = flipMode switch
+            EngineFlipMode flipModeImgSharp = flipMode switch
             {
-                FlipMode.None => SixLabors.ImageSharp.Processing.FlipMode.None,
-                FlipMode.Horizontal => SixLabors.ImageSharp.Processing.FlipMode.Horizontal,
-                FlipMode.Vertical => SixLabors.ImageSharp.Processing.FlipMode.Vertical,
+                FlipMode.None => EngineFlipMode.None,
+                FlipMode.Horizontal => EngineFlipMode.Horizontal,
+                FlipMode.Vertical => EngineFlipMode.Vertical,
                 _ => throw new NotImplementedException()
             };
 
@@ -2060,6 +2071,7 @@ namespace IronSoftware.Drawing
         }
 
         #region Implicit Casting
+#if !NETFRAMEWORK
 
         /// <summary>
         /// Implicitly casts SixLabors.ImageSharp.Image objects to 
@@ -2091,6 +2103,7 @@ namespace IronSoftware.Drawing
                     "Error while casting AnyBitmap from SixLabors.ImageSharp.Image", e);
             }
         }
+#endif
 
         /// <summary>
         /// Since we store ImageSharp object internal AnyBitmap (lazy) so this casting will return the same ImageSharp object if it loaded.
@@ -2157,7 +2170,7 @@ namespace IronSoftware.Drawing
         /// Since we store ImageSharp object internal AnyBitmap (lazy) so this casting will return the same ImageSharp object if it loaded.
         /// But if it is gif/tiff we need to make resize all frame to have the same size before we load to ImageSharp object;
         /// </summary>
-        private static Image<T> CastToImageSharp<T>(AnyBitmap bitmap) where T :unmanaged, SixLabors.ImageSharp.PixelFormats.IPixel<T>
+        private static Image<T> CastToImageSharp<T>(AnyBitmap bitmap) where T :unmanaged, IPixel<T>
         {
             try
             {
@@ -2217,6 +2230,7 @@ namespace IronSoftware.Drawing
                     "Error while casting AnyBitmap to SixLabors.ImageSharp.Image", e);
             }
         }
+#if !NETFRAMEWORK
 
         /// <summary>
         /// Implicitly casts to SixLabors.ImageSharp.Image objects from 
@@ -2234,6 +2248,8 @@ namespace IronSoftware.Drawing
         {
             return CastToImageSharp<Rgb24>(bitmap);
         }
+#endif
+#if !NETFRAMEWORK
 
         /// <summary>
         /// Implicitly casts SixLabors.ImageSharp.Image objects to 
@@ -2264,6 +2280,8 @@ namespace IronSoftware.Drawing
                     "Error while casting AnyBitmap from SixLabors.ImageSharp.Image", e);
             }
         }
+#endif
+#if !NETFRAMEWORK
 
         /// <summary>
         /// Implicitly casts to SixLabors.ImageSharp.Image objects from 
@@ -2294,6 +2312,8 @@ namespace IronSoftware.Drawing
                     "Error while casting AnyBitmap to SixLabors.ImageSharp.Image", e);
             }
         }
+#endif
+#if !NETFRAMEWORK
 
         /// <summary>
         /// Implicitly casts SixLabors.ImageSharp.Image objects to 
@@ -2324,6 +2344,8 @@ namespace IronSoftware.Drawing
                     "Error while casting AnyBitmap from SixLabors.ImageSharp.Image", e);
             }
         }
+#endif
+#if !NETFRAMEWORK
 
         /// <summary>
         /// Implicitly casts to SixLabors.ImageSharp.Image objects from 
@@ -2354,6 +2376,7 @@ namespace IronSoftware.Drawing
                     "Error while casting AnyBitmap to SixLabors.ImageSharp.Image", e);
             }
         }
+#endif
 
         /// <summary>
         /// Implicitly casts SkiaSharp.SKImage objects to 
@@ -2900,6 +2923,13 @@ namespace IronSoftware.Drawing
                     DecodeSVG(file).Encode(SKEncodedImageFormat.Png, 100)
                     .ToArray(), preserveOriginalFormat);
             }
+#if NETFRAMEWORK
+            catch (DllNotFoundException e) when (e.InnerException is FileNotFoundException)
+            {
+                // Svg.Skia is not installed; DecodeSVG's message already says so.
+                throw;
+            }
+#endif
             catch (DllNotFoundException e)
             {
                 throw new DllNotFoundException(
@@ -2916,31 +2946,47 @@ namespace IronSoftware.Drawing
         {
             try
             {
-                SkiaSharp.Extended.Svg.SKSvg svg = new();
-                _ = svg.Load(strInput);
-
-                SKBitmap toBitmap = new(
-                    (int)svg.Picture.CullRect.Width,
-                    (int)svg.Picture.CullRect.Height);
-                using (SKCanvas canvas = new(toBitmap))
-                {
-                    canvas.Clear(SKColors.White);
-                    canvas.DrawPicture(svg.Picture);
-                    canvas.Flush();
-                }
-
-                return toBitmap;
-
+                return RenderSVG(strInput);
             }
             catch (DllNotFoundException e)
             {
                 throw new DllNotFoundException("Please install SkiaSharp.Svg " +
                     "from NuGet.", e);
             }
+#if NETFRAMEWORK
+            catch (FileNotFoundException e) when (e.FileName?.StartsWith("Svg.", StringComparison.OrdinalIgnoreCase) == true)
+            {
+                throw new DllNotFoundException("Please install Svg.Skia from NuGet to load SVG images on .NET Framework.", e);
+            }
+#endif
             catch (Exception e)
             {
                 throw new NotSupportedException("Error while reading SVG image format.", e);
             }
+        }
+
+        // Kept separate so a missing SVG assembly surfaces inside DecodeSVG's try block (it fails when this method is JIT-compiled).
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static SKBitmap RenderSVG(string strInput)
+        {
+#if NETFRAMEWORK
+            using Svg.Skia.SKSvg svg = new();
+#else
+            SkiaSharp.Extended.Svg.SKSvg svg = new();
+#endif
+            _ = svg.Load(strInput);
+
+            SKBitmap toBitmap = new(
+                (int)svg.Picture.CullRect.Width,
+                (int)svg.Picture.CullRect.Height);
+            using (SKCanvas canvas = new(toBitmap))
+            {
+                canvas.Clear(SKColors.White);
+                canvas.DrawPicture(svg.Picture);
+                canvas.Flush();
+            }
+
+            return toBitmap;
         }
 
         private static PlatformNotSupportedException SystemDotDrawingPlatformNotSupported(Exception innerException)
@@ -3385,7 +3431,7 @@ namespace IronSoftware.Drawing
                         PreserveOriginalFormat = preserveOriginalFormat;
                         img = Image.Load<Rgba32>(Binary);
                         if (Format.Name == "PNG")
-                            img.Mutate(img => img.BackgroundColor(SixLabors.ImageSharp.Color.White));
+                            img.Mutate(img => img.BackgroundColor(Color.White));
                     }
 
                     CorrectImageSharp(img);
@@ -3421,15 +3467,15 @@ namespace IronSoftware.Drawing
             // Check if image metadata is accurate already
             switch (resolutionUnit)
             {
-                case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerMeter:
+                case EnginePixelResolutionUnit.PixelsPerMeter:
                     // Convert metadata of the resolution unit to pixel per inch to match the conversion below of 1 meter = 37.3701 inches
-                    img.Metadata.ResolutionUnits = SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerInch;
+                    img.Metadata.ResolutionUnits = EnginePixelResolutionUnit.PixelsPerInch;
                     img.Metadata.HorizontalResolution = Math.Ceiling(horizontal / 39.3701);
                     img.Metadata.VerticalResolution = Math.Ceiling(vertical / 39.3701);
                     break;
-                case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerCentimeter:
+                case EnginePixelResolutionUnit.PixelsPerCentimeter:
                     // Convert metadata of the resolution unit to pixel per inch to match the conversion below of 1 inch = 2.54 centimeters
-                    img.Metadata.ResolutionUnits = SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerInch;
+                    img.Metadata.ResolutionUnits = EnginePixelResolutionUnit.PixelsPerInch;
                     img.Metadata.HorizontalResolution = Math.Ceiling(horizontal * 2.54);
                     img.Metadata.VerticalResolution = Math.Ceiling(vertical * 2.54);
                     break;
@@ -3883,22 +3929,22 @@ namespace IronSoftware.Drawing
 
                     switch (image.Metadata.ResolutionUnits)
                     {
-                        case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.AspectRatio:
+                        case EnginePixelResolutionUnit.AspectRatio:
                             output.SetField(TiffTag.XRESOLUTION, image.Metadata.HorizontalResolution);
                             output.SetField(TiffTag.YRESOLUTION, image.Metadata.VerticalResolution);
                             output.SetField(TiffTag.RESOLUTIONUNIT, ResUnit.NONE);
                             break;
-                        case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerInch:
+                        case EnginePixelResolutionUnit.PixelsPerInch:
                             output.SetField(TiffTag.XRESOLUTION, image.Metadata.HorizontalResolution);
                             output.SetField(TiffTag.YRESOLUTION, image.Metadata.VerticalResolution);
                             output.SetField(TiffTag.RESOLUTIONUNIT, ResUnit.INCH);
                             break;
-                        case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerCentimeter:
+                        case EnginePixelResolutionUnit.PixelsPerCentimeter:
                             output.SetField(TiffTag.XRESOLUTION, image.Metadata.HorizontalResolution);
                             output.SetField(TiffTag.YRESOLUTION, image.Metadata.VerticalResolution);
                             output.SetField(TiffTag.RESOLUTIONUNIT, ResUnit.CENTIMETER);
                             break;
-                        case SixLabors.ImageSharp.Metadata.PixelResolutionUnit.PixelsPerMeter:
+                        case EnginePixelResolutionUnit.PixelsPerMeter:
                             output.SetField(TiffTag.XRESOLUTION, image.Metadata.HorizontalResolution / 100);
                             output.SetField(TiffTag.YRESOLUTION, image.Metadata.VerticalResolution / 100);
                             output.SetField(TiffTag.RESOLUTIONUNIT, ResUnit.CENTIMETER);

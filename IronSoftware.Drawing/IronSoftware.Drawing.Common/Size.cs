@@ -195,6 +195,7 @@ public struct Size : IEquatable<Size>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator !=(Size left, Size right) => !left.Equals(right);
 
+#if !NETFRAMEWORK
     /// <summary>
     /// Convert a <see cref="SixLabors.ImageSharp.Size"/> type to a <see cref="Size"/> type.
     /// </summary>
@@ -203,7 +204,9 @@ public struct Size : IEquatable<Size>
     {
         return new Size(v.Width, v.Height);
     }
+#endif
 
+#if !NETFRAMEWORK
     /// <summary>
     /// Convert to a <see cref="SixLabors.ImageSharp.Size"/> type.
     /// </summary>
@@ -212,6 +215,7 @@ public struct Size : IEquatable<Size>
     {
         return new SixLabors.ImageSharp.Size(v.Width, v.Height);
     }
+#endif
 
     /// <summary>
     /// Convert a <see cref="System.Drawing.Size"/> type to a <see cref="Size"/> type.

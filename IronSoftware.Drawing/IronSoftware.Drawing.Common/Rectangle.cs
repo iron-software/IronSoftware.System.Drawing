@@ -231,6 +231,7 @@ namespace IronSoftware.Drawing
             return SkiaSharp.SKRectI.Create(Rectangle.X, Rectangle.Y, Rectangle.Width, Rectangle.Height);
         }
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts SixLabors.ImageSharp.Rectangle objects to <see cref="Rectangle"/>.
         /// <para>When your .NET Class methods use <see cref="Rectangle"/> as parameters and return types, you now automatically support SixLabors.ImageSharp.Rectangle as well.</para>
@@ -240,7 +241,9 @@ namespace IronSoftware.Drawing
         {
             return new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts to SixLabors.ImageSharp.Rectangle objects from <see cref="Rectangle"/>.
         /// <para>When your .NET Class methods use <see cref="Rectangle"/> as parameters and return types, you now automatically support SixLabors.ImageSharp.Rectangle as well.</para>
@@ -250,7 +253,9 @@ namespace IronSoftware.Drawing
         {
             return new SixLabors.ImageSharp.Rectangle(Rectangle.X, Rectangle.Y, Rectangle.Width, Rectangle.Height);
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts SixLabors.ImageSharp.RectangleF objects to <see cref="Rectangle"/>.
         /// <para>When your .NET Class methods use <see cref="Rectangle"/> as parameters and return types, you now automatically support SixLabors.ImageSharp.RectangleF as well.</para>
@@ -260,7 +265,9 @@ namespace IronSoftware.Drawing
         {
             return new Rectangle((int)rectangle.X, (int)rectangle.Y, (int)rectangle.Width, (int)rectangle.Height);
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts to SixLabors.ImageSharp.RectangleF objects from <see cref="Rectangle"/>.
         /// <para>When your .NET Class methods use <see cref="Rectangle"/> as parameters and return types, you now automatically support SixLabors.ImageSharp.RectangleF as well.</para>
@@ -270,6 +277,7 @@ namespace IronSoftware.Drawing
         {
             return new SixLabors.ImageSharp.RectangleF(Rectangle.X, Rectangle.Y, Rectangle.Width, Rectangle.Height);
         }
+#endif
 
         /// <summary>
         /// Implicitly casts Microsoft.Maui.Graphics.Rect objects to <see cref="Rectangle"/>.

@@ -12,7 +12,7 @@
 		<NoWarn>CS8002</NoWarn>
 		<Platforms>AnyCPU</Platforms>
 		<SignAssembly>true</SignAssembly>
-		<TargetFrameworks>netstandard2.0;net60</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net462;net60</TargetFrameworks>
 		<TransformOnBuild>true</TransformOnBuild>
 	</PropertyGroup>
 
@@ -26,24 +26,40 @@
 	<ItemGroup>
         <PackageReference Include="BitMiracle.LibTiff.NET" Version="2.4.649" />
         <PackageReference Include="Microsoft.Maui.Graphics" Version="7.0.92" />
-        <PackageReference Include="SkiaSharp" Version="2.88.7" />
         <PackageReference Include="IronSoftware.Drawing.Abstractions" Version="2026.1.2" />
-        <PackageReference Include="SkiaSharp.Svg" Version="1.60.0" />
         <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
 	</ItemGroup>
 
 	<Choose>
+		<!--
+		.NET Framework: no SixLabors.ImageSharp. Images are decoded, processed and encoded by the
+		internal engine in SkiaEngine/ (SkiaSharp + BitMiracle.LibTiff), because ImageSharp 2.x is
+		end-of-life and unpatched. SixLabors.Fonts stays: it is not part of ImageSharp, and products
+		compiled against the netstandard2.0 build load SixLabors.Fonts.dll at runtime.
+		-->
+		<When Condition="'$(TargetFramework)' == 'net462'">
+			<ItemGroup>
+				<PackageReference Include="SkiaSharp" Version="4.153.1" />
+				<PackageReference Include="SixLabors.Fonts" Version="1.0.0" />
+				<!-- SkiaSharp.Svg 1.60 calls APIs removed in SkiaSharp 4; Svg.Skia is its maintained successor. -->
+				<PackageReference Include="Svg.Skia" Version="5.2.3" />
+			</ItemGroup>
+		</When>
 		<When Condition="'$(TargetFramework)' == 'net60'">
 			<ItemGroup>
+				<PackageReference Include="SkiaSharp" Version="2.88.7" />
 				<PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
 				<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
+				<PackageReference Include="SkiaSharp.Svg" Version="1.60.0" />
 			</ItemGroup>
 		</When>
 		<Otherwise>
 			<ItemGroup>
+				<PackageReference Include="SkiaSharp" Version="2.88.7" />
 				<PackageReference Include="SixLabors.ImageSharp" Version="2.1.13" />
 				<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0" />
+				<PackageReference Include="SkiaSharp.Svg" Version="1.60.0" />
 			</ItemGroup>
 		</Otherwise>
 	</Choose>
