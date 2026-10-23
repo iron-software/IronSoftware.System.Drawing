@@ -183,6 +183,7 @@ public struct SizeF : IEquatable<SizeF>
         return new System.Drawing.SizeF(v.Width, v.Height);
     }
 
+#if !NETFRAMEWORK
     /// <summary>
     /// Convert a <see cref="System.Drawing.SizeF"/> type to a <see cref="SizeF"/> type.
     /// </summary>
@@ -191,7 +192,9 @@ public struct SizeF : IEquatable<SizeF>
     {
         return new SizeF(v.Width, v.Height);
     }
+#endif
 
+#if !NETFRAMEWORK
     /// <summary>
     /// Convert to a <see cref="SixLabors.ImageSharp.SizeF"/> type.
     /// </summary>
@@ -200,6 +203,7 @@ public struct SizeF : IEquatable<SizeF>
     {
         return new SixLabors.ImageSharp.SizeF(v.Width, v.Height);
     }
+#endif
 
     /// <summary>
     /// Convert a <see cref="SkiaSharp.SKSize"/> type to a <see cref="SizeF"/> type.

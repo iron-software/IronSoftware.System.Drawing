@@ -274,6 +274,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(176, skColor.Blue);
         }
 
+#if !NET48
         [FactWithAutomaticDisplayName]
         public void Cast_ImageSharp_Color_from_Color()
         {
@@ -557,6 +558,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(bmColor.ToArgb(), rgba32.ToArgb());
             Assert.Equal(bmColor.ToArgb(), rgb24.ToArgb());
         }
+#endif
 
         [FactWithAutomaticDisplayName]
         public void Should_Create_FromName()

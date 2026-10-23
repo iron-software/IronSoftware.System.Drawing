@@ -129,6 +129,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             }
         }
 
+#if !NET48
         [FactWithAutomaticDisplayName]
         public void ImageSharpLoader_BigTiffWithOversizedIfdCount_FailsFast()
         {
@@ -138,7 +139,9 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             ShouldFailFast(() => ImageSharpLoader.Load(new MemoryStream(bytes)));
             ShouldFailFast(() => ImageSharpLoader.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(new MemoryStream(bytes)));
         }
+#endif
 
+#if !NET48
         [FactWithAutomaticDisplayName]
         public void ImageSharpLoader_ValidImage_MatchesImageLoad()
         {
@@ -154,6 +157,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             fromStream.Width.Should().Be(expected.Width);
             fromStream.Height.Should().Be(expected.Height);
         }
+#endif
 
         [FactWithAutomaticDisplayName]
         public void FromBytes_ValidBigTiff_StillLoads()

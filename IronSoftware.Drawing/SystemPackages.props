@@ -1,13 +1,13 @@
 <Project>
 	<!--
-	System.* compatibility packages used by the netstandard2.0 build (what .NET Framework apps get).
+	System.* compatibility packages used by the netstandard2.0 and net462 builds.
 
 	These four packages ship together and must be upgraded together: System.Memory 4.6.3 is
 	compiled against System.Buffers 4.0.5.0, System.Numerics.Vectors 4.1.6.0 and
 	System.Runtime.CompilerServices.Unsafe 6.0.3.0. Upgrading only one of them causes
 	FileLoadException on .NET Framework (see dotnet/runtime#109827 and OCR-372).
 
-	The same versions MUST be declared in the netstandard2.0 dependency group of
+	The same versions MUST be declared in the netstandard2.0 and net462 dependency groups of
 	NuGet/IronSoftware.Drawing.nuspec so that consumers always restore at least the assembly
 	versions IronSoftware.Drawing.Common.dll is compiled against. CI enforces this with
 	CI/scripts/Test-SystemAssemblyReferences.ps1.
@@ -25,7 +25,7 @@
 		<SystemRuntimeCompilerServicesUnsafeVersion>6.1.2</SystemRuntimeCompilerServicesUnsafeVersion>
 	</PropertyGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'net462'">
 		<PackageReference Include="System.Memory" Version="$(SystemMemoryVersion)" />
 		<PackageReference Include="System.Buffers" Version="$(SystemBuffersVersion)" />
 		<PackageReference Include="System.Numerics.Vectors" Version="$(SystemNumericsVectorsVersion)" />

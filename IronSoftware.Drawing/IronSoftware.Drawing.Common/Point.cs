@@ -40,6 +40,7 @@ namespace IronSoftware.Drawing
 
         #region Implicit Operators
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts SixLabors.ImageSharp.Point objects to Point
         /// </summary>
@@ -48,7 +49,9 @@ namespace IronSoftware.Drawing
         {
             return new Point(point.X, point.Y);
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts Point objects to SixLabors.ImageSharp.Point
         /// </summary>
@@ -57,6 +60,7 @@ namespace IronSoftware.Drawing
         {
             return new SixLabors.ImageSharp.Point(point.X, point.Y);
         }
+#endif
 
         /// <summary>
         /// Implicitly casts System.Drawing.Point objects to <see cref="Point"/>.

@@ -66,17 +66,30 @@ function Get-AssemblyVersion([string] $path) {
     finally { $stream.Dispose() }
 }
 
-# Lowest assembly version the given package version provides to .NET Framework / netstandard2.0
-# consumers. The lib folders can differ (System.Memory 4.6.3: net462 = 4.0.5.0, netstandard2.0 = 4.0.2.0),
-# so take the minimum to be safe for every consumer.
-function Get-PackageAssemblyVersion([string] $id, [string] $version, [string] $assemblyName) {
+# Assembly version the given package version provides to consumers of our $tfm lib folder.
+# The package lib folders can differ (System.Memory 4.6.3: net462 = 4.0.5.0, netstandard2.0 = 4.0.2.0).
+# - .NET Framework group: the app resolves the package's own .NET Framework lib folder (the highest
+#   net4x folder not above our target, else netstandard2.0), so check against that one.
+# - netstandard2.0 group: it can be consumed from any .NET Framework or netstandard app, so take the
+#   minimum across those lib folders to be safe for every consumer.
+function Get-PackageAssemblyVersion([string] $id, [string] $version, [string] $assemblyName, [string] $tfm) {
     $packageDir = Join-Path $PackagesRoot (Join-Path $id.ToLowerInvariant() $version.ToLowerInvariant())
     if (-not (Test-Path $packageDir)) {
         throw "Package $id $version is not in '$PackagesRoot'. Restore the solution before running this check."
     }
-    $versions = foreach ($lib in 'net462', 'net461', 'net46', 'net45', 'netstandard2.0') {
-        $dll = Join-Path $packageDir "lib/$lib/$assemblyName.dll"
-        if (Test-Path $dll) { Get-AssemblyVersion $dll }
+    $candidates = 'net48', 'net472', 'net471', 'net47', 'net462', 'net461', 'net46', 'net45'
+    if ($tfm -match '^net4\d+$') {
+        $ours = [int]($tfm.Substring(3).PadRight(3, '0'))
+        $lib = @($candidates | Where-Object { [int]($_.Substring(3).PadRight(3, '0')) -le $ours }) + 'netstandard2.0' |
+            Where-Object { Test-Path (Join-Path $packageDir "lib/$_/$assemblyName.dll") } |
+            Select-Object -First 1
+        $versions = if ($lib) { Get-AssemblyVersion (Join-Path $packageDir "lib/$lib/$assemblyName.dll") }
+    }
+    else {
+        $versions = foreach ($lib in $candidates + 'netstandard2.0') {
+            $dll = Join-Path $packageDir "lib/$lib/$assemblyName.dll"
+            if (Test-Path $dll) { Get-AssemblyVersion $dll }
+        }
     }
     if (-not $versions) {
         throw "No .NET Framework / netstandard2.0 assembly found for $id $version in '$packageDir'."
@@ -129,7 +142,7 @@ foreach ($group in $nuspec.SelectNodes("//*[local-name()='dependencies']/*[local
                 continue
             }
             $packageVersion = $declared[$ref.Name]
-            $provided = Get-PackageAssemblyVersion $ref.Name $packageVersion $ref.Name
+            $provided = Get-PackageAssemblyVersion $ref.Name $packageVersion $ref.Name $tfm
             $status = if ($ref.Version -gt $provided) { 'FAIL' } else { 'ok' }
             Write-Host ("[{0}] {1}: {2} {3} -> declared package {4} provides {5}  {6}" -f $tfm, $dll.Name, $ref.Name, $ref.Version, $packageVersion, $provided, $status)
             if ($status -eq 'FAIL') {

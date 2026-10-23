@@ -1048,6 +1048,7 @@ namespace IronSoftware.Drawing
             return new SkiaSharp.SKColor(color.R, color.G, color.B, color.A);
         }
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts <see cref="SixLabors.ImageSharp.Color"/> objects to <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support <see cref="SixLabors.ImageSharp.Color"/> as well.</para>
@@ -1058,7 +1059,9 @@ namespace IronSoftware.Drawing
             string hex = color.ToHex();
             return new Color(ConvertToHexNumberByte(hex, 6, 2), ConvertToHexNumberByte(hex, 0, 2), ConvertToHexNumberByte(hex, 2, 2), ConvertToHexNumberByte(hex, 4, 2));
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts to <see cref="SixLabors.ImageSharp.Color"/> objects from <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support <see cref="SixLabors.ImageSharp.Color"/> as well.</para>
@@ -1072,7 +1075,9 @@ namespace IronSoftware.Drawing
             return SixLabors.ImageSharp.Color.FromRgba(color.R, color.G, color.B, color.A);
 #endif
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts <see cref="SixLabors.ImageSharp.PixelFormats.Rgba32"/> objects to <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support <see cref="SixLabors.ImageSharp.PixelFormats.Rgba32"/> as well.</para>
@@ -1083,7 +1088,9 @@ namespace IronSoftware.Drawing
             string hex = color.ToHex(); // Rgba
             return new Color(ConvertToHexNumberByte(hex, 6, 2), ConvertToHexNumberByte(hex, 0, 2), ConvertToHexNumberByte(hex, 2, 2), ConvertToHexNumberByte(hex, 4, 2));
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts to <see cref="SixLabors.ImageSharp.PixelFormats.Rgba32"/> objects from <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support <see cref="SixLabors.ImageSharp.PixelFormats.Rgba32"/> as well.</para>
@@ -1097,7 +1104,9 @@ namespace IronSoftware.Drawing
             return SixLabors.ImageSharp.Color.FromRgba(color.R, color.G, color.B, color.A);
 #endif
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts <see cref="SixLabors.ImageSharp.PixelFormats.Bgra32"/> objects to <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support <see cref="SixLabors.ImageSharp.PixelFormats.Bgra32"/> as well.</para>
@@ -1107,7 +1116,9 @@ namespace IronSoftware.Drawing
         {
             return new Color(color.A, color.R, color.G, color.B);
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts to <see cref="SixLabors.ImageSharp.PixelFormats.Bgra32"/> objects from <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support <see cref="SixLabors.ImageSharp.PixelFormats.Bgra32"/> as well.</para>
@@ -1121,7 +1132,9 @@ namespace IronSoftware.Drawing
             return SixLabors.ImageSharp.Color.FromRgba(color.R, color.G, color.B, color.A);
 #endif
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts <see cref="SixLabors.ImageSharp.PixelFormats.Rgb24"/> objects to <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support <see cref="SixLabors.ImageSharp.PixelFormats.Rgb24"/> as well.</para>
@@ -1131,7 +1144,9 @@ namespace IronSoftware.Drawing
         {
             return new Color(color.R, color.G, color.B);
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts to <see cref="SixLabors.ImageSharp.PixelFormats.Rgb24"/> objects from <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support <see cref="SixLabors.ImageSharp.PixelFormats.Rgb24"/> as well.</para>
@@ -1145,7 +1160,9 @@ namespace IronSoftware.Drawing
             return SixLabors.ImageSharp.Color.FromRgba(color.R, color.G, color.B, color.A);
 #endif
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts <see cref="SixLabors.ImageSharp.PixelFormats.Bgr24"/> objects to <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support <see cref="SixLabors.ImageSharp.PixelFormats.Bgr24"/> as well.</para>
@@ -1155,7 +1172,9 @@ namespace IronSoftware.Drawing
         {
             return new Color(color.R, color.G, color.B);
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts to <see cref="SixLabors.ImageSharp.PixelFormats.Bgr24"/> objects from <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support <see cref="SixLabors.ImageSharp.PixelFormats.Bgr24"/> as well.</para>
@@ -1169,7 +1188,9 @@ namespace IronSoftware.Drawing
             return SixLabors.ImageSharp.Color.FromRgb(color.R, color.G, color.B);
 #endif
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts <see cref="SixLabors.ImageSharp.PixelFormats.Rgb48"/> objects to <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support <see cref="SixLabors.ImageSharp.PixelFormats.Rgb48"/> as well.</para>
@@ -1183,7 +1204,9 @@ namespace IronSoftware.Drawing
             return (Color)SixLabors.ImageSharp.Color.FromRgb((byte)(color.R >> 8), (byte)(color.G >> 8), (byte)(color.B >> 8));
 #endif
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts to <see cref="SixLabors.ImageSharp.PixelFormats.Rgb48"/> objects from <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support <see cref="SixLabors.ImageSharp.PixelFormats.Rgb48"/> as well.</para>
@@ -1199,7 +1222,9 @@ namespace IronSoftware.Drawing
             return result;
 #endif
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts <see cref="SixLabors.ImageSharp.PixelFormats.Rgba64"/> objects to <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support <see cref="SixLabors.ImageSharp.PixelFormats.Rgba64"/> as well.</para>
@@ -1209,7 +1234,9 @@ namespace IronSoftware.Drawing
         {
             return new Color(color.A, color.R, color.G, color.B);
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts to <see cref="SixLabors.ImageSharp.PixelFormats.Rgba64"/> objects from <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support <see cref="SixLabors.ImageSharp.PixelFormats.Rgba64"/> as well.</para>
@@ -1223,7 +1250,9 @@ namespace IronSoftware.Drawing
             return SixLabors.ImageSharp.Color.FromRgba(color.R, color.G, color.B, color.A);
 #endif
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts <see cref="SixLabors.ImageSharp.PixelFormats.Abgr32"/> objects to <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support <see cref="SixLabors.ImageSharp.PixelFormats.Abgr32"/> as well.</para>
@@ -1233,7 +1262,9 @@ namespace IronSoftware.Drawing
         {
             return new Color(color.A, color.R, color.G, color.B);
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts to <see cref="SixLabors.ImageSharp.PixelFormats.Abgr32"/> objects from <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support <see cref="SixLabors.ImageSharp.PixelFormats.Abgr32"/> as well.</para>
@@ -1247,7 +1278,9 @@ namespace IronSoftware.Drawing
             return SixLabors.ImageSharp.Color.FromRgba(color.R, color.G, color.B, color.A);
 #endif
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts <see cref="SixLabors.ImageSharp.PixelFormats.Argb32"/> objects to <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support <see cref="SixLabors.ImageSharp.PixelFormats.Argb32"/> as well.</para>
@@ -1257,7 +1290,9 @@ namespace IronSoftware.Drawing
         {
             return new Color(color.A, color.R, color.G, color.B);
         }
+#endif
 
+#if !NETFRAMEWORK
         /// <summary>
         /// Implicitly casts to <see cref="SixLabors.ImageSharp.PixelFormats.Argb32"/> objects from <see cref="Color"/>.  
         /// <para>When your .NET Class methods use <see cref="Color"/> as parameters or return types, you now automatically support <see cref="SixLabors.ImageSharp.PixelFormats.Argb32"/> as well.</para>
@@ -1271,6 +1306,7 @@ namespace IronSoftware.Drawing
             return SixLabors.ImageSharp.Color.FromRgba(color.R, color.G, color.B, color.A);
 #endif
         }
+#endif
 
         /// <summary>
         /// Implicitly casts <see cref="Microsoft.Maui.Graphics.Color"/> objects to <see cref="Color"/>.  

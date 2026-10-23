@@ -70,6 +70,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(5, rectangle.Y);
         }
 
+#if !NET48
         [FactWithAutomaticDisplayName]
         public void CastImageSharp_Rectangle_to_Rectangle()
         {
@@ -137,6 +138,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(5, rectangle.X);
             Assert.Equal(5, rectangle.Y);
         }
+#endif
 
         [FactWithAutomaticDisplayName]
         public void CastSKRect_to_Rectangle()
@@ -411,6 +413,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(5, Rectangle.Y);
         }
 
+#if !NET48
         [FactWithAutomaticDisplayName]
         public void CastImageSharp_RectangleF_to_RectangleF()
         {
@@ -443,6 +446,7 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(5, Rectangle.X);
             Assert.Equal(5, Rectangle.Y);
         }
+#endif
 
         [FactWithAutomaticDisplayName]
         public void CastSKRect_to_RectangleF()

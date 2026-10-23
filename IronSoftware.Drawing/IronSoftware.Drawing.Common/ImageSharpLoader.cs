@@ -1,3 +1,6 @@
+// .NET Framework has no SixLabors.ImageSharp dependency (see SkiaEngine/), so this ImageSharp-typed API
+// exists only on the other targets. AnyBitmap uses SkiaEngine.ImageSharpLoader there instead.
+#if !NETFRAMEWORK
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
@@ -139,3 +142,4 @@ namespace IronSoftware.Drawing
         }
     }
 }
+#endif

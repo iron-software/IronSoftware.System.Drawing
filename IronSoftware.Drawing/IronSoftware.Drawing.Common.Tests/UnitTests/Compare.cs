@@ -25,8 +25,22 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             expectedImageSharp.Mutate(x => x.Resize(100, 100));
             actualImageSharp.Mutate(x => x.Resize(100, 100));
 
+#if NET48
+            // The ImageSharp casts are not available on .NET Framework; go through PNG bytes instead.
+            AssertImageAreEqual(ToAnyBitmap(expectedImageSharp), ToAnyBitmap(actualImageSharp));
+#else
             AssertImageAreEqual(expectedImageSharp, actualImageSharp);
+#endif
         }
+
+#if NET48
+        private static AnyBitmap ToAnyBitmap(SixLabors.ImageSharp.Image image)
+        {
+            using var stream = new MemoryStream();
+            SixLabors.ImageSharp.ImageExtensions.SaveAsPng(image, stream);
+            return AnyBitmap.FromBytes(stream.ToArray());
+        }
+#endif
 
         protected static void AssertImageAreEqual(string expectedImagePath, string resultImagePath, bool isCleanAll = false)
         {
