@@ -34,7 +34,12 @@ namespace IronSoftware.Drawing.SkiaEngine
             int frameCount = animated ? Math.Max(1, codec.FrameCount) : 1;
             SKCodecFrameInfo[] frameInfo = animated && codec.FrameCount > 0 ? codec.FrameInfo : Array.Empty<SKCodecFrameInfo>();
 
-            var metadata = new ImageMetadata { ExifOrientation = (ushort)codec.EncodedOrigin };
+            var metadata = new ImageMetadata
+            {
+                ExifOrientation = (ushort)codec.EncodedOrigin,
+                PngColorType = header.PngColorType,
+                PngBitDepth = header.PngBitDepth
+            };
             if (metadata.ExifOrientation is < 1 or > 8)
             {
                 metadata.ExifOrientation = 1;

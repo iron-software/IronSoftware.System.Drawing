@@ -28,8 +28,15 @@ namespace IronSoftware.Drawing.SkiaEngine
         /// <summary>Per-frame GIF/WebP delay in 1/100 s, kept so re-encoding animations keeps timing.</summary>
         internal List<int> FrameDelays { get; set; }
 
+        /// <summary>Source PNG colour type (-1 when not decoded from PNG) and bit depth, kept so PNG re-encoding keeps them as ImageSharp does.</summary>
+        internal int PngColorType { get; set; } = -1;
+
+        internal int PngBitDepth { get; set; }
+
         public ImageMetadata Clone() => new()
         {
+            PngColorType = PngColorType,
+            PngBitDepth = PngBitDepth,
             HorizontalResolution = HorizontalResolution,
             VerticalResolution = VerticalResolution,
             ResolutionUnits = ResolutionUnits,

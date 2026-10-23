@@ -250,18 +250,50 @@ namespace IronSoftware.Drawing.SkiaEngine
                 _ => ((byte)6, 4, false),
             };
 
+            int bitDepth = sixteen ? 16 : 8;
             int bytesPerPixel = channels * (sixteen ? 2 : 1);
             int stride = width * bytesPerPixel;
-            byte[] raw = BuildRows(image, channels, sixteen, stride);
+            byte[] palette = null, transparency = null;
+            byte[] raw;
+
+            // Like ImageSharp, keep a decoded PNG's palette or low-bit grayscale encoding.
+            int sourceType = image.Metadata.PngColorType, sourceDepth = image.Metadata.PngBitDepth;
+            if (sourceType == 3 && !sixteen && sourceDepth is 1 or 2 or 4 or 8)
+            {
+                colorType = 3;
+                bitDepth = sourceDepth;
+                raw = BuildIndexedRows(image.GetFrameRgba32(0), width, height, bitDepth, out palette, out transparency);
+                stride = (width * bitDepth + 7) / 8;
+                bytesPerPixel = 1;
+            }
+            else if (sourceType == 0 && colorType == 0 && !sixteen && sourceDepth is 1 or 2 or 4)
+            {
+                bitDepth = sourceDepth;
+                raw = BuildLowBitGrayRows(image.GetFrameRgba32(0), width, height, bitDepth);
+                stride = (width * bitDepth + 7) / 8;
+                bytesPerPixel = 1;
+            }
+            else
+            {
+                raw = BuildRows(image, channels, sixteen, stride);
+            }
 
             stream.Write(new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A }, 0, 8);
 
             var ihdr = new byte[13];
             WriteInt32BE(ihdr, 0, width);
             WriteInt32BE(ihdr, 4, height);
-            ihdr[8] = (byte)(sixteen ? 16 : 8);
+            ihdr[8] = (byte)bitDepth;
             ihdr[9] = colorType;
             WriteChunk(stream, "IHDR", ihdr);
+            if (palette != null)
+            {
+                WriteChunk(stream, "PLTE", palette);
+                if (transparency != null)
+                {
+                    WriteChunk(stream, "tRNS", transparency);
+                }
+            }
 
             var phys = new byte[9];
             bool aspect = image.Metadata.ResolutionUnits == PixelResolutionUnit.AspectRatio;
@@ -272,6 +304,65 @@ namespace IronSoftware.Drawing.SkiaEngine
 
             WriteChunk(stream, "IDAT", Zlib(Filter(raw, height, stride, bytesPerPixel)));
             WriteChunk(stream, "IEND", Array.Empty<byte>());
+        }
+
+        private static byte[] BuildIndexedRows(Rgba32[] pixels, int width, int height, int bitDepth, out byte[] palette, out byte[] transparency)
+        {
+            bool transparent = Array.Exists(pixels, p => p.A < 128);
+            int maxColors = (1 << bitDepth) - (transparent ? 1 : 0);
+            byte[] indices = new OctreeQuantizer(pixels, Math.Max(1, maxColors)).Map(pixels, out Rgba32[] colors, out int transparentIndex);
+
+            palette = new byte[colors.Length * 3];
+            for (int i = 0; i < colors.Length; i++)
+            {
+                palette[i * 3] = colors[i].R;
+                palette[(i * 3) + 1] = colors[i].G;
+                palette[(i * 3) + 2] = colors[i].B;
+            }
+
+            transparency = null;
+            if (transparentIndex >= 0)
+            {
+                transparency = new byte[transparentIndex + 1];
+                for (int i = 0; i < transparency.Length; i++) transparency[i] = 255;
+                transparency[transparentIndex] = 0;
+            }
+
+            return PackRows(indices, width, height, bitDepth);
+        }
+
+        private static byte[] BuildLowBitGrayRows(Rgba32[] pixels, int width, int height, int bitDepth)
+        {
+            int max = (1 << bitDepth) - 1;
+            var samples = new byte[pixels.Length];
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                samples[i] = (byte)(((PixelMath.Luminance8(pixels[i].R, pixels[i].G, pixels[i].B) * max) + 127) / 255);
+            }
+
+            return PackRows(samples, width, height, bitDepth);
+        }
+
+        /// <summary>Packs one sample per pixel into rows of <paramref name="bitDepth"/>-bit samples, most significant bits first.</summary>
+        private static byte[] PackRows(byte[] samples, int width, int height, int bitDepth)
+        {
+            int stride = (width * bitDepth + 7) / 8;
+            if (bitDepth == 8)
+            {
+                return samples;
+            }
+
+            var packed = new byte[stride * height];
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int bit = x * bitDepth;
+                    packed[(y * stride) + (bit >> 3)] |= (byte)(samples[(y * width) + x] << (8 - bitDepth - (bit & 7)));
+                }
+            }
+
+            return packed;
         }
 
         private static byte[] BuildRows(Image image, int channels, bool sixteen, int stride)

@@ -1069,7 +1069,11 @@ namespace IronSoftware.Drawing
         /// <param name="color"><see cref="Color"/> is explicitly cast to a <see cref="SixLabors.ImageSharp.Color"/> </param>
         public static implicit operator SixLabors.ImageSharp.Color(Color color)
         {
+#if NET8_0_OR_GREATER
+            return SixLabors.ImageSharp.Color.FromPixel(new SixLabors.ImageSharp.PixelFormats.Rgba32(color.R, color.G, color.B, color.A));
+#else
             return SixLabors.ImageSharp.Color.FromRgba(color.R, color.G, color.B, color.A);
+#endif
         }
 #endif
 
@@ -1094,7 +1098,11 @@ namespace IronSoftware.Drawing
         /// <param name="color"><see cref="Color"/> is explicitly cast to a <see cref="SixLabors.ImageSharp.PixelFormats.Rgba32"/> </param>
         public static implicit operator SixLabors.ImageSharp.PixelFormats.Rgba32(Color color)
         {
+#if NET8_0_OR_GREATER
+            return new SixLabors.ImageSharp.PixelFormats.Rgba32(color.R, color.G, color.B, color.A);
+#else
             return SixLabors.ImageSharp.Color.FromRgba(color.R, color.G, color.B, color.A);
+#endif
         }
 #endif
 
@@ -1118,7 +1126,11 @@ namespace IronSoftware.Drawing
         /// <param name="color"><see cref="Color"/> is explicitly cast to a <see cref="SixLabors.ImageSharp.PixelFormats.Bgra32"/> </param>
         public static implicit operator SixLabors.ImageSharp.PixelFormats.Bgra32(Color color)
         {
+#if NET8_0_OR_GREATER
+            return new SixLabors.ImageSharp.PixelFormats.Bgra32(color.R, color.G, color.B, color.A);
+#else
             return SixLabors.ImageSharp.Color.FromRgba(color.R, color.G, color.B, color.A);
+#endif
         }
 #endif
 
@@ -1142,7 +1154,11 @@ namespace IronSoftware.Drawing
         /// <param name="color"><see cref="Color"/> is explicitly cast to a <see cref="SixLabors.ImageSharp.PixelFormats.Rgb24"/> </param>
         public static implicit operator SixLabors.ImageSharp.PixelFormats.Rgb24(Color color)
         {
+#if NET8_0_OR_GREATER
+            return new SixLabors.ImageSharp.PixelFormats.Rgb24(color.R, color.G, color.B);
+#else
             return SixLabors.ImageSharp.Color.FromRgba(color.R, color.G, color.B, color.A);
+#endif
         }
 #endif
 
@@ -1166,7 +1182,11 @@ namespace IronSoftware.Drawing
         /// <param name="color"><see cref="Color"/> is explicitly cast to a <see cref="SixLabors.ImageSharp.PixelFormats.Bgr24"/> </param>
         public static implicit operator SixLabors.ImageSharp.PixelFormats.Bgr24(Color color)
         {
+#if NET8_0_OR_GREATER
+            return new SixLabors.ImageSharp.PixelFormats.Bgr24(color.R, color.G, color.B);
+#else
             return SixLabors.ImageSharp.Color.FromRgb(color.R, color.G, color.B);
+#endif
         }
 #endif
 
@@ -1178,7 +1198,11 @@ namespace IronSoftware.Drawing
         /// <param name="color"><see cref="SixLabors.ImageSharp.PixelFormats.Rgb48"/> will automatically be casted to <see cref="Color"/> </param>
         public static implicit operator Color(SixLabors.ImageSharp.PixelFormats.Rgb48 color)
         {
+#if NET8_0_OR_GREATER
+            return (Color)SixLabors.ImageSharp.Color.FromPixel(new SixLabors.ImageSharp.PixelFormats.Rgb24((byte)(color.R >> 8), (byte)(color.G >> 8), (byte)(color.B >> 8)));
+#else
             return (Color)SixLabors.ImageSharp.Color.FromRgb((byte)(color.R >> 8), (byte)(color.G >> 8), (byte)(color.B >> 8));
+#endif
         }
 #endif
 
@@ -1190,9 +1214,13 @@ namespace IronSoftware.Drawing
         /// <param name="color"><see cref="Color"/> is explicitly cast to a <see cref="SixLabors.ImageSharp.PixelFormats.Rgb48"/> </param>
         public static implicit operator SixLabors.ImageSharp.PixelFormats.Rgb48(Color color)
         {
+#if NET8_0_OR_GREATER
+            return SixLabors.ImageSharp.PixelFormats.Rgb48.FromRgba64((SixLabors.ImageSharp.PixelFormats.Rgba64)color);
+#else
             var result = new SixLabors.ImageSharp.PixelFormats.Rgb48();
             result.FromRgba64((SixLabors.ImageSharp.PixelFormats.Rgba64)color);
             return result;
+#endif
         }
 #endif
 
@@ -1216,7 +1244,11 @@ namespace IronSoftware.Drawing
         /// <param name="color"><see cref="Color"/> is explicitly cast to a <see cref="SixLabors.ImageSharp.PixelFormats.Rgba64"/> </param>
         public static implicit operator SixLabors.ImageSharp.PixelFormats.Rgba64(Color color)
         {
+#if NET8_0_OR_GREATER
+            return new SixLabors.ImageSharp.PixelFormats.Rgba64(new SixLabors.ImageSharp.PixelFormats.Rgba32(color.R, color.G, color.B, color.A));
+#else
             return SixLabors.ImageSharp.Color.FromRgba(color.R, color.G, color.B, color.A);
+#endif
         }
 #endif
 
@@ -1240,7 +1272,11 @@ namespace IronSoftware.Drawing
         /// <param name="color"><see cref="Color"/> is explicitly cast to a <see cref="SixLabors.ImageSharp.PixelFormats.Abgr32"/> </param>
         public static implicit operator SixLabors.ImageSharp.PixelFormats.Abgr32(Color color)
         {
+#if NET8_0_OR_GREATER
+            return new SixLabors.ImageSharp.PixelFormats.Abgr32(color.R, color.G, color.B, color.A);
+#else
             return SixLabors.ImageSharp.Color.FromRgba(color.R, color.G, color.B, color.A);
+#endif
         }
 #endif
 
@@ -1264,7 +1300,11 @@ namespace IronSoftware.Drawing
         /// <param name="color"><see cref="Color"/> is explicitly cast to a <see cref="SixLabors.ImageSharp.PixelFormats.Argb32"/> </param>
         public static implicit operator SixLabors.ImageSharp.PixelFormats.Argb32(Color color)
         {
+#if NET8_0_OR_GREATER
+            return new SixLabors.ImageSharp.PixelFormats.Argb32(color.R, color.G, color.B, color.A);
+#else
             return SixLabors.ImageSharp.Color.FromRgba(color.R, color.G, color.B, color.A);
+#endif
         }
 #endif
 
