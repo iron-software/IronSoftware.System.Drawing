@@ -16,6 +16,8 @@
 		<TransformOnBuild>true</TransformOnBuild>
 	</PropertyGroup>
 
+	<Import Project="..\SystemPackages.props" />
+
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
 	  <PlatformTarget>AnyCPU</PlatformTarget>
 	  <DefineConstants>DEBUG;TRACE</DefineConstants>

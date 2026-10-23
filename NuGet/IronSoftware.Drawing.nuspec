@@ -47,6 +47,8 @@ Enhancements
 - AnyBitmap now preserves the original source color depth (BitsPerPixel) across derived operations, including frame extraction, cloning, rotation, redaction, and resizing
 Bug Fixes
 - Fixed an issue where derived AnyBitmap operations incorrectly reported a decoded 32bpp color depth instead of the original source pixel depth
+Dependencies
+- .NET Standard 2.0 / .NET Framework: System.Memory 4.6.3, System.Buffers 4.6.1, System.Numerics.Vectors 4.6.1 and System.Runtime.CompilerServices.Unsafe 6.1.2 are now declared dependencies. .NET Framework apps need binding redirects to System.Memory 4.0.5.0, System.Buffers 4.0.5.0, System.Numerics.Vectors 4.1.6.0 and System.Runtime.CompilerServices.Unsafe 6.0.3.0; SDK-style and PackageReference projects generate these automatically
 		</releaseNotes>
 		<copyright>Copyright © Iron Software 2022-2026</copyright>
 		<tags>Images, Bitmap, SkiaSharp, SixLabors, BitMiracle, Maui, SVG, TIFF, TIF, GIF, JPEG, PNG, Color, Rectangle, Drawing, C#, VB.NET, ASPX, create, render, generate, standard, netstandard2.0, core, netcore</tags>
@@ -57,6 +59,11 @@ Bug Fixes
 				<dependency id="SixLabors.ImageSharp" version="2.1.13" />
 				<dependency id="SixLabors.ImageSharp.Drawing" version="1.0.0" />
 				<dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
+				<!-- Keep in sync with IronSoftware.Drawing/SystemPackages.props (enforced by CI/scripts/Test-SystemAssemblyReferences.ps1) -->
+				<dependency id="System.Memory" version="4.6.3" />
+				<dependency id="System.Buffers" version="4.6.1" />
+				<dependency id="System.Numerics.Vectors" version="4.6.1" />
+				<dependency id="System.Runtime.CompilerServices.Unsafe" version="6.1.2" />
 			</group>
 			<group targetFramework="net60">
 				<dependency id="IronSoftware.Drawing.Abstractions" version="2026.1.2" />

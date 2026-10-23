@@ -60,6 +60,17 @@ jobs:
           --property:AssemblyVersion=$(finalAssemblyVersion)
         versioningScheme: byEnvVar
         versionEnvVar: AssemblyVersion
+    # Fail if a shipped DLL references System.Memory / Buffers / Unsafe / Vectors (etc.) at a higher
+    # assembly version than the nuspec dependency guarantees (FileLoadException on .NET Framework, OCR-372).
+    - task: PowerShell@2
+      displayName: Check System.* assembly references against nuspec
+      inputs:
+        targetType: 'filePath'
+        filePath: '$(Build.SourcesDirectory)/CI/scripts/Test-SystemAssemblyReferences.ps1'
+        arguments: >-
+          -NuspecPath '$(Build.SourcesDirectory)/NuGet/IronSoftware.Drawing.nuspec'
+          -BinRoot '$(Build.SourcesDirectory)/IronSoftware.Drawing/IronSoftware.Drawing.Common/bin/${{ parameters.buildConfiguration }}'
+        pwsh: true
     # Publish Pipeline Artifacts
     - task: CopyFiles@2
       displayName: 'Copy tests.runsettings file'
