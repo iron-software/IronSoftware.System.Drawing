@@ -1,6 +1,7 @@
 using BitMiracle.LibTiff.Classic;
 using FluentAssertions;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Metadata;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -1155,7 +1156,11 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(24, new AnyBitmap(rgb24, 20, 20).BitsPerPixel);
 
             string path64 = "dw40_tmp64.png";
+#if NET8_0_OR_GREATER
+            using (var img64 = new Image<Rgba64>(30, 30)) { img64.Save(path64, new SixLabors.ImageSharp.Formats.Png.PngEncoder { ColorType = SixLabors.ImageSharp.Formats.Png.PngColorType.RgbWithAlpha, BitDepth = SixLabors.ImageSharp.Formats.Png.PngBitDepth.Bit16 }); }
+#else
             using (var img64 = new Image<Rgba64>(30, 30)) { img64.SaveAsPng(path64); }
+#endif
             try
             {
                 var rgba64 = AnyBitmap.FromFile(path64);
@@ -1166,6 +1171,82 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             {
                 CleanResultFile(path64);
             }
+        }
+
+        [TheoryWithAutomaticDisplayName]
+        [InlineData("A8", "GrayscaleWithAlpha", "Bit8", 16)]
+        [InlineData("L8", "Grayscale", "Bit8", 8)]
+        [InlineData("L16", "Grayscale", "Bit16", 16)]
+        [InlineData("La16", "GrayscaleWithAlpha", "Bit8", 16)]
+        [InlineData("La32", "GrayscaleWithAlpha", "Bit16", 32)]
+        [InlineData("Rgb24", "Rgb", "Bit8", 24)]
+        [InlineData("Bgr24", "Rgb", "Bit8", 24)]
+        [InlineData("Rgb48", "Rgb", "Bit16", 48)]
+        [InlineData("Rgba32", "RgbWithAlpha", "Bit8", 32)]
+        [InlineData("Bgra32", "RgbWithAlpha", "Bit8", 32)]
+        [InlineData("Rgba64", "RgbWithAlpha", "Bit16", 64)]
+        [InlineData("RgbaVector", "RgbWithAlpha", "Bit16", 64)]
+        [InlineData("Bgr565", "RgbWithAlpha", "Bit8", 32)]
+        public void ExportPng_ShouldChooseColorTypeAndBitDepthFromPixelType(
+            string pixelType, string expectedColorType, string expectedBitDepth, int expectedBitsPerPixel)
+        {
+            using Image source = pixelType switch
+            {
+                "A8" => new Image<A8>(4, 4),
+                "L8" => new Image<L8>(4, 4),
+                "L16" => new Image<L16>(4, 4),
+                "La16" => new Image<La16>(4, 4),
+                "La32" => new Image<La32>(4, 4),
+                "Rgb24" => new Image<Rgb24>(4, 4),
+                "Bgr24" => new Image<Bgr24>(4, 4),
+                "Rgb48" => new Image<Rgb48>(4, 4),
+                "Rgba32" => new Image<Rgba32>(4, 4),
+                "Bgra32" => new Image<Bgra32>(4, 4),
+                "Rgba64" => new Image<Rgba64>(4, 4),
+                "RgbaVector" => new Image<RgbaVector>(4, 4),
+                "Bgr565" => new Image<SixLabors.ImageSharp.PixelFormats.Bgr565>(4, 4),
+                _ => throw new ArgumentOutOfRangeException(nameof(pixelType))
+            };
+            AnyBitmap bitmap = source;
+
+            byte[] png = bitmap.ExportBytes(AnyBitmap.ImageFormat.Png);
+
+            using (Image reloaded = Image.Load(png))
+            {
+                var pngMetadata = reloaded.Metadata.GetPngMetadata();
+                Assert.Equal(expectedColorType, pngMetadata.ColorType.ToString());
+                Assert.Equal(expectedBitDepth, pngMetadata.BitDepth.ToString());
+            }
+            Assert.Equal(expectedBitsPerPixel, AnyBitmap.FromBytes(png).BitsPerPixel);
+        }
+
+        [TheoryWithAutomaticDisplayName]
+        [InlineData("Palette", "Bit8")]
+        [InlineData("Grayscale", "Bit1")]
+        [InlineData("Grayscale", "Bit16")]
+        public void ExportPng_ShouldKeepSourcePngColorTypeAndBitDepthWhenReencoding(string colorType, string bitDepth)
+        {
+            byte[] sourcePng;
+            using (var source = new Image<Rgba32>(8, 8, new Rgba32(255, 255, 255, 255)))
+            using (var stream = new MemoryStream())
+            {
+                source.Save(stream, new SixLabors.ImageSharp.Formats.Png.PngEncoder
+                {
+                    ColorType = (SixLabors.ImageSharp.Formats.Png.PngColorType)Enum.Parse(typeof(SixLabors.ImageSharp.Formats.Png.PngColorType), colorType),
+                    BitDepth = (SixLabors.ImageSharp.Formats.Png.PngBitDepth)Enum.Parse(typeof(SixLabors.ImageSharp.Formats.Png.PngBitDepth), bitDepth)
+                });
+                sourcePng = stream.ToArray();
+            }
+
+            // RotateFlip decodes and re-encodes, so the output goes through the PNG encoder
+            // instead of returning the original bytes.
+            var rotated = AnyBitmap.FromBytes(sourcePng).RotateFlip(AnyBitmap.RotateMode.Rotate180, AnyBitmap.FlipMode.None);
+            byte[] png = rotated.ExportBytes(AnyBitmap.ImageFormat.Png);
+
+            using Image reloaded = Image.Load(png);
+            var pngMetadata = reloaded.Metadata.GetPngMetadata();
+            Assert.Equal(colorType, pngMetadata.ColorType.ToString());
+            Assert.Equal(bitDepth, pngMetadata.BitDepth.ToString());
         }
 
         [FactWithAutomaticDisplayName]
@@ -1296,7 +1377,11 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             using var image = new Image<Rgba32>(Configuration.Default, 100, 100, Color.White);
             image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
             {
+#if NET8_0_OR_GREATER
+                BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Bit32,
+#else
                 BitsPerPixel = SixLabors.ImageSharp.Formats.Bmp.BmpBitsPerPixel.Pixel32,
+#endif
                 SupportTransparency = true
             });
 

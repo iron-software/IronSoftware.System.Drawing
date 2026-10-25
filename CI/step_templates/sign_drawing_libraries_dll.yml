@@ -12,7 +12,7 @@ steps:
     custom: tool
     arguments: install --global AzureSignTool
 - task: PowerShell@2
-  displayName: 'Sign IronSoftware.Drawing.Common.dll .NET6'
+  displayName: 'Sign IronSoftware.Drawing.Common.dll netstandard2.0'
   inputs:
       workingDirectory: 'bin\$(Configuration)\netstandard2.0'
       targetType: 'inline'
@@ -29,9 +29,26 @@ steps:
           --verbose `
           "IronSoftware.Drawing.Common.dll"
 - task: PowerShell@2
-  displayName: 'Sign IronSoftware.Drawing.Common.dll .NET6'
+  displayName: 'Sign IronSoftware.Drawing.Common.dll .NET 6 (net60)'
   inputs:
       workingDirectory: 'bin\$(Configuration)\net60'
+      targetType: 'inline'
+      script: |
+        azuresigntool sign `
+          --azure-key-vault-url "$(AZURE_KEY_VAULT_URL)" `
+          --azure-key-vault-client-id "$(AZURE_KEY_VAULT_APPLICATION_ID)" `
+          --azure-key-vault-client-secret "$(AZURE_KEY_VAULT_CLIENT_SECRET)" `
+          --azure-key-vault-tenant-id "$(AZURE_KEY_VAULT_TENANT_ID)" `
+          --azure-key-vault-certificate "$(AZURE_KEY_VAULT_CERTIFICATE_NAME)" `
+          --timestamp-rfc3161 "$(TimestampUrl)" `
+          --timestamp-digest sha256 `
+          --file-digest sha256 `
+          --verbose `
+          "IronSoftware.Drawing.Common.dll"
+- task: PowerShell@2
+  displayName: 'Sign IronSoftware.Drawing.Common.dll .NET 8 (net80)'
+  inputs:
+      workingDirectory: 'bin\$(Configuration)\net80'
       targetType: 'inline'
       script: |
         azuresigntool sign `

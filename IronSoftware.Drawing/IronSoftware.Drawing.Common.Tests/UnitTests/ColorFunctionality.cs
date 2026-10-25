@@ -284,14 +284,22 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
             Assert.Equal(0, red.G);
             Assert.Equal(0, red.B);
 
+#if NET8_0_OR_GREATER
+            imgColor = SixLabors.ImageSharp.Color.FromPixel(new SixLabors.ImageSharp.PixelFormats.Rgba32(0, 255, 0, 255));
+#else
             imgColor = SixLabors.ImageSharp.Color.FromRgba(0, 255, 0, 255);
+#endif
             Color green = imgColor;
             Assert.Equal(255, green.A);
             Assert.Equal(0, green.R);
             Assert.Equal(255, green.G);
             Assert.Equal(0, green.B);
 
+#if NET8_0_OR_GREATER
+            imgColor = SixLabors.ImageSharp.Color.FromPixel(new SixLabors.ImageSharp.PixelFormats.Rgb24(0, 0, 255));
+#else
             imgColor = SixLabors.ImageSharp.Color.FromRgb(0, 0, 255);
+#endif
             Color blue = imgColor;
             Assert.Equal(255, blue.A);
             Assert.Equal(0, blue.R);
@@ -322,7 +330,11 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void Cast_ImageSharp_Rgba32_from_Color()
         {
+#if NET8_0_OR_GREATER
+            SixLabors.ImageSharp.PixelFormats.Rgba32 imgColor = SixLabors.ImageSharp.Color.Red.ToPixel<SixLabors.ImageSharp.PixelFormats.Rgba32>();
+#else
             SixLabors.ImageSharp.PixelFormats.Rgba32 imgColor = SixLabors.ImageSharp.Color.Red;
+#endif
             Color red = imgColor;
             Assert.Equal(255, red.A);
             Assert.Equal(255, red.R);
@@ -367,7 +379,11 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void Cast_ImageSharp_Rgb24_from_Color()
         {
+#if NET8_0_OR_GREATER
+            SixLabors.ImageSharp.PixelFormats.Rgb24 imgColor = SixLabors.ImageSharp.Color.Red.ToPixel<SixLabors.ImageSharp.PixelFormats.Rgb24>();
+#else
             SixLabors.ImageSharp.PixelFormats.Rgb24 imgColor = SixLabors.ImageSharp.Color.Red;
+#endif
             Color red = imgColor;
             Assert.Equal(255, red.R);
             Assert.Equal(0, red.G);
@@ -470,7 +486,11 @@ namespace IronSoftware.Drawing.Common.Tests.UnitTests
         [FactWithAutomaticDisplayName]
         public void Cast_ImageSharp_Rgba64_from_Color()
         {
+#if NET8_0_OR_GREATER
+            SixLabors.ImageSharp.PixelFormats.Rgba64 imgColor = SixLabors.ImageSharp.Color.Red.ToPixel<SixLabors.ImageSharp.PixelFormats.Rgba64>();
+#else
             SixLabors.ImageSharp.PixelFormats.Rgba64 imgColor = SixLabors.ImageSharp.Color.Red;
+#endif
             Color red = imgColor;
             Assert.Equal(255, red.R);
             Assert.Equal(0, red.G);
